@@ -125,6 +125,11 @@ async function processHtmlFile(inputFileName, outputFileName) {
 
 async function processFolder(inputFolderName, outputFolderName) {
   const files = fs.readdirSync(inputFolderName);
+  try {
+    fs.mkdirSync(outputFolderName, { recursive: true })
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err
+  }
   for (file of files) {
     await processHtmlFile(
       path.join(inputFolderName, file),
