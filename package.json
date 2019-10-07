@@ -1,0 +1,15 @@
+{
+  "name": "danilop-personal-page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "processLinks.js",
+  "dependencies": {
+    "open-graph-scraper": "^3.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "node processLinks.js src public"
+  },
+  "author": "",
+  "license": "ISC"
+}
