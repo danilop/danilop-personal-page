@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 const ogs = require("open-graph-scraper");
 
@@ -87,7 +87,9 @@ async function processLinks(fileName, firstWidth, secondWidth, limit) {
         "<h6>" +
         linkData.title +
         "</h6>" +
-        (linkData.subtitle ? '<p class="font-italic small">' + linkData.subtitle + '</p>' : '') +
+        (linkData.subtitle
+          ? '<p class="font-italic small">' + linkData.subtitle + "</p>"
+          : "") +
         "</a>" +
         "</div>" +
         "</div>"
@@ -125,11 +127,6 @@ async function processHtmlFile(inputFileName, outputFileName) {
 
 async function processFolder(inputFolderName, outputFolderName) {
   const files = fs.readdirSync(inputFolderName);
-  try {
-    fs.mkdirSync(outputFolderName, { recursive: true })
-  } catch (err) {
-    if (err.code !== 'EEXIST') throw err
-  }
   for (file of files) {
     await processHtmlFile(
       path.join(inputFolderName, file),
@@ -139,8 +136,10 @@ async function processFolder(inputFolderName, outputFolderName) {
 }
 
 (async () => {
-  const inputFolderName = process.argv[2];
-  const outputFolderName = process.argv[3];
+  const staticFolderName = process.argv[2];
+  const inputFolderName = process.argv[3];
+  const outputFolderName = process.argv[4];
+  fs.copySync(staticFolderName, outputFolderName);
   await processFolder(inputFolderName, outputFolderName);
 })().catch(e => {
   console.error(e);

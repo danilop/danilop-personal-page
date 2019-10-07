@@ -4,11 +4,12 @@
   "description": "",
   "main": "processLinks.js",
   "dependencies": {
+    "fs-extra": "^8.1.0",
     "open-graph-scraper": "^3.6.2"
   },
   "devDependencies": {},
   "scripts": {
-    "build": "node processLinks.js src public"
+    "build": "node processLinks.js static src public"
   },
   "author": "",
   "license": "ISC"
