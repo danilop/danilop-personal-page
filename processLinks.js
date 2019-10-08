@@ -168,6 +168,8 @@ async function processFolder(dataFolderName, inputFolderName, outputFolderName, 
   }
 }
 
+// Main
+
 (async () => {
   const dataFolderName = process.argv[2];
   const staticFolderName = process.argv[3];
