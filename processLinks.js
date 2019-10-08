@@ -4,8 +4,15 @@ const ogs = require("open-graph-scraper");
 const crypto = require('crypto');
 
 function removeAfter(s, t) {
-  let n = s.lastIndexOf(t);
-  return s.substr(0, n != -1 ? n : s.length);
+  return s.split(t)[0];
+}
+
+function removeAny(s, t) {
+  return s.replace(t, '');
+}
+
+function makeOrdinalsSup(s) {
+  return s.replace(/([0-9]+)(st|nd|rd|th)\b/, "$1<sup>$2</sup>");
 }
 
 function link2hash(link) {
@@ -39,18 +46,22 @@ async function getLinksData(links, cacheFolderName) {
       console.log("cached results:", results);
     }
 
-    let title;
+    let title = results.data.ogTitle;
     let subtitle = null;
     switch (results.data.ogSiteName) {
       case "Amazon Web Services":
-        title = removeAfter(results.data.ogTitle, " | ");
+        title = removeAfter(title, " | ");
         break;
       case "Speaker Deck":
-        title = results.data.ogTitle;
-        subtitle = results.data.ogDescription.split("\n")[0];
+        subtitle = removeAfter(results.data.ogDescription, "\n");
+        subtitle = makeOrdinalsSup(subtitle);
         break;
       default:
-        title = results.data.ogTitle;
+        // YouTube Videos
+        title = removeAfter(title, " - ");
+        title = removeAfter(title, " – ");
+        title = removeAfter(title, " by ");
+        title = removeAny(title, /\[.*\]/);
     }
     linksData.push({
       title: title,
@@ -120,7 +131,7 @@ async function processLinks(fileName, cacheFolderName, firstWidth, secondWidth, 
   return htmlLinks.join("\r\n");
 }
 
-async function processHtmlFile(inputFileName, outputFileName, cacheFolderName) {
+async function processHtmlFile(inputFileName, outputFileName, dataFolderName, cacheFolderName) {
   const htmlData = fs.readFileSync(inputFileName);
   const htmlLines = htmlData.toString().split(/(?:\r\n|\r|\n)/g);
   const outputLines = [];
@@ -131,7 +142,7 @@ async function processHtmlFile(inputFileName, outputFileName, cacheFolderName) {
     );
     if (linksToProcess) {
       console.log(line);
-      linksFileName = linksToProcess[1];
+      linksFileName = path.join(dataFolderName, linksToProcess[1]);
       firstWidth = linksToProcess[2];
       secondWidth = linksToProcess[3];
       limit = linksToProcess[4];
@@ -146,25 +157,26 @@ async function processHtmlFile(inputFileName, outputFileName, cacheFolderName) {
   fs.writeFileSync(outputFileName, outputLines.join("\r\n"));
 }
 
-async function processFolder(inputFolderName, outputFolderName, cacheFolderName) {
+async function processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName) {
   const files = fs.readdirSync(inputFolderName);
   for (file of files) {
     await processHtmlFile(
       path.join(inputFolderName, file),
       path.join(outputFolderName, file),
-      cacheFolderName
+      dataFolderName, cacheFolderName
     );
   }
 }
 
 (async () => {
-  const staticFolderName = process.argv[2];
-  const inputFolderName = process.argv[3];
-  const outputFolderName = process.argv[4];
-  const cacheFolderName = process.argv[5];
+  const dataFolderName = process.argv[2];
+  const staticFolderName = process.argv[3];
+  const inputFolderName = process.argv[4];
+  const outputFolderName = process.argv[5];
+  const cacheFolderName = process.argv[6];
   fs.copySync(staticFolderName, outputFolderName);
   fs.ensureDir(cacheFolderName);
-  await processFolder(inputFolderName, outputFolderName, cacheFolderName);
+  await processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName);
 })().catch(e => {
   console.error(e);
 });

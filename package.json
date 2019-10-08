@@ -9,7 +9,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "build": "node processLinks.js static src public cache"
+    "build": "node processLinks.js data static src public cache"
   },
   "author": "",
   "license": "ISC"
