@@ -84,15 +84,15 @@ async function processLinks(fileName, firstWidth, secondWidth, limit) {
         //'" data-toggle="' +
         //linkData.description +
         '">' +
-        "<h6>" +
+        '<h6 class="mt-1">' +
         linkData.title +
-        "</h6>" +
+        '</h6>' +
+        '</a>' +
         (linkData.subtitle
-          ? '<p class="font-italic small">' + linkData.subtitle + "</p>"
-          : "") +
-        "</a>" +
-        "</div>" +
-        "</div>"
+          ? '<p class="font-italic small">' + linkData.subtitle + '</p>'
+          : '') +
+        '</div>' +
+        '</div>'
     );
   }
 
