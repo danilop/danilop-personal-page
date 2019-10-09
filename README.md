@@ -1,5 +1,7 @@
 # danilop-personal-page
 
+![Sample personal page](https://danilop.s3.amazonaws.com/Images/danilop-personal-page.png)
+
 A simple script to populate a web page with links, retrieving link info using the Open Graph protocol.
 
 I built it for my personal page: https://danilop.net
