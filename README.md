@@ -6,12 +6,12 @@ A simple script to populate a web page with links, retrieving link info using th
 
 I built it for my personal page: https://danilop.net
 
-Put static assets in the `static` folder.
+1. Put static assets in the `static` folder.
 
-Put HTML templates with `processLinks` where you want to embed links in the `src` folder.
+2. Put HTML templates with `processLinks` where you want to embed links in the `src` folder.
 
-Put links as a JSON array in the `data` folder.
+3. Put links as a JSON array in the `data` folder.
 
-Using the Open Graph protocol, I am currently getting info from the AWS Blog, Speaker Deck, and YouTube.
+4. Using the Open Graph protocol, this is getting info from the link source.
 
-The output goes in a `public` folder.
+5. The output goes in a `public` folder.
