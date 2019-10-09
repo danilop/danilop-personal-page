@@ -12,6 +12,8 @@ I built it for my personal page: https://danilop.net
 
 3. Put links as a JSON array in the `data` folder.
 
-4. Using the Open Graph protocol, this is getting info from the link source.
+4. Run `npm run build`
 
-5. The output goes in a `public` folder.
+5. Using the Open Graph protocol, this is getting info from the link source.
+
+6. The output goes in a `public` folder.
