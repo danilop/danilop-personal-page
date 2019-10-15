@@ -2,7 +2,7 @@
 
 ![Sample personal page](https://danilop.s3.amazonaws.com/Images/danilop-personal-page.png)
 
-A simple script to populate a web page with links, retrieving link info using the Open Graph protocol.
+A simple script to populate a web page with links, retrieving link info using the Open Graph protocol (https://ogp.me).
 
 I am using https://getbootstrap.com for the grid system.
 
