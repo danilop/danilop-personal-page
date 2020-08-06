@@ -14,6 +14,6 @@ I built it for my personal page: https://danilop.net
 
 3. The JSON file should be in the `data` folder and contain a single JSON array of links.
 
-4. Run `npm run build` to create the `public` folder.
+4. Run `npm run build` to create the `public` folder. I use [AWS Amplify Console](https://aws.amazon.com/amplify/console/) to automate deployment.
 
 5. Using the Open Graph protocol, this is getting all the info (title, thumbnail) from the link source, such as Speaker Deck or YouTube.
