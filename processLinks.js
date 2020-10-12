@@ -28,32 +28,34 @@ async function getLinksData(links, cacheFolderName) {
   
     let cacheFileName = path.join(cacheFolderName, link2hash(link));
     
-    let results;
+    let result;
     try {
-      results = fs.readJsonSync(cacheFileName);
+      result = fs.readJsonSync(cacheFileName);
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw err;
       }
     }
     
-    if (results === undefined) {
+    if (result === undefined || result.ogTitle === undefined) {
       const options = { url: link };
       results = await ogs(options);
-      console.log("results:", results);
-      fs.writeJsonSync(cacheFileName, results);
+      result = results.result
+      console.log("result:", result);
+      fs.writeJsonSync(cacheFileName, result);
     } else {
-      console.log("cached results:", results);
+      console.log("cached result:", result);
     }
 
-    let title = results.data.ogTitle;
+
+    let title = result.ogTitle;
     let subtitle = null;
-    switch (results.data.ogSiteName) {
+    switch (result.ogSiteName) {
       case "Amazon Web Services":
         title = removeAfter(title, " | ");
         break;
       case "Speaker Deck":
-        subtitle = removeAfter(results.data.ogDescription, "\n");
+        subtitle = removeAfter(result.ogDescription, "\n");
         subtitle = makeOrdinalsSup(subtitle);
         break;
       default:
@@ -66,9 +68,9 @@ async function getLinksData(links, cacheFolderName) {
     linksData.push({
       title: title,
       subtitle: subtitle,
-      url: results.data.ogUrl,
-      description: results.data.ogDescription,
-      imageUrl: results.data.ogImage.url
+      url: result.ogUrl,
+      description: result.ogDescription,
+      imageUrl: result.ogImage.url
     });
   }
 
