@@ -5,7 +5,7 @@
   "main": "processLinks.js",
   "dependencies": {
     "fs-extra": "^8.1.0",
-    "open-graph-scraper": "^4.6.0"
+    "open-graph-scraper": "^5.1.0"
   },
   "devDependencies": {},
   "scripts": {
