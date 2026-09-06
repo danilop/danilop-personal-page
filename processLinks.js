@@ -15,6 +15,15 @@ function makeOrdinalsSup(s) {
   return s.replace(/([0-9]+)(st|nd|rd|th)\b/, "$1<sup>$2</sup>");
 }
 
+function getImageUrl(ogImage) {
+  // open-graph-scraper >= 5 always returns ogImage as an array.
+  // Older cached results (and single-image v4 responses) store a plain object.
+  if (Array.isArray(ogImage)) {
+    return ogImage.length > 0 ? ogImage[0].url : null;
+  }
+  return ogImage ? ogImage.url : null;
+}
+
 function link2hash(link) {
   const digest = crypto.createHash('sha256').update(link).digest('hex');
   console.log (digest);
@@ -70,7 +79,7 @@ async function getLinksData(links, cacheFolderName) {
       subtitle: subtitle,
       url: result.ogUrl,
       description: result.ogDescription,
-      imageUrl: result.ogImage.url
+      imageUrl: getImageUrl(result.ogImage)
     });
   }
 
