@@ -1,0 +1,14 @@
+---
+const { config } = Astro.props;
+---
+
+<footer class="site-footer">
+  <p>
+    {config.name} <span aria-hidden="true">·</span> {config.title}
+  </p>
+  <nav aria-label="Footer">
+    <a href="/original-site/">The Original Site</a>
+    <a href="/rss.xml">RSS</a>
+    <a href="https://github.com/danilop/danilop-personal-page">Source</a>
+  </nav>
+</footer>

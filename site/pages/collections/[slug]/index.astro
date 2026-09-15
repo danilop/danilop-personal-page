@@ -1,0 +1,65 @@
+---
+import { loadEditions, editionUrl } from "../../../../core/editions";
+import Layout from "../../../components/Layout.astro";
+import { site } from "../../../data";
+export function getStaticPaths() {
+  return site.collections.map((c) => ({
+    params: { slug: c.url.split("/")[2] },
+    props: { collection: c },
+  }));
+}
+const { collection: c } = Astro.props;
+const editions = (await loadEditions()).filter(
+  (e) => e.collection === c.id && e.status === "published",
+);
+---
+
+<Layout title={c.title} description={c.summary}>
+  <header class="page-heading">
+    <p class="eyebrow">{c.book ? "Growing book" : "Collection"}</p>
+    <h1>{c.title}</h1>
+    <p>{c.summary}</p>
+  </header>
+  <div class="prose collection-intro" set:html={c.introduction} />
+  <nav class="contents" aria-label="Table of contents">
+    <ol>
+      {c.nodes.map((n) => (
+        <li
+          style={`--depth:${Math.max(0, n.depth - 1)}`}
+          class:list={{ planned: n.planned }}
+        >
+          {n.planned ? (
+            <span>{n.title} — Planned</span>
+          ) : (
+            <a
+              href={
+                n.kind === "piece"
+                  ? `${c.url}read/${n.id}/`
+                  : `${c.url}chapters/${n.id}/`
+              }
+            >
+              {n.number && `${n.number}. `}
+              {n.title}
+            </a>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+  {editions.length > 0 && (
+    <section>
+      <h2>Published editions</h2>
+      <ul>
+        {editions.map((e) => (
+          <li>
+            <a href={editionUrl(e)}>{e.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+  <details open class="continuous-reading">
+    <summary>Read the whole collection</summary>
+    <div class="prose" set:html={c.html} />
+  </details>
+</Layout>

@@ -1,0 +1,14 @@
+---
+import Header from "../../site/components/Header.astro";
+import Footer from "../../site/components/Footer.astro";
+import "./style.css";
+const { config, collectionsCount } = Astro.props;
+---
+
+<div class="paper theme-ink">
+  <Header config={config} collectionsCount={collectionsCount} />
+  <main id="main">
+    <slot />
+  </main>
+  <Footer config={config} />
+</div>

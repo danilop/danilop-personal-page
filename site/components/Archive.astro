@@ -1,0 +1,70 @@
+---
+import Layout from "./Layout.astro";
+import { site, dateLabel } from "../data";
+const { kind = "all", page = 1 } = Astro.props;
+const labels: Record<string, string> = {
+  all: "Earlier Work",
+  posts: "Articles",
+  decks: "Talks & Slides",
+  videos: "Videos",
+};
+const records = site.archive.filter((r) => kind === "all" || r.kind === kind),
+  size = 30,
+  total = Math.ceil(records.length / size),
+  shown = records.slice((page - 1) * size, page * size);
+const base = kind === "all" ? "/archive/" : `/archive/${kind}/`;
+---
+
+<Layout
+  title={labels[kind]}
+  description="Articles, talks, and videos published before the relaunch of Notes Along the Way."
+>
+  <header class="page-heading">
+    <h1>{labels[kind]}</h1>
+    <p>
+      Articles, talks, and videos from before this new chapter.{" "}
+      <a href="/original-site/">Visit The Original Site.</a>
+    </p>
+  </header>
+  <nav class="archive-nav" aria-label="Earlier Work categories">
+    {Object.entries(labels).map(([key, label]) => (
+      <a
+        href={key === "all" ? "/archive/" : `/archive/${key}/`}
+        aria-current={key === kind ? "page" : undefined}
+      >
+        {label}
+      </a>
+    ))}
+  </nav>
+  <div class="archive-list">
+    {shown.map((r) => (
+      <article>
+        <p class="eyebrow">
+          {r.publisher}
+          {r.subtitle && ` · ${r.subtitle}`}
+        </p>
+        <h2>
+          <a href={r.url}>{r.title}</a>
+        </h2>
+        {r.publishedAt && (
+          <p class="meta">
+            <time datetime={r.publishedAt}>{dateLabel(r.publishedAt)}</time>
+          </p>
+        )}
+        {r.description && <p class="description">{r.description}</p>}
+      </article>
+    ))}
+  </div>
+  {total > 1 && (
+    <nav class="pagination" aria-label="Archive pages">
+      {Array.from({ length: total }, (_, i) => (
+        <a
+          href={i === 0 ? base : `${base}page/${i + 1}/`}
+          aria-current={i + 1 === page ? "page" : undefined}
+        >
+          {i + 1}
+        </a>
+      ))}
+    </nav>
+  )}
+</Layout>

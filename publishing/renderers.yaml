@@ -1,0 +1,38 @@
+schemaVersion: 1
+web:
+  code: {plugin: shiki}
+  image: {plugin: image}
+  table: {plugin: table}
+  chart: {plugin: vega-lite}
+  diagram: {plugin: mermaid}
+  math: {plugin: katex}
+  callout: {plugin: prose}
+  exercise: {plugin: prose}
+  audio: {plugin: media}
+  video: {plugin: media}
+  document: {plugin: pdf-native}
+  presentation: {plugin: google-slides-published}
+  gallery: {plugin: gallery-link}
+  simulation: {plugin: simulation}
+  model-experiment: {plugin: browser-model}
+book:
+  code: {plugin: shiki}
+  image: {plugin: image}
+  table: {plugin: table}
+  chart: {plugin: vega-lite}
+  diagram: {plugin: mermaid}
+  math: {plugin: katex}
+  callout: {plugin: prose}
+  exercise: {plugin: prose}
+  audio: {plugin: media}
+  video: {plugin: media}
+  document: {plugin: pdf-native}
+  presentation: {plugin: google-slides-published}
+  gallery: {plugin: gallery-link}
+  simulation: {plugin: simulation}
+  model-experiment: {plugin: browser-model}
+formats:
+  d2: {plugin: d2, options: {layout: elk}}
+  mermaid: {plugin: mermaid}
+  google-docs-published: {plugin: google-docs-published}
+  google-slides-published: {plugin: google-slides-published}

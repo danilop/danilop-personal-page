@@ -1,0 +1,47 @@
+---
+import { readingLinks } from "../../../../../core/reading-links";
+import Layout from "../../../../components/Layout.astro";
+import { site } from "../../../../data";
+export function getStaticPaths() {
+  return site.collections.flatMap((c) =>
+    c.nodes
+      .filter((n) => ["chapter", "appendix", "part"].includes(n.kind))
+      .map((n) => ({
+        params: { slug: c.url.split("/")[2], node: n.id },
+        props: { c, n },
+      })),
+  );
+}
+const { c, n } = Astro.props;
+const start = c.nodes.indexOf(n),
+  children: typeof c.nodes = [];
+for (let i = start + 1; i < c.nodes.length && c.nodes[i].depth > n.depth; i++)
+  children.push(c.nodes[i]);
+---
+
+<Layout title={n.title} canonical={c.url} description={c.summary}>
+  <article class="reading">
+    <header class="article-heading">
+      <p class="eyebrow">
+        <a href={c.url}>{c.title}</a>
+      </p>
+      <h1>
+        {n.number && `${n.number}. `}
+        {n.title}
+      </h1>
+    </header>
+    {children.map((child) => (
+      <section id={child.id}>
+        <h2>{child.title}</h2>
+        <div
+          class="prose"
+          set:html={readingLinks(
+            child.html,
+            c.url,
+            children.map((x) => x.id),
+          )}
+        />
+      </section>
+    ))}
+  </article>
+</Layout>

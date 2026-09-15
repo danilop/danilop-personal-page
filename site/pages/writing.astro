@@ -1,0 +1,24 @@
+---
+import Layout from "../components/Layout.astro";
+import { site, dateLabel } from "../data";
+---
+
+<Layout title="Writing" description="Articles and notes by Danilo Poccia.">
+  <header class="page-heading">
+    <h1>Writing</h1>
+    <p>Articles, experiments, and ideas that can grow over time.</p>
+  </header>
+  <div class="writing-list">
+    {site.articles.map((p) => (
+      <article>
+        <p class="meta">
+          <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
+        </p>
+        <h2>
+          <a href={p.url}>{p.title}</a>
+        </h2>
+        <p>{p.summary}</p>
+      </article>
+    ))}
+  </div>
+</Layout>

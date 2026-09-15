@@ -1,0 +1,6 @@
+---
+import Home from "../ink-and-paper/Home.astro";
+const { site, config } = Astro.props;
+---
+
+<Home site={site} config={{ ...config, layout: "linear" }} />

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "models": [
+    {
+      "id": "SmolLM2-135M-Instruct-q0f16-MLC",
+      "runtime": "webllm",
+      "format": "mlc",
+      "model": "https://huggingface.co/mlc-ai/SmolLM2-135M-Instruct-q0f16-MLC/resolve/06fc409f2212adff29d93cbc742c1d6957302df5/",
+      "modelLib": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/025bcaf3780fa8254f5e5efd3bfea0a5397248f4/web-llm-models/v0_2_84/base/SmolLM2-135M-Instruct-q0f16_cs1k-webgpu.wasm",
+      "revision": "06fc409f2212adff29d93cbc742c1d6957302df5",
+      "vramMB": 359.69,
+      "requiredFeatures": [
+        "shader-f16"
+      ],
+      "artifacts": [
+        {
+          "path": "mlc-chat-config.json",
+          "bytes": 2018,
+          "sha256": "84fa8cda47c443589d05c7295339b0c58c15d964e7f2df53873366187789bb59"
+        },
+        {
+          "path": "ndarray-cache.json",
+          "bytes": 70279,
+          "sha256": "bb1307859901ebe833a1ad9f25b5a2babed8bbcfe8ea1d7e5b64db52e1c17149"
+        },
+        {
+          "path": "params_shard_0.bin",
+          "bytes": 56623104,
+          "sha256": "dbe321b43856cffd6920fc39ce1e9750556c3698aae47ca561652548d23dc2cd"
+        },
+        {
+          "path": "params_shard_1.bin",
+          "bytes": 30091392,
+          "sha256": "90eb8da289949ce6ea2fceec85228966fcc6b8cd962504ce0a58e21a0e308f51"
+        },
+        {
+          "path": "params_shard_2.bin",
+          "bytes": 32966784,
+          "sha256": "ffb047fe03c824f7f32fb7abad18c6265ec31400b2b98e32d442deda8b030ce8"
+        },
+        {
+          "path": "params_shard_3.bin",
+          "bytes": 30754944,
+          "sha256": "8feb2e304125627dc231c30d4457fe9c5df5709b9e2858046ac3463175401ef7"
+        },
+        {
+          "path": "params_shard_4.bin",
+          "bytes": 32966784,
+          "sha256": "1cda5ecde438a850307b9490514e58235c64d640399fa68a4c0c28fcff84a1e4"
+        },
+        {
+          "path": "params_shard_5.bin",
+          "bytes": 30754944,
+          "sha256": "6df9612bec9d030861635bd33f3cbeef82eba604fed050b168252f965916de35"
+        },
+        {
+          "path": "params_shard_6.bin",
+          "bytes": 32966784,
+          "sha256": "3cdabc62da6bf632d0000920cf0785f93a7b38140a2ab1096f8e029dc2382ebb"
+        },
+        {
+          "path": "params_shard_7.bin",
+          "bytes": 21905280,
+          "sha256": "ef917ee0421e0fa69bcde5bfc7ba50a96028756bb30181004d34b3babceb88fc"
+        },
+        {
+          "path": "tensor-cache.json",
+          "bytes": 70279,
+          "sha256": "bb1307859901ebe833a1ad9f25b5a2babed8bbcfe8ea1d7e5b64db52e1c17149"
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 2104556,
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 3764,
+          "sha256": "a27f638bd2831f5c3dea654a75838930f2b11fbe550c4d4e1d5d7bd07157b2ee"
+        },
+        {
+          "path": "vocab.json",
+          "bytes": 800662,
+          "sha256": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+        }
+      ],
+      "downloadBytes": 272081574,
+      "libraryRevision": "025bcaf3780fa8254f5e5efd3bfea0a5397248f4",
+      "librarySha256": "124201e7d550944c578f67c813d74b861bee2b45c8478a694634599ba5364e64",
+      "integrity": {
+        "model_lib": "sha256-EkIB59VQlExXj2fIE9dLhhvuK0XIR4ppRjRZm6U2TmQ=",
+        "onFailure": "error",
+        "tokenizer": {
+          "tokenizer.json": "sha256-nKms3bZSWhlOyKx6h/JPu6cjKpoV/6GvDBIk/NiI5Hw="
+        },
+        "config": "sha256-hPqM2kfEQ1idBccpUzmwxYwV2WTn8t9ThzNmGHeJu1k="
+      }
+    }
+  ]
+}

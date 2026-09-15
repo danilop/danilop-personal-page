@@ -1,0 +1,57 @@
+---
+import Layout from "../../site/components/Layout.astro";
+import { dateLabel } from "../../site/data";
+import type { ArticleData } from "../../core/site-data";
+interface Props {
+  article: ArticleData;
+}
+const { article } = Astro.props;
+---
+
+<Layout
+  title={article.title}
+  description={article.summary}
+  canonical={article.url}
+  article={article}
+>
+  <article class="reading">
+    <header class="article-heading">
+      <p class="eyebrow">
+        <a href="/writing/">Writing</a>
+      </p>
+      <h1>{article.title}</h1>
+      <p class="dek">{article.summary}</p>
+      <p class="meta">
+        <time datetime={article.publishedAt}>
+          {dateLabel(article.publishedAt)}
+        </time>{" "}
+        · {article.minutes} min read
+        {article.updatedAt && (
+          <>
+            {" "}
+            · Updated{" "}
+            <time datetime={article.updatedAt}>
+              {dateLabel(article.updatedAt)}
+            </time>
+          </>
+        )}
+      </p>
+    </header>
+    <div class="prose" set:html={article.html} />
+    {article.collections.length > 0 && (
+      <aside class="memberships">
+        <h2>Continue exploring</h2>
+        <ul>
+          {article.collections.map((c) => (
+            <li>
+              <a href={c.url}>{c.title}</a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+    <a class="back-link" href="/writing/">
+      All writing
+    </a>
+  </article>
+</Layout>

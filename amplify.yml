@@ -4,16 +4,20 @@ frontend:
     preBuild:
       commands:
         - nvm use 22
+        - sudo yum install -y atk at-spi2-atk cups-libs gtk3 libXcomposite libXdamage libXrandr libxkbcommon mesa-libgbm nss alsa-lib
         - npm ci
     build:
       commands:
+        - node --import tsx scripts/prepare.ts
+        - npm run check
         - npm test
         - npm run build
   artifacts:
-    baseDirectory: public
+    baseDirectory: dist
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
       - cache/**/*
+      - ~/.cache/puppeteer/**/*

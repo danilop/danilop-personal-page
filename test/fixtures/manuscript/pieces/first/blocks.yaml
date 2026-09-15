@@ -1,0 +1,29 @@
+schemaVersion: 1
+blocks:
+  flow:
+    kind: diagram
+    source: {format: d2, path: ./flow.d2}
+    caption: Notes become a book.
+    description: Notes connect to a collection, which connects to a book.
+  chart:
+    kind: chart
+    source:
+      format: chart-v1
+      data: ./data.csv
+      mark: line
+      x: {field: step, type: quantitative, title: Step}
+      y: {field: value, type: quantitative, title: Value}
+    caption: A growing value.
+    description: The value grows from 100 to 110.25 over two steps.
+  table:
+    kind: table
+    source: {format: csv, path: ./data.csv}
+    caption: The same values as a table.
+  code:
+    kind: code
+    source: {format: source-code, path: ./code.py, language: python}
+    caption: A greeting.
+  equation:
+    kind: math
+    source: {format: tex, text: 'x_{n+1} = 1.05 x_n'}
+    caption: The recurrence relation.

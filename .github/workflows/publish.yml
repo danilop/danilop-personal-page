@@ -1,0 +1,40 @@
+name: Verify deployment and publish short links
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: notes-publication
+  cancel-in-progress: false
+jobs:
+  publish-links:
+    if: vars.PUBLICATION_ROLE_ARN != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.PUBLICATION_ROLE_ARN }}
+          aws-region: eu-west-1
+      - run: npm run publish:links -- --apply --wait
+      - run: npm run distribute -- --apply
+        env:
+          PUBLICATION_BUCKET: danilop-link
+          DEV_API_KEY: ${{ secrets.DEV_API_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: distribution-previews
+          path: exports/distribution/
+          if-no-files-found: ignore

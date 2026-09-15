@@ -1,0 +1,40 @@
+---
+import Layout from "../../../components/Layout.astro";
+import { loadEditions, editionUrl } from "../../../../core/editions";
+import { dateLabel } from "../../../data";
+export async function getStaticPaths() {
+  return (await loadEditions())
+    .filter((e) => e.status === "published")
+    .map((edition) => ({
+      params: { collection: edition.collection, edition: edition.id },
+      props: { edition },
+    }));
+}
+const { edition } = Astro.props;
+---
+
+<Layout
+  title={edition.title}
+  description={edition.summary}
+  canonical={editionUrl(edition)}
+>
+  <article class="reading">
+    <header class="article-heading">
+      <p class="eyebrow">Book edition</p>
+      <h1>{edition.title}</h1>
+      <p class="dek">{edition.summary}</p>
+      <p class="meta">Published {dateLabel(edition.publishedAt)}</p>
+    </header>
+    <ul>
+      {edition.artifacts.map((a) => (
+        <li>
+          <a href={a.url}>{a.label}</a>
+        </li>
+      ))}
+    </ul>
+    <p class="meta">
+      This edition is a fixed publication. Later articles may continue to
+      develop independently.
+    </p>
+  </article>
+</Layout>

@@ -104,7 +104,7 @@ async function devPosts(username) {
       posts.push({ url: article.url, metadata: {
         ogTitle: article.title, ogDescription: article.description, ogUrl: article.url,
         ogSiteName: 'DEV Community', ...(imageUrl ? { ogImage: { url: imageUrl } } : {}),
-        publishedAt: article.published_at, source
+        publishedAt: article.published_at, canonicalUrl: article.canonical_url || article.url, source
       } });
     }
   }

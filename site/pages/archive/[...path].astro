@@ -1,0 +1,26 @@
+---
+import Archive from "../../components/Archive.astro";
+import { site } from "../../data";
+export function getStaticPaths() {
+  const paths = [];
+  for (const kind of ["all", "posts", "decks", "videos"]) {
+    const count = site.archive.filter(
+      (record) => kind === "all" || record.kind === kind,
+    ).length;
+    for (let page = 1; page <= Math.max(1, Math.ceil(count / 30)); page++) {
+      const segments = [
+        kind === "all" ? "" : kind,
+        page === 1 ? "" : `page/${page}`,
+      ].filter(Boolean);
+      paths.push({
+        params: { path: segments.join("/") || undefined },
+        props: { kind, page },
+      });
+    }
+  }
+  return paths;
+}
+const { kind, page } = Astro.props;
+---
+
+<Archive kind={kind} page={page} />

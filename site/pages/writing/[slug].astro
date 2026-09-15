@@ -1,0 +1,15 @@
+---
+import { getCollection } from "astro:content";
+import { themes } from "../../../themes/registry";
+import { siteConfig } from "../../../core/config";
+export async function getStaticPaths() {
+  return (await getCollection("pieces")).map((p) => ({
+    params: { slug: p.data.url.split("/")[2] },
+    props: { article: { ...p.data, id: p.id } },
+  }));
+}
+const { article } = Astro.props;
+const Article = themes[(await siteConfig()).theme].Article;
+---
+
+<Article article={article} />

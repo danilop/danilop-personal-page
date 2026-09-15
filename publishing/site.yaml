@@ -1,0 +1,34 @@
+schemaVersion: 1
+relaunchDate: 2026-09-15
+url: https://www.danilop.net
+name: Danilo Poccia
+title: Notes Along the Way
+description: Articles, experiments, and ideas that can grow over time.
+theme: ink-and-paper
+layout: editorial
+tokens:
+  paper: '#f6f3eb'
+  ink: '#13191c'
+  accent: '#164b88'
+  muted: '#586371'
+  rule: '#708091'
+  hairline: '#c9c9c3'
+  serif: Newsreader
+  sans: Inter
+  width: 1230
+assets:
+  portrait:
+    path: site-assets/brand/portrait-ink.png
+    alt: Ink portrait of Danilo Poccia
+    fit: contain
+    position: center
+  biography:
+    path: site-assets/brand/portrait-photo.jpg
+    alt: Danilo Poccia
+    fit: cover
+    position: center
+  hero:
+    path: site-assets/brand/notebooks.png
+    alt: Blue ink illustration of an open book and loose pages
+    fit: contain
+    position: center

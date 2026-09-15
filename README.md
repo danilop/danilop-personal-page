@@ -1,103 +1,127 @@
-# danilop-personal-page
+# Danilo Poccia
 
-![Sample personal page](https://danilop.s3.amazonaws.com/Images/danilop-personal-page.png)
+*Notes Along the Way*
 
-A simple script to populate a web page with links, retrieving link info using the Open Graph protocol (https://ogp.me).
+Articles, experiments, and ideas that can grow over time.
 
-I am using https://getbootstrap.com for the grid system.
+[Website](https://www.danilop.net) · [Design](docs/product-design.md) · [Authoring](docs/authoring-format.md) · [Operations](docs/operations.md)
 
-I built it for my personal page: https://danilop.net
+## One article. Many ways to read it.
 
-1. Put static assets in the `static` folder.
+Write in Markdown. Publish an article on its own, place it in a collection, or
+make it a section of a growing book. Collections can gain chapters, introductions,
+appendices, and other book material without duplicating the original writing.
 
-2. Put HTML templates with `<!-- processLinks {JSON file} {thumbnail width} {title width} [max links] -->` where you want to embed links in the `src` folder. The thumbnail and title width are using the https://getbootstrap.com grid system and should add to 12. You can optionally add a maimum number of links to process from the source list.
+The Ink & Paper theme puts reading first: a name-first masthead, blue ink,
+serif headlines, and generous space. Fonts, colors, images, CSS, and templates
+live apart from the content and publishing system.
 
-3. The JSON file should be in the `data` folder and contain a single JSON array of links.
+- **Rich explanations:** source code, CSV tables and charts, Mermaid and D2
+  diagrams, equations, citations, figures, audio, and video.
+- **Interactive examples:** registered JavaScript/WASM simulations and replaceable
+  browser model runtimes, with explicit activation and static book alternatives.
+- **Portable publishing:** frozen Markua manuscripts, a Leanpub adapter, DEV
+  synchronization, and an assisted Medium workflow.
+- **Durable links:** reviewed aliases for new work at `danilop.link`, activated
+  only after the canonical publication is live.
+- **Earlier Work:** the historical catalogue in the new design. **The Original
+  Site** preserves the old look. **Elsewhere** is reserved for external writing
+  published after relaunch. Empty sections stay hidden.
 
-4. Run `npm run build` to create the `public` folder. I use [AWS Amplify Console](https://aws.amazon.com/amplify/console/) to automate deployment.
+Public PDFs and published Google Docs/Slides load on reader request. iCloud
+Photos albums use public album links; photographs are not copied into this repo.
 
-5. Link titles, descriptions, and thumbnails come from saved publisher metadata
-   or an Open Graph lookup, with optional manual corrections applied last.
+## Release status
 
-## Updating posts
+The rebuild is implemented and verified locally. Production
+still serves the original site. The shorter **Hello, Brave New World** article
+and the Earlier Work / The Original Site wording are approved.
 
-Use Node.js 22 or later, then run:
+Short-link cloud setup awaits the specific access approval described in
+[deployment access review](docs/deployment-access-review.md). DEV and Leanpub
+adapters have local contract tests; live publishing accounts are not connected.
+No article is enrolled for cross-posting. Search and a site-wide AI assistant
+remain future work. See [verification](docs/verification.md) and [launch status](docs/launch-review.md) for evidence and
+remaining release gates.
+
+## Develop
+
+Use Node.js 22.12 or later (the project selects Node 22) and npm:
 
 ```sh
 npm ci
-npm run sync:posts
-npm test
+npm run dev
+```
+
+For a production build and preview:
+
+```sh
 npm run build
+npm run check
+npm test
+npm run preview
 ```
 
-`sync:posts` follows every page of the AWS News, Database, and Developer author
-archives and the public DEV article API for `danilop`, including posts published
-under DEV organizations. It verifies authorship, merges new URLs with existing
-ones, removes exact duplicates, and sorts by publication date (newest first).
-Existing links missing from a source are retained. Links without a known date
-remain at the end in their original order.
+Output goes to `dist/`. Ordinary article reading needs no JavaScript. Model
+weights are downloaded only when a reader explicitly starts a model experiment.
 
-Sources are configured in `data/post-sources.json`. Its `awsAdditionalPosts`
-list covers verified coauthored articles omitted from the author archives.
-Add newly discovered coauthored articles there; the importer checks their
-bylines. The importer finishes all sources before writing any data and leaves
-manual corrections untouched. Review and commit the changed JSON files, then
-push to `main` to deploy. Content discovery is an explicit update step, separate
-from deployment, so a build does not unexpectedly change the curated list.
+## Write and maintain
 
-## Correcting titles, descriptions, and images
+Start with [the authoring guide](docs/authoring-format.md) and the
+[welcome article](content/pieces/hello-brave-new-world/index.md). The private
+[test manuscript](test/fixtures/manuscript/) exercises collections and book
+features without inventing published books for the homepage.
 
-Metadata precedence, from lowest to highest:
-
-1. Raw Open Graph metadata in the local/Amplify `cache/` directory (fetched when
-   no usable title is available).
-2. Versioned publisher metadata in `data/link-metadata.json`, refreshed by
-   `sync:posts` for AWS and DEV. It also contains the existing YouTube metadata
-   so builds do not depend on YouTube allowing requests from AWS.
-3. Manual, per-field corrections in `data/link-overrides.json`, keyed by the
-   exact URL in the content list.
-
-For example:
-
-```json
-{
-  "https://youtu.be/efk8XFJrW2c": {
-    "title": "Building observable applications with OpenTelemetry",
-    "subtitle": "AWS re:Invent 2022 · BOA310",
-    "description": "A demo-focused introduction to instrumenting applications with OpenTelemetry."
-  }
-}
+```sh
+npm run sync:posts          # explicitly refresh AWS and DEV discovery
+npm run distribute         # prepare previews for enrolled destinations
+npm run publish:links      # inspect proposed aliases; does not publish
 ```
 
-Corrections use the fields `title`, `description`, `subtitle`, `url`, `imageUrl`,
-and `publishedAt`. Omitted fields retain their imported or cached values; `null`
-clears optional fields such as the thumbnail or subtitle. Titles and destination
-URLs must remain valid. Corrections are applied after title formatting on every
-build and are never written into the raw cache. Removing a correction restores
-the underlying source value without clearing the cache. The current templates
-display titles, thumbnails, and subtitles; descriptions remain available to the
-renderer for future layouts.
+Historical metadata combines saved source data with editorial corrections:
+**Open Graph metadata → publisher metadata → per-field overrides**.
+Corrections in `data/link-overrides.json` survive cache refreshes. Production
+builds use versioned metadata and never scrape missing titles silently.
 
-For an Open Graph-only link, delete its SHA-256-named file in `cache/` to refetch
-source metadata. This does not remove manual corrections. To change imported
-AWS/DEV metadata, rerun `sync:posts` or add a manual correction.
+## Repository guide
 
-## Automatic deployment
+| Directory | Purpose |
+| --- | --- |
+| `content/` | Markdown pieces, collections, references, and edition manifests |
+| `core/` | Content model, assembly, rendering, editions, and publishing |
+| `renderers/`, `runtime/` | Replaceable renderers and browser experiment adapters |
+| `themes/`, `site/` | Theme templates, styles, and Astro routes |
+| `publishing/` | Theme, homepage, renderers, models, aliases, and destinations |
+| `data/`, `lib/` | Historical source lists and metadata resolution |
+| `legacy/` | Preserved original-site snapshot |
+| `scripts/`, `test/` | Build/publication tools and representative tests |
+| `docs/` | Product decisions, implementation choices, and operating instructions |
 
-AWS Amplify Hosting builds and deploys commits pushed to the GitHub `main`
-branch. A local commit must be pushed to GitHub to trigger deployment.
-The build settings are versioned in `amplify.yml`: install dependencies with
-`npm ci`, run `npm run build`, and publish the `public` directory. Link metadata
-is cached between builds. Build errors fail deployment to avoid publishing an
-incomplete site.
+`dist/`, `.generated/`, `exports/`, caches, and publication state are generated
+or private local data and are ignored by Git. The original generator remains
+available through `npm run build:legacy`; its output is `public/`.
 
-Hosting uses the `danilop-personal-page` Amplify app (`d26ru7a9pi36wa`) in
-`eu-west-1`, with `danilop.net` and `www.danilop.net` mapped to `main`.
-The build image is Amazon Linux 2023 (`amplify:al2023`); `amplify.yml` and
-`.nvmrc` select Node.js 22 so hosted and local builds use the same major version.
-Automatic builds must remain enabled for that branch in Amplify. The GitHub
-push webhook triggers Amplify directly; no GitHub Actions deployment workflow
-or AWS credentials in GitHub are required.
+## Specifications
 
-Missing/generic titles and invalid URLs fail the build instead of publishing
-broken links. Metadata is escaped before insertion into HTML.
+- [Product design](docs/product-design.md): reader and author experience.
+- [Content model](docs/content-model.md): pieces, collections, placements, editions.
+- [Authoring format](docs/authoring-format.md): Markdown/YAML and configuration.
+- [Architecture](docs/architecture.md): replaceable implementation choices.
+- [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
+- [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
+- [Implementation status](docs/implementation-plan.md): capability and verification map.
+
+The README and specifications must change alongside the implementation. This
+standing requirement is recorded in [AGENTS.md](AGENTS.md).
+
+## Deployment
+
+AWS Amplify builds and deploys pushes to GitHub `main`. `amplify.yml` defines
+the build; `customHttp.yml` defines response headers. The publication workflow
+waits for that exact deployed revision before activating short links or updating
+enrolled remote copies. Local commits must be pushed to trigger deployment.
+
+## License
+
+[MIT](LICENSE) — Copyright © 2026 Danilo Poccia.
+See [asset provenance](docs/assets.md) for fonts, artwork, and preserved material.

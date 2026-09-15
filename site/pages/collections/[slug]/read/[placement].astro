@@ -1,0 +1,45 @@
+---
+import { readingLinks } from "../../../../../core/reading-links";
+import Layout from "../../../../components/Layout.astro";
+import { site } from "../../../../data";
+export function getStaticPaths() {
+  return site.collections.flatMap((c) =>
+    c.nodes
+      .filter((n) => n.kind === "piece")
+      .map((n) => ({
+        params: { slug: c.url.split("/")[2], placement: n.id },
+        props: { c, n },
+      })),
+  );
+}
+const { c, n } = Astro.props;
+const reading = c.nodes.filter((x) => x.kind === "piece"),
+  index = reading.findIndex((x) => x.id === n.id),
+  previous = reading[index - 1],
+  next = reading[index + 1];
+---
+
+<Layout title={n.title} canonical={c.url} description={c.summary}>
+  <article class="reading">
+    <header class="article-heading">
+      <p class="eyebrow">
+        <a href={c.url}>{c.title}</a>
+      </p>
+      <h1>
+        {n.number && `${n.number}. `}
+        {n.title}
+      </h1>
+    </header>
+    <div
+      id={n.id}
+      class="prose"
+      set:html={readingLinks(n.html, c.url, [n.id])}
+    />
+    <nav class="reading-navigation" aria-label="Collection reading">
+      {previous && (
+        <a href={`${c.url}read/${previous.id}/`}>Previous: {previous.title}</a>
+      )}
+      {next && <a href={`${c.url}read/${next.id}/`}>Next: {next.title}</a>}
+    </nav>
+  </article>
+</Layout>

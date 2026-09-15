@@ -1,0 +1,19 @@
+---
+import Layout from "../components/Layout.astro";
+import { site } from "../data";
+---
+
+<Layout title="About">
+  <header class="page-heading">
+    <h1>About</h1>
+  </header>
+  <div class="about-grid">
+    <img
+      src="/brand/biography.webp"
+      width="260"
+      height="390"
+      alt="Danilo Poccia"
+    />
+    <div class="prose" set:html={site.about} />
+  </div>
+</Layout>

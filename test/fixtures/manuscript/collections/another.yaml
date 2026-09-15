@@ -1,0 +1,8 @@
+schemaVersion: 1
+id: another
+title: Another collection
+summary: Reuse without duplication.
+status: published
+slug: another
+body:
+  - {id: reused, kind: piece, ref: first}

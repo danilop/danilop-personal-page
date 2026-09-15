@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noEmit": true,
+    "types": ["node"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": [
+    "core/**/*.ts",
+    "renderers/**/*.ts",
+    "scripts/**/*.ts",
+    "test/**/*.ts",
+    "runtime/**/*.ts"
+  ],
+  "exclude": ["prototypes", "node_modules"]
+}

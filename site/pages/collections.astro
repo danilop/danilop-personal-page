@@ -1,0 +1,25 @@
+---
+import Layout from "../components/Layout.astro";
+import { site } from "../data";
+---
+
+<Layout title="Collections & Books">
+  <header class="page-heading">
+    <h1>Collections & Books</h1>
+  </header>
+  {site.collections.length ? (
+    site.collections.map((c) => (
+      <article class="collection-entry">
+        <h2>
+          <a href={c.url}>{c.title}</a>
+        </h2>
+        <p>{c.summary}</p>
+      </article>
+    ))
+  ) : (
+    <p class="quiet-page">
+      Collections will appear here as the writing develops.{" "}
+      <a href="/writing/">Explore the writing.</a>
+    </p>
+  )}
+</Layout>

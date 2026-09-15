@@ -1,0 +1,83 @@
+---
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/newsreader/400.css";
+import "@fontsource/newsreader/500.css";
+import "@fontsource/newsreader/600.css";
+import "@fontsource/newsreader/400-italic.css";
+import "katex/dist/katex.min.css";
+import { siteConfig } from "../../core/config";
+import { themes } from "../../themes/registry";
+import { site } from "../data";
+const config = await siteConfig();
+const {
+  title = config.name,
+  description = config.description,
+  canonical = Astro.url.pathname,
+  article,
+} = Astro.props;
+const Shell = themes[config.theme].Shell;
+const url = new URL(canonical, config.url).href;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": article ? "BlogPosting" : "WebPage",
+  name: title,
+  headline: title,
+  description,
+  url,
+  author: { "@type": "Person", name: config.name },
+  ...(article
+    ? {
+        datePublished: article.publishedAt,
+        dateModified: article.updatedAt ?? article.publishedAt,
+      }
+    : {}),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title===config.name?`${config.name} — ${config.title}`:`${title} — ${config.name}`}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={config.title}
+      href="/rss.xml"
+    />
+    <link rel="stylesheet" href="/theme-tokens.css" />
+    {config.overrideCss && (
+      <link rel="stylesheet" href="/theme-overrides.css" />
+    )}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta
+      property="og:image"
+      content={new URL("/brand/portrait.webp", config.url).href}
+    />
+    <meta name="twitter:card" content="summary" />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(jsonLd).replaceAll("<", "\\u003c")}
+    ></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Shell config={config} collectionsCount={site.collections.length}>
+      <slot />
+    </Shell>
+    <script>
+      import "../../runtime/enhance";
+    </script>
+  </body>
+</html>

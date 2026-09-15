@@ -1,0 +1,12 @@
+---
+import Layout from "../components/Layout.astro";
+import { site } from "../data";
+import { siteConfig } from "../../core/config";
+import { themes } from "../../themes/registry";
+const config = await siteConfig();
+const Home = themes[config.theme].Home;
+---
+
+<Layout>
+  <Home site={site} config={config} />
+</Layout>

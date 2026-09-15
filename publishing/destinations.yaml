@@ -1,0 +1,9 @@
+schemaVersion: 1
+destinations:
+  dev:
+    plugin: dev
+    account: danilop
+    credentialEnv: DEV_API_KEY
+  medium:
+    plugin: medium-assisted
+    account: danilop

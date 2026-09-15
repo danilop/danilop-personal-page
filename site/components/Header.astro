@@ -1,0 +1,27 @@
+---
+const { config, collectionsCount } = Astro.props;
+---
+
+<header class="masthead">
+  <div class="identity">
+    <a class="name" href="/">
+      {config.name}
+    </a>
+    <p>{config.title}</p>
+  </div>
+  <a class="portrait-link" href="/about/" aria-label="About Danilo Poccia">
+    <img
+      src="/brand/portrait.webp"
+      width="178"
+      height="157"
+      alt={config.assets.portrait.alt}
+      style={`object-fit:${config.assets.portrait.fit};object-position:${config.assets.portrait.position}`}
+    />
+  </a>
+  <nav aria-label="Main navigation">
+    <a href="/writing/">Writing</a>
+    {collectionsCount > 0 && <a href="/collections/">Collections & Books</a>}
+    <a href="/archive/">Earlier Work</a>
+    <a href="/about/">About</a>
+  </nav>
+</header>

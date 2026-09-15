@@ -1,0 +1,2578 @@
+{
+  "https://speakerdeck.com/danilop/a-journey-from-complexity-to-observability": {
+    "ogUrl": "https://speakerdeck.com/danilop/a-journey-from-complexity-to-observability",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "A journey from complexity to observability",
+    "ogDescription": "AWS Community Day, Dublin, May 25th, 2023\n\nManaging the inherent complexity of software from development to production presents a significant challeng&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "A journey from complexity to observability",
+    "twitterDescription": "AWS Community Day, Dublin, May 25th, 2023\n\nManaging the inherent complexity of software from development to production presents a significant challeng&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/533e4552117a4bc9b4d9f4809ae8e3eb/slide_0.jpg?25848627",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/533e4552117a4bc9b4d9f4809ae8e3eb/slide_0.jpg?25848627",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/a-journey-from-complexity-to-observability",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/from-complexity-to-observability-using-opentelemetry": {
+    "ogUrl": "https://speakerdeck.com/danilop/from-complexity-to-observability-using-opentelemetry",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "From complexity to observability using OpenTelemetry",
+    "ogDescription": "CloudConf, Turin, May 16th, 2023\n\nUnderstanding the behavior of modern applications can be challenging because they are built using many components th&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "From complexity to observability using OpenTelemetry",
+    "twitterDescription": "CloudConf, Turin, May 16th, 2023\n\nUnderstanding the behavior of modern applications can be challenging because they are built using many components th&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/41be676780294b8f9d324c7706b05097/slide_0.jpg?25660437",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/41be676780294b8f9d324c7706b05097/slide_0.jpg?25660437",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/from-complexity-to-observability-using-opentelemetry",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/using-container-images-with-serverless-functions-dot-dot-dot-and-containers": {
+    "ogUrl": "https://speakerdeck.com/danilop/using-container-images-with-serverless-functions-dot-dot-dot-and-containers",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Using container images with serverless functions... and containers!",
+    "ogDescription": "ServerlessDays Warsaw, October 20th, 2021\n\nServerless functions have been designed from the start for simplicity, providing a managed runtime to execu&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Using container images with serverless functions... and containers!",
+    "twitterDescription": "ServerlessDays Warsaw, October 20th, 2021\n\nServerless functions have been designed from the start for simplicity, providing a managed runtime to execu&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/f7fbed6988f441c08c4f068b18ee4d4e/slide_0.jpg?19335396",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/f7fbed6988f441c08c4f068b18ee4d4e/slide_0.jpg?19335396",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/using-container-images-with-serverless-functions-dot-dot-dot-and-containers",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-in-2021-6c8b49e9-5c85-4836-a6c1-b6ffed91fc49": {
+    "ogUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-in-2021-6c8b49e9-5c85-4836-a6c1-b6ffed91fc49",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "What Can You Do with Serverless – In 2021",
+    "ogDescription": "NE:Tech Meetup, July 8th, 2021\n\nServerless is always evolving (faster than any definition) and each year new capabilities simplify existing workloads &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "What Can You Do with Serverless – In 2021",
+    "twitterDescription": "NE:Tech Meetup, July 8th, 2021\n\nServerless is always evolving (faster than any definition) and each year new capabilities simplify existing workloads &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/fb8485abbf7947c7ad7863923b9c8cea/slide_0.jpg?18499112",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/fb8485abbf7947c7ad7863923b9c8cea/slide_0.jpg?18499112",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-in-2021-6c8b49e9-5c85-4836-a6c1-b6ffed91fc49",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-in-2021": {
+    "ogUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-in-2021",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "What Can You Do with Serverless – In 2021",
+    "ogDescription": "AWS User Group Dublin, February 4th, 2021\n\nServerless is always evolving (faster than any definition) and each year new capabilities simplify existing&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "What Can You Do with Serverless – In 2021",
+    "twitterDescription": "AWS User Group Dublin, February 4th, 2021\n\nServerless is always evolving (faster than any definition) and each year new capabilities simplify existing&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/3e9e36cc7c774770adb3280d470c9289/slide_0.jpg?17285405",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/3e9e36cc7c774770adb3280d470c9289/slide_0.jpg?17285405",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-in-2021",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/analyzing-data-at-any-scale-with-aws-lambda": {
+    "ogUrl": "https://speakerdeck.com/danilop/analyzing-data-at-any-scale-with-aws-lambda",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Analyzing data at any scale with AWS Lambda",
+    "ogDescription": "AWS re:Invent 2020\n\nAWS Lambda functions provide a powerful compute environment that can be used to process and gain insights from data stored in data&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Analyzing data at any scale with AWS Lambda",
+    "twitterDescription": "AWS re:Invent 2020\n\nAWS Lambda functions provide a powerful compute environment that can be used to process and gain insights from data stored in data&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/98309c1f662a4c22bb99bc48cdb73238/slide_0.jpg?17318098",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/98309c1f662a4c22bb99bc48cdb73238/slide_0.jpg?17318098",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/analyzing-data-at-any-scale-with-aws-lambda",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/how-lego-dot-com-accelerates-innovation-with-serverless": {
+    "ogUrl": "https://speakerdeck.com/danilop/how-lego-dot-com-accelerates-innovation-with-serverless",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "How LEGO.com accelerates innovation with serverless",
+    "ogDescription": "AWS re:Invent 2020\n\nMostly presented by Sheen Brisals, AWS Serverless Hero, Senior Engineering Manager, The LEGO Group.\n\nAfter experiencing scaling &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "How LEGO.com accelerates innovation with serverless",
+    "twitterDescription": "AWS re:Invent 2020\n\nMostly presented by Sheen Brisals, AWS Serverless Hero, Senior Engineering Manager, The LEGO Group.\n\nAfter experiencing scaling &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/7c9b3f02312a4ce5bde948babc134b74/slide_0.jpg?17318067",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/7c9b3f02312a4ce5bde948babc134b74/slide_0.jpg?17318067",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/how-lego-dot-com-accelerates-innovation-with-serverless",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/sowing-the-seeds-of-software-development-what-can-you-do-with-serverless-in-2021": {
+    "ogUrl": "https://speakerdeck.com/danilop/sowing-the-seeds-of-software-development-what-can-you-do-with-serverless-in-2021",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Sowing the Seeds of Software Development: What Can You Do with Serverless – In 2021! ",
+    "ogDescription": "AWS User Group Peru Conference, January 24th, 2021\n\nServerless is always evolving (faster than any definition) and each year new capabilities simplify&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Sowing the Seeds of Software Development: What Can You Do with Serverless – In 2021! ",
+    "twitterDescription": "AWS User Group Peru Conference, January 24th, 2021\n\nServerless is always evolving (faster than any definition) and each year new capabilities simplify&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/50dd84848c47414380c374bdbf1cd0ea/slide_0.jpg?17185644",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/50dd84848c47414380c374bdbf1cd0ea/slide_0.jpg?17185644",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/sowing-the-seeds-of-software-development-what-can-you-do-with-serverless-in-2021",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/managing-time-series-on-aws": {
+    "ogUrl": "https://speakerdeck.com/danilop/managing-time-series-on-aws",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Managing Time Series on AWS",
+    "ogDescription": "Cloud Conf, November 5th, 2020\n\nTime series are a very common data format that describes how things change over time. Some of the most common sources &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Managing Time Series on AWS",
+    "twitterDescription": "Cloud Conf, November 5th, 2020\n\nTime series are a very common data format that describes how things change over time. Some of the most common sources &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/fc3290651a9c4d1db14610cb8516df0f/slide_0.jpg?16651699",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/fc3290651a9c4d1db14610cb8516df0f/slide_0.jpg?16651699",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/managing-time-series-on-aws",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/from-web-services-to-quantum-computing-the-power-of-building-on-the-cloud": {
+    "ogUrl": "https://speakerdeck.com/danilop/from-web-services-to-quantum-computing-the-power-of-building-on-the-cloud",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "From Web Services to Quantum Computing: The Power of Building on the Cloud",
+    "ogDescription": "AWS Community Day Sri Lanka, September 17th, 2020\n\nAdding new features for your customers, or creating something new from scratch, it’s much easier wh&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "From Web Services to Quantum Computing: The Power of Building on the Cloud",
+    "twitterDescription": "AWS Community Day Sri Lanka, September 17th, 2020\n\nAdding new features for your customers, or creating something new from scratch, it’s much easier wh&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/da01b3e524e34e0ca4382a39a1c7f8ce/slide_0.jpg?16290042",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/da01b3e524e34e0ca4382a39a1c7f8ce/slide_0.jpg?16290042",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/from-web-services-to-quantum-computing-the-power-of-building-on-the-cloud",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/using-machine-learning-from-your-databases": {
+    "ogUrl": "https://speakerdeck.com/danilop/using-machine-learning-from-your-databases",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Using Machine Learning From Your Databases",
+    "ogDescription": "AWS User Group Netherlands, June 30th, 2020\n\nMachine Learning allows you to get better insights from your data. But where is most of the structured da&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Using Machine Learning From Your Databases",
+    "twitterDescription": "AWS User Group Netherlands, June 30th, 2020\n\nMachine Learning allows you to get better insights from your data. But where is most of the structured da&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e412c5f95db64d9296936a39a060b1f8/slide_0.jpg?15756030",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e412c5f95db64d9296936a39a060b1f8/slide_0.jpg?15756030",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/using-machine-learning-from-your-databases",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/data-management-for-serverless-apps": {
+    "ogUrl": "https://speakerdeck.com/danilop/data-management-for-serverless-apps",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Data Management for Serverless Apps",
+    "ogDescription": "ServerlessDays Milan, June 4th, 2020\n",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Data Management for Serverless Apps",
+    "twitterDescription": "ServerlessDays Milan, June 4th, 2020\n",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/949b6aed576c4487836d6587400bb540/slide_0.jpg?15602927",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/949b6aed576c4487836d6587400bb540/slide_0.jpg?15602927",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/data-management-for-serverless-apps",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-dot-dot-dot-in-2020-cd6eac52-3186-49d6-aa4b-9edd888a3c65": {
+    "ogUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-dot-dot-dot-in-2020-cd6eac52-3186-49d6-aa4b-9edd888a3c65",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "What can you do with Serverless… in 2020?",
+    "ogDescription": "Serverless Italy Meetup, April 2nd, 2020",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "What can you do with Serverless… in 2020?",
+    "twitterDescription": "Serverless Italy Meetup, April 2nd, 2020",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/32991a05c2ed4d96876a33d7759d920a/slide_0.jpg?15236605",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/32991a05c2ed4d96876a33d7759d920a/slide_0.jpg?15236605",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-dot-dot-dot-in-2020-cd6eac52-3186-49d6-aa4b-9edd888a3c65",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/a-quick-intro-to-serverless-and-aws": {
+    "ogUrl": "https://speakerdeck.com/danilop/a-quick-intro-to-serverless-and-aws",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "A quick intro to serverless & AWS",
+    "ogDescription": "ItalianCoders DevTalks, March 31st, 2020",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "A quick intro to serverless & AWS",
+    "twitterDescription": "ItalianCoders DevTalks, March 31st, 2020",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/8f9d88ae3a254f2fa2a31afac301b6e2/slide_0.jpg?15225466",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/8f9d88ae3a254f2fa2a31afac301b6e2/slide_0.jpg?15225466",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/a-quick-intro-to-serverless-and-aws",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/end-to-end-observability-for-your-serverless-apps": {
+    "ogUrl": "https://speakerdeck.com/danilop/end-to-end-observability-for-your-serverless-apps",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "End-to-End Observability for Your Serverless Apps",
+    "ogDescription": "AWS re:Invent 2019 Recap Day Serverless Meetup, London, February 18th, 2020\n",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "End-to-End Observability for Your Serverless Apps",
+    "twitterDescription": "AWS re:Invent 2019 Recap Day Serverless Meetup, London, February 18th, 2020\n",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/965bf8fdaf944741bf75b462e5376387/slide_0.jpg?14925743",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/965bf8fdaf944741bf75b462e5376387/slide_0.jpg?14925743",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/end-to-end-observability-for-your-serverless-apps",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/playing-with-machine-learning": {
+    "ogUrl": "https://speakerdeck.com/danilop/playing-with-machine-learning",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Playing with Machine Learning",
+    "ogDescription": "AIBE Summit, London, January 29th, 2020\n\nSorry, there are a few videos missing in the slides.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Playing with Machine Learning",
+    "twitterDescription": "AIBE Summit, London, January 29th, 2020\n\nSorry, there are a few videos missing in the slides.",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e69b4518d29647cbb95419db19d0e345/slide_0.jpg?14756617",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e69b4518d29647cbb95419db19d0e345/slide_0.jpg?14756617",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/playing-with-machine-learning",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-dot-dot-dot-in-2020": {
+    "ogUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-dot-dot-dot-in-2020",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "What Can You Do with Serverless ...in 2020?",
+    "ogDescription": "ServerlessDays, Belfast, January 24th, 2020\n",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "What Can You Do with Serverless ...in 2020?",
+    "twitterDescription": "ServerlessDays, Belfast, January 24th, 2020\n",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/8bf0781ef085489e94c066dabfaafd24/slide_0.jpg?14716853",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/8bf0781ef085489e94c066dabfaafd24/slide_0.jpg?14716853",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/what-can-you-do-with-serverless-dot-dot-dot-in-2020",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/the-serverless-journey-of-shop-dot-lego-dot-com": {
+    "ogUrl": "https://speakerdeck.com/danilop/the-serverless-journey-of-shop-dot-lego-dot-com",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "The serverless journey of shop.LEGO.com",
+    "ogDescription": "re:Invent, Las Vegas, December 2nd, 2019\n\nConnecting the LEGO play experience with millions of people requires an innovative platform. This has fueled&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "The serverless journey of shop.LEGO.com",
+    "twitterDescription": "re:Invent, Las Vegas, December 2nd, 2019\n\nConnecting the LEGO play experience with millions of people requires an innovative platform. This has fueled&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/7f2fd95fd5c24604bea601388b1bc1cd/slide_0.jpg?14370749",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/7f2fd95fd5c24604bea601388b1bc1cd/slide_0.jpg?14370749",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/the-serverless-journey-of-shop-dot-lego-dot-com",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/cd": {
+    "ogUrl": "https://speakerdeck.com/danilop/cd",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Simplifying Serverless CI/CD",
+    "ogDescription": "Serverless South Wales Meetup, Cardiff, November 6th, 2019",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Simplifying Serverless CI/CD",
+    "twitterDescription": "Serverless South Wales Meetup, Cardiff, November 6th, 2019",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/93fce9001c8a42fb95d5a435ffae3004/slide_0.jpg?14092954",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/93fce9001c8a42fb95d5a435ffae3004/slide_0.jpg?14092954",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/cd",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/and-then-there-are-algorithms-part-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-part-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "And Then There Are Algorithms – Part 1",
+    "ogDescription": "Machine Learning for the Enterprise Conference, Rome, October 28th, 2019\n\nMachine Learning = Algorithms + Data + Tools\n\nPart 1\n",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "And Then There Are Algorithms – Part 1",
+    "twitterDescription": "Machine Learning for the Enterprise Conference, Rome, October 28th, 2019\n\nMachine Learning = Algorithms + Data + Tools\n\nPart 1\n",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/1d3dcc049c86496783a0808c7b0130bd/slide_0.jpg?14007299",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/1d3dcc049c86496783a0808c7b0130bd/slide_0.jpg?14007299",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-part-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/and-then-there-are-algorithms-part-2": {
+    "ogUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-part-2",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "And Then There Are Algorithms – Part 2",
+    "ogDescription": "Machine Learning for the Enterprise Conference, Rome, October 28th, 2019\n\nMachine Learning = Algorithms + Data + Tools\n\nPart 2\n",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "And Then There Are Algorithms – Part 2",
+    "twitterDescription": "Machine Learning for the Enterprise Conference, Rome, October 28th, 2019\n\nMachine Learning = Algorithms + Data + Tools\n\nPart 2\n",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/97d7c0fccee54291b7922f3688cf5b5b/slide_0.jpg?14007354",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/97d7c0fccee54291b7922f3688cf5b5b/slide_0.jpg?14007354",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-part-2",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/simplifying-time-series-forecasting-and-real-time-personalization": {
+    "ogUrl": "https://speakerdeck.com/danilop/simplifying-time-series-forecasting-and-real-time-personalization",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Simplifying time-series forecasting and real-time personalization",
+    "ogDescription": "AWS Innovate – ML & AI Edition, October 17th, 2019\n\nhttps://aws.amazon.com/events/aws-innovate-2019/emea-machine-learning-edition/\n\nPersonalization &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Simplifying time-series forecasting and real-time personalization",
+    "twitterDescription": "AWS Innovate – ML & AI Edition, October 17th, 2019\n\nhttps://aws.amazon.com/events/aws-innovate-2019/emea-machine-learning-edition/\n\nPersonalization &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/a1c4ed3c7e5245dba7c4197c012ee318/slide_0.jpg?13935129",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/a1c4ed3c7e5245dba7c4197c012ee318/slide_0.jpg?13935129",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/simplifying-time-series-forecasting-and-real-time-personalization",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/diving-deep-into-the-event-driven-side-of-serverless-0ed9da92-61ca-456b-9540-2e40a6cd4987": {
+    "ogUrl": "https://speakerdeck.com/danilop/diving-deep-into-the-event-driven-side-of-serverless-0ed9da92-61ca-456b-9540-2e40a6cd4987",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Diving deep into the event-driven side of Serverless",
+    "ogDescription": "ServerlessDays, Istanbul, October 3rd, 2019\n\nServerless computing is often described as the interaction of functions with fully-managed services. In t&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Diving deep into the event-driven side of Serverless",
+    "twitterDescription": "ServerlessDays, Istanbul, October 3rd, 2019\n\nServerless computing is often described as the interaction of functions with fully-managed services. In t&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e9aaca8d956c4d7b90b575e168dfc016/slide_0.jpg?13771674",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e9aaca8d956c4d7b90b575e168dfc016/slide_0.jpg?13771674",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/diving-deep-into-the-event-driven-side-of-serverless-0ed9da92-61ca-456b-9540-2e40a6cd4987",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important-04e6dc49-8990-460e-9e4f-ef00e8369329": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important-04e6dc49-8990-460e-9e4f-ef00e8369329",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building a serverless “positive chat” and why products and teams are important",
+    "ogDescription": "AWS User Group, Colombo, September 19th, 2019\n\nI wanted to build something to improve the way we communicate, a 'positive chat' that rejects sentences&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building a serverless “positive chat” and why products and teams are important",
+    "twitterDescription": "AWS User Group, Colombo, September 19th, 2019\n\nI wanted to build something to improve the way we communicate, a 'positive chat' that rejects sentences&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/15bd2e001cfc4e92bc867d51d114b6dc/slide_0.jpg?13632503",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/15bd2e001cfc4e92bc867d51d114b6dc/slide_0.jpg?13632503",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important-04e6dc49-8990-460e-9e4f-ef00e8369329",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-9f479a78-4f7c-4428-bdb6-0c19ae11bc9d": {
+    "ogUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-9f479a78-4f7c-4428-bdb6-0c19ae11bc9d",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Taking Serverless to the Next Level",
+    "ogDescription": "ServerlessDays, Belgrade, September 13th, 2019\n\nMoving to serverless brings more benefits if you can optimize the way you work. In this session, I sha&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Taking Serverless to the Next Level",
+    "twitterDescription": "ServerlessDays, Belgrade, September 13th, 2019\n\nMoving to serverless brings more benefits if you can optimize the way you work. In this session, I sha&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/9fdbda6f1b5040ff8d6267047c6deaf7/slide_0.jpg?13574162",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/9fdbda6f1b5040ff8d6267047c6deaf7/slide_0.jpg?13574162",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-9f479a78-4f7c-4428-bdb6-0c19ae11bc9d",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/observability-for-serverless-apps-what-should-you-look-at": {
+    "ogUrl": "https://speakerdeck.com/danilop/observability-for-serverless-apps-what-should-you-look-at",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Observability for serverless apps: What should you look at?",
+    "ogDescription": "ServerlessDays, Melbourne, August 29th, 2019\n\nHow deeply can you understand what is happening inside your application, from a technical and business p&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Observability for serverless apps: What should you look at?",
+    "twitterDescription": "ServerlessDays, Melbourne, August 29th, 2019\n\nHow deeply can you understand what is happening inside your application, from a technical and business p&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/910caab3290f4da38ee0fbbf9d1eed00/slide_0.jpg?13423490",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/910caab3290f4da38ee0fbbf9d1eed00/slide_0.jpg?13423490",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/observability-for-serverless-apps-what-should-you-look-at",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important-b8fd1f4a-861e-404c-9cda-ef37ec8c3310": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important-b8fd1f4a-861e-404c-9cda-ef37ec8c3310",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building a serverless \"positive chat\" and why products and teams are important",
+    "ogDescription": "ServerlessDays, Sydney, August 27th, 2019\n\nI wanted to build something to improve the way we communicate, a 'positive chat' that rejects sentences wit&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building a serverless \"positive chat\" and why products and teams are important",
+    "twitterDescription": "ServerlessDays, Sydney, August 27th, 2019\n\nI wanted to build something to improve the way we communicate, a 'positive chat' that rejects sentences wit&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/1cca58e1b389401389f5398e55dc68e9/slide_0.jpg?13406226",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/1cca58e1b389401389f5398e55dc68e9/slide_0.jpg?13406226",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important-b8fd1f4a-861e-404c-9cda-ef37ec8c3310",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-beyond-functions-building-modern-applications": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-beyond-functions-building-modern-applications",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless beyond Functions: Building Modern Applications",
+    "ogDescription": "AWS Community Day, Chennai, August 10th, 2019\n\nModern application development is an approach to designing, building, and managing applications. This a&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless beyond Functions: Building Modern Applications",
+    "twitterDescription": "AWS Community Day, Chennai, August 10th, 2019\n\nModern application development is an approach to designing, building, and managing applications. This a&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/4bfeaf05544b41ac82bb21715b21e8f4/slide_0.jpg?13298998",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/4bfeaf05544b41ac82bb21715b21e8f4/slide_0.jpg?13298998",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-beyond-functions-building-modern-applications",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-security-workshop": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-security-workshop",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless Security Workshop",
+    "ogDescription": "ServerlessDays London, July 12th, 2019\n\nIn this workshop, you will learn techniques to secure a serverless application built with AWS Lambda, Amazon A&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless Security Workshop",
+    "twitterDescription": "ServerlessDays London, July 12th, 2019\n\nIn this workshop, you will learn techniques to secure a serverless application built with AWS Lambda, Amazon A&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/007dc8cb13394cffa8b98762d4fcfb0f/slide_0.jpg?13037071",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/007dc8cb13394cffa8b98762d4fcfb0f/slide_0.jpg?13037071",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-security-workshop",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-bd1b14bf-d6a2-4e2c-9851-8ada9e099351": {
+    "ogUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-bd1b14bf-d6a2-4e2c-9851-8ada9e099351",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Taking Serverless to the Next Level",
+    "ogDescription": "Devoxx Poland, Krakow, June 26th, 2019\n\nMoving to serverless brings more benefits if you can optimize the way you work. In this session, I share best &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Taking Serverless to the Next Level",
+    "twitterDescription": "Devoxx Poland, Krakow, June 26th, 2019\n\nMoving to serverless brings more benefits if you can optimize the way you work. In this session, I share best &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e16bfb8945884b759aa8b0466504f254/slide_0.jpg?12894375",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e16bfb8945884b759aa8b0466504f254/slide_0.jpg?12894375",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-bd1b14bf-d6a2-4e2c-9851-8ada9e099351",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/diving-deep-into-the-event-driven-side-of-serverless": {
+    "ogUrl": "https://speakerdeck.com/danilop/diving-deep-into-the-event-driven-side-of-serverless",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Diving deep into the event-driven side of Serverless",
+    "ogDescription": "ServerlessDays, Milan, June 21st, 2019\n\nServerless computing is often described as the interaction of functions with fully-managed services. In this w&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Diving deep into the event-driven side of Serverless",
+    "twitterDescription": "ServerlessDays, Milan, June 21st, 2019\n\nServerless computing is often described as the interaction of functions with fully-managed services. In this w&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/f70768dcfef74479b95337fe8a2df521/slide_0.jpg?12860730",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/f70768dcfef74479b95337fe8a2df521/slide_0.jpg?12860730",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/diving-deep-into-the-event-driven-side-of-serverless",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/idea-to-prototype-to-production": {
+    "ogUrl": "https://speakerdeck.com/danilop/idea-to-prototype-to-production",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Idea to Prototype to Production",
+    "ogDescription": "Serverless for Product Managers, London Tech Week, June 13th, 2019",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Idea to Prototype to Production",
+    "twitterDescription": "Serverless for Product Managers, London Tech Week, June 13th, 2019",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/a4d9574eec164445ab1f3a671ea212e8/slide_0.jpg?12805889",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/a4d9574eec164445ab1f3a671ea212e8/slide_0.jpg?12805889",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/idea-to-prototype-to-production",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/cd-on-aws-ccd7a349-14f5-4647-861a-4ab3e9e0e000": {
+    "ogUrl": "https://speakerdeck.com/danilop/cd-on-aws-ccd7a349-14f5-4647-861a-4ab3e9e0e000",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "CI/CD on AWS",
+    "ogDescription": "AWS Summit, London, May 8th, 2019\n\nHow can you accelerate the delivery of new, high-quality services? How can you be able to experiment and get feedba&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "CI/CD on AWS",
+    "twitterDescription": "AWS Summit, London, May 8th, 2019\n\nHow can you accelerate the delivery of new, high-quality services? How can you be able to experiment and get feedba&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/afa40d57d012431093a2ec60eb769060/slide_0.jpg?12522931",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/afa40d57d012431093a2ec60eb769060/slide_0.jpg?12522931",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/cd-on-aws-ccd7a349-14f5-4647-861a-4ab3e9e0e000",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/modern-application-development-in-the-cloud": {
+    "ogUrl": "https://speakerdeck.com/danilop/modern-application-development-in-the-cloud",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Modern Application Development in the Cloud",
+    "ogDescription": "AWS Summit, Madrid, May 7th, 2019",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Modern Application Development in the Cloud",
+    "twitterDescription": "AWS Summit, Madrid, May 7th, 2019",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/7b0f4b91a2ec4ac78edc73a1af10a856/slide_0.jpg?12514415",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/7b0f4b91a2ec4ac78edc73a1af10a856/slide_0.jpg?12514415",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/modern-application-development-in-the-cloud",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments-1f053441-6eee-4ddb-bb65-4855005613b8": {
+    "ogUrl": "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments-1f053441-6eee-4ddb-bb65-4855005613b8",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Evolutionary Serverless Architectures with Safe Deployments",
+    "ogDescription": "Serverless Days, Helsinki, April 25th, 2019\n\nEvolutionary architectures and safe deployments, with strategies such as canary or linear releases, can r&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Evolutionary Serverless Architectures with Safe Deployments",
+    "twitterDescription": "Serverless Days, Helsinki, April 25th, 2019\n\nEvolutionary architectures and safe deployments, with strategies such as canary or linear releases, can r&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/6ae9eb17de4b43d4806b376d731fccf0/slide_0.jpg?12435288",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/6ae9eb17de4b43d4806b376d731fccf0/slide_0.jpg?12435288",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments-1f053441-6eee-4ddb-bb65-4855005613b8",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/cd-on-aws": {
+    "ogUrl": "https://speakerdeck.com/danilop/cd-on-aws",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "CI/CD on AWS",
+    "ogDescription": "AWS Summit Benelux, Amsterdam, April 17th, 2019",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "CI/CD on AWS",
+    "twitterDescription": "AWS Summit Benelux, Amsterdam, April 17th, 2019",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/be296c8147d5475b88a3571ab8b01636/slide_0.jpg?12368935",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/be296c8147d5475b88a3571ab8b01636/slide_0.jpg?12368935",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/cd-on-aws",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-functions-deep-dive": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-functions-deep-dive",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless functions deep dive",
+    "ogDescription": "AWS Summit Benelux, Amsterdam, April 17th, 2019\n",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless functions deep dive",
+    "twitterDescription": "AWS Summit Benelux, Amsterdam, April 17th, 2019\n",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/2dfb58f5dad54da9ade0d5eb8140068f/slide_0.jpg?12369075",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/2dfb58f5dad54da9ade0d5eb8140068f/slide_0.jpg?12369075",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-functions-deep-dive",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-4e03cdc6-bdf8-4fc8-880a-cafcf8d6eca1": {
+    "ogUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-4e03cdc6-bdf8-4fc8-880a-cafcf8d6eca1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Taking Serverless to the Next Level",
+    "ogDescription": "Voxxed Days Milano, April 13th, 2019 \n\nWhat are the top best practices to build and run applications without thinking about servers? Model your server&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Taking Serverless to the Next Level",
+    "twitterDescription": "Voxxed Days Milano, April 13th, 2019 \n\nWhat are the top best practices to build and run applications without thinking about servers? Model your server&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/2d2f64e7501144e4a67de74b395f11fd/slide_0.jpg?12342595",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/2d2f64e7501144e4a67de74b395f11fd/slide_0.jpg?12342595",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level-4e03cdc6-bdf8-4fc8-880a-cafcf8d6eca1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/cd-for-modern-applications": {
+    "ogUrl": "https://speakerdeck.com/danilop/cd-for-modern-applications",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "CI/CD for Modern Applications",
+    "ogDescription": "AWS Dev Day Oslo, April 3rd, 2019",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "CI/CD for Modern Applications",
+    "twitterDescription": "AWS Dev Day Oslo, April 3rd, 2019",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/2cf2168594f54b0bad0f1c72cb760a85/slide_0.jpg?12254922",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/2cf2168594f54b0bad0f1c72cb760a85/slide_0.jpg?12254922",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/cd-for-modern-applications",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/observability-for-modern-applications": {
+    "ogUrl": "https://speakerdeck.com/danilop/observability-for-modern-applications",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Observability for Modern Applications",
+    "ogDescription": "AWS Dev Day Oslo, April 3rd, 2019",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Observability for Modern Applications",
+    "twitterDescription": "AWS Dev Day Oslo, April 3rd, 2019",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/10eb34da6f8043b3aa94a277d4e063db/slide_0.jpg?12255012",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/10eb34da6f8043b3aa94a277d4e063db/slide_0.jpg?12255012",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/observability-for-modern-applications",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments-f70bd907-c2ea-407f-b7a1-7dac62097d67": {
+    "ogUrl": "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments-f70bd907-c2ea-407f-b7a1-7dac62097d67",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Evolutionary Serverless Architectures with Safe Deployments",
+    "ogDescription": "ServerlessDays Amsterdam, March 29th, 2019\n\nEvolutionary architectures and safe deployments, with strategies such as canary or linear releases, can re&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Evolutionary Serverless Architectures with Safe Deployments",
+    "twitterDescription": "ServerlessDays Amsterdam, March 29th, 2019\n\nEvolutionary architectures and safe deployments, with strategies such as canary or linear releases, can re&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/0acd2f92337c4d43a17f37426b510ed8/slide_0.jpg?12219441",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/0acd2f92337c4d43a17f37426b510ed8/slide_0.jpg?12219441",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments-f70bd907-c2ea-407f-b7a1-7dac62097d67",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building a serverless 'positive chat' and why products and teams are important",
+    "ogDescription": "CloudConf, Turin, March 28th, 2019\n\nCan we use technology to improve ourselves? Communication is such an important part of our lives, and we should al&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building a serverless 'positive chat' and why products and teams are important",
+    "twitterDescription": "CloudConf, Turin, March 28th, 2019\n\nCan we use technology to improve ourselves? Communication is such an important part of our lives, and we should al&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/f8bb2c254f784897be7770a21a0c47ee/slide_0.jpg?12208395",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/f8bb2c254f784897be7770a21a0c47ee/slide_0.jpg?12208395",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-a-serverless-positive-chat-and-why-products-and-teams-are-important",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/breaking-up-the-monolith-into-modern-applications": {
+    "ogUrl": "https://speakerdeck.com/danilop/breaking-up-the-monolith-into-modern-applications",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Breaking up the monolith into modern applications",
+    "ogDescription": "AWS Summit, Milan, March 12th, 2019\n\nTips for decomposing your apps into serverless microservices.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Breaking up the monolith into modern applications",
+    "twitterDescription": "AWS Summit, Milan, March 12th, 2019\n\nTips for decomposing your apps into serverless microservices.",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/5532886a0060446f9beeeb221cea6337/slide_0.jpg?12063404",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/5532886a0060446f9beeeb221cea6337/slide_0.jpg?12063404",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/breaking-up-the-monolith-into-modern-applications",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/using-machine-learning-for-serverless-analytics": {
+    "ogUrl": "https://speakerdeck.com/danilop/using-machine-learning-for-serverless-analytics",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Using Machine Learning for Serverless Analytics",
+    "ogDescription": "AWS Summit, Berlin, February 27th, 2019\n\nServerless is not just functions! The same approach can be used for different use cases, such as building bat&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Using Machine Learning for Serverless Analytics",
+    "twitterDescription": "AWS Summit, Berlin, February 27th, 2019\n\nServerless is not just functions! The same approach can be used for different use cases, such as building bat&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/25493ecbfc8d4948a6fc5fffbde1460f/slide_0.jpg?11945547",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/25493ecbfc8d4948a6fc5fffbde1460f/slide_0.jpg?11945547",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/using-machine-learning-for-serverless-analytics",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/aws-appsync-and-step-functions": {
+    "ogUrl": "https://speakerdeck.com/danilop/aws-appsync-and-step-functions",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "AWS AppSync & Step Functions",
+    "ogDescription": "AWS User Group Netherlands + J-AWS, Haarlem, February 20th, 2019\n\nThe latest updates on AWS AppSync & Step Functions.\nFrom frontend to backend, there&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "AWS AppSync & Step Functions",
+    "twitterDescription": "AWS User Group Netherlands + J-AWS, Haarlem, February 20th, 2019\n\nThe latest updates on AWS AppSync & Step Functions.\nFrom frontend to backend, there&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/d14e69c8a5974103a8e9617e3f832e61/slide_0.jpg?11869395",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/d14e69c8a5974103a8e9617e3f832e61/slide_0.jpg?11869395",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/aws-appsync-and-step-functions",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-real-time-apps-lets-build-a-positive-chat": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-real-time-apps-lets-build-a-positive-chat",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless real-time apps: Let’s build a “positive” chat",
+    "ogDescription": "AWS User Group UK, London, February 6th, 2019\n\nCan we use technology to improve ourselves? I'll show how I came to build a \"positive chat\" using senti&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless real-time apps: Let’s build a “positive” chat",
+    "twitterDescription": "AWS User Group UK, London, February 6th, 2019\n\nCan we use technology to improve ourselves? I'll show how I came to build a \"positive chat\" using senti&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/7af6ca6dda544be29a6842b861916a7b/slide_0.jpg?11715152",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/7af6ca6dda544be29a6842b861916a7b/slide_0.jpg?11715152",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-real-time-apps-lets-build-a-positive-chat",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level": {
+    "ogUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Taking Serverless to the Next Level",
+    "ogDescription": "ServerlessDays, Cardiff, January 30th, 2019\n\nWhat are the top best practices to build and run applications without thinking about servers? Model your &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Taking Serverless to the Next Level",
+    "twitterDescription": "ServerlessDays, Cardiff, January 30th, 2019\n\nWhat are the top best practices to build and run applications without thinking about servers? Model your &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/5f7eb77351ea4ec6a740e8688b719ee6/slide_0.jpg?11632912",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/5f7eb77351ea4ec6a740e8688b719ee6/slide_0.jpg?11632912",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/taking-serverless-to-the-next-level",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments": {
+    "ogUrl": "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Evolutionary Serverless Architectures with Safe Deployments",
+    "ogDescription": "ServerlessDays, Milan, October 19th, 2018\n\nThe term \"architecture\" applied to software can bring the idea of static, difficult to change, solutions. U&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Evolutionary Serverless Architectures with Safe Deployments",
+    "twitterDescription": "ServerlessDays, Milan, October 19th, 2018\n\nThe term \"architecture\" applied to software can bring the idea of static, difficult to change, solutions. U&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/06951f8b50e64633a2775da65383555c/slide_0.jpg?11011919",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/06951f8b50e64633a2775da65383555c/slide_0.jpg?11011919",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/evolutionary-serverless-architectures-with-safe-deployments",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-development-experience": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-development-experience",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless Development Experience",
+    "ogDescription": "AWS User Group Meeting, Belfast, September 6th, 2018",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless Development Experience",
+    "twitterDescription": "AWS User Group Meeting, Belfast, September 6th, 2018",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/cdbe9f896dda4f9eaabc5c83686dc179/slide_0.jpg?10713203",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/cdbe9f896dda4f9eaabc5c83686dc179/slide_0.jpg?10713203",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-development-experience",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-by-design-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-by-design-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless by Design",
+    "ogDescription": "AWS User Group Meeting, Cambridge, July 10th, 2018\n\nServerless technologies bring you to adopt event-driven architectures. I created “Serverless by De&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless by Design",
+    "twitterDescription": "AWS User Group Meeting, Cambridge, July 10th, 2018\n\nServerless technologies bring you to adopt event-driven architectures. I created “Serverless by De&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/303b8a0d20d849d4ba05b0a645658317/slide_0.jpg?10378870",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/303b8a0d20d849d4ba05b0a645658317/slide_0.jpg?10378870",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-by-design-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/real-time-serverless-backends-with-graphql": {
+    "ogUrl": "https://speakerdeck.com/danilop/real-time-serverless-backends-with-graphql",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Real-Time Serverless Backends with GraphQL",
+    "ogDescription": "AWS User Group Meeting, Cambridge, July 10th, 2018\n\nGraphQL is an open standard that lets you request, change, and subscribe to the exact data you nee&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Real-Time Serverless Backends with GraphQL",
+    "twitterDescription": "AWS User Group Meeting, Cambridge, July 10th, 2018\n\nGraphQL is an open standard that lets you request, change, and subscribe to the exact data you nee&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/a7c3e307a358410aaaa22bba55ecfc54/slide_0.jpg?10378911",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/a7c3e307a358410aaaa22bba55ecfc54/slide_0.jpg?10378911",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/real-time-serverless-backends-with-graphql",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/portable-serverless-apps": {
+    "ogUrl": "https://speakerdeck.com/danilop/portable-serverless-apps",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Portable Serverless Apps",
+    "ogDescription": "ServerlessDays, London, July 6th, 2018\n\nCan you design serverless applications that run in multiple environments, for example having the same code exe&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Portable Serverless Apps",
+    "twitterDescription": "ServerlessDays, London, July 6th, 2018\n\nCan you design serverless applications that run in multiple environments, for example having the same code exe&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/72f5fa0531524fa8b3ff18fe783f93c9/slide_0.jpg?10357065",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/72f5fa0531524fa8b3ff18fe783f93c9/slide_0.jpg?10357065",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/portable-serverless-apps",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/and-then-there-are-algorithms-2": {
+    "ogUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-2",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "And Then There Are Algorithms",
+    "ogDescription": "InfluxDays, London, June 14th, 2018\n\nWhat are algorithms? How can I build a machine learning model? In machine learning, training large models on a ma&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "And Then There Are Algorithms",
+    "twitterDescription": "InfluxDays, London, June 14th, 2018\n\nWhat are algorithms? How can I build a machine learning model? In machine learning, training large models on a ma&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/5ff93b38572448b7b2a93780c1936aa9/slide_0.jpg?10223149",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/5ff93b38572448b7b2a93780c1936aa9/slide_0.jpg?10223149",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-2",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-by-design": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-by-design",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless by Design",
+    "ogDescription": "Voxxed Days, Athens, June 2nd, 2018\n\nServerless technologies bring you to adopt event-driven architectures. I created “Serverless by Design”, an open &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless by Design",
+    "twitterDescription": "Voxxed Days, Athens, June 2nd, 2018\n\nServerless technologies bring you to adopt event-driven architectures. I created “Serverless by Design”, an open &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/271bcf6bdc1549d7a2d9fbabcc429abe/slide_0.jpg?10148613",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/271bcf6bdc1549d7a2d9fbabcc429abe/slide_0.jpg?10148613",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-by-design",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-real-time-serverless-backends-with-graphql": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-real-time-serverless-backends-with-graphql",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building Real-time Serverless Backends with GraphQL",
+    "ogDescription": "AWS SummitBenelux, The Hague, May 31st, 2018\n\n GraphQL is an open standard that lets you request, change, and subscribe to the exact data you need in &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building Real-time Serverless Backends with GraphQL",
+    "twitterDescription": "AWS SummitBenelux, The Hague, May 31st, 2018\n\n GraphQL is an open standard that lets you request, change, and subscribe to the exact data you need in &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/48145f2d52bd44a2b5f35b58c6902bb7/slide_0.jpg?10139679",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/48145f2d52bd44a2b5f35b58c6902bb7/slide_0.jpg?10139679",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-real-time-serverless-backends-with-graphql",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-serverless-apis-with-the-amazon-api-gateway-and-aws-appsync": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-serverless-apis-with-the-amazon-api-gateway-and-aws-appsync",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building Serverless APIs with the Amazon API Gateway and AWS AppSync",
+    "ogDescription": "London API Professionals Meetup, London, May 23rd, 2018 \n\nIn this session, we’ll review features and best practices for building serverless backends u&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building Serverless APIs with the Amazon API Gateway and AWS AppSync",
+    "twitterDescription": "London API Professionals Meetup, London, May 23rd, 2018 \n\nIn this session, we’ll review features and best practices for building serverless backends u&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/ab0e082bc5f74162a07527f22c04b3b1/slide_0.jpg?10079663",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/ab0e082bc5f74162a07527f22c04b3b1/slide_0.jpg?10079663",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-serverless-apis-with-the-amazon-api-gateway-and-aws-appsync",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/and-then-there-are-algorithms": {
+    "ogUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "And Then There Are Algorithms",
+    "ogDescription": "Codemotion, Rome, April 14th, 2018\n\nAlgorithms & Machine Learning",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "And Then There Are Algorithms",
+    "twitterDescription": "Codemotion, Rome, April 14th, 2018\n\nAlgorithms & Machine Learning",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/4134aee785c148618118109e8dfd1bc5/slide_0.jpg?9821199",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/4134aee785c148618118109e8dfd1bc5/slide_0.jpg?9821199",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/and-then-there-are-algorithms-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "And Then There Are Algorithms",
+    "ogDescription": "CloudConf, Turin, April 12th, 2018\n\nAlgorithms & Machine Learning",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "And Then There Are Algorithms",
+    "twitterDescription": "CloudConf, Turin, April 12th, 2018\n\nAlgorithms & Machine Learning",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/432723bca4da4d879518144fc72bccea/slide_0.jpg?9821629",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/432723bca4da4d879518144fc72bccea/slide_0.jpg?9821629",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/and-then-there-are-algorithms-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-beyond-functions-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-beyond-functions-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless beyond Functions",
+    "ogDescription": "Voxxed Days, Bucharest, March 22nd, 2018\n\nWith serverless development you can “chain” multiple functions together, and design event-driven architectur&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless beyond Functions",
+    "twitterDescription": "Voxxed Days, Bucharest, March 22nd, 2018\n\nWith serverless development you can “chain” multiple functions together, and design event-driven architectur&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/c8db4eedbab44c7d887a26ee24edb1c9/slide_0.jpg?9685110",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/c8db4eedbab44c7d887a26ee24edb1c9/slide_0.jpg?9685110",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-beyond-functions-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-state-of-the-union": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-state-of-the-union",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless: State of the Union",
+    "ogDescription": "Builders' Day, Edinburgh, February 21st, 2018",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless: State of the Union",
+    "twitterDescription": "Builders' Day, Edinburgh, February 21st, 2018",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/d54c925e9513411fba1842e5dbdf9dda/slide_0.jpg?9510483",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/d54c925e9513411fba1842e5dbdf9dda/slide_0.jpg?9510483",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-state-of-the-union",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-development-deep-dive": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-development-deep-dive",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless Development Deep Dive",
+    "ogDescription": "Builders' Day, Edinburgh, February 21st, 2018",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless Development Deep Dive",
+    "twitterDescription": "Builders' Day, Edinburgh, February 21st, 2018",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/7a0f9edaba1e4076a0ba3ab9a659ef04/slide_0.jpg?9510440",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/7a0f9edaba1e4076a0ba3ab9a659ef04/slide_0.jpg?9510440",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-development-deep-dive",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-advanced-serverless-applications-with-aws-step-functions": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-advanced-serverless-applications-with-aws-step-functions",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building Advanced Serverless Applications with AWS Step Functions",
+    "ogDescription": "Builders' Day, Edinburgh, February 21st, 2018",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building Advanced Serverless Applications with AWS Step Functions",
+    "twitterDescription": "Builders' Day, Edinburgh, February 21st, 2018",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/9444400dc0ce40aabd101eed59ddf73a/slide_0.jpg?9510536",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/9444400dc0ce40aabd101eed59ddf73a/slide_0.jpg?9510536",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-advanced-serverless-applications-with-aws-step-functions",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/real-time-serverless-back-ends-with-graphql": {
+    "ogUrl": "https://speakerdeck.com/danilop/real-time-serverless-back-ends-with-graphql",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Real-Time Serverless Back Ends with GraphQL",
+    "ogDescription": "JeffConf, Hamburg, February 16th, 2018\n\nGraphQL is an open standard that lets you request, change, and subscribe to the exact data you need in a singl&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Real-Time Serverless Back Ends with GraphQL",
+    "twitterDescription": "JeffConf, Hamburg, February 16th, 2018\n\nGraphQL is an open standard that lets you request, change, and subscribe to the exact data you need in a singl&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/3e1b3d1521874a51aa50ed56c6294272/slide_0.jpg?9434478",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/3e1b3d1521874a51aa50ed56c6294272/slide_0.jpg?9434478",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/real-time-serverless-back-ends-with-graphql",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-a-voice-enabled-security-camera-with-a-mobile-app-and-a-raspberry-pi-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-a-voice-enabled-security-camera-with-a-mobile-app-and-a-raspberry-pi-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building a Voice-Enabled Security Camera with a Mobile App and a Raspberry Pi",
+    "ogDescription": "Linuxing in London, December 20th, 2017\n\nIn this session we’ll use deep learning powered services from AWS, to build a security camera with face and o&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building a Voice-Enabled Security Camera with a Mobile App and a Raspberry Pi",
+    "twitterDescription": "Linuxing in London, December 20th, 2017\n\nIn this session we’ll use deep learning powered services from AWS, to build a security camera with face and o&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/0d828d3427074a0faed7fd49942db8c3/slide_0.jpg?9199448",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/0d828d3427074a0faed7fd49942db8c3/slide_0.jpg?9199448",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-a-voice-enabled-security-camera-with-a-mobile-app-and-a-raspberry-pi-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/aws-re-invent-2017-recap-for-london-startups": {
+    "ogUrl": "https://speakerdeck.com/danilop/aws-re-invent-2017-recap-for-london-startups",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "AWS re:Invent 2017 Recap for London Startups",
+    "ogDescription": "London, December 13th, 2017",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "AWS re:Invent 2017 Recap for London Startups",
+    "twitterDescription": "London, December 13th, 2017",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/cba927562c0247dc8e57fdf3bd4c96aa/slide_0.jpg?9157004",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/cba927562c0247dc8e57fdf3bd4c96aa/slide_0.jpg?9157004",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/aws-re-invent-2017-recap-for-london-startups",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/aws-re-invent-2017-recap": {
+    "ogUrl": "https://speakerdeck.com/danilop/aws-re-invent-2017-recap",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "AWS re:Invent 2017 Recap",
+    "ogDescription": "Cambridge AWS User Group, December 7th, 2017",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "AWS re:Invent 2017 Recap",
+    "twitterDescription": "Cambridge AWS User Group, December 7th, 2017",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/86590a1fb5b34e30aa4f6c8089178526/slide_0.jpg?9142884",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/86590a1fb5b34e30aa4f6c8089178526/slide_0.jpg?9142884",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/aws-re-invent-2017-recap",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/re-invent-2017-serverless-recap": {
+    "ogUrl": "https://speakerdeck.com/danilop/re-invent-2017-serverless-recap",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "re:Invent 2017 Serverless Recap",
+    "ogDescription": "Serverless Meetup, London, December 5th, 2017\n\n A quick summary of all serverless announcements\u001b from the AWS re:Invent 2017.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "re:Invent 2017 Serverless Recap",
+    "twitterDescription": "Serverless Meetup, London, December 5th, 2017\n\n A quick summary of all serverless announcements\u001b from the AWS re:Invent 2017.",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/d36602d8be194296a6bebe2d426fa6ef/slide_0.jpg?9109501",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/d36602d8be194296a6bebe2d426fa6ef/slide_0.jpg?9109501",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/re-invent-2017-serverless-recap",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-artificial-intelligence-tools-to-developers": {
+    "ogUrl": "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-artificial-intelligence-tools-to-developers",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machines are Learning: Bringing Powerful Artificial Intelligence Tools to Developers",
+    "ogDescription": "WAJUG, Liège, November 20th, 2017\n\nHave you always wanted to add predictive capabilities or conversational interfaces to your application, but haven’t&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machines are Learning: Bringing Powerful Artificial Intelligence Tools to Developers",
+    "twitterDescription": "WAJUG, Liège, November 20th, 2017\n\nHave you always wanted to add predictive capabilities or conversational interfaces to your application, but haven’t&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e98ea44b75f04cafa9959bcf7f80fbf2/slide_0.jpg?9022551",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e98ea44b75f04cafa9959bcf7f80fbf2/slide_0.jpg?9022551",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-artificial-intelligence-tools-to-developers",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-ai-to-all-developers": {
+    "ogUrl": "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-ai-to-all-developers",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machines are Learning: Bringing Powerful AI to All Developers",
+    "ogDescription": "Data Natives, Berlin, November 17th, 2017\n\nHave you always wanted to add predictive capabilities, image or voice recognition to your application, but &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machines are Learning: Bringing Powerful AI to All Developers",
+    "twitterDescription": "Data Natives, Berlin, November 17th, 2017\n\nHave you always wanted to add predictive capabilities, image or voice recognition to your application, but &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/f0e9e614d21d4edc9cc053ecdc7d7669/slide_0.jpg?8992897",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/f0e9e614d21d4edc9cc053ecdc7d7669/slide_0.jpg?8992897",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-ai-to-all-developers",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-artificial-intelligence-to-all-developers": {
+    "ogUrl": "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-artificial-intelligence-to-all-developers",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machines are Learning: Bringing Powerful Artificial Intelligence to All Developers",
+    "ogDescription": "Codemotion, Milan, November 10th, 2017\n\nHave you always wanted to add predictive capabilities, image or voice recognition to your application, but hav&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machines are Learning: Bringing Powerful Artificial Intelligence to All Developers",
+    "twitterDescription": "Codemotion, Milan, November 10th, 2017\n\nHave you always wanted to add predictive capabilities, image or voice recognition to your application, but hav&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/cd83d64aafbc4dd0ba7e3b88636a427f/slide_0.jpg?8940924",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/cd83d64aafbc4dd0ba7e3b88636a427f/slide_0.jpg?8940924",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machines-are-learning-bringing-powerful-artificial-intelligence-to-all-developers",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/getting-started-with-serverless-apps": {
+    "ogUrl": "https://speakerdeck.com/danilop/getting-started-with-serverless-apps",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Getting Started with Serverless Apps",
+    "ogDescription": "Web Summit, Lisbon, November 9th, 2017\n\nBuild and run applications without thinking about servers. This session will introduce you to the core concept&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Getting Started with Serverless Apps",
+    "twitterDescription": "Web Summit, Lisbon, November 9th, 2017\n\nBuild and run applications without thinking about servers. This session will introduce you to the core concept&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e6d02a9cebbf41c09135f5736b7ce6ab/slide_0.jpg?8934764",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e6d02a9cebbf41c09135f5736b7ce6ab/slide_0.jpg?8934764",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/getting-started-with-serverless-apps",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-by-example-building-a-real-time-chat-system": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-by-example-building-a-real-time-chat-system",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless by Example: Building a Real-Time Chat System",
+    "ogDescription": "Web Summit, Lisbon, November 9th, 2017\n\nOne of the great advantages of serverless development is the possibility to “chain” multiple functions and too&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless by Example: Building a Real-Time Chat System",
+    "twitterDescription": "Web Summit, Lisbon, November 9th, 2017\n\nOne of the great advantages of serverless development is the possibility to “chain” multiple functions and too&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/8ea28057dc214d84a4216bd582071aca/slide_0.jpg?8934789",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/8ea28057dc214d84a4216bd582071aca/slide_0.jpg?8934789",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-by-example-building-a-real-time-chat-system",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/building-a-voice-enabled-security-camera-with-a-mobile-app-and-a-raspberry-pi": {
+    "ogUrl": "https://speakerdeck.com/danilop/building-a-voice-enabled-security-camera-with-a-mobile-app-and-a-raspberry-pi",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Building a Voice-Enabled Security Camera with a Mobile App and a Raspberry Pi",
+    "ogDescription": "Amazon Appstore Developer Summit, London, November 7th, 2017\n\nIn this session we’ll use deep learning powered services from AWS, to build a security c&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Building a Voice-Enabled Security Camera with a Mobile App and a Raspberry Pi",
+    "twitterDescription": "Amazon Appstore Developer Summit, London, November 7th, 2017\n\nIn this session we’ll use deep learning powered services from AWS, to build a security c&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/1aa0f7d620234b75b1438e28a4ad7800/slide_0.jpg?8926297",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/1aa0f7d620234b75b1438e28a4ad7800/slide_0.jpg?8926297",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/building-a-voice-enabled-security-camera-with-a-mobile-app-and-a-raspberry-pi",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-beyond-functions": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-beyond-functions",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless beyond Functions",
+    "ogDescription": "JeffConf, Milan, September 29th, 2017\n\nOne of the great advantages of serverless development is the possibility to “chain” multiple functions together&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless beyond Functions",
+    "twitterDescription": "JeffConf, Milan, September 29th, 2017\n\nOne of the great advantages of serverless development is the possibility to “chain” multiple functions together&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/47ad3e2ca51e4525966efafd1a776438/slide_0.jpg?8656465",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/47ad3e2ca51e4525966efafd1a776438/slide_0.jpg?8656465",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-beyond-functions",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-for-developers-3": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-for-developers-3",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless for Developers",
+    "ogDescription": "AWS Pop-up Loft, San Francisco, July 28th, 2017\n\nBuilding a real-time web chat using AWS Lambda, AWS IoT (for WebSockets) and Amazon DynamoDB (with TT&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless for Developers",
+    "twitterDescription": "AWS Pop-up Loft, San Francisco, July 28th, 2017\n\nBuilding a real-time web chat using AWS Lambda, AWS IoT (for WebSockets) and Amazon DynamoDB (with TT&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/c79a2f741161411b8299737331259400/slide_0.jpg?8357113",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/c79a2f741161411b8299737331259400/slide_0.jpg?8357113",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-for-developers-3",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/cd-and-end-to-end-tracing": {
+    "ogUrl": "https://speakerdeck.com/danilop/cd-and-end-to-end-tracing",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless in Production with CI/CD and End-to-End Tracing",
+    "ogDescription": "London JavaScript Community, London, July 11th, 2017\n\nIn this session I will share some of the best practices to use serverless applications in produc&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless in Production with CI/CD and End-to-End Tracing",
+    "twitterDescription": "London JavaScript Community, London, July 11th, 2017\n\nIn this session I will share some of the best practices to use serverless applications in produc&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/f702fe0f63aa435199934f7d1e764166/slide_0.jpg?8283849",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/f702fe0f63aa435199934f7d1e764166/slide_0.jpg?8283849",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/cd-and-end-to-end-tracing",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/innovation-at-amazon": {
+    "ogUrl": "https://speakerdeck.com/danilop/innovation-at-amazon",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Innovation @ Amazon",
+    "ogDescription": "AWS Summit, London, June 28th, 2017\n\nIn this session we’ll review some of the mechanisms and best practices that help us innovate in Amazon, and go th&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Innovation @ Amazon",
+    "twitterDescription": "AWS Summit, London, June 28th, 2017\n\nIn this session we’ll review some of the mechanisms and best practices that help us innovate in Amazon, and go th&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/60ccc3e6a58d4cb5af6b04173299aae5/slide_0.jpg?8226980",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/60ccc3e6a58d4cb5af6b04173299aae5/slide_0.jpg?8226980",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/innovation-at-amazon",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/deep-dive-on-serverless-application-development": {
+    "ogUrl": "https://speakerdeck.com/danilop/deep-dive-on-serverless-application-development",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Deep Dive on Serverless Application Development",
+    "ogDescription": "AWS Summit, London, June 28th, 2017\n\nAWS Lambda and Amazon API Gateway have changed how developers build and run their applications or services. But w&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Deep Dive on Serverless Application Development",
+    "twitterDescription": "AWS Summit, London, June 28th, 2017\n\nAWS Lambda and Amazon API Gateway have changed how developers build and run their applications or services. But w&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/0371f8e0446a4ac0b6c6011b0c968335/slide_0.jpg?8227098",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/0371f8e0446a4ac0b6c6011b0c968335/slide_0.jpg?8227098",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/deep-dive-on-serverless-application-development",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machine-learning-for-developers-2": {
+    "ogUrl": "https://speakerdeck.com/danilop/machine-learning-for-developers-2",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machine Learning for Developers",
+    "ogDescription": "Codemotion, Rome, March 25th, 2017\n\n Have you always wanted to add predictive capabilities or voice recognition to your application, but haven’t been &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machine Learning for Developers",
+    "twitterDescription": "Codemotion, Rome, March 25th, 2017\n\n Have you always wanted to add predictive capabilities or voice recognition to your application, but haven’t been &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/d420d72b2f92476fb0f023d1ea2b638c/slide_0.jpg?7735714",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/d420d72b2f92476fb0f023d1ea2b638c/slide_0.jpg?7735714",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machine-learning-for-developers-2",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-for-developers-2": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-for-developers-2",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless for Developers",
+    "ogDescription": "Cloud Conf, Turin, March 16th, 2017\n\nTips for Your Next App.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless for Developers",
+    "twitterDescription": "Cloud Conf, Turin, March 16th, 2017\n\nTips for Your Next App.",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/d5898f0e662549ecb5c46095cdd46ca4/slide_0.jpg?7690228",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/d5898f0e662549ecb5c46095cdd46ca4/slide_0.jpg?7690228",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-for-developers-2",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machines-are-learning": {
+    "ogUrl": "https://speakerdeck.com/danilop/machines-are-learning",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machines are Learning",
+    "ogDescription": "Cloud Conf, Turin, March 16th, 2017\n\nBringing Powerful Artificial Intelligence Tools to Developers.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machines are Learning",
+    "twitterDescription": "Cloud Conf, Turin, March 16th, 2017\n\nBringing Powerful Artificial Intelligence Tools to Developers.",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/e50293ae755f4781b6b82be3537db9ba/slide_0.jpg?7690287",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/e50293ae755f4781b6b82be3537db9ba/slide_0.jpg?7690287",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machines-are-learning",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/an-introduction-to-amazon-ai-services": {
+    "ogUrl": "https://speakerdeck.com/danilop/an-introduction-to-amazon-ai-services",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "An Introduction to Amazon AI  Services",
+    "ogDescription": "AWS User Group Barcelona, March 2nd, 2017\n\nIntroducing the new Amazon AI services (Rekognition, Polly, Lex) with some demos and some considerations on&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "An Introduction to Amazon AI  Services",
+    "twitterDescription": "AWS User Group Barcelona, March 2nd, 2017\n\nIntroducing the new Amazon AI services (Rekognition, Polly, Lex) with some demos and some considerations on&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/315857edb09d4817915ba9a9b6f2db7c/slide_0.jpg?7624521",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/315857edb09d4817915ba9a9b6f2db7c/slide_0.jpg?7624521",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/an-introduction-to-amazon-ai-services",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machine-learning-for-developers-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/machine-learning-for-developers-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machine Learning for Developers",
+    "ogDescription": "Voxxed Days Zurich, February 23rd, 2017\n\nHave you always wanted to add predictive capabilities or voice recognition to your application, but haven’t b&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machine Learning for Developers",
+    "twitterDescription": "Voxxed Days Zurich, February 23rd, 2017\n\nHave you always wanted to add predictive capabilities or voice recognition to your application, but haven’t b&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/ca0a635d048f4919922396dc5d2adc9d/slide_0.jpg?7591187",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/ca0a635d048f4919922396dc5d2adc9d/slide_0.jpg?7591187",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machine-learning-for-developers-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-for-javascript-developers": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-for-javascript-developers",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless for (JavaScript) Developers",
+    "ogDescription": "London JavaScript Community, February 7th, 2017\n\nServerless architectures simplify operations and maintenance of production applications, abstracting &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless for (JavaScript) Developers",
+    "twitterDescription": "London JavaScript Community, February 7th, 2017\n\nServerless architectures simplify operations and maintenance of production applications, abstracting &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/202b9a2e31744082982f80da27e91632/slide_0.jpg?7525710",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/202b9a2e31744082982f80da27e91632/slide_0.jpg?7525710",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-for-javascript-developers",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/aws-security-deep-dive": {
+    "ogUrl": "https://speakerdeck.com/danilop/aws-security-deep-dive",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "AWS Security Deep Dive",
+    "ogDescription": "AWS User Group Glasgow, February 1st, 2017\n\nAn overview of how to approach security in the cloud, new services and features from AWS, and a glimpse of&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "AWS Security Deep Dive",
+    "twitterDescription": "AWS User Group Glasgow, February 1st, 2017\n\nAn overview of how to approach security in the cloud, new services and features from AWS, and a glimpse of&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/4164295685f2473fbac65efcf24656ae/slide_0.jpg?7499730",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/4164295685f2473fbac65efcf24656ae/slide_0.jpg?7499730",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/aws-security-deep-dive",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/aws-re-invent-2016-keynotes-announcements": {
+    "ogUrl": "https://speakerdeck.com/danilop/aws-re-invent-2016-keynotes-announcements",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "AWS re:Invent 2016 Keynotes Announcements",
+    "ogDescription": "December 8th, 2016\n\nAll the AWS announcements in the re:Invent 2016 keynotes on Wednesday and Thursday.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "AWS re:Invent 2016 Keynotes Announcements",
+    "twitterDescription": "December 8th, 2016\n\nAll the AWS announcements in the re:Invent 2016 keynotes on Wednesday and Thursday.",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/05c87d2b3d3e4e9290695df97f3ac12a/slide_0.jpg?7332346",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/05c87d2b3d3e4e9290695df97f3ac12a/slide_0.jpg?7332346",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/aws-re-invent-2016-keynotes-announcements",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/connecting-the-unconnected-with-aws-iot": {
+    "ogUrl": "https://speakerdeck.com/danilop/connecting-the-unconnected-with-aws-iot",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Connecting the Unconnected with AWS IoT",
+    "ogDescription": "Webinar with Cloud Academy, London, November 24th, 2016\n\nConnecting physical devices to the cloud can enhance the user experience. AWS IoT is a new ma&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Connecting the Unconnected with AWS IoT",
+    "twitterDescription": "Webinar with Cloud Academy, London, November 24th, 2016\n\nConnecting physical devices to the cloud can enhance the user experience. AWS IoT is a new ma&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/213ec94ffe624f02bc0aa0e506dc9928/slide_0.jpg?7255219",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/213ec94ffe624f02bc0aa0e506dc9928/slide_0.jpg?7255219",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/connecting-the-unconnected-with-aws-iot",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/machine-learning-for-developers": {
+    "ogUrl": "https://speakerdeck.com/danilop/machine-learning-for-developers",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Machine Learning for Developers",
+    "ogDescription": "Devoxx Belgium, Antwerp, November 10th, 2016 \n\nHave you always wanted to add predictive capabilities or voice recognition to your application, but haven&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Machine Learning for Developers",
+    "twitterDescription": "Devoxx Belgium, Antwerp, November 10th, 2016 \n\nHave you always wanted to add predictive capabilities or voice recognition to your application, but haven&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/841d0b53e4af4296bb5dda616e552965/slide_0.jpg?7169847",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/841d0b53e4af4296bb5dda616e552965/slide_0.jpg?7169847",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/machine-learning-for-developers",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-for-developers-tips-for-your-next-app-1": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-for-developers-tips-for-your-next-app-1",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless for Developers: Tips for Your Next App",
+    "ogDescription": "Serverless Meetup, Milan, November 3rd, 2016\n\nServerless architectures simplify operations and maintenance of production applications, abstracting fro&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless for Developers: Tips for Your Next App",
+    "twitterDescription": "Serverless Meetup, Milan, November 3rd, 2016\n\nServerless architectures simplify operations and maintenance of production applications, abstracting fro&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/4f2fdc928274438f9bdeb069a7f78060/slide_0.jpg?7127597",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/4f2fdc928274438f9bdeb069a7f78060/slide_0.jpg?7127597",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-for-developers-tips-for-your-next-app-1",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/serverless-for-developers-tips-for-your-next-app": {
+    "ogUrl": "https://speakerdeck.com/danilop/serverless-for-developers-tips-for-your-next-app",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Serverless for Developers: Tips for Your Next App",
+    "ogDescription": "ServerlessConf, London, October 28th, 2016\n\nServerless architectures simplify operations and maintenance of production applications, abstracting from &hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Serverless for Developers: Tips for Your Next App",
+    "twitterDescription": "ServerlessConf, London, October 28th, 2016\n\nServerless architectures simplify operations and maintenance of production applications, abstracting from &hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/82de6ec3d9b2417caec315e307ba84ff/slide_0.jpg?7081908",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/82de6ec3d9b2417caec315e307ba84ff/slide_0.jpg?7081908",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/serverless-for-developers-tips-for-your-next-app",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/connecting-the-unconnected-iot-made-simple": {
+    "ogUrl": "https://speakerdeck.com/danilop/connecting-the-unconnected-iot-made-simple",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Connecting the Unconnected: IoT Made Simple",
+    "ogDescription": "October 25th, 2016\n\nConnecting physical devices to the cloud can enhance the user experience. AWS IoT is a new managed service that enables Internet-c&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Connecting the Unconnected: IoT Made Simple",
+    "twitterDescription": "October 25th, 2016\n\nConnecting physical devices to the cloud can enhance the user experience. AWS IoT is a new managed service that enables Internet-c&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/9409f30869c94a5b993d7e03ea20c493/slide_0.jpg?7066441",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/9409f30869c94a5b993d7e03ea20c493/slide_0.jpg?7066441",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/connecting-the-unconnected-iot-made-simple",
+    "success": true
+  },
+  "https://speakerdeck.com/danilop/developing-and-testing-mobile-apps-on-aws": {
+    "ogUrl": "https://speakerdeck.com/danilop/developing-and-testing-mobile-apps-on-aws",
+    "ogSiteName": "Speaker Deck",
+    "ogTitle": "Developing & Testing Mobile Apps on AWS",
+    "ogDescription": "October 25th, 2016 \n\nIn this session we will discuss how you can leverage the new cross-platform AWS Mobile Services to build a highly scalable and re&hellip;",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "twitterSite": "@speakerdeck",
+    "twitterCreator": "@speakerdeck",
+    "twitterTitle": "Developing & Testing Mobile Apps on AWS",
+    "twitterDescription": "October 25th, 2016 \n\nIn this session we will discuss how you can leverage the new cross-platform AWS Mobile Services to build a highly scalable and re&hellip;",
+    "ogImage": {
+      "url": "https://files.speakerdeck.com/presentations/6c0ca33087814582b989056f1dbde0c0/slide_0.jpg?7066507",
+      "width": null,
+      "height": null,
+      "type": "jpg"
+    },
+    "twitterImage": {
+      "url": "https://files.speakerdeck.com/presentations/6c0ca33087814582b989056f1dbde0c0/slide_0.jpg?7066507",
+      "width": null,
+      "height": null,
+      "alt": null
+    },
+    "ogLocale": "en",
+    "charset": "utf8",
+    "requestUrl": "https://speakerdeck.com/danilop/developing-and-testing-mobile-apps-on-aws",
+    "success": true
+  }
+}
