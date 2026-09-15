@@ -30,6 +30,10 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 2. Resolve the pending [specific access approval](deployment-access-review.md).
    Automatic approval review blocked the initial setup; no short-link or access mutation occurred.
 3. Apply approved setup, test resolver behavior and alias ownership/recovery.
+   Before adding live external-publishing credentials, implement the isolation
+   and authentication checks in [credentials and access](credentials-and-access.md).
+   This includes a separate protected DEV environment and matching delivery role;
+   the original short-link role proposal remains unchanged.
 4. Push the tested release to `main`; the rebuilt branch is committed and its hosted preview has passed.
 5. Verify the exact deployed revision, homepage, article, old routes, 404, feeds,
    snapshot, and short links. Update release status with live evidence.

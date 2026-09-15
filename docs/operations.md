@@ -96,6 +96,11 @@ links its published editions; living and fixed-edition aliases are separate.
 
 ## Cross-posting
 
+Follow [credentials and access](credentials-and-access.md) before connecting a
+provider. The protected DEV environment and separated delivery job are proposed,
+not yet configured. Keep Leanpub local until a real book needs it; public embeds
+and Medium's assisted workflow require no publishing credentials here.
+
 No article is enrolled initially. Add an explicit assignment to
 `publishing/distribution.yaml` and a destination/account to `destinations.yaml`.
 Run `npm run distribute` to generate an article, payload and previous body under

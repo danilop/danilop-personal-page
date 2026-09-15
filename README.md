@@ -42,6 +42,8 @@ and the Earlier Work / The Original Site wording are approved.
 Short-link cloud setup awaits the specific access approval described in
 [deployment access review](docs/deployment-access-review.md). DEV and Leanpub
 adapters have local contract tests; live publishing accounts are not connected.
+Follow [credentials and access](docs/credentials-and-access.md) before adding
+provider keys; protected DEV delivery still needs the documented workflow changes.
 No article is enrolled for cross-posting. Search and a site-wide AI assistant
 remain future work. See [verification](docs/verification.md) and [launch status](docs/launch-review.md) for evidence and
 remaining release gates.
@@ -110,6 +112,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
+- [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
 

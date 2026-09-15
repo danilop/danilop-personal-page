@@ -8,6 +8,11 @@ The [product design](product-design.md#cross-posting-and-updates) defines the
 experience. This document specifies replaceable delivery adapters, separate
 from rendering plugins and themes.
 
+Credential setup and the required automation isolation changes are documented in
+[credentials and access](credentials-and-access.md). Store a DEV key only in the
+proposed `dev-publication` environment; the current workflow does not yet consume
+that environment. Do not add a repository-wide key to enable the existing wiring.
+
 ## Provider feasibility
 
 | Destination | Initial adapter | Update behavior |
