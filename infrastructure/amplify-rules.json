@@ -1,0 +1,8 @@
+[
+  {"source":"https://danilop.net","target":"https://www.danilop.net","status":"302"},
+  {"source":"/posts.html","target":"/archive/posts/","status":"301"},
+  {"source":"/decks.html","target":"/archive/decks/","status":"301"},
+  {"source":"/videos.html","target":"/archive/videos/","status":"301"},
+  {"source":"/about.html","target":"/about/","status":"301"},
+  {"source":"/<*>","target":"/404.html","status":"404"}
+]

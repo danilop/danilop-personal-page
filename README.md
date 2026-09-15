@@ -46,7 +46,7 @@ remaining release gates.
 
 ## Develop
 
-Use Node.js 22.12 or later (the project selects Node 22) and npm:
+Use Node.js 22.19 or later (the project pins Node 22.23.0) and npm:
 
 ```sh
 npm ci

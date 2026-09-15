@@ -11,7 +11,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | --- | --- | --- |
 | Website | Astro, static output | Content-oriented rendering with optional interactive islands |
 | Implementation | TypeScript in strict mode | Explicit schemas and plugin contracts |
-| Runtime/package manager | Node.js 22, at least 22.12; npm | Align with current hosting and Astro requirements |
+| Runtime/package manager | Node.js 22, at least 22.19; npm | Align with current hosting and Astro requirements |
 | Authoring | Markdown + YAML metadata/manifests | Portable prose and inspectable structure |
 | Parsing | unified / remark / rehype, with remark-directive | Parse semantic blocks before HTML generation |
 | Validation | Zod schemas; exportable JSON Schema where practical | Build validation plus future editor assistance |
@@ -37,8 +37,8 @@ Resolved versions are installed and recorded in package-lock.json. See
 [implementation status](implementation-plan.md) and [operations](operations.md)
 for actual module locations, commands and account-dependent limits.
 
-Astro currently requires Node 22.12 or later. The existing project uses Node 22;
-the rebuild declares Node >=22.12 and uses Astro 7.3.2.
+The resolved dependency tree requires Node 22.19 or later. The rebuild pins
+Node 22.23.0 and uses Astro 7.3.2.
 [Astro setup](https://docs.astro.build/en/install-and-setup/),
 [content collections](https://docs.astro.build/en/guides/content-collections/).
 

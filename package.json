@@ -4,7 +4,7 @@
   "description": "Notes Along the Way \u2014 articles, collections, books, and interactive explanations",
   "main": "processLinks.js",
   "engines": {
-    "node": ">=22.12"
+    "node": ">=22.19"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

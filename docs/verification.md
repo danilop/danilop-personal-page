@@ -66,6 +66,14 @@ The implementation was visually verified against the selected Ink & Paper
 an identical reproduction of the concept's illustrative content. No material
 clipping, asset-loading or responsive mismatch remains in the checked views.
 
+## Hosted preview
+
+The first Amplify preview build passed on Amazon Linux 2023 and the public
+homepage, article, archive, snapshot, feed and sitemap returned 200. The pipeline
+revealed an older preinstalled Node 22.18; the rebuild now installs pinned Node
+22.23.0 to meet the dependency tree's minimum version. Final hosted validation
+with that pin is in progress.
+
 ## Not yet verified remotely
 
 - New Amplify hosted build and production cutover, redirects/404 and live revision.

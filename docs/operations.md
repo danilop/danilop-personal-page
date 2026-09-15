@@ -4,7 +4,7 @@ Updated: 2026-09-15. Local rebuild implemented; production cutover pending.
 
 ## Build and preview
 
-Use Node 22.12+ and `npm ci`. Run `npm run dev` for the website, or
+Use the pinned Node 22.23.0 and `npm ci` (minimum 22.19 for the dependency tree). Run `npm run dev` for the website, or
 `npm run build` followed by `npm run preview` to inspect production output.
 `npm run check` checks Astro and TypeScript; `npm test` covers the legacy importer
 and publishing core. Run the build first on a fresh checkout to create the
@@ -135,6 +135,8 @@ The existing domain is `https://www.danilop.net`. The root-domain redirect stays
 in Amplify. Preview branches emit noindex metadata and disallow crawling. Build
 identity comes from the checked-out Git commit, including manually started jobs. At cutover, the old catch-all must target `/404.html`, with explicit
 redirects for `/posts.html`, `/decks.html`, `/videos.html`, and `/about.html`.
+The reviewed rules are in `infrastructure/amplify-rules.json`. Apply them only
+when the new site is live: rules apply to every branch of this Amplify app.
 
 Short-link setup is **pending specific access approval**. The exact proposal is
 [here](deployment-access-review.md); `scripts/provision-links.mjs` defaults to a
