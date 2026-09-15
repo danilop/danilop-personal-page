@@ -1,88 +1,18 @@
 const fs = require("fs-extra");
 const path = require("path");
-const ogs = require("open-graph-scraper");
-const crypto = require('crypto');
-
-function removeAfter(s, t) {
-  return s.split(t)[0];
-}
-
-function removeAny(s, t) {
-  return s.replace(t, '');
-}
-
-function makeOrdinalsSup(s) {
-  return s.replace(/([0-9]+)(st|nd|rd|th)\b/, "$1<sup>$2</sup>");
-}
-
-function getImageUrl(ogImage) {
-  // open-graph-scraper >= 5 always returns ogImage as an array.
-  // Older cached results (and single-image v4 responses) store a plain object.
-  if (Array.isArray(ogImage)) {
-    return ogImage.length > 0 ? ogImage[0].url : null;
-  }
-  return ogImage ? ogImage.url : null;
-}
-
-function link2hash(link) {
-  const digest = crypto.createHash('sha256').update(link).digest('hex');
-  console.log (digest);
-  return digest;
-}
+const { getLinkData, escapeHtml } = require('./lib/link-metadata');
+const importedMetadata = require('./data/link-metadata.json');
+const linkOverrides = require('./data/link-overrides.json');
 
 async function getLinksData(links, cacheFolderName) {
   const linksData = [];
-
-  for (let link of links) {
-  
-    let cacheFileName = path.join(cacheFolderName, link2hash(link));
-    
-    let result;
-    try {
-      result = fs.readJsonSync(cacheFileName);
-    } catch (err) {
-      if (err.code !== 'ENOENT') {
-        throw err;
-      }
-    }
-    
-    if (result === undefined || result.ogTitle === undefined) {
-      const options = { url: link };
-      results = await ogs(options);
-      result = results.result
-      console.log("result:", result);
-      fs.writeJsonSync(cacheFileName, result);
-    } else {
-      console.log("cached result:", result);
-    }
-
-
-    let title = result.ogTitle;
-    let subtitle = null;
-    switch (result.ogSiteName) {
-      case "Amazon Web Services":
-        title = removeAfter(title, " | ");
-        break;
-      case "Speaker Deck":
-        subtitle = removeAfter(result.ogDescription, "\n");
-        subtitle = makeOrdinalsSup(subtitle);
-        break;
-      default:
-        // YouTube Videos
-        title = removeAfter(title, " - ");
-        title = removeAfter(title, " – ");
-        title = removeAfter(title, " by ");
-        title = removeAny(title, /\[.*\]/);
-    }
-    linksData.push({
-      title: title,
-      subtitle: subtitle,
-      url: result.ogUrl,
-      description: result.ogDescription,
-      imageUrl: getImageUrl(result.ogImage)
-    });
+  for (const link of links) {
+    linksData.push(await getLinkData(link, {
+      cacheFolderName,
+      imported: importedMetadata,
+      overrides: linkOverrides
+    }));
   }
-
   return linksData;
 }
 
@@ -101,7 +31,8 @@ async function processLinks(fileName, cacheFolderName, firstWidth, secondWidth, 
 
   let htmlLinks = [];
 
-  for (let linkData of linksData) {
+  for (const record of linksData) {
+    const linkData = Object.fromEntries(Object.entries(record).map(([key, value]) => [key, escapeHtml(value)]));
     htmlLinks.push(
       '<div class="row bg-light p-1 m-1">' +
         '<div class="col-sm-' +
@@ -153,10 +84,10 @@ async function processHtmlFile(inputFileName, outputFileName, dataFolderName, ca
     );
     if (linksToProcess) {
       console.log(line);
-      linksFileName = path.join(dataFolderName, linksToProcess[1]);
-      firstWidth = linksToProcess[2];
-      secondWidth = linksToProcess[3];
-      limit = linksToProcess[4];
+      const linksFileName = path.join(dataFolderName, linksToProcess[1]);
+      const firstWidth = linksToProcess[2];
+      const secondWidth = linksToProcess[3];
+      const limit = linksToProcess[4];
       outputLines.push(
         await processLinks(linksFileName, cacheFolderName, firstWidth, secondWidth, limit)
       );
@@ -170,7 +101,7 @@ async function processHtmlFile(inputFileName, outputFileName, dataFolderName, ca
 
 async function processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName) {
   const files = fs.readdirSync(inputFolderName);
-  for (file of files) {
+  for (const file of files) {
     await processHtmlFile(
       path.join(inputFolderName, file),
       path.join(outputFolderName, file),
@@ -188,7 +119,7 @@ async function processFolder(dataFolderName, inputFolderName, outputFolderName, 
   const outputFolderName = process.argv[5];
   const cacheFolderName = process.argv[6];
   fs.copySync(staticFolderName, outputFolderName);
-  fs.ensureDir(cacheFolderName);
+  await fs.ensureDir(cacheFolderName);
   await processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName);
 })().catch(e => {
   console.error(e);

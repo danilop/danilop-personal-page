@@ -1,0 +1,69 @@
+{
+  "https://youtu.be/efk8XFJrW2c": {
+    "title": "Building observable applications with OpenTelemetry",
+    "description": "A demo-focused introduction to instrumenting applications with OpenTelemetry.",
+    "subtitle": "AWS re:Invent 2022 · BOA310"
+  },
+  "https://youtu.be/O-hSs7aF7JE": {
+    "title": "Lift and shift a web application to serverless: Yes, it’s possible!",
+    "description": "A practical migration journey from an existing web application to serverless.",
+    "subtitle": "AWS re:Invent 2022 · BOA326"
+  },
+  "https://youtu.be/-zqhJ7qXEU4": {
+    "title": "Analyze time-series data in real time and in your data lake",
+    "description": "Approaches to analyzing time-series data from applications, operational metrics, and connected devices.",
+    "subtitle": "AWS re:Invent 2021"
+  },
+  "https://youtu.be/wS7F__gEqx4": {
+    "title": "Using events and workflows to build distributed applications",
+    "description": "How events and workflows coordinate services in distributed applications.",
+    "subtitle": "AWS re:Invent 2021"
+  },
+  "https://youtu.be/ezN-yXe7-4Y": {
+    "title": "Analyzing data at any scale with AWS Lambda",
+    "description": "Using AWS Lambda to process and analyze data across databases and object storage.",
+    "subtitle": "AWS re:Invent 2020"
+  },
+  "https://youtu.be/HcbnrJdNBRI": {
+    "title": "How LEGO.com accelerates innovation with serverless",
+    "description": "How LEGO moved from a monolith to serverless microservices after experiencing scaling issues on Black Friday.",
+    "subtitle": "AWS re:Invent 2020"
+  },
+  "https://youtu.be/cJ7l6lntpng": {
+    "title": "What Can You Do with Serverless ...in 2020?",
+    "description": "A look at evolving serverless capabilities and the applications they make possible."
+  },
+  "https://youtu.be/20KBtJOxUpw": {
+    "title": "The serverless journey of shop.LEGO.com",
+    "description": "The cloud migration and serverless evolution of LEGO’s e-commerce platform.",
+    "subtitle": "AWS re:Invent 2019 · SVS320-R1"
+  },
+  "https://youtu.be/idq8-io0zRQ": {
+    "title": "Taking Serverless to the Next Level",
+    "description": "Best practices for modeling, deploying, and running serverless applications.",
+    "subtitle": "VDM19"
+  },
+  "https://youtu.be/LrPJvX_uRZ8": {
+    "title": "Diving deep into the event-driven side of serverless",
+    "description": "How functions and managed services work together in event-driven serverless applications.",
+    "subtitle": "@ServerlessMIL"
+  },
+  "https://youtu.be/Q6XJazrZw74": {
+    "title": "Machine Learning for Developers",
+    "description": "Practical ways for developers to add machine-learning capabilities to applications."
+  },
+  "https://youtu.be/o3HIa1soFfk": {
+    "title": "And Then There Are Algorithms",
+    "description": "A discussion of algorithms, training data, and machine learning.",
+    "subtitle": "Codemotion Rome 2018"
+  },
+  "https://youtu.be/Zwqwa0Yj2eE": {
+    "title": "You Don’t Want to Build a Serverless Monolith",
+    "description": "Why adopting serverless technology alone does not guarantee a microservices architecture.",
+    "subtitle": "Codemotion Amsterdam 2018"
+  },
+  "https://youtu.be/SB4IAJbgWS8": {
+    "title": "Serverless for Developers: Tips for Your Next App",
+    "description": "Practical tips for building your next application with serverless services."
+  }
+}

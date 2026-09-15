@@ -1,0 +1,12 @@
+{
+  "awsAuthorArchives": [
+    "https://aws.amazon.com/blogs/aws/author/danilop/",
+    "https://aws.amazon.com/blogs/database/author/danilop/",
+    "https://aws.amazon.com/blogs/developer/author/danilop/"
+  ],
+  "awsAdditionalPosts": [
+    "https://aws.amazon.com/blogs/aws/build-reliable-ai-agents-for-ui-workflow-automation-with-amazon-nova-act-now-generally-available/",
+    "https://aws.amazon.com/blogs/opensource/jupyter-deploy-create-a-jupyterlab-application-with-real-time-collaboration-in-the-cloud-in-minutes/"
+  ],
+  "devUsername": "danilop"
+}
