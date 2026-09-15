@@ -437,6 +437,7 @@ test("contextual fragments, article references and heading transformations prese
     p = lib.pieces.get("second")!;
   p.body =
     '## Details\n\n[Details](#details) and :ref{target="first"}.\n\n```text\n## code, not a heading\n```\n';
+  p.body += "\nA second footnote[^one].\n\n[^one]: A different source.\n";
   p.ast = parser().parse(p.body);
   const c = lib.collections.find((c) => c.id === "guide")!,
     doc = assemble(c, lib, "web");
@@ -468,6 +469,7 @@ test("contextual fragments, article references and heading transformations prese
     );
     assert.match(body, /```text\n## code, not a heading\n```/);
     assert.match(body, /### Details/);
+    assert.match(body, new RegExp(`\\[\\^${occurrence.id}-one\\]`));
   } finally {
     await fs.rm(tmp, { recursive: true, force: true });
   }

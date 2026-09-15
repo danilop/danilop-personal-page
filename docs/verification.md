@@ -1,6 +1,6 @@
-# Local release verification
+# Release verification
 
-Date: 2026-09-15. Scope: local rebuild; hosted release pending.
+Date: 2026-09-15. Scope: local rebuild and hosted preview; production release pending.
 
 ## Automated checks
 
@@ -68,15 +68,24 @@ clipping, asset-loading or responsive mismatch remains in the checked views.
 
 ## Hosted preview
 
-The first Amplify preview build passed on Amazon Linux 2023 and the public
-homepage, article, archive, snapshot, feed and sitemap returned 200. The pipeline
-revealed an older preinstalled Node 22.18; the rebuild now installs pinned Node
-22.23.0 to meet the dependency tree's minimum version. Final hosted validation
-with that pin is in progress.
+The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
+passed Amplify build, deploy and verify stages (job 3) on Amazon Linux 2023.
+Its public build marker matches `1cfcf9d417a82c5a2ea09c91b6ccde4a02815ec9`.
+The pipeline installs pinned Node 22.23.0, passes the checker and all 23 tests,
+and generates the static site successfully.
+
+The homepage, approved welcome article, video archive, original snapshot,
+build marker, robots file, feed and sitemap all returned HTTP 200. The preview
+has `noindex`, robots `Disallow: /`, and the expected `nosniff` response header.
+These preview settings are branch-specific. Production still serves the old site.
+
+A subsequent book-export correction namespaces footnotes by placement, preventing
+collisions when assembled articles reuse the same footnote name. All 23 local
+tests and the checker pass with that correction; it is not part of preview job 3.
 
 ## Not yet verified remotely
 
-- New Amplify hosted build and production cutover, redirects/404 and live revision.
+- Production cutover, production redirects/404 and the live main-domain revision.
 - CloudFront/KVS setup, actual alias resolution, IAM/OIDC and cloud rollback.
 - Actual DEV account draft delivery and Leanpub rendering/publication.
 - Anonymous viewing of the author's Google documents or iCloud albums.

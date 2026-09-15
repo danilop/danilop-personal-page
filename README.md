@@ -33,7 +33,9 @@ Photos albums use public album links; photographs are not copied into this repo.
 
 ## Release status
 
-The rebuild is implemented and verified locally. Production
+The rebuild is implemented and verified locally and on the
+[hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/).
+The hosted build passed all 23 tests using pinned Node 22.23.0. Production
 still serves the original site. The shorter **Hello, Brave New World** article
 and the Earlier Work / The Original Site wording are approved.
 

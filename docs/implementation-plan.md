@@ -1,6 +1,6 @@
 # Implementation and verification status
 
-Status: local implementation; locally verified; cloud setup and deployment pending.
+Status: implemented; local and hosted preview checks passed; short-link setup and production cutover pending.
 Updated: 2026-09-15.
 
 Danilo selected **all planned publishing capabilities before deployment**.
@@ -21,7 +21,7 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | Leanpub | Preview/status/publication adapter for an existing book | API contract tests; live account/source/preview not configured |
 | DEV / Medium | API and assisted adapters, durable state, mapping/review/recovery commands | Local contract tests; no real account delivery authorized/enrolled |
 | `danilop.link` | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback | Compiler tests; specific infrastructure access approval pending |
-| Main deployment | Existing Amplify integration; build/check/test configuration updated | Hosted preview build in progress; production cutover pending |
+| Main deployment | Existing Amplify integration; build/check/test configuration updated | Hosted preview job 3 passed at `1cfcf9d` with Node 22.23.0; production cutover pending |
 
 ## Remaining release work
 
@@ -30,7 +30,7 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 2. Resolve the pending [specific access approval](deployment-access-review.md).
    Automatic approval review blocked the initial setup; no short-link or access mutation occurred.
 3. Apply approved setup, test resolver behavior and alias ownership/recovery.
-4. Commit the tested release, validate a preview, and push the release to `main`.
+4. Push the tested release to `main`; the rebuilt branch is committed and its hosted preview has passed.
 5. Verify the exact deployed revision, homepage, article, old routes, 404, feeds,
    snapshot, and short links. Update release status with live evidence.
 

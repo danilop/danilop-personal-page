@@ -122,6 +122,7 @@ export const markua: BookExporter = {
           /\]\(#([^)]*)\)/g,
           (_, target) => `](#${n.id}-${target})`,
         );
+        body = body.replace(/\[\^([^\]]+)\]/g, (_, id) => `[^${n.id}-${id}]`);
         // Source stays Markdown; contextual block renditions replace directives only.
         for (const [id, block] of Object.entries(n.piece.blocks)) {
           const expression = new RegExp(
