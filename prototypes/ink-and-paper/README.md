@@ -14,6 +14,10 @@ site configuration and theme registry. See the
 
 ## Preview
 
+Use the root project's pinned Node 24.21.0 and npm 12.0.2. This prototype now uses
+React 19.3.0, Vite 8.3.0 and the React plugin 6.1.1. Its lockfile and version-specific
+install-script approvals are independent of the production Astro application.
+
 From this folder:
 
 ```sh
@@ -76,6 +80,10 @@ not impose a production font or icon-library decision.
 See [design QA](design-qa.md) for source comparison, browser checks, fixes,
 limitations, and screenshots. This is visual/interaction validation of a prototype,
 not a full accessibility audit or production publishing test.
+
+Dependency refresh (2026-09-15): clean install, production build, all four hosting
+tests and dependency audit pass. Browser smoke testing verified homepage rendering
+and opening/closing the sample article; no browser errors or warnings were logged.
 
 ## Production implementation
 

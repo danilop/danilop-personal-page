@@ -1,7 +1,7 @@
 # Dependencies and Amplify hosting
 
-Updated 2026-09-15. Local verification passed; the modernized hosted preview
-is awaiting its build. The production branch continues serving the original site.
+Updated 2026-09-15. Local verification and the modernized hosted preview passed.
+The production branch continues serving the original site.
 
 ## Supported versions
 
@@ -27,6 +27,13 @@ Sources: [Node releases](https://nodejs.org/en/blog/release),
 [Astro TypeScript compatibility](https://github.com/withastro/astro/issues/17268),
 [Open Graph options](https://github.com/jshemas/openGraphScraper).
 Package versions and peers were also read directly from the npm registry.
+
+The isolated design prototype was updated too: React/React DOM 19.3.0, Vite 8.3.0,
+and the React plugin 6.1.1. It shares the runtime/npm requirements but keeps its
+own lockfile and install-script policy. Its four hosting tests, build and browser
+article-dialog smoke check pass, with no browser errors or warnings. Its audit
+also reports zero known vulnerabilities. These prototype dependencies are not
+part of the production Astro bundle.
 
 ## Reproducible installation
 
@@ -58,8 +65,8 @@ The version-1 repository build specification:
 - Publishes `dist/` and caches `.npm`, renderer `cache/`, and `.cache/puppeteer`
   relative to the repository. Puppeteer's cache directory is explicitly exported.
 
-The console fallback build specification is being synchronized to the repository
-recipe. Existing production `main` contains its own `amplify.yml`, so its old-site
+The console fallback build specification was synchronized and read back to verify
+an exact match with the repository recipe. Existing production `main` contains its own `amplify.yml`, so its old-site
 build remains independent until cutover. Production redirects remain staged in
 `infrastructure/amplify-rules.json`; applying them early would affect the old site.
 `customHttp.yml` retains reader/security headers and an uncached build marker,
@@ -87,4 +94,10 @@ work in [credentials and access](credentials-and-access.md) is still pending.
   than the old millisecond value.
 - Type checks pass; production output remains 29 pages, 177 files, 695 checked
   local links, and 307 historical records.
-- Hosted verification will be recorded after the new preview build completes.
+- Amplify preview job 4 passed build/deploy/verify at commit
+  `008fbc27f1ca3de8fb66bc0daced8c40737b65ab`. All 24 hosted tests passed.
+  The public build marker matches; homepage, article, archive, original snapshot,
+  robots, feed and sitemap return 200. A hashed CSS response has
+  `public, max-age=31536000, immutable`; the build marker has `no-store`.
+- Prototype-only dependency changes and final documentation follow that preview
+  commit; they do not change the deployed production build inputs.

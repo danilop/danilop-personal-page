@@ -68,25 +68,26 @@ clipping, asset-loading or responsive mismatch remains in the checked views.
 
 ## Hosted preview
 
-The dependency modernization passes all local checks on Node 24.21.0 and npm
-12.0.2. Its fresh hosted verification is pending; the earlier preview evidence
-below is retained until that build completes. See
+The dependency modernization passes local and hosted checks on Node 24.21.0 and
+npm 12.0.2. See
 [dependencies and hosting](dependencies-and-hosting.md).
 
 The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
-passed Amplify build, deploy and verify stages (job 3) on Amazon Linux 2023.
-Its public build marker matches `1cfcf9d417a82c5a2ea09c91b6ccde4a02815ec9`.
-The pipeline installs pinned Node 22.23.0, passes the checker and all 23 tests,
+passed Amplify build, deploy and verify stages (job 4) on Amazon Linux 2023.
+Its public build marker matches `008fbc27f1ca3de8fb66bc0daced8c40737b65ab`.
+The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 24 tests,
 and generates the static site successfully.
 
 The homepage, approved welcome article, video archive, original snapshot,
 build marker, robots file, feed and sitemap all returned HTTP 200. The preview
 has `noindex`, robots `Disallow: /`, and the expected `nosniff` response header.
-These preview settings are branch-specific. Production still serves the old site.
+Hashed CSS has the configured immutable year-long cache policy; the build marker
+has `no-store`. Preview indexing settings are branch-specific. Production still
+serves the old site. The console fallback recipe matches the repository buildspec.
 
-A subsequent book-export correction namespaces footnotes by placement, preventing
-collisions when assembled articles reuse the same footnote name. All 23 local
-tests and the checker pass with that correction; it is not part of preview job 3.
+The book-export correction namespaces footnotes by placement, preventing
+collisions when assembled articles reuse the same footnote name. This fix is
+included in preview job 4.
 
 ## Not yet verified remotely
 
