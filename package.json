@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "processLinks.js",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "cheerio": "1.0.0-rc.12",
     "fs-extra": "^8.1.0",

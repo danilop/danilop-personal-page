@@ -93,6 +93,8 @@ incomplete site.
 
 Hosting uses the `danilop-personal-page` Amplify app (`d26ru7a9pi36wa`) in
 `eu-west-1`, with `danilop.net` and `www.danilop.net` mapped to `main`.
+The build image is Amazon Linux 2023 (`amplify:al2023`); `amplify.yml` and
+`.nvmrc` select Node.js 22 so hosted and local builds use the same major version.
 Automatic builds must remain enabled for that branch in Amplify. The GitHub
 push webhook triggers Amplify directly; no GitHub Actions deployment workflow
 or AWS credentials in GitHub are required.
