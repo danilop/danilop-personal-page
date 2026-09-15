@@ -192,4 +192,5 @@ async function processFolder(dataFolderName, inputFolderName, outputFolderName, 
   await processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName);
 })().catch(e => {
   console.error(e);
+  process.exitCode = 1;
 });

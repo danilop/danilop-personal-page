@@ -17,3 +17,18 @@ I built it for my personal page: https://danilop.net
 4. Run `npm run build` to create the `public` folder. I use [AWS Amplify Console](https://aws.amazon.com/amplify/console/) to automate deployment.
 
 5. Using the Open Graph protocol, this is getting all the info (title, thumbnail) from the link source, such as Speaker Deck or YouTube.
+
+## Automatic deployment
+
+AWS Amplify Hosting builds and deploys commits pushed to the GitHub `main`
+branch. A local commit must be pushed to GitHub to trigger deployment.
+The build settings are versioned in `amplify.yml`: install dependencies with
+`npm ci`, run `npm run build`, and publish the `public` directory. Link metadata
+is cached between builds. Build errors fail deployment to avoid publishing an
+incomplete site.
+
+Hosting uses the `danilop-personal-page` Amplify app (`d26ru7a9pi36wa`) in
+`eu-west-1`, with `danilop.net` and `www.danilop.net` mapped to `main`.
+Automatic builds must remain enabled for that branch in Amplify. The GitHub
+push webhook triggers Amplify directly; no GitHub Actions deployment workflow
+or AWS credentials in GitHub are required.
