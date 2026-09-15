@@ -3,10 +3,12 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install
+        - nvm install --no-progress --skip-default-packages
         - nvm use
-        - sudo yum install -y atk at-spi2-atk cups-libs gtk3 libXcomposite libXdamage libXrandr libxkbcommon mesa-libgbm nss alsa-lib
-        - npm ci
+        - npm install --global "$(node -p 'require("./package.json").packageManager')"
+        - sudo dnf install -y atk at-spi2-atk cups-libs gtk3 libXcomposite libXdamage libXrandr libxkbcommon mesa-libgbm nss alsa-lib
+        - export PUPPETEER_CACHE_DIR="$PWD/.cache/puppeteer"
+        - npm ci --include=dev --cache .npm --prefer-offline
     build:
       commands:
         - node --import tsx scripts/prepare.ts
@@ -19,6 +21,6 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
+      - .npm/**/*
       - cache/**/*
-      - ~/.cache/puppeteer/**/*
+      - .cache/puppeteer/**/*

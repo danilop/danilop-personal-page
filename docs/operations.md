@@ -4,7 +4,9 @@ Updated: 2026-09-15. Local rebuild implemented; production cutover pending.
 
 ## Build and preview
 
-Use the pinned Node 22.23.0 and `npm ci` (minimum 22.19 for the dependency tree). Run `npm run dev` for the website, or
+Use pinned Node 24.21.0 LTS and npm 12.0.2, then `npm ci`. The project enforces
+Node 24 and npm 12 and version-specific dependency install-script approvals.
+See [dependencies and hosting](dependencies-and-hosting.md) for upgrades. Run `npm run dev` for the website, or
 `npm run build` followed by `npm run preview` to inspect production output.
 `npm run check` checks Astro and TypeScript; `npm test` covers the legacy importer
 and publishing core. Run the build first on a fresh checkout to create the
@@ -136,6 +138,11 @@ not prevent other enrolled copies from being processed.
 
 Amplify app `d26ru7a9pi36wa` in `eu-west-1` automatically builds GitHub `main`.
 `amplify.yml` builds `dist/`; `customHttp.yml` sets response headers.
+The AL2023 build installs the pinned runtime/package manager, installs required
+Chromium libraries with `dnf`, and caches npm downloads, render output and
+project-local Puppeteer browsers. It does not cache `node_modules` or use an
+absolute/home-relative cache path. Hashed `_astro` assets are immutable-cacheable;
+the deployment marker remains uncached.
 The existing domain is `https://www.danilop.net`. The root-domain redirect stays
 in Amplify. Preview branches emit noindex metadata and disallow crawling. Build
 identity comes from the checked-out Git commit, including manually started jobs. At cutover, the old catch-all must target `/404.html`, with explicit

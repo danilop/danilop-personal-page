@@ -38,6 +38,25 @@ test('fresh Open Graph metadata is cached raw and the correction is applied afte
   assert.deepEqual(await fs.readJson(state.cacheFile), raw);
 });
 
+test('current Open Graph scraper output preserves source metadata and editorial overrides', async t => {
+  const state = await fixture(t);
+  const ogs = require('open-graph-scraper');
+  const html = '<html><head><meta property="og:title" content="Source title"><meta property="og:description" content="Source description"><meta property="og:image" content="https://example.com/photo.png"></head></html>';
+  const result = await getLinkData(link, {
+    ...state,
+    overrides: { [link]: { description: 'Edited description' } },
+    scrape: async options => {
+      assert.equal(options.timeout, 20);
+      return ogs({ html });
+    },
+  });
+  assert.equal(result.title, 'Source title');
+  assert.equal(result.description, 'Edited description');
+  assert.equal(result.imageUrl, 'https://example.com/photo.png');
+  assert.equal((await fs.readJson(state.cacheFile)).ogTitle, 'Source title');
+  assert.equal((await fs.readJson(state.cacheFile)).ogDescription, 'Source description');
+});
+
 test('saved YouTube metadata and corrections work with an empty build cache', async t => {
   const state = await fixture(t);
   const imported = require('../data/link-metadata.json');

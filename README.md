@@ -50,9 +50,12 @@ remaining release gates.
 
 ## Develop
 
-Use Node.js 22.19 or later (the project pins Node 22.23.0) and npm:
+Use the pinned Node.js 24.21.0 LTS and npm 12.0.2. With nvm installed:
 
 ```sh
+nvm install --skip-default-packages
+nvm use
+npm install --global npm@12.0.2
 npm ci
 npm run dev
 ```
@@ -113,6 +116,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
+- [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
 

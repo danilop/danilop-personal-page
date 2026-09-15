@@ -135,8 +135,10 @@ The following are recommendations awaiting implementation and configuration:
   in GitHub. An environment changes the subject claim: simply adding
   `environment:` to today's main-ref role would break authentication. Keep this
   separate from the still-pending original short-link access proposal.
-- Pin workflow actions to verified full commit IDs; disable persisted checkout
-  credentials. Review dependency/script execution in any job that receives a key.
+- Review dependency/script execution in any job that receives a key. Action
+  versions are now pinned to verified full commit IDs, checkout does not persist
+  credentials, and npm 12 permits only version-approved install scripts. These
+  controls do not replace the separate protected delivery environment.
 - Reject redirects on DEV authenticated requests and verify the authenticated
   account before a create, rather than checking ownership only after creation.
 - Keep provider keys on the delivery step only. Do not include them in builds,

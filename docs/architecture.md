@@ -11,7 +11,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | --- | --- | --- |
 | Website | Astro, static output | Content-oriented rendering with optional interactive islands |
 | Implementation | TypeScript in strict mode | Explicit schemas and plugin contracts |
-| Runtime/package manager | Node.js 22, at least 22.19; npm | Align with current hosting and Astro requirements |
+| Runtime/package manager | Node.js 24.21.0 LTS; npm 12.0.2 | Pinned across local, Amplify and GitHub builds |
 | Authoring | Markdown + YAML metadata/manifests | Portable prose and inspectable structure |
 | Parsing | unified / remark / rehype, with remark-directive | Parse semantic blocks before HTML generation |
 | Validation | Zod schemas; exportable JSON Schema where practical | Build validation plus future editor assistance |
@@ -37,8 +37,10 @@ Resolved versions are installed and recorded in package-lock.json. See
 [implementation status](implementation-plan.md) and [operations](operations.md)
 for actual module locations, commands and account-dependent limits.
 
-The resolved dependency tree requires Node 22.19 or later. The rebuild pins
-Node 22.23.0 and uses Astro 7.3.2.
+The rebuild pins Node 24.21.0 LTS and npm 12.0.2 and uses Astro 7.3.2.
+TypeScript remains at 6.0.3 because Astro's checker does not support TypeScript 7's
+compiler API. See [dependencies and hosting](dependencies-and-hosting.md) for
+version exceptions, install-script policy, and hosted verification.
 [Astro setup](https://docs.astro.build/en/install-and-setup/),
 [content collections](https://docs.astro.build/en/guides/content-collections/).
 

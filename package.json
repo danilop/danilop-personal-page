@@ -1,11 +1,13 @@
 {
   "name": "danilop-personal-page",
   "version": "1.0.0",
-  "description": "Notes Along the Way \u2014 articles, collections, books, and interactive explanations",
+  "description": "Notes Along the Way — articles, collections, books, and interactive explanations",
   "main": "processLinks.js",
   "engines": {
-    "node": ">=22.19"
+    "node": ">=24.21.0 <25",
+    "npm": ">=12.0.2 <13"
   },
+  "packageManager": "npm@12.0.2",
   "dependencies": {
     "@astrojs/check": "^0.9.10",
     "@aws-sdk/client-amplify": "^3.1133.0",
@@ -22,15 +24,15 @@
     "@mlc-ai/web-llm": "^0.2.85",
     "@terrastruct/d2": "^0.1.33",
     "@types/katex": "^0.16.8",
-    "@types/node": "^22.20.3",
+    "@types/node": "^24.13.5",
     "@types/unist": "^3.0.3",
     "astro": "^7.3.2",
-    "cheerio": "1.0.0-rc.12",
+    "cheerio": "^1.2.0",
     "csv-parse": "^7.0.2",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^11.4.0",
     "gray-matter": "^4.0.3",
     "katex": "^0.18.7",
-    "open-graph-scraper": "^4.6.0",
+    "open-graph-scraper": "^6.12.0",
     "rehype-katex": "^7.0.1",
     "rehype-parse": "^9.0.1",
     "rehype-remark": "^10.0.1",
@@ -72,5 +74,10 @@
     "@types/mdast": "^4.0.4",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^1.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true,
+    "puppeteer@25.11.0": true
   }
 }

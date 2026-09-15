@@ -4,7 +4,7 @@ Date: 2026-09-15. Scope: local rebuild and hosted preview; production release pe
 
 ## Automated checks
 
-- 23 tests: seven legacy metadata/discovery tests and 16 publishing tests.
+- 24 tests: eight legacy metadata/discovery tests and 16 publishing tests.
 - Astro/TypeScript: zero errors, warnings or hints in the checker.
 - Production build: 29 generated pages, 177 output files, 695 checked local links.
 - Historical parity: 307 records, comprising 201 posts, 92 decks and 14 videos.
@@ -67,6 +67,11 @@ an identical reproduction of the concept's illustrative content. No material
 clipping, asset-loading or responsive mismatch remains in the checked views.
 
 ## Hosted preview
+
+The dependency modernization passes all local checks on Node 24.21.0 and npm
+12.0.2. Its fresh hosted verification is pending; the earlier preview evidence
+below is retained until that build completes. See
+[dependencies and hosting](dependencies-and-hosting.md).
 
 The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
 passed Amplify build, deploy and verify stages (job 3) on Amazon Linux 2023.
