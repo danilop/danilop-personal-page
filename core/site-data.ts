@@ -55,6 +55,7 @@ export type CompiledSite = {
   };
   about: string;
   revision: string;
+  isPreview: boolean;
   buildTime: string;
   shortlinks: Record<string, string>;
 };

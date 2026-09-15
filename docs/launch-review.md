@@ -86,14 +86,14 @@ exercise actual static renderers, JS/WASM parity, reusable collection assembly,
 private-content filtering, frozen editions and cross-posting behavior. Browser
 checks have exercised real local model download/generation/reset/unload/cache
 removal and both simulations. The integrity-enabled runtime also passed real browser checks. Final local
-evidence, including 22 tests, is recorded in [verification](verification.md).
+evidence, including 23 tests, is recorded in [verification](verification.md).
 
 The initial site has one approved article, 307 historical records, and no public
 collections or Elsewhere items. Sparse sections are hidden. No test manuscript
 or model example is published as filler.
 
 Specific short-link AWS/GitHub access approval remains pending after an automatic
-approval rejection; no cloud mutation occurred. Production still serves the old
+approval rejection; no short-link or access mutation occurred. Production still serves the old
 site. Hosted preview, cutover, exact live revision/alias verification remain
 release gates. DEV/Leanpub adapters are locally tested but unconnected to live
 publishing accounts; public Google/iCloud permissions await real URLs.

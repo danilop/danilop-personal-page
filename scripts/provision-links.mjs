@@ -30,9 +30,7 @@ const store =
     "Durable aliases for Notes Along the Way",
   ]).KeyValueStore;
 const kvsArn = store.ARN;
-const code = `import cf from 'cloudfront';\nconst store = cf.kvs();\nasync function handler(event) {\n const request = event.request;\n if (request.method !== 'GET' && request.method !== 'HEAD') return {statusCode:404,headers:{'content-type':{value:'text/plain; charset=utf-8'}},body:'Short link not found.'};\n if (request.uri === '/') return {statusCode:302,headers:{location:{value:'https://www.danilop.net/'},'cache-control':{value:'public, max-age=60'}}};\n const key = request.uri.replace(/^\\//, '').replace(/\\/$/, '');\n if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(key)) return {statusCode:404,headers:{'content-type':{value:'text/plain; charset=utf-8'}},body:'Short link not found.'};\n try { const target = await store.get(key);\n if (!target.startsWith('https://www.danilop.net/')) return {statusCode:404,headers:{'content-type':{value:'text/plain; charset=utf-8'}},body:'Short link not found.'};\n return {statusCode:302,headers:{location:{value:target},'cache-control':{value:'public, max-age=60'}}};\n } catch (_) { return {statusCode:404,headers:{'content-type':{value:'text/plain; charset=utf-8'}},body:'Short link not found.'}; }\n}\n`;
-await fs.mkdir("infrastructure", { recursive: true });
-await fs.writeFile("infrastructure/shortlinks.js", code);
+await fs.access("infrastructure/shortlinks.js");
 const config = {
   Comment: "Notes Along the Way durable short links",
   Runtime: "cloudfront-js-2.0",

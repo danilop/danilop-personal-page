@@ -4,7 +4,7 @@ Date: 2026-09-15. Scope: local rebuild; hosted release pending.
 
 ## Automated checks
 
-- 22 tests: seven legacy metadata/discovery tests and 15 publishing tests.
+- 23 tests: seven legacy metadata/discovery tests and 16 publishing tests.
 - Astro/TypeScript: zero errors, warnings or hints in the checker.
 - Production build: 29 generated pages, 177 output files, 695 checked local links.
 - Historical parity: 307 records, comprising 201 posts, 92 decks and 14 videos.

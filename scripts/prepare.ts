@@ -76,9 +76,8 @@ async function main() {
     about: await renderProse(
       matter(await fs.readFile("content/about.md", "utf8")).content,
     ),
-    revision:
-      process.env.AWS_COMMIT_ID ??
-      execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    revision: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    isPreview: Boolean(process.env.AWS_BRANCH && process.env.AWS_BRANCH !== "main"),
     buildTime: new Date().toISOString(),
     shortlinks: compileLinks(
       await readYaml("publishing/links.yaml"),

@@ -21,14 +21,14 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | Leanpub | Preview/status/publication adapter for an existing book | API contract tests; live account/source/preview not configured |
 | DEV / Medium | API and assisted adapters, durable state, mapping/review/recovery commands | Local contract tests; no real account delivery authorized/enrolled |
 | `danilop.link` | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback | Compiler tests; specific infrastructure access approval pending |
-| Main deployment | Existing Amplify integration; build/check/test configuration updated | Hosted rebuild and exact live revision verification pending |
+| Main deployment | Existing Amplify integration; build/check/test configuration updated | Hosted preview build in progress; production cutover pending |
 
 ## Remaining release work
 
 1. Local regression/browser checks are recorded in [verification](verification.md).
    Repeat affected checks only when further release changes require them.
 2. Resolve the pending [specific access approval](deployment-access-review.md).
-   Automatic approval review blocked the initial setup; no cloud mutation occurred.
+   Automatic approval review blocked the initial setup; no short-link or access mutation occurred.
 3. Apply approved setup, test resolver behavior and alias ownership/recovery.
 4. Commit the tested release, validate a preview, and push the release to `main`.
 5. Verify the exact deployed revision, homepage, article, old routes, 404, feeds,

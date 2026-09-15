@@ -132,7 +132,8 @@ not prevent other enrolled copies from being processed.
 Amplify app `d26ru7a9pi36wa` in `eu-west-1` automatically builds GitHub `main`.
 `amplify.yml` builds `dist/`; `customHttp.yml` sets response headers.
 The existing domain is `https://www.danilop.net`. The root-domain redirect stays
-in Amplify. At cutover, the old catch-all must target `/404.html`, with explicit
+in Amplify. Preview branches emit noindex metadata and disallow crawling. Build
+identity comes from the checked-out Git commit, including manually started jobs. At cutover, the old catch-all must target `/404.html`, with explicit
 redirects for `/posts.html`, `/decks.html`, `/videos.html`, and `/about.html`.
 
 Short-link setup is **pending specific access approval**. The exact proposal is

@@ -566,3 +566,14 @@ test("fixed edition aliases resolve separately from living collections and draft
     {},
   );
 });
+
+test('short-link resolver redirects only managed site targets and never falls through to S3',async()=>{
+ const {runInNewContext}=await import('node:vm');
+ const source=(await fs.readFile('infrastructure/shortlinks.js','utf8')).replace("import cf from 'cloudfront';",'');
+ const handler=runInNewContext(source+'\nhandler;',{cf:{kvs:()=>({async get(key:string){if(key==='hello')return 'https://www.danilop.net/writing/hello-brave-new-world/';if(key==='bad')return 'https://example.com/';throw Error('missing');}})}});
+ const call=(uri:string,method='GET')=>handler({request:{uri,method,querystring:{next:{value:'https://example.com/'}}}});
+ assert.equal((await call('/hello/')).headers.location.value,'https://www.danilop.net/writing/hello-brave-new-world/');
+ assert.equal((await call('/hello','HEAD')).statusCode,302);
+ for(const uri of ['/missing','/bad','/publication/distribution/ledger.json','/../hello'])assert.equal((await call(uri)).statusCode,404);
+ assert.equal((await call('/hello','POST')).statusCode,404);
+});

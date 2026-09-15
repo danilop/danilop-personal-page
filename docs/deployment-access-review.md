@@ -2,7 +2,8 @@
 
 The website deployment through existing Amplify access is already authorized.
 Automatic review additionally requires explicit approval for these new persistent
-access changes. The implementation is in `scripts/provision-links.mjs`.
+access changes. The setup is in `scripts/provision-links.mjs`; the resolver source is
+`infrastructure/shortlinks.js` and has local request/redirect tests.
 
 ## Exact resources and access
 

@@ -42,6 +42,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title===config.name?`${config.name} — ${config.title}`:`${title} — ${config.name}`}</title>
     <meta name="description" content={description} />
+    {site.isPreview && <meta name="robots" content="noindex,nofollow" />}
     <link rel="canonical" href={url} />
     <link rel="icon" href="/favicon.ico" />
     <link
