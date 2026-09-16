@@ -1,4 +1,4 @@
-name: Verify deployment and publish short links
+name: Verify live deployment and publish
 on:
   push:
     branches: [main]
@@ -18,10 +18,28 @@ jobs:
         with:
           persist-credentials: false
       - id: mode
-        run: node -e 'const c=require("./publishing/deployment.json");require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT,`enabled=${c.indexable}\n`)'
+        run: node -e 'const c=require("./publishing/deployment.json");require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT,"enabled="+c.indexable+"\n")'
+  verify-deployment:
+    outputs:
+      verified: ${{ steps.verify.outputs.verified }}
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.nvmrc'
+      - name: Wait for the exact deployed revision and check public routes
+        id: verify
+        run: node scripts/verify-deployment.mjs --wait
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
   publish-links:
-    needs: publication-mode
-    if: needs.publication-mode.outputs.enabled == 'true' && github.ref == 'refs/heads/main' && vars.PUBLICATION_ROLE_ARN != ''
+    needs: [publication-mode, verify-deployment]
+    if: needs.publication-mode.outputs.enabled == 'true' && needs.verify-deployment.outputs.verified == 'true' && github.ref == 'refs/heads/main' && vars.PUBLICATION_ROLE_ARN != ''
     permissions:
       contents: read
       id-token: write

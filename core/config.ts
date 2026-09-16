@@ -1,3 +1,4 @@
+import { deployment } from "./deployment.mjs";
 import { z } from "zod";
 import { readYaml } from "./model";
 const color = z.string().regex(/^#[0-9a-fA-F]{6}$/);
@@ -12,7 +13,6 @@ const asset = z
 export const siteSchema = z
   .object({
     schemaVersion: z.literal(1),
-    url: z.url(),
     relaunchDate: z.iso.date(),
     name: z.string(),
     title: z.string(),
@@ -54,9 +54,12 @@ export const siteSchema = z
     overrideCss: z.string().optional(),
   })
   .strict();
-export type SiteConfig = z.infer<typeof siteSchema>;
+export type SiteConfig = z.infer<typeof siteSchema> & { url: string };
 export async function siteConfig() {
-  return siteSchema.parse(await readYaml("publishing/site.yaml"));
+  return {
+    ...siteSchema.parse(await readYaml("publishing/site.yaml")),
+    url: deployment.origin,
+  };
 }
 export const homeSchema = z
   .object({

@@ -1,105 +1,87 @@
-# Dependencies and Amplify hosting
+# Dependencies and deployment
 
-Updated 2026-09-15. Local verification and the modernized hosted preview passed.
-The production build preserves the original root site and adds the rebuild at `/new/`.
+Reviewed 2026-09-16. The original site remains at `/`; the rebuild uses `/new/`.
 
-## Supported versions
+## Supported stack
 
-| Component | Selected version | Reason |
+| Component | Version | Update policy |
 | --- | --- | --- |
-| Node.js | 24.21.0 | Current Node 24 LTS; pinned in `.nvmrc` |
-| npm | 12.0.2 | Current stable; pinned in `packageManager` |
-| Astro | 7.3.2 | Current stable, already in use |
-| TypeScript | 6.0.3 | Latest compatible version; Astro's checker requires the 6.x compiler API |
-| Node types | 24.13.5 | Match the chosen Node 24 runtime rather than a different major's registry tag |
-| Cheerio | 1.2.0 | Replace the old release candidate |
-| fs-extra | 11.4.0 | Replace 8.1.0 |
-| open-graph-scraper | 6.12.0 | Replace 4.6.0; preserve source cache and editorial overrides |
+| Node.js | 24.21.0 LTS | Pin `.nvmrc`; stay on the supported LTS major |
+| npm | 12.0.2 | Pin `packageManager`; enforce engines |
+| Astro | 7.3.2 | Current stable; validate renderer and route compatibility |
+| TypeScript | 6.0.3 | Astro checker supports 5.x/6.x, not 7.x |
+| Node types | 24.13.5 | Match the runtime major; do not follow an unrelated latest tag |
+| Prettier | 3.9.7 | Compatible patch applied in this review |
 
-All other direct dependencies were checked against current registry releases;
-compatible transitive updates are recorded in `package-lock.json`. TypeScript 7
-is not forced past Astro's peer requirements. Two upstream deprecated transitive
-packages remain: `whatwg-encoding` through Cheerio's encoding-sniffer, and
-`node-domexception` through CitationJS's fetch stack. Their current parent
-packages still require them; no incompatible overrides were introduced.
+Registry review found no other compatible direct upgrades. The dependency audit
+reports zero known vulnerabilities. This is an advisory database result, not a
+full security assessment. Keep the committed lockfile; never upgrade during a
+production build. The separate design prototype is not part of the deployed bundle.
 
-Sources: [Node releases](https://nodejs.org/en/blog/release),
-[Astro TypeScript compatibility](https://github.com/withastro/astro/issues/17268),
-[Open Graph options](https://github.com/jshemas/openGraphScraper).
-Package versions and peers were also read directly from the npm registry.
+All action pins match their current official releases: checkout 7.0.1, setup-node
+7.0.0, upload-artifact 7.0.1, and configure-aws-credentials 6.3.0. Pins use immutable
+commit IDs. TypeScript's newer major and Node's newer majors are not automatic
+upgrade targets.
 
-The isolated design prototype was updated too: React/React DOM 19.3.0, Vite 8.3.0,
-and the React plugin 6.1.1. It shares the runtime/npm requirements but keeps its
-own lockfile and install-script policy. Its four hosting tests, build and browser
-article-dialog smoke check pass, with no browser errors or warnings. Its audit
-also reports zero known vulnerabilities. These prototype dependencies are not
-part of the production Astro bundle.
+## One validation command
 
-## Reproducible installation
+```sh
+npm ci
+npm run validate
+```
 
-`.npmrc` enforces the supported engines and strict install-script policy.
-`package.json` permits only the reviewed installed versions of esbuild, fsevents
-and Puppeteer to run dependency lifecycle scripts. Changing one of those versions
-requires reviewing its installer and updating its explicit approval. Do not use
-a blanket allow-all flag to bypass an install failure.
+Validation runs tests, prepares clean content, checks types, builds, packages both
+sites, and verifies the artifact. Tests run first so their generated media is
+cleared before production preparation. Preparation runs once. `npm run build`
+remains available for a build without the full test/check sequence.
 
-Use `npm ci` for builds. Updating dependencies uses `npm update` or explicit
-package upgrades, followed by a clean install, type checks, tests and build.
-`npm outdated` can still list TypeScript and the Node type tag; the table above
-records why the selected versions differ. Native model binaries and weights keep
-their separately verified immutable versions and integrity manifest.
-[npm install policy](https://docs.npmjs.com/cli/install/).
+`.npmrc` enforces engines and explicit lifecycle-script approvals. Review installer
+changes when upgrading esbuild, fsevents, or Puppeteer; do not bypass the allowlist.
+Mermaid rendering requires Chromium and its system libraries. Amplify installs
+AL2023 libraries; GitHub validation installs Chromium's Ubuntu dependencies.
 
-## Amplify
+## GitHub → Amplify → live verification
 
-The existing app already uses `amplify:al2023` and static `WEB` hosting. No SSR
-adapter or Amplify backend dependency is needed for this static website.
+1. Pull requests run **Validate website** with a read-only token and no publishing
+   credentials. The same job can be dispatched manually.
+2. Pushing to `main` triggers Amplify's connected GitHub build automatically.
+   The checked-in `amplify.yml` is authoritative; the console copy is a fallback.
+3. Amplify runs `npm run validate` and deploys `dist/`. It caches npm downloads,
+   render output, and Chromium, not `node_modules`.
+4. **Verify live deployment and publish** independently waits for the exact
+   revision at the uncached build marker, even when publication is disabled.
+   It checks pages, resources/cache headers, RSS, true 404 responses, and original
+   page preservation. A newer main revision supersedes an older check explicitly;
+   superseded checks cannot authorize publication.
+5. Only a verified, indexable main revision can reach the optional publication
+   job. Short-link access and protected DEV delivery remain separate setup tasks.
 
-The version-1 repository build specification:
+`publishing/deployment.json` is the single source for HTTPS origin, base path,
+indexing, and original-root preservation. `customHttp.yml` sets the corresponding
+headers; review its path patterns when changing the base. Native Amplify 404
+handling is retained because explicit `404` rules redirected with HTTP 302.
 
-- Installs `.nvmrc` without the image's unrelated default global packages.
-- Installs the npm version declared by `packageManager`.
-- Uses AL2023 `dnf` for Chromium's shared-library dependencies.
-- Installs the locked dependency tree including development tools.
-- Checks types, runs tests, builds and verifies public output before deployment.
-- Publishes `dist/` and caches `.npm`, renderer `cache/`, and `.cache/puppeteer`
-  relative to the repository. Puppeteer's cache directory is explicitly exported.
+Repository workflow defaults are read-only, with pull-request approval disabled.
+Each workflow declares its own permissions. `main` currently permits direct pushes:
+PR validation is available but is not a required merge gate. Branch protection
+and automated dependency-update PRs are optional follow-up decisions.
 
-The console fallback build specification was synchronized and read back to verify
-an exact match with the repository recipe. The combined `main` build packages
-the preserved root site and `/new/` together. Use
-`infrastructure/amplify-coexistence-rules.json` for this stage;
-`infrastructure/amplify-rules.json` remains reserved for final root cutover.
-`customHttp.yml` retains reader/security headers and an uncached build marker,
-and makes hashed `_astro` assets cacheable for a year with `immutable`.
+## Evidence and operation
 
-Sources: [AWS build settings](https://docs.aws.amazon.com/amplify/latest/userguide/edit-build-settings.html),
-[cache path rules](https://docs.aws.amazon.com/amplify/latest/userguide/yml-specification-syntax.html).
+The pre-change main revision `686b116` matched successful Amplify job 5 and the
+live `/new/build.json`; its build took about 2 minutes 24 seconds. The earlier
+GitHub workflow only checked publication mode and skipped delivery, so its green
+status did not prove deployment. The independent verifier closes that gap.
+Local validation passes 40 tests and checks 178 new-site files and 733 links.
+See [verification](verification.md) for hosted results and
+[publishing workflow](publishing-workflow.md) for author steps.
 
-## GitHub Actions
+```sh
+npm run verify:deployment           # verify the current commit is live
+npm run verify:deployment -- --wait # wait up to 20 minutes, then check routes
+```
 
-Official action releases are pinned by immutable commit ID: checkout 7.0.1,
-setup-node 7.0.0, configure-aws-credentials 6.3.0 and upload-artifact 7.0.1.
-A read-only configuration job skips publication when deployment indexing is disabled.
-Checkout does not persist credentials. Both push and manual publication require
-`refs/heads/main`; OIDC permission is scoped to the publication job. Preview
-artifacts expire after seven days. These changes do not provision cloud access or
-connect external publishing credentials. The separate DEV environment and role
-work in [credentials and access](credentials-and-access.md) is still pending.
-
-## Verification
-
-- Fresh npm 12 installation on Node 24 succeeds; dependency audit reports zero
-  known vulnerabilities and `npm ls --all` has no invalid dependencies.
-- 24 tests pass (8 metadata/discovery, 16 publishing), including real parsing
-  through the upgraded Open Graph library. Its timeout is now 20 seconds rather
-  than the old millisecond value.
-- Type checks pass; production output remains 29 pages, 177 files, 695 checked
-  local links, and 307 historical records.
-- Amplify preview job 4 passed build/deploy/verify at commit
-  `008fbc27f1ca3de8fb66bc0daced8c40737b65ab`. All 24 hosted tests passed.
-  The public build marker matches; homepage, article, archive, original snapshot,
-  robots, feed and sitemap return 200. A hashed CSS response has
-  `public, max-age=31536000, immutable`; the build marker has `no-store`.
-- Prototype-only dependency changes and final documentation follow that preview
-  commit; they do not change the deployed production build inputs.
+Sources checked during this review: [Node releases](https://nodejs.org/en/blog/release),
+[npm registry](https://www.npmjs.com/package/@astrojs/check),
+[Amplify build settings](https://docs.aws.amazon.com/amplify/latest/userguide/build-settings.html),
+[GitHub workflow permissions](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions).

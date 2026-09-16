@@ -11,10 +11,7 @@ frontend:
         - npm ci --include=dev --cache .npm --prefer-offline
     build:
       commands:
-        - node --import tsx scripts/prepare.ts
-        - npm run check
-        - npm test
-        - npm run build
+        - npm run validate
   artifacts:
     baseDirectory: dist
     files:

@@ -38,7 +38,7 @@ with local icons and visible platform names configured in `publishing/site.yaml`
 
 The rebuild is verified locally and on the
 [live preview](https://www.danilop.net/new/),
-with 37 passing tests. The verified live deployment preserves the original site at
+with 40 passing tests. The verified live deployment preserves the original site at
 `/` and serves the rebuild under `/new/`. Root cutover remains pending.
 
 Short-link setup awaits [access approval](docs/deployment-access-review.md).
@@ -68,9 +68,7 @@ npm run dev
 For a production build and preview:
 
 ```sh
-npm run build
-npm run check
-npm test
+npm run validate
 npm run preview
 ```
 
@@ -128,9 +126,11 @@ guides must change alongside the implementation; see [AGENTS.md](AGENTS.md).
 
 ## Deployment
 
-AWS Amplify builds and deploys pushes to GitHub `main`. `amplify.yml` defines
+Pull requests run the same validation command as Amplify. AWS Amplify builds
+and deploys pushes to GitHub `main`; an independent GitHub job verifies the exact
+live revision, routes, assets, RSS, and preservation of the original pages. `amplify.yml` defines
 the build; `customHttp.yml` defines response headers. After integration setup,
-the publication workflow waits for that exact deployed revision before activating
+the publication workflow requires that verification before activating
 short links or updating enrolled remote copies. Local commits must be pushed to
 trigger deployment. The `/new/` preview keeps the original root site intact.
 

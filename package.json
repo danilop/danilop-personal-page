@@ -1,7 +1,7 @@
 {
   "name": "danilop-personal-page",
   "version": "1.0.0",
-  "description": "Notes Along the Way \u2014 articles, collections, books, and interactive explanations",
+  "description": "Notes Along the Way — articles, collections, books, and interactive explanations",
   "main": "processLinks.js",
   "engines": {
     "node": ">=24.21.0 <25",
@@ -57,7 +57,7 @@
   },
   "scripts": {
     "dev": "node --import tsx scripts/prepare.ts && astro dev --host 127.0.0.1",
-    "build": "node --import tsx scripts/prepare.ts && astro build && node --import tsx scripts/package-site.ts && node --import tsx scripts/verify-build.ts",
+    "build": "npm run prepare:site && npm run build:prepared",
     "preview": "node scripts/preview-site.mjs",
     "check": "astro check && tsc --noEmit -p tsconfig.core.json",
     "build:legacy": "node processLinks.js data static src public cache",
@@ -66,13 +66,17 @@
     "book": "node --import tsx scripts/book.ts",
     "distribute": "node --import tsx scripts/distribute.ts",
     "publish:links": "node --import tsx scripts/publish-links.ts",
-    "leanpub": "node --import tsx scripts/leanpub.ts"
+    "leanpub": "node --import tsx scripts/leanpub.ts",
+    "prepare:site": "node --import tsx scripts/prepare.ts",
+    "build:prepared": "astro build && node --import tsx scripts/package-site.ts && node --import tsx scripts/verify-build.ts",
+    "validate": "npm test && npm run prepare:site && npm run check && npm run build:prepared",
+    "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@types/mdast": "^4.0.4",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.7",
     "prettier-plugin-astro": "^1.0.0"
   },
   "allowScripts": {

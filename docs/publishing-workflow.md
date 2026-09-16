@@ -45,9 +45,7 @@ drafts. For local review, temporarily set the article and relevant collection to
 not ready. Do not push before approval. Future dates do not schedule publication.
 
 ```sh
-npm run build
-npm run check
-npm test
+npm run validate
 npm run preview
 ```
 
@@ -77,8 +75,9 @@ After editorial and visual approval:
 3. Rebuild and review any changes made since the preview.
 4. Review the Git diff; commit the article, source assets, relevant configuration,
    and affected documentation. Push and merge the reviewed change into `main`.
-5. Wait for Amplify to finish. Check that production `/new/build.json` reports the
-   deployed commit, then open the article, media, navigation, and RSS on the site.
+5. Wait for Amplify and GitHub’s live-deployment verification to pass. Use
+   `npm run verify:deployment -- --wait` for the same check locally, then review
+   the published article and its media in the browser.
 
 A push to `main` triggers Amplify; a local commit does not. The `/new/` section and original root ship together. The separate Amplify branch
 preview requires a manual release.

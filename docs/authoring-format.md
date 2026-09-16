@@ -34,7 +34,7 @@ content/
     reliable-agents-first.yaml
 publishing/
   site.yaml                   # brand and theme configuration
-  deployment.json             # base path, indexing, original-root preservation
+  deployment.json             # origin, base path, indexing, original-root preservation
   renderers.yaml
   links.yaml
   destinations.yaml           # cross-posting adapters/account references
@@ -455,9 +455,10 @@ map contains `{term, definition}` entries. `:index{term="Term"}` marks an index
 entry. A book generates bibliography, glossary and index sections when used.
 Plain heading links such as `[Details](#details)` are namespaced per placement.
 
-`publishing/site.yaml` requires identity, URL, relaunchDate, theme/layout, tokens
+`publishing/site.yaml` requires identity, relaunchDate, theme/layout, tokens
 and portrait/biography assets; individual token values have defaults. Supported
-fonts are Newsreader/Georgia and Inter/system-ui. `publishing/home.yaml` contains
+fonts are Newsreader/Georgia and Inter/system-ui. The HTTPS origin and deployment
+base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.yaml` contains
 optional lead, recentCount, elsewhereCount, and selected collection IDs.
 
 ## About-page social profiles

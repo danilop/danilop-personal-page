@@ -560,7 +560,7 @@ The build injects an Original Site return banner into generated copies only.
 
 ## Deployment base and coexistence
 
-`publishing/deployment.json` owns the deployment base, indexing policy, and
+`publishing/deployment.json` owns the HTTPS origin, deployment base, indexing policy, and
 original-site preservation flag. Content and assembly keep logical root-relative
 paths. Astro middleware applies the base to rendered HTML; shared URL helpers
 apply it to metadata, feeds, short links, and cross-post media. Astro/Vite use the

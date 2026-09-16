@@ -37,11 +37,19 @@ test("deployment paths preserve external URLs and are idempotent under nested ba
 
 test("deployment configuration rejects unsafe and conflicting paths", () => {
   const config = {
+    origin: "https://example.com",
     basePath: "/new/",
     indexable: false,
     preserveOriginal: true,
   };
   assert.deepEqual(deploymentSettings(config), config);
+  for (const origin of [
+    "http://example.com",
+    "https://example.com/path",
+    "https://user:pass@example.com",
+    "https://example.com?x",
+  ])
+    assert.throws(() => deploymentSettings({ ...config, origin }));
   for (const basePath of ["new", "/new", "//", "/../", "/new?x/", "/a_b/"])
     assert.throws(() => deploymentSettings({ ...config, basePath }));
   assert.throws(() => deploymentSettings({ ...config, basePath: "/" }));

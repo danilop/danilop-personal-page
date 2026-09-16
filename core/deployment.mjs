@@ -1,6 +1,11 @@
 import fs from "node:fs";
 
 export function deploymentSettings(input, override = undefined) {
+  const origin = new URL(input.origin);
+  if (origin.protocol !== "https:" || origin.origin !== input.origin)
+    throw Error(
+      "Deployment origin must be an HTTPS origin without a path or credentials",
+    );
   const basePath = override ?? input.basePath;
   if (typeof basePath !== "string" || !/^\/(?:[a-z0-9-]+\/)*$/.test(basePath))
     throw Error(
@@ -17,7 +22,12 @@ export function deploymentSettings(input, override = undefined) {
   const preserveOriginal = override === "/" ? false : input.preserveOriginal;
   if (preserveOriginal && basePath === "/")
     throw Error("Preserving the original site requires a non-root basePath");
-  return { basePath, indexable: input.indexable, preserveOriginal };
+  return {
+    origin: origin.origin,
+    basePath,
+    indexable: input.indexable,
+    preserveOriginal,
+  };
 }
 
 export const deployment = deploymentSettings(

@@ -182,3 +182,17 @@ Hosting correction: explicit Amplify `404` rules returned 302 redirects to a
 no redirect. The local preview serves the custom error design; Amplify currently
 returns an empty native 404 body. Both routing files omit the misleading catch-all.
 No credentials, short-link infrastructure, or remote article copies were changed.
+
+## GitHub and Amplify process audit — 2026-09-16
+
+Confirmed before changes: GitHub main, Amplify job 5, and the live marker all
+matched `686b116`; auto-build is enabled and the checked-in build recipe overrides
+the console fallback. Root pages, mounted routes, feed, headers, and native 404s pass.
+
+The updated process adds read-only PR validation and an independent live check
+that runs while publication is disabled. Tests cover stale/invalid/cached markers,
+transient failures, superseded commits, and deployment origin/path validation.
+Local release validation passes all 40 tests and 178-file / 733-link checks.
+Prettier is updated to 3.9.7; registry audit reports zero known vulnerabilities.
+Repository workflow defaults were reduced to read-only, with PR approval disabled.
+Hosted job results are checked after deploying this change.

@@ -12,8 +12,8 @@ Use pinned Node 24.21.0 LTS and npm 12.0.2, then `npm ci`. The project enforces
 Node 24 and npm 12 and version-specific dependency install-script approvals.
 See [dependencies and hosting](dependencies-and-hosting.md) for upgrades. Run `npm run dev` for the website, or
 `npm run build` followed by `npm run preview` to inspect production output.
-`npm run check` checks Astro and TypeScript; `npm test` covers the legacy importer
-and publishing core. Run the build first on a fresh checkout to create the
+`npm run validate` is the shared local/CI release gate: tests, clean content
+preparation, type checks, build, and artifact verification. Run the build first on a fresh checkout to create the
 content-loader inputs. Mermaid CLI needs its installed Chromium and Linux system
 libraries; Amplify installs these in `amplify.yml`.
 
@@ -29,11 +29,14 @@ verifier rejects QA routes and private fixture sentinels.
 
 ## Deployment location
 
-`publishing/deployment.json` currently sets `basePath: "/new/"`, `indexable: false`,
+`publishing/deployment.json` currently sets `origin: "https://www.danilop.net"`,
+`basePath: "/new/"`, `indexable: false`,
 and `preserveOriginal: true`. `npm run build` produces a combined `dist/`;
 `npm run preview` serves both sites locally. `npm run dev` serves the rebuilt
 section only. Paths below are relative to the rebuilt site's configured base.
-The current deployment marker is `/new/build.json`.
+The current deployment marker is `/new/build.json`. `npm run verify:deployment`
+checks that the current commit is live; add `-- --wait` to wait for deployment.
+The same check runs in GitHub independently of short-link or external delivery.
 
 For an isolated root-build check, use `NOTES_BASE_PATH=/ npm run build`; this
 also disables original-root preservation for that build. Do not deploy this
