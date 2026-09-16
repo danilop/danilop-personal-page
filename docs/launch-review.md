@@ -1,7 +1,7 @@
 # Launch requirements review
 
-Status: review in progress; implementation and deployment authorized by Danilo,
-with scope and editorial decisions confirmed below. Date: 2026-09-15.
+Status: root deployment authorized on 2026-09-16; 42 local tests and release
+artifact checks pass. Third-party creation and updates are manual only.
 
 This is a delivery checklist, not a replacement for the product or technical
 specifications. Keep it updated with implementation and verification evidence.
@@ -26,9 +26,9 @@ specifications. Keep it updated with implementation and verification evidence.
 - Automatic deployment from GitHub main through the existing Amplify application.
 - Durable short links for new public work, with collision checks and exact
   deployment verification before activation.
-- Selected cross-posting with per-destination plugins; automatic DEV delivery is
-  feasible, while Medium needs assisted import/update. Do not publish remotely
-  merely because a destination plugin exists.
+- Selected cross-posting with per-destination plugins. DEV uses an explicitly
+  invoked API command; Medium uses assisted import/update. No commit, push,
+  assignment, or tag may trigger third-party publication.
 - Keep README, product design, content model, authoring instructions, architecture
   and operations synchronized with the implementation.
 - Hello, Brave New World is approved, including the Earlier Work / The Original
@@ -93,12 +93,11 @@ The initial site has one approved article, 307 historical records, and no public
 collections or Elsewhere items. Sparse sections are hidden. No test manuscript
 or model example is published as filler.
 
-Specific short-link AWS/GitHub access approval remains pending after an automatic
-approval rejection; no short-link or access mutation occurred. Production still serves the old
-site. Hosted preview job 7 passed at `dc433ac`, including all 34 tests and public
-route checks; see [verification](verification.md). Production cutover and exact
-live revision/alias verification remain release gates. DEV/Leanpub adapters are locally tested but unconnected to live
-publishing accounts; public Google/iCloud permissions await real URLs.
+Specific short-link AWS/GitHub access approval remains pending; this root release
+does not change those resources or grant new access. The approved article is the
+only new publication. DEV/Leanpub adapters remain locally tested without a live
+publication trial; Google/iCloud permission checks await real public URLs.
+The reported GitHub DEV key is not consumed by any workflow.
 
 Cross-post media now uses destination profiles with PNG renditions, supported
 native embeds, explicit authored fallbacks and required-embed blocking. Real
@@ -112,7 +111,7 @@ deployment: removing Amplify catch-all redirects restores native 404 responses.
 Automatic delivery of the custom error-page design remains unsupported in the
 current static hosting configuration. See the temporary-launch evidence below.
 
-## Temporary launch under `/new/`
+## Temporary launch under `/new/` (historical)
 
 Deployed and verified 2026-09-16, main job 4 (`c093c93`). The authorized deployment preserves
 all original snapshot files at `/` and mounts the rebuild at `/new/`. Snapshot
@@ -137,7 +136,15 @@ Verification: 37 tests and type checks pass. Root and `/new/` builds each verify
 book routes without publishing sample content. Hosted evidence belongs in
 [verification](verification.md).
 
-Final cutover remains separate: set the base to `/`, disable original-root
-preservation, choose indexing policy, add permanent redirects from temporary
-page/feed URLs, and verify production before enabling integrations. Reserved
-short-link codes can then target final URLs. Fixed-edition targets stay immutable.
+## Root cutover — 2026-09-16
+
+Authorized: publish the new site at `/` with indexing enabled. Keep Earlier Work
+at `/archive/` and The Original Site at `/original-site/`. Apply permanent
+redirects for `/new`, `/new/`, nested temporary URLs, and legacy HTML entry points.
+The root verifier checks the snapshot, RSS, sitemap, indexing, assets, and 404s.
+
+`publishing/distribution.yaml` remains empty. Every future third-party create or
+update requires a manual local command selecting one piece and destination with
+`--reviewed`. Website pushes only deploy the site and, after separate setup,
+activate short links. No external article is published during this launch.
+See [verification](verification.md) for deployment results.

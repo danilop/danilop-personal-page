@@ -1,6 +1,6 @@
 # Implementation and verification status
 
-Status: implemented; local and hosted preview checks passed; short-link setup and production cutover pending.
+Status: implemented; root deployment authorized and validated locally. Short-link setup and real provider delivery remain pending.
 Updated: 2026-09-16.
 
 Danilo selected **all planned publishing capabilities before deployment**.
@@ -19,9 +19,9 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | Local browser models | Replaceable runtime, WebLLM worker, pinned model manifest | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified |
 | Frozen editions | Markua exporter, hashed manifest, immutable output directory, public edition routes | Real fixture export and tamper detection; no public edition created |
 | Leanpub | Preview/status/publication adapter for an existing book | API contract tests; live account/source/preview not configured |
-| DEV / Medium | API and assisted adapters, durable state, mapping/review/recovery commands | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
+| DEV / Medium | Manual-only API and assisted adapters, durable state, mapping/review/recovery commands | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
 | `danilop.link` | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback | Compiler tests; specific infrastructure access approval pending |
-| Main deployment | Existing Amplify integration; build/check/test configuration and console fallback updated | Hosted preview job 7 passed at `dc433ac` with Node 24.21.0/npm 12.0.2; production cutover pending |
+| Main deployment | Existing Amplify integration; build/check/test configuration and console fallback updated | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md) |
 
 ## Remaining release work
 

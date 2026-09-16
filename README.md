@@ -36,22 +36,17 @@ with local icons and visible platform names configured in `publishing/site.yaml`
 
 ## Release status
 
-The rebuild is verified locally and on the
-[live preview](https://www.danilop.net/new/),
-with 40 passing tests. The verified live deployment preserves the original site at
-`/` and serves the rebuild under `/new/`. Root cutover remains pending.
+The new site is configured for the main URL, with the historical catalogue at
+`/archive/` and the preserved snapshot at `/original-site/`. Temporary `/new/`
+links redirect to their root equivalents. See [verification](docs/verification.md)
+for release evidence.
 
-Short-link setup awaits [access approval](docs/deployment-access-review.md).
-External accounts are not connected; no articles are enrolled for cross-posting.
-Protected DEV delivery still needs implementation. Follow
-[credentials and access](docs/credentials-and-access.md) before adding keys.
+Third-party publication is manual: assignments prepare exports; commits and tags
+never send or update external posts. No articles are enrolled. The DEV key is
+not consumed by website builds or GitHub workflows. See
+[credentials and access](docs/credentials-and-access.md) before first delivery.
+Short-link setup still awaits [access approval](docs/deployment-access-review.md).
 AI image automation, search, and a site-wide AI assistant remain future work.
-See [verification](docs/verification.md) and [launch status](docs/launch-review.md)
-for tested capabilities and remaining release gates.
-
-The [temporary `/new/` deployment](docs/launch-review.md#temporary-launch-under-new)
-uses shared base-path configuration. Short-link and external delivery are disabled
-while this section is a non-indexable preview.
 
 ## Develop
 
@@ -82,7 +77,7 @@ Follow the [publishing workflow](docs/publishing-workflow.md) from draft to rele
 1. Write the Markdown article and prepare its media.
 2. Preview locally, run checks, and approve the content and visuals.
 3. Commit and merge into `main`; verify the production deployment.
-4. After final cutover and integration setup, activate short links and external copies.
+4. Optionally review and manually deliver an explicitly selected external copy.
 
 The guide also covers collections, book editions, updates, and recovery. Use the
 [authoring reference](docs/authoring-format.md) for file formats and the
@@ -119,7 +114,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
-- [Navigation review](docs/navigation-review.md): tested visitor journeys, improvements, and the pending hosted 404 rule.
+- [Navigation review](docs/navigation-review.md): tested visitor journeys, improvements, and hosting limitations.
 
 Keep documentation brief, professional, and task-focused. The README and affected
 guides must change alongside the implementation; see [AGENTS.md](AGENTS.md).
@@ -128,11 +123,11 @@ guides must change alongside the implementation; see [AGENTS.md](AGENTS.md).
 
 Pull requests run the same validation command as Amplify. AWS Amplify builds
 and deploys pushes to GitHub `main`; an independent GitHub job verifies the exact
-live revision, routes, assets, RSS, and preservation of the original pages. `amplify.yml` defines
+live revision, routes, assets, RSS, indexing, and the original-site snapshot. `amplify.yml` defines
 the build; `customHttp.yml` defines response headers. After integration setup,
 the publication workflow requires that verification before activating
-short links or updating enrolled remote copies. Local commits must be pushed to
-trigger deployment. The `/new/` preview keeps the original root site intact.
+short links. Third-party delivery is a separate manual operation. Local commits
+must be pushed to trigger website deployment.
 
 ## License
 

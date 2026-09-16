@@ -205,3 +205,17 @@ The corrected [hosted validation](https://github.com/danilop/danilop-personal-pa
 passes all tests, type checks, preparation, packaging, and artifact verification
 at `1527401`. This manually dispatched run exercises the same job used for PRs;
 an actual pull-request event was not needed for this audit.
+
+## Root release and manual distribution — 2026-09-16
+
+Root release configuration passes 42 tests, type checks, and verification of
+178 output files, 733 internal links, and 307 historical records. The two new
+checks reject unreviewed/unselected delivery, GitHub delivery, and automatic
+assignment policies. Existing media/idempotency tests now use reviewed delivery.
+No article is enrolled, and no DEV request or credential use occurs.
+
+The artifact enables indexing at `/`, retains `/original-site/`, and prepares
+permanent temporary/legacy redirects in `infrastructure/amplify-rules.json`.
+The live verifier now checks indexing, robots/sitemap, and all five snapshot
+pages in addition to root routes/assets, RSS, revision, and true 404 responses.
+Hosted results are verified during cutover before task completion.

@@ -5,6 +5,21 @@
     "status": "302"
   },
   {
+    "source": "/new",
+    "target": "/",
+    "status": "301"
+  },
+  {
+    "source": "/new/",
+    "target": "/",
+    "status": "301"
+  },
+  {
+    "source": "/new/<*>",
+    "target": "/<*>",
+    "status": "301"
+  },
+  {
     "source": "/posts.html",
     "target": "/archive/posts/",
     "status": "301"

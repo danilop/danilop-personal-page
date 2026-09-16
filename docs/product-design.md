@@ -301,14 +301,15 @@ directly to the original article, before the exported body content.
 
 After changes, update the existing remote copy where supported. Track whether
 each copy is current, needs an update, failed, or requires manual action. Support
-automatic updates under an enabled policy as well as reviewed or paused delivery.
+only explicit manual creation and updates, with review or pause policies.
+A content change, assignment, commit, push, or tag must never trigger a remote send.
 Flag direct remote edits as conflicts before overwriting them. Preserve remote
 identity rather than creating a new post for each revision.
 
 Capabilities differ by destination: assisted export/import and manual updates
 are valid plugin outcomes when automation is unavailable. Adapt rich content
 with readable static alternatives and links back to interactive originals.
-Exclude drafts, book-only pieces and the legacy catalogue from automatic
+Exclude drafts, book-only pieces and the legacy catalogue from external
 distribution. Retirement does not silently delete remote copies.
 
 This is an accepted launch requirement; actual external publication remains an

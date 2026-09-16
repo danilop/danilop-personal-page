@@ -1,4 +1,4 @@
-name: Verify live deployment and publish
+name: Verify deployment and update short links
 on:
   push:
     branches: [main]
@@ -62,14 +62,3 @@ jobs:
           role-to-assume: ${{ vars.PUBLICATION_ROLE_ARN }}
           aws-region: eu-west-1
       - run: npm run publish:links -- --apply --wait
-      - run: npm run distribute -- --apply
-        env:
-          PUBLICATION_BUCKET: danilop-link
-          DEV_API_KEY: ${{ secrets.DEV_API_KEY }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: distribution-previews
-          path: exports/distribution/
-          if-no-files-found: ignore
-          retention-days: 7

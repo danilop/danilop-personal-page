@@ -1,6 +1,6 @@
 {
   "origin": "https://www.danilop.net",
-  "basePath": "/new/",
-  "indexable": false,
-  "preserveOriginal": true
+  "basePath": "/",
+  "indexable": true,
+  "preserveOriginal": false
 }

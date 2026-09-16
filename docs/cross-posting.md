@@ -1,18 +1,15 @@
 # Cross-posting adapters
 
-Status: adapters and media export implemented; local and hosted preview tests pass.
-No external publishing accounts
-or credentials configured. Provider
-capabilities checked against official documentation on 2026-09-15.
+Status: adapters and media export implemented. Third-party creation and updates
+are manual; no article is enrolled or remotely published. Provider capabilities
+were checked against official documentation on 2026-09-15.
 
 The [product design](product-design.md#cross-posting-and-updates) defines the
-experience. This document specifies replaceable delivery adapters, separate
-from rendering plugins and themes.
-
-Credential setup and the required automation isolation changes are documented in
-[credentials and access](credentials-and-access.md). Store a DEV key only in the
-proposed `dev-publication` environment; the current workflow does not yet consume
-that environment. Do not add a repository-wide key to enable the existing wiring.
+experience. Delivery adapters remain separate from rendering plugins and themes.
+The GitHub website/short-link workflow does not consume `DEV_API_KEY` or invoke
+delivery. See [publishing workflow](publishing-workflow.md#5-manually-publish-an-external-copy-when-wanted)
+for the per-article file and explicit local command, and
+[credentials and access](credentials-and-access.md) for secret/state setup.
 
 ## Provider feasibility
 
@@ -132,10 +129,10 @@ adapter must not require changes to the article model or delivery coordinator.
 
 Assignments select full article or authored excerpt, target-specific title,
 summary, tags and optional remote series, and delivery policies. Initial creation
-can be a reviewed draft, explicitly enabled automatic publication, or assisted
-manual publication. Updates can be automatic after site deployment, reviewed,
-or paused. An enabled policy is standing configuration; routine updates do not
-require repeated confirmation. Unsupported automatic policies fail validation.
+can be a draft, a public copy (`published`), or assisted manual publication.
+Updates are reviewed or paused. Every create/update requires an explicit manual
+command selecting one piece and destination with `--reviewed`; no standing
+assignment, commit, push, or tag authorizes a send. Automatic policies are rejected.
 
 Render the assembled standalone document into destination Markdown/HTML. Apply
 explicit destination overrides last, preserving them across revisions. Do not

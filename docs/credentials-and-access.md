@@ -1,14 +1,17 @@
 # Credentials and external publishing
 
 Researched against official provider documentation on 2026-09-15.
-This is setup guidance and a security recommendation, not a claim that accounts
-or protections have been connected. No credentials were read or changed.
+Updated 2026-09-16: third-party delivery is manual from a reviewed local checkout.
+Danilo reports storing `DEV_API_KEY` in GitHub; no current workflow consumes it.
+The read-only repository secret listing did not show that name during this task;
+confirm its repository/environment location before any future GitHub integration.
+No secret value was read, changed, or sent to DEV.
 
 ## What to set up now
 
 Only DEV needs a new publishing credential for the next integration step.
-Store it in your password manager and, for future automated delivery, in the
-protected GitHub environment described below. Do not paste it into chat, commit
+Store it in your password manager for manual local delivery. A future manually
+dispatched GitHub workflow could use the protected environment described below. Do not paste it into chat, commit
 it, put it in an issue, or add it to the Amplify website build.
 
 | Service | Credential for this project | Recommended location |
@@ -23,7 +26,7 @@ it, put it in an issue, or add it to the Amplify website build.
 | AWS site / short links | Temporary AWS credentials through GitHub OIDC | IAM role; no static AWS access key in GitHub |
 | In-browser models | None for the configured public model | Versioned model manifest; no hosted inference account |
 
-## DEV: create and store a dedicated key
+## DEV: local delivery and future GitHub isolation
 
 DEV supports Markdown article creation and updates, with canonical URLs and
 draft publication state. API V1 uses an `api-key` header. The documentation does
@@ -31,6 +34,11 @@ not describe selectable article-only scopes or per-article key restrictions;
 treat this as an account credential, not a key limited to this website's posts.
 [Forem authentication](https://developers.forem.com/api),
 [article API](https://developers.forem.com/api/v1).
+
+For local delivery, inject the password-manager key only into the selected
+publication command. A GitHub secret cannot be downloaded back into that process.
+The following GitHub environment setup is for a future manual delivery workflow;
+it is not required for website launch.
 
 1. Sign in as the intended author (`danilop`) and open
    [DEV Settings → Extensions](https://dev.to/settings/extensions).
@@ -45,8 +53,7 @@ treat this as an account credential, not a key limited to this website's posts.
    a **branch** rule matching **`main`** exactly. Do not add a tag rule or `*`.
 6. For the first connection, use a required reviewer if available. A sole operator
    must be able to approve their own initiated runs, or appoint another reviewer.
-   Once tested, routine updates can run without per-run review if desired;
-   keep the main-only environment restriction.
+   Every run must still be explicitly initiated; keep the main-only restriction.
 7. Under **Environment secrets**, add **`DEV_API_KEY`** and paste the key there.
    Do not add a same-named repository secret, Actions variable, or Amplify variable.
 
@@ -56,10 +63,11 @@ was verified public, with `main` as its default branch and no environments
 configured at the time of this review.
 [GitHub environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
 
-**Storing the key will not start publishing.** The current workflow does not
-reference this environment. Its existing repository-secret wiring must be
-replaced before automated delivery is enabled; do not work around that by adding
-a repository-wide key. No article is currently enrolled for cross-posting.
+**Storing the key does not start publishing.** No current GitHub workflow reads
+it. The website/short-link workflow cannot deliver external articles, and the
+CLI rejects delivery under GitHub Actions. No article is enrolled. A repository
+secret can remain unused now; before adding a GitHub delivery workflow, move it
+to the protected environment and remove the repository copy.
 
 Before delivery, verify the authenticated username using `GET /api/users/me`,
 prepare the destination preview, then test one explicitly selected article as a
@@ -123,12 +131,12 @@ only after reader activation. Public viewing does not prevent copying; publish
 only material intended for that audience. Frozen book editions should use an
 intentional exported snapshot rather than a changing online document.
 
-## Automation changes required before enabling delivery
+## Requirements for a future manual GitHub delivery workflow
 
 The following are recommendations awaiting implementation and configuration:
 
 - Separate DEV delivery from short-link deployment, with a fresh runner and a
-  `dev-publication` environment. Restrict both push and manual execution to main.
+  `dev-publication` environment. Use only explicit manual execution on main; never push or tag triggers.
 - Scope the DEV delivery role to its ledger prefix and only the deployment checks
   it needs. Keep short-link write access out of that role.
 - Match the new role to the environment's actual OIDC subject and restrict main

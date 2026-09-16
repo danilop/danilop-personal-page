@@ -33,8 +33,8 @@ export const assignmentSchema = z
     destination: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     mode: z.enum(["full", "excerpt"]).default("full"),
     excerpt: z.string().optional(),
-    creation: z.enum(["draft", "automatic", "manual"]).default("draft"),
-    updates: z.enum(["automatic", "review", "paused"]).default("review"),
+    creation: z.enum(["draft", "published", "manual"]).default("draft"),
+    updates: z.enum(["review", "paused"]).default("review"),
     media: mediaPolicySchema.optional(),
     overrides: z
       .object({
@@ -203,7 +203,7 @@ export async function exportPublication(
     canonical_url,
     tags,
     series: a.overrides.series,
-    published: a.creation === "automatic",
+    published: a.creation === "published",
   } satisfies Payload;
   return {
     payload,

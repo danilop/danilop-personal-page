@@ -78,6 +78,13 @@ export async function checkSite({
       `${route}: canonical URL missing`,
     );
     if (!indexable) assert.match(html, /name="robots"[^>]*content="noindex/);
+    else {
+      assert.doesNotMatch(html, /name="robots"[^>]*content="noindex/);
+      assert.doesNotMatch(
+        response.headers.get("x-robots-tag") ?? "",
+        /noindex/i,
+      );
+    }
     if (route === "/") home = html;
   }
   const resources = new Set(
@@ -127,6 +134,29 @@ export async function checkSite({
         `Original page changed: ${name}`,
       );
     }
+  } else {
+    for (const name of [
+      "",
+      "about.html",
+      "posts.html",
+      "decks.html",
+      "videos.html",
+    ]) {
+      const html = await (await get(at("/original-site/" + name))).text();
+      assert.match(html, /You are viewing the preserved original site/);
+      assert.match(html, /noindex,follow/);
+      assert.ok(
+        html.includes(`href="${sitePath("/", basePath)}"`),
+        "Snapshot return link missing",
+      );
+    }
+  }
+  if (indexable) {
+    const robots = await (await get(at("/robots.txt"))).text();
+    assert.ok(robots.includes(`Sitemap: ${at("/sitemap.xml")}`));
+    assert.doesNotMatch(robots, /Disallow: \/\s*$/m);
+    const sitemap = await (await get(at("/sitemap.xml"))).text();
+    assert.doesNotMatch(sitemap, /\/new\//);
   }
   return {
     pages: 4,
@@ -134,6 +164,7 @@ export async function checkSite({
     feed: true,
     missingPage: 404,
     originalPreserved: preserveOriginal,
+    snapshotChecked: !preserveOriginal,
   };
 }
 

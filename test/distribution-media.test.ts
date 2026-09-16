@@ -34,8 +34,8 @@ async function fixture(t: any) {
   const assignment = assignmentSchema.parse({
     piece: piece.id,
     destination: "dev",
-    creation: "automatic",
-    updates: "automatic",
+    creation: "published",
+    updates: "review",
   });
   const options = { plugin: "dev", assetsOut: path.join(temp, "media") };
   return { temp, lib, piece, setBody, assignment, options };
@@ -242,9 +242,33 @@ test("changed image bytes update the same remote article with a fresh image URL"
   const save = async (value: Delivery) => {
     entry = value;
   };
-  await syncCopy(adapter, first.payload, "one", entry, save, f.assignment);
-  await syncCopy(adapter, second.payload, "two", entry, save, f.assignment);
-  await syncCopy(adapter, second.payload, "two", entry, save, f.assignment);
+  await syncCopy(
+    adapter,
+    first.payload,
+    "one",
+    entry,
+    save,
+    f.assignment,
+    true,
+  );
+  await syncCopy(
+    adapter,
+    second.payload,
+    "two",
+    entry,
+    save,
+    f.assignment,
+    true,
+  );
+  await syncCopy(
+    adapter,
+    second.payload,
+    "two",
+    entry,
+    save,
+    f.assignment,
+    true,
+  );
   assert.equal(creates, 1);
   assert.equal(updates, 1);
   assert.equal(entry!.remote!.id, 42);

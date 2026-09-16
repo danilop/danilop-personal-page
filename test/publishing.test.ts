@@ -208,12 +208,12 @@ test("cross-post reruns update one ID, preserve overrides and detect remote edit
     piece: "hello",
     destination: "dev",
     mode: "full" as const,
-    creation: "automatic" as const,
-    updates: "automatic" as const,
+    creation: "published" as const,
+    updates: "review" as const,
     overrides: {},
   };
-  await syncCopy(adapter, payload, "a", entry, save, policy);
-  await syncCopy(adapter, payload, "a", entry, save, policy);
+  await syncCopy(adapter, payload, "a", entry, save, policy, true);
+  await syncCopy(adapter, payload, "a", entry, save, policy, true);
   assert.equal(creates, 1);
   assert.equal(updates, 0);
   await syncCopy(
@@ -223,6 +223,7 @@ test("cross-post reruns update one ID, preserve overrides and detect remote edit
     entry,
     save,
     policy,
+    true,
   );
   assert.equal(updates, 1);
   remote.payload.body_markdown = "Remote edit";
@@ -233,6 +234,7 @@ test("cross-post reruns update one ID, preserve overrides and detect remote edit
     entry,
     save,
     policy,
+    true,
   );
   assert.equal(entry!.status, "conflict");
   assert.equal(updates, 1);
@@ -264,12 +266,14 @@ test("uncertain remote creation cannot blindly create twice", async () => {
     piece: "hello",
     destination: "dev",
     mode: "full" as const,
-    creation: "automatic" as const,
-    updates: "automatic" as const,
+    creation: "published" as const,
+    updates: "review" as const,
     overrides: {},
   };
-  await assert.rejects(syncCopy(adapter, payload, "a", entry, save, policy));
-  await syncCopy(adapter, payload, "a", entry, save, policy);
+  await assert.rejects(
+    syncCopy(adapter, payload, "a", entry, save, policy, true),
+  );
+  await syncCopy(adapter, payload, "a", entry, save, policy, true);
   assert.equal(calls, 1);
   assert.equal(entry!.status, "conflict");
 });
@@ -514,12 +518,14 @@ test("a timed-out successful update is reconciled without another update", async
     piece: "hello",
     destination: "dev",
     mode: "full" as const,
-    creation: "automatic" as const,
-    updates: "automatic" as const,
+    creation: "published" as const,
+    updates: "review" as const,
     overrides: {},
   };
-  await assert.rejects(syncCopy(adapter, changed, "new", entry, save, policy));
-  await syncCopy(adapter, changed, "new", entry, save, policy);
+  await assert.rejects(
+    syncCopy(adapter, changed, "new", entry, save, policy, true),
+  );
+  await syncCopy(adapter, changed, "new", entry, save, policy, true);
   assert.equal(updates, 1);
   assert.equal(entry.status, "current");
   assert(!entry.intent);
@@ -569,13 +575,42 @@ test("fixed edition aliases resolve separately from living collections and draft
   );
 });
 
-test('short-link resolver redirects only managed site targets and never falls through to S3',async()=>{
- const {runInNewContext}=await import('node:vm');
- const source=(await fs.readFile('infrastructure/shortlinks.js','utf8')).replace("import cf from 'cloudfront';",'');
- const handler=runInNewContext(source+'\nhandler;',{cf:{kvs:()=>({async get(key:string){if(key==='hello')return 'https://www.danilop.net/writing/hello-brave-new-world/';if(key==='bad')return 'https://example.com/';throw Error('missing');}})}});
- const call=(uri:string,method='GET')=>handler({request:{uri,method,querystring:{next:{value:'https://example.com/'}}}});
- assert.equal((await call('/hello/')).headers.location.value,'https://www.danilop.net/writing/hello-brave-new-world/');
- assert.equal((await call('/hello','HEAD')).statusCode,302);
- for(const uri of ['/missing','/bad','/publication/distribution/ledger.json','/../hello'])assert.equal((await call(uri)).statusCode,404);
- assert.equal((await call('/hello','POST')).statusCode,404);
+test("short-link resolver redirects only managed site targets and never falls through to S3", async () => {
+  const { runInNewContext } = await import("node:vm");
+  const source = (
+    await fs.readFile("infrastructure/shortlinks.js", "utf8")
+  ).replace("import cf from 'cloudfront';", "");
+  const handler = runInNewContext(source + "\nhandler;", {
+    cf: {
+      kvs: () => ({
+        async get(key: string) {
+          if (key === "hello")
+            return "https://www.danilop.net/writing/hello-brave-new-world/";
+          if (key === "bad") return "https://example.com/";
+          throw Error("missing");
+        },
+      }),
+    },
+  });
+  const call = (uri: string, method = "GET") =>
+    handler({
+      request: {
+        uri,
+        method,
+        querystring: { next: { value: "https://example.com/" } },
+      },
+    });
+  assert.equal(
+    (await call("/hello/")).headers.location.value,
+    "https://www.danilop.net/writing/hello-brave-new-world/",
+  );
+  assert.equal((await call("/hello", "HEAD")).statusCode, 302);
+  for (const uri of [
+    "/missing",
+    "/bad",
+    "/publication/distribution/ledger.json",
+    "/../hello",
+  ])
+    assert.equal((await call(uri)).statusCode, 404);
+  assert.equal((await call("/hello", "POST")).statusCode, 404);
 });

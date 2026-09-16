@@ -425,17 +425,19 @@ assignments:
       tags: [ai, programming]
 ```
 
-Creation policies are `draft`, `automatic`, `manual`; updates are `automatic`,
-`review`, `paused`. `mode: excerpt` additionally requires authored `excerpt` text.
-Overrides support title, summary, tags, and series. Optional `media` settings
-select PNG maximum width, preferred/required/static embed policy, required block
-IDs, and exact editor-verified embed URLs. See the configuration and limitations
-in [cross-post media](cross-posting.md#media-portability-clarification--2026-09-16).
-Every exported image needs alternative text; unsupported interactive content needs
-an authored alternative and public HTTPS companion link. The initial assignments list
-is empty. An assignment is explicit enrollment; an adapter's existence does not
-authorize publication. See [operations](operations.md) for preview, review,
-existing-post mapping, manual completion and recovery commands.
+Creation states are `draft`, `published`, and `manual`; updates are `review` or
+`paused`. These settings describe the copy, not a delivery trigger. Every create
+or update needs `--apply --piece ID --destination ID --reviewed` from a local
+checkout. Commit, push, and tag events never send external articles.
+
+`mode: excerpt` requires authored `excerpt` text. Overrides support title,
+summary, tags, and series. Optional `media` settings select PNG width, embed
+policy, required block IDs, and editor-verified URLs; see
+[cross-post media](cross-posting.md#media-portability-clarification--2026-09-16).
+Images need alt text; unsupported interactive content needs an authored
+alternative and public companion link. The assignments list is initially empty.
+The former `automatic` policies are rejected: use `creation: published` only
+for the intended first-copy state and `updates: review` for manual updates.
 
 ## 8. Compatibility policy
 

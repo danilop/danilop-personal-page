@@ -1,6 +1,6 @@
 # Dependencies and deployment
 
-Reviewed 2026-09-16. The original site remains at `/`; the rebuild uses `/new/`.
+Reviewed 2026-09-16. The new site uses `/`; its original-site snapshot remains at `/original-site/`.
 
 ## Supported stack
 
@@ -50,13 +50,15 @@ through AppArmor so Chromium's sandbox can run.
    The checked-in `amplify.yml` is authoritative; the console copy is a fallback.
 3. Amplify runs `npm run validate` and deploys `dist/`. It caches npm downloads,
    render output, and Chromium, not `node_modules`.
-4. **Verify live deployment and publish** independently waits for the exact
+4. **Verify deployment and update short links** independently waits for the exact
    revision at the uncached build marker, even when publication is disabled.
    It checks pages, resources/cache headers, RSS, true 404 responses, and original
-   page preservation. A newer main revision supersedes an older check explicitly;
+   snapshot navigation and indexing. A newer main revision supersedes an older check explicitly;
    superseded checks cannot authorize publication.
 5. Only a verified, indexable main revision can reach the optional publication
-   job. Short-link access and protected DEV delivery remain separate setup tasks.
+   job for short links. Third-party delivery is excluded from all GitHub workflows;
+   its CLI requires a manually selected, reviewed copy. Short-link access remains
+   a separate setup task.
 
 `publishing/deployment.json` is the single source for HTTPS origin, base path,
 indexing, and original-root preservation. `customHttp.yml` sets the corresponding

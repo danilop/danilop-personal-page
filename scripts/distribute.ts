@@ -30,6 +30,16 @@ async function main() {
   };
   const selectedPiece = value("--piece"),
     selectedDestination = value("--destination");
+  if (apply) {
+    if (!selectedPiece || !selectedDestination || !args.includes("--reviewed"))
+      throw Error(
+        "Manual delivery requires --piece ID --destination ID --reviewed",
+      );
+    if (process.env.GITHUB_ACTIONS === "true")
+      throw Error(
+        "Third-party delivery is manual from a reviewed local checkout; GitHub jobs only deploy the website",
+      );
+  }
   const adopt = value("--adopt"),
     completed = value("--complete-manual");
   if (
@@ -63,7 +73,9 @@ async function main() {
     encoding: "utf8",
   }).trim();
   const verify = async () => {
-    const r = await fetch(siteUrl("/build.json", config.url), { cache: "no-store" });
+    const r = await fetch(siteUrl("/build.json", config.url), {
+      cache: "no-store",
+    });
     if (!r.ok || (await r.json()).revision !== revision)
       throw Error("Exact source revision is not deployed");
   };

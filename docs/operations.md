@@ -1,7 +1,7 @@
 # Development and publishing operations
 
-Updated: 2026-09-16. Combined deployment: original site at `/`, rebuild at `/new/`.
-Final root cutover and external integrations remain pending.
+Updated: 2026-09-16. Root deployment: new site at `/`, original snapshot at `/original-site/`.
+Third-party delivery is manual; short-link infrastructure remains pending.
 
 For routine authoring and release, follow the [publishing workflow](publishing-workflow.md).
 This reference covers configuration, delivery commands, and recovery.
@@ -29,23 +29,16 @@ verifier rejects QA routes and private fixture sentinels.
 
 ## Deployment location
 
-`publishing/deployment.json` currently sets `origin: "https://www.danilop.net"`,
-`basePath: "/new/"`, `indexable: false`,
-and `preserveOriginal: true`. `npm run build` produces a combined `dist/`;
-`npm run preview` serves both sites locally. `npm run dev` serves the rebuilt
-section only. Paths below are relative to the rebuilt site's configured base.
-The current deployment marker is `/new/build.json`. `npm run verify:deployment`
-checks that the current commit is live; add `-- --wait` to wait for deployment.
-The same check runs in GitHub independently of short-link or external delivery.
+`publishing/deployment.json` sets `origin: "https://www.danilop.net"`,
+`basePath: "/"`, `indexable: true`, and `preserveOriginal: false`. This stops copying
+the original site over the root; its snapshot still ships at `/original-site/`.
+The marker is `/build.json`. `npm run verify:deployment -- --wait` checks the exact
+commit, root pages/assets, feed, indexing, 404 responses, and snapshot navigation.
 
-For an isolated root-build check, use `NOTES_BASE_PATH=/ npm run build`; this
-also disables original-root preservation for that build. Do not deploy this
-check output accidentally. Rebuild without the override for the combined release.
-
-Apply `infrastructure/amplify-coexistence-rules.json` after the combined artifact
-is live. Keep final-cutover rules separate. Non-indexable deployments reject
-short-link and distribution `--apply`; CI skips publication before requesting
-cloud credentials. Dry-run previews remain available.
+Apply `infrastructure/amplify-rules.json` for `/new/` → `/` redirects and legacy
+HTML routes. These rules apply to every branch of the Amplify app. Keep native
+404 handling: explicit Amplify 404 rules previously returned redirects.
+The old coexistence rules remain a rollback reference.
 
 ## Historical publications and the relaunch boundary
 
@@ -123,8 +116,8 @@ links its published editions; living and fixed-edition aliases are separate.
 ## Cross-posting
 
 Follow [credentials and access](credentials-and-access.md) before connecting a
-provider. The protected DEV environment and separated delivery job are proposed,
-not yet configured. Keep Leanpub local until a real book needs it; public embeds
+provider. GitHub jobs never deliver third-party articles. A future protected manual
+GitHub delivery workflow remains a separate configuration task. Keep Leanpub local until a real book needs it; public embeds
 and Medium's assisted workflow require no publishing credentials here.
 
 No article is enrolled initially. Add an explicit assignment to
@@ -138,16 +131,16 @@ they do not prevent canonical site deployment. Credentials are named
 environment variables. DEV supports API delivery; Medium uses manual import/edit.
 
 `--apply` verifies a clean checkout and the exact live `build.json` revision.
-Updates requiring review use `--reviewed`. Filter to a copy using `--piece ID
---destination ID`. Images must already be reachable from production.
+Every delivery requires `--reviewed` and an exact copy selection using `--piece ID
+--destination ID`; GitHub Actions delivery is rejected. Images must already be reachable from production.
 
-- Adopt an existing owned DEV post with `--apply --piece ID --destination dev
+- Adopt an existing owned DEV post with `--apply --reviewed --piece ID --destination dev
   --adopt REMOTE_ID`. This checks its owner and canonical URL. It records the
   observed remote body without publishing; review before a subsequent update.
 - Resolve a direct-edit conflict by reviewing remote changes and updating local
   source/overrides, then explicitly adopting that observed remote ID again.
   A subsequent reviewed delivery updates the same post.
-- After completing a Medium import/edit, use `--apply --piece ID --destination
+- After completing a Medium import/edit, use `--apply --reviewed --piece ID --destination
   medium --complete-manual https://medium.com/...` to record author verification.
   Add `--embeds-reviewed` after checking every editor embed listed in its media
   report. Required Medium embeds also need their exact verified URL recorded in
@@ -157,7 +150,7 @@ Updates requiring review use `--reviewed`. Filter to a copy using `--piece ID
   the coordinator will not blindly create twice.
 - Removing an assignment stops delivery; it never deletes a remote story.
 
-Local state lives in `.publication-state/`. CI uses the private S3 prefix
+Local state lives in `.publication-state/`. An optionally configured remote ledger uses the private S3 prefix
 `publication/distribution/` with conditional writes and a lock. Keep this ledger
 out of metadata caches and public artifacts. Before recovering a stale lock,
 verify its recorded run is no longer active. Preserve ledger backups and remote
