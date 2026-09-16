@@ -6,7 +6,7 @@ Date: 2026-09-16. Scope: local rebuild and hosted preview; production release pe
 
 - 31 tests: eight legacy metadata/discovery tests and 23 publishing tests.
 - Astro/TypeScript: zero errors, warnings or hints in the checker.
-- Production build: 29 generated pages, 177 output files, 695 checked local links.
+- Production build: 29 generated pages, 178 output files, 695 checked local links.
 - Historical parity: 307 records, comprising 201 posts, 92 decks and 14 videos.
 - Private fixture sentinels absent from output; `/_qa/` removed by a clean build.
 - Documentation file links and new-source whitespace checks pass. The historical
@@ -115,3 +115,21 @@ included since preview job 4. Cross-post media export is included in job 5.
 Local contract tests do not replace these checks. The first two are release
 work; account/content-dependent checks require selected material and configured
 accounts. See [launch review](launch-review.md) and [access review](deployment-access-review.md).
+
+## About-page social links — 2026-09-16
+
+Local checker: zero errors/warnings/hints. Production build passes, including
+178 output files and 695 local links. Existing profile destinations are preserved
+in `publishing/site.yaml`; icons are locally bundled with attribution.
+
+Browser plugin/skill was unavailable, so the bundled Playwright runtime and
+installed Chromium were used at `http://127.0.0.1:4321/about/`. Checks passed at
+1440×960, 390×844 and 320×740: correct page identity and meaningful content, no
+error overlay, no browser warnings/errors, four labelled icon links, 44px link
+height, no horizontal overflow. GitHub focus → Tab focuses LinkedIn with a visible
+outline. Screenshots were inspected at desktop and mobile widths; icons remain
+recognizable and the row wraps below the biography. The old text-only sentence
+is intentionally replaced by this row. Remote profile pages were not audited.
+
+Local screenshots: `/tmp/notes-about-1440.png`, `/tmp/notes-about-390.png`,
+`/tmp/notes-about-320.png`. Preview deployment verification follows separately.

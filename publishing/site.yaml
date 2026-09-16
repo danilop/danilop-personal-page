@@ -4,6 +4,11 @@ url: https://www.danilop.net
 name: Danilo Poccia
 title: Notes Along the Way
 description: Articles, experiments, and ideas that can grow over time.
+socialLinks:
+  - {label: GitHub, url: 'https://github.com/danilop', icon: github}
+  - {label: LinkedIn, url: 'https://www.linkedin.com/in/dpoccia/', icon: linkedin}
+  - {label: X (Twitter), url: 'https://twitter.com/danilop', icon: x}
+  - {label: Facebook, url: 'https://www.facebook.com/danilopoccia/', icon: facebook}
 theme: ink-and-paper
 layout: editorial
 tokens:

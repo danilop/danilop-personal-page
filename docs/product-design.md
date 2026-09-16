@@ -338,3 +338,12 @@ Browser editing, subscriptions, search and a site-wide assistant are deferred.
 - Preserve archive URLs or redirect them to equivalent destinations.
 - Resolve a new short link correctly before and after a canonical slug change.
 - Require no model download or experiment startup for ordinary reading.
+
+### About-page social profiles
+
+Preserve the social profile links with recognizable monochrome icons and visible
+platform names in a separate row below the biography. The row wraps on mobile,
+uses a generous clickable area and clear keyboard focus, and introduces no
+third-party widgets or requests before activation. Keep each icon and label in
+one link. Placement below the short bio is a design choice; icon-plus-text
+accessibility follows [W3C guidance](https://www.w3.org/WAI/tutorials/images/decorative/).

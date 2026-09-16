@@ -1,0 +1,70 @@
+---
+import type { SiteConfig } from "../../core/config";
+import github from "../../site-assets/social/github.svg?raw";
+import linkedin from "../../site-assets/social/linkedin.svg?raw";
+import x from "../../site-assets/social/x-twitter.svg?raw";
+import facebook from "../../site-assets/social/facebook.svg?raw";
+interface Props {
+  links: SiteConfig["socialLinks"];
+}
+const { links } = Astro.props;
+const icons = { github, linkedin, x, facebook };
+---
+
+{links.length > 0 && (
+  <nav class="social-links" aria-label="Social profiles">
+    <ul>
+      {links.map((link) => (
+        <li>
+          <a href={link.url} rel="me noopener noreferrer">
+            <span class="social-icon" set:html={icons[link.icon]} />
+            <span>{link.label}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .social-links {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--hairline);
+    padding-top: 1rem;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    text-decoration: underline;
+    text-decoration-color: var(--hairline);
+    text-underline-offset: 0.25em;
+  }
+  a:hover {
+    color: var(--blue);
+    text-decoration-color: currentColor;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 4px;
+  }
+  .social-icon {
+    display: inline-flex;
+    flex: 0 0 20px;
+  }
+  .social-icon :global(svg) {
+    stroke: none;
+  }
+</style>

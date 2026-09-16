@@ -17,6 +17,22 @@ export const siteSchema = z
     name: z.string(),
     title: z.string(),
     description: z.string(),
+    socialLinks: z
+      .array(
+        z
+          .object({
+            label: z.string().min(1),
+            url: z.url().refine((value) => {
+              const url = new URL(value);
+              return (
+                url.protocol === "https:" && !url.username && !url.password
+              );
+            }, "Social links must use HTTPS without credentials"),
+            icon: z.enum(["github", "linkedin", "x", "facebook"]),
+          })
+          .strict(),
+      )
+      .default([]),
     theme: z.enum(["ink-and-paper", "plain"]),
     layout: z.enum(["editorial", "linear"]),
     tokens: z

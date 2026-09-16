@@ -452,3 +452,19 @@ Plain heading links such as `[Details](#details)` are namespaced per placement.
 and portrait/biography assets; individual token values have defaults. Supported
 fonts are Newsreader/Georgia and Inter/system-ui. `publishing/home.yaml` contains
 optional lead, recentCount, elsewhereCount, and selected collection IDs.
+
+## About-page social profiles
+
+Keep biography prose in `content/about.md`; configure the separate profile row in
+`publishing/site.yaml` using optional `socialLinks` entries:
+
+```yaml
+socialLinks:
+  - {label: GitHub, url: 'https://github.com/danilop', icon: github}
+```
+
+Icons currently support `github`, `linkedin`, `x`, and `facebook`. Labels, HTTPS
+URLs and ordering are configurable; an empty list hides the row. Add future icon
+artwork to the local icon set and schema. Each icon/name pair is one link, with
+the icon hidden from assistive technology to avoid duplicate announcements.
+Local Font Awesome SVG attribution is in `site-assets/licenses/font-awesome-social-icons.txt`.

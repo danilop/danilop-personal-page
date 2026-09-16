@@ -1,0 +1,7 @@
+Social icons: GitHub, LinkedIn, X (Twitter), Facebook.
+Font Awesome Free 7.3.1, Copyright 2026 Fonticons, Inc.
+https://fontawesome.com/
+https://fontawesome.com/license/free
+SVG icons licensed under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Changes: accessibility attributes and explicit 20px dimensions added.
+Brand trademarks remain the property of their respective owners.

@@ -1,6 +1,9 @@
 ---
 import Layout from "../components/Layout.astro";
 import { site } from "../data";
+import { siteConfig } from "../../core/config";
+import SocialLinks from "../components/SocialLinks.astro";
+const config = await siteConfig();
 ---
 
 <Layout title="About">
@@ -14,6 +17,9 @@ import { site } from "../data";
       height="390"
       alt="Danilo Poccia"
     />
-    <div class="prose" set:html={site.about} />
+    <div>
+      <div class="prose" set:html={site.about} />
+      <SocialLinks links={config.socialLinks} />
+    </div>
   </div>
 </Layout>

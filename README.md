@@ -31,6 +31,8 @@ live apart from the content and publishing system.
 
 Public PDFs and published Google Docs/Slides load on reader request. iCloud
 Photos albums use public album links; photographs are not copied into this repo.
+The About page presents social profiles in a separate row below the biography,
+with local icons and visible platform names configured in `publishing/site.yaml`.
 
 ## Release status
 
@@ -120,6 +122,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
+- [Analytics and privacy](docs/analytics-and-privacy.md): proposed provider comparison and consent approach; not enabled.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
