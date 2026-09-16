@@ -96,7 +96,7 @@ Specific short-link AWS/GitHub access approval remains pending; this root releas
 does not change those resources or grant new access. The approved article is the
 only new publication. DEV/Leanpub adapters remain locally tested without a live
 publication trial; Google/iCloud permission checks await real public URLs.
-The reported GitHub DEV key is not consumed by any workflow.
+The GitHub DEV key is confirmed in `dev-publication` and is not consumed by any workflow.
 
 Cross-post media now uses destination profiles with PNG renditions, supported
 native embeds, explicit authored fallbacks and required-embed blocking. Real

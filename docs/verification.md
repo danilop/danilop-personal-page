@@ -228,3 +228,7 @@ arrived at its CDN edge. The verifier now allows up to three additional minutes
 for route convergence and rechecks the marker afterward. A dedicated regression
 test covers transient and persistent failures, bringing the suite to 43 tests.
 This retry does not turn a persistent route failure into success.
+
+Credential metadata confirms `DEV_API_KEY` in the `dev-publication` GitHub
+environment, with no repository-wide copy. Only names were inspected; its value
+was not accessed and no provider authentication/publication request was made.

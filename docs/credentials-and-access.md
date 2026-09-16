@@ -2,9 +2,8 @@
 
 Researched against official provider documentation on 2026-09-15.
 Updated 2026-09-16: third-party delivery is manual from a reviewed local checkout.
-Danilo reports storing `DEV_API_KEY` in GitHub; no current workflow consumes it.
-The read-only repository secret listing did not show that name during this task;
-confirm its repository/environment location before any future GitHub integration.
+`DEV_API_KEY` is confirmed by name in the GitHub `dev-publication` environment;
+there is no repository-wide copy. No current workflow consumes it.
 No secret value was read, changed, or sent to DEV.
 
 ## What to set up now
@@ -65,9 +64,8 @@ configured at the time of this review.
 
 **Storing the key does not start publishing.** No current GitHub workflow reads
 it. The website/short-link workflow cannot deliver external articles, and the
-CLI rejects delivery under GitHub Actions. No article is enrolled. A repository
-secret can remain unused now; before adding a GitHub delivery workflow, move it
-to the protected environment and remove the repository copy.
+CLI rejects delivery under GitHub Actions. No article is enrolled. The existing environment secret can remain unused until a separate manual
+GitHub delivery workflow and durable state access are explicitly configured.
 
 Before delivery, verify the authenticated username using `GET /api/users/me`,
 prepare the destination preview, then test one explicitly selected article as a
