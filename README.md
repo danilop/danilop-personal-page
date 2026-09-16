@@ -37,8 +37,8 @@ with local icons and visible platform names configured in `publishing/site.yaml`
 ## Release status
 
 The rebuild is verified locally and on the
-[hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/),
-with 37 passing tests. The combined deployment preserves the original site at
+[live preview](https://www.danilop.net/new/),
+with 37 passing tests. The verified live deployment preserves the original site at
 `/` and serves the rebuild under `/new/`. Root cutover remains pending.
 
 Short-link setup awaits [access approval](docs/deployment-access-review.md).

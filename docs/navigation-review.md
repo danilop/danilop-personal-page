@@ -73,3 +73,12 @@ Amplify preview job 7 passed build, deploy and verify at
 The public-content browser journey also passed on the hosted preview at all three
 widths, with no browser errors or overflow. The shared missing-page rule remains
 a production-cutover task; production itself still serves the original site.
+
+## Hosted status after `/new/` release — 2026-09-16
+
+The combined main-domain deployment passes desktop/mobile navigation at `/new/`
+while preserving the original root site. Missing URLs return native HTTP 404 after
+removing Amplify catch-all redirects. The previous recommendation to use a `404`
+rule targeting `/404.html` is superseded: live testing showed a 302 redirect followed
+by a 200 response. Custom error-page rendering remains local-only; hosted missing
+URLs have an empty native 404 body. See [verification](verification.md).

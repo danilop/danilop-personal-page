@@ -172,10 +172,12 @@ absolute/home-relative cache path. Hashed `_astro` assets are immutable-cacheabl
 the deployment marker remains uncached.
 The existing domain is `https://www.danilop.net`. The root-domain redirect stays
 in Amplify. Preview branches emit noindex metadata and disallow crawling. Build
-identity comes from the checked-out Git commit, including manually started jobs. At cutover, the old catch-all must target `/404.html`, with explicit
-redirects for `/posts.html`, `/decks.html`, `/videos.html`, and `/about.html`.
-The reviewed rules are in `infrastructure/amplify-rules.json`. Apply them only
-when the new site is live: rules apply to every branch of this Amplify app.
+identity comes from the checked-out Git commit, including manually started jobs. At cutover, use explicit redirects for `/posts.html`, `/decks.html`,
+`/videos.html`, and `/about.html`. Leave the missing-page catch-all absent:
+Amplify `404` rules were observed to redirect with 302, while native handling
+returns a true 404 (without the custom error-page body).
+The final root-cutover rules are in `infrastructure/amplify-rules.json`. Apply
+them only when the new site takes over the root: rules apply to every branch of this Amplify app.
 
 Short-link setup is **pending specific access approval**. The exact proposal is
 [here](deployment-access-review.md); `scripts/provision-links.mjs` defaults to a

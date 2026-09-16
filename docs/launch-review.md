@@ -107,14 +107,14 @@ checks. See [cross-posting media](cross-posting.md#media-portability-clarificati
 
 The navigation audit improved active-section indicators, collection/chapter
 reading paths, book-edition discovery, archive pagination and Original Site
-return navigation. The remaining hosted missing-page failure was reproduced:
-an unknown preview URL resolves to `/index.html` with the homepage. Apply
-`infrastructure/amplify-rules.json` at production cutover and verify a genuine
-404 response plus the recovery page. See [navigation review](navigation-review.md).
+return navigation. The earlier hosted missing-page failure is resolved for the main-domain combined
+deployment: removing Amplify catch-all redirects restores native 404 responses.
+Automatic delivery of the custom error-page design remains unsupported in the
+current static hosting configuration. See the temporary-launch evidence below.
 
 ## Temporary launch under `/new/`
 
-Implemented 2026-09-16; local checks pass. The authorized deployment preserves
+Deployed and verified 2026-09-16, main job 4 (`c093c93`). The authorized deployment preserves
 all original snapshot files at `/` and mounts the rebuild at `/new/`. Snapshot
 HTML was compared byte-for-byte with the live root pages before release.
 
@@ -128,8 +128,8 @@ both the publication workflow and local apply commands. No credentials or
 short-link infrastructure are needed for this temporary launch.
 
 Deploy the combined artifact through `main`, then apply
-`infrastructure/amplify-coexistence-rules.json`: normalize `/new`, serve its own
-404, and retain the domain redirect. These rules are app-wide; do not apply the
+`infrastructure/amplify-coexistence-rules.json`: normalize `/new` and retain the domain redirect. Missing URLs use the native
+404 response; explicit Amplify `404` rules were observed to redirect with 302. These rules are app-wide; do not apply the
 final root-cutover rules while the original site remains at `/`.
 
 Verification: 37 tests and type checks pass. Root and `/new/` builds each verify

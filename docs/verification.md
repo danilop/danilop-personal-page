@@ -169,4 +169,16 @@ remains pending and is not covered by that successful normal-navigation result.
 - No publication credentials are used. Delivery is disabled while indexing is off.
 - Browser plugin not available; checks use the installed Playwright/Chromium runtime.
 
-Hosted release verification is performed after the exact main revision deploys.
+Hosted main job 4 succeeded at `c093c9378d0ed0e02fd37e1f91a27552c6b7a4c3`.
+Live verification confirms five original pages remain byte-for-byte identical,
+seven new-section routes respond, `/new/build.json` matches the deployed revision
+and is uncached, RSS uses mounted URLs, and the apex redirect preserves `/new/`.
+Desktop (1440px) and mobile (390px) navigation pass without app/resource errors.
+The private fixture browser check also passes collection next/contents, standalone
+exit, chapter entry, and book-edition navigation at the mounted base.
+
+Hosting correction: explicit Amplify `404` rules returned 302 redirects to a
+200 error page. Removing those catch-alls gives native HTTP 404 responses with
+no redirect. The local preview serves the custom error design; Amplify currently
+returns an empty native 404 body. Both routing files omit the misleading catch-all.
+No credentials, short-link infrastructure, or remote article copies were changed.
