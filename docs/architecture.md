@@ -557,3 +557,17 @@ contents and end-of-collection controls between section and chapter routes.
 Published editions independently keep the collection/book index discoverable.
 `Header.astro` exposes the current page or section through `aria-current`.
 The build injects an Original Site return banner into generated copies only.
+
+## Deployment base and coexistence
+
+`publishing/deployment.json` owns the deployment base, indexing policy, and
+original-site preservation flag. Content and assembly keep logical root-relative
+paths. Astro middleware applies the base to rendered HTML; shared URL helpers
+apply it to metadata, feeds, short links, and cross-post media. Astro/Vite use the
+same base for bundles and browser workers. Publication checks use the mounted
+build marker and reject apply operations for non-indexable previews.
+
+The build writes new-site output beneath the configured base in `dist/`, then
+copies the frozen original snapshot to the root when preservation is enabled.
+Every original file is verified byte-for-byte. Local preview serves the complete
+artifact. Root-only builds use the same pipeline without snapshot packaging.

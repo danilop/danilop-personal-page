@@ -4,6 +4,8 @@ Status: implemented authoring format v1. Date: 2026-09-15.
 Examples use illustrative IDs; referenced files must exist. Runnable examples
 live under test/fixtures/manuscript/.
 
+For the draft-to-release process, follow the [publishing workflow](publishing-workflow.md).
+
 The [content model](content-model.md) defines meaning. This document chooses a
 portable file representation. The [architecture](architecture.md) explains how
 it is parsed and rendered. Schema versioning applies to all manifests.
@@ -32,6 +34,7 @@ content/
     reliable-agents-first.yaml
 publishing/
   site.yaml                   # brand and theme configuration
+  deployment.json             # base path, indexing, original-root preservation
   renderers.yaml
   links.yaml
   destinations.yaml           # cross-posting adapters/account references
@@ -43,6 +46,10 @@ Files in these directories are version controlled. Generated HTML,
 figures, bundles, and manuscript exports go into build directories. Large model
 weights live in versioned asset storage; manifests record URLs and checksums.
 A file's physical location is not its content ID.
+
+For proposed natural-language illustration briefs and local image review, see
+the [image authoring workflow](image-authoring-workflow.md). It is an authoring
+proposal, not an extension to the implemented content schema.
 
 Branding, theme selection, design tokens, portraits, decorative asset slots, and
 supported layout variants belong in `publishing/site.yaml`, not article Markdown.

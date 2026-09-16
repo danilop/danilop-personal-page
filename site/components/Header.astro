@@ -1,9 +1,11 @@
 ---
+import { localPath } from "../../core/deployment.mjs";
+const pathname = localPath(Astro.url.pathname);
 const { config, collectionsCount } = Astro.props;
 const current = (prefix: string) =>
-  Astro.url.pathname === prefix
+  pathname === prefix
     ? "page"
-    : Astro.url.pathname.startsWith(prefix)
+    : pathname.startsWith(prefix)
       ? "location"
       : undefined;
 ---
@@ -33,7 +35,7 @@ const current = (prefix: string) =>
         href="/collections/"
         aria-current={
           current("/collections/") ??
-          (Astro.url.pathname.startsWith("/books/") ? "location" : undefined)
+          (pathname.startsWith("/books/") ? "location" : undefined)
         }
       >
         Collections & Books

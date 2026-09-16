@@ -1,4 +1,5 @@
 ---
+import { siteUrl } from "../../core/deployment.mjs";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/newsreader/400.css";
@@ -21,7 +22,7 @@ const {
   article,
 } = Astro.props;
 const Shell = themes[config.theme].Shell;
-const url = new URL(canonical, config.url).href;
+const url = siteUrl(canonical, config.url);
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": article ? "BlogPosting" : "WebPage",
@@ -65,7 +66,7 @@ const jsonLd = {
     <meta property="og:type" content={article ? "article" : "website"} />
     <meta
       property="og:image"
-      content={new URL("/brand/portrait.webp", config.url).href}
+      content={siteUrl("/brand/portrait.webp", config.url)}
     />
     <meta name="twitter:card" content="summary" />
     <script

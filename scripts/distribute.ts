@@ -1,3 +1,4 @@
+import { deployment, siteUrl } from "../core/deployment.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
@@ -16,6 +17,8 @@ import {
   payloadHash,
 } from "../core/distribution";
 async function main() {
+  if (process.argv.includes("--apply") && !deployment.indexable)
+    throw Error("External publication is disabled for this preview deployment");
   const args = process.argv.slice(2),
     apply = args.includes("--apply");
   const value = (flag: string) => {
@@ -60,7 +63,7 @@ async function main() {
     encoding: "utf8",
   }).trim();
   const verify = async () => {
-    const r = await fetch(config.url + "/build.json", { cache: "no-store" });
+    const r = await fetch(siteUrl("/build.json", config.url), { cache: "no-store" });
     if (!r.ok || (await r.json()).revision !== revision)
       throw Error("Exact source revision is not deployed");
   };

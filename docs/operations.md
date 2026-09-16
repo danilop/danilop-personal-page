@@ -1,6 +1,10 @@
 # Development and publishing operations
 
-Updated: 2026-09-15. Local rebuild implemented; production cutover pending.
+Updated: 2026-09-16. Combined deployment: original site at `/`, rebuild at `/new/`.
+Final root cutover and external integrations remain pending.
+
+For routine authoring and release, follow the [publishing workflow](publishing-workflow.md).
+This reference covers configuration, delivery commands, and recovery.
 
 ## Build and preview
 
@@ -22,6 +26,23 @@ Private browser fixtures can be created with
 `NOTES_QA=1 node --import tsx scripts/fixture-preview.ts`. They create `/_qa/`
 inside local output. **Always run a clean `npm run build` afterward.** The build
 verifier rejects QA routes and private fixture sentinels.
+
+## Deployment location
+
+`publishing/deployment.json` currently sets `basePath: "/new/"`, `indexable: false`,
+and `preserveOriginal: true`. `npm run build` produces a combined `dist/`;
+`npm run preview` serves both sites locally. `npm run dev` serves the rebuilt
+section only. Paths below are relative to the rebuilt site's configured base.
+The current deployment marker is `/new/build.json`.
+
+For an isolated root-build check, use `NOTES_BASE_PATH=/ npm run build`; this
+also disables original-root preservation for that build. Do not deploy this
+check output accidentally. Rebuild without the override for the combined release.
+
+Apply `infrastructure/amplify-coexistence-rules.json` after the combined artifact
+is live. Keep final-cutover rules separate. Non-indexable deployments reject
+short-link and distribution `--apply`; CI skips publication before requesting
+cloud credentials. Dry-run previews remain available.
 
 ## Historical publications and the relaunch boundary
 

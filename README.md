@@ -4,7 +4,7 @@
 
 Articles, experiments, and ideas that can grow over time.
 
-[Website](https://www.danilop.net) · [Design](docs/product-design.md) · [Authoring](docs/authoring-format.md) · [Operations](docs/operations.md)
+[Website](https://www.danilop.net) · [Publishing](docs/publishing-workflow.md) · [Design](docs/product-design.md) · [Operations](docs/operations.md)
 
 ## One article. Many ways to read it.
 
@@ -36,24 +36,22 @@ with local icons and visible platform names configured in `publishing/site.yaml`
 
 ## Release status
 
-The rebuild is implemented and verified locally and on the
-[hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/).
-The hosted build passed all 34 tests using pinned Node 24.21.0 and npm 12.0.2. Production
-still serves the original site. The shorter **Hello, Brave New World** article
-and the Earlier Work / The Original Site wording are approved.
+The rebuild is verified locally and on the
+[hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/),
+with 37 passing tests. The combined deployment preserves the original site at
+`/` and serves the rebuild under `/new/`. Root cutover remains pending.
 
-Short-link cloud setup awaits the specific access approval described in
-[deployment access review](docs/deployment-access-review.md). DEV and Leanpub
-adapters have local contract tests; live publishing accounts are not connected.
-Follow [credentials and access](docs/credentials-and-access.md) before adding
-provider keys; protected DEV delivery still needs the documented workflow changes.
-No article is enrolled for cross-posting. Media export now generates portable PNGs,
-preserves supported destination embeds, and reports fallbacks or blocks required
-embeds that cannot be preserved. The local suite passes 34 tests; actual remote
-draft rendering remains to be checked with connected accounts. See [media portability](docs/cross-posting.md#media-portability-clarification--2026-09-16).
-Search and a site-wide AI assistant
-remain future work. See [verification](docs/verification.md) and [launch status](docs/launch-review.md) for evidence and
-remaining release gates.
+Short-link setup awaits [access approval](docs/deployment-access-review.md).
+External accounts are not connected; no articles are enrolled for cross-posting.
+Protected DEV delivery still needs implementation. Follow
+[credentials and access](docs/credentials-and-access.md) before adding keys.
+AI image automation, search, and a site-wide AI assistant remain future work.
+See [verification](docs/verification.md) and [launch status](docs/launch-review.md)
+for tested capabilities and remaining release gates.
+
+The [temporary `/new/` deployment](docs/launch-review.md#temporary-launch-under-new)
+uses shared base-path configuration. Short-link and external delivery are disabled
+while this section is a non-indexable preview.
 
 ## Develop
 
@@ -79,23 +77,18 @@ npm run preview
 Output goes to `dist/`. Ordinary article reading needs no JavaScript. Model
 weights are downloaded only when a reader explicitly starts a model experiment.
 
-## Write and maintain
+## Publish
 
-Start with [the authoring guide](docs/authoring-format.md) and the
-[welcome article](content/pieces/hello-brave-new-world/index.md). The private
-[test manuscript](test/fixtures/manuscript/) exercises collections and book
-features without inventing published books for the homepage.
+Follow the [publishing workflow](docs/publishing-workflow.md) from draft to release:
 
-```sh
-npm run sync:posts          # explicitly refresh AWS and DEV discovery
-npm run distribute         # prepare previews for enrolled destinations
-npm run publish:links      # inspect proposed aliases; does not publish
-```
+1. Write the Markdown article and prepare its media.
+2. Preview locally, run checks, and approve the content and visuals.
+3. Commit and merge into `main`; verify the production deployment.
+4. After final cutover and integration setup, activate short links and external copies.
 
-Historical metadata combines saved source data with editorial corrections:
-**Open Graph metadata → publisher metadata → per-field overrides**.
-Corrections in `data/link-overrides.json` survive cache refreshes. Production
-builds use versioned metadata and never scrape missing titles silently.
+The guide also covers collections, book editions, updates, and recovery. Use the
+[authoring reference](docs/authoring-format.md) for file formats and the
+[image authoring proposal](docs/image-authoring-workflow.md) for planned Codex support.
 
 ## Repository guide
 
@@ -117,6 +110,7 @@ available through `npm run build:legacy`; its output is `public/`.
 
 ## Specifications
 
+- [Publishing workflow](docs/publishing-workflow.md): drafting, review, release, distribution, and updates.
 - [Product design](docs/product-design.md): reader and author experience.
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML and configuration.
@@ -129,15 +123,16 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
 - [Navigation review](docs/navigation-review.md): tested visitor journeys, improvements, and the pending hosted 404 rule.
 
-The README and specifications must change alongside the implementation. This
-standing requirement is recorded in [AGENTS.md](AGENTS.md).
+Keep documentation brief, professional, and task-focused. The README and affected
+guides must change alongside the implementation; see [AGENTS.md](AGENTS.md).
 
 ## Deployment
 
 AWS Amplify builds and deploys pushes to GitHub `main`. `amplify.yml` defines
-the build; `customHttp.yml` defines response headers. The publication workflow
-waits for that exact deployed revision before activating short links or updating
-enrolled remote copies. Local commits must be pushed to trigger deployment.
+the build; `customHttp.yml` defines response headers. After integration setup,
+the publication workflow waits for that exact deployed revision before activating
+short links or updating enrolled remote copies. Local commits must be pushed to
+trigger deployment. The `/new/` preview keeps the original root site intact.
 
 ## License
 

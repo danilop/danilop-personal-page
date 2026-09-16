@@ -153,3 +153,20 @@ Preview job 7 passed build/deploy/verify at `dc433ac`. The public-content naviga
 journey was repeated successfully against the hosted preview at 1440/390/320px,
 with no browser errors or overflow. The missing-page routing exception above
 remains pending and is not covered by that successful normal-navigation result.
+
+## Original root and `/new/` deployment — 2026-09-16
+
+- Original root HTML matches the saved snapshot byte-for-byte before release;
+  packaging verifies every preserved file, including assets.
+- Type checks and 37 tests pass, including base-path normalization, HTML rewrite
+  idempotence, document structure, responsive image paths, and external URL preservation.
+- `/new/` and isolated `/` builds each pass 178-file / 733-link verification.
+- Local desktop/mobile browser checks cover the original homepage, new home,
+  article navigation and refresh, About/social images, archive pagination,
+  preserved snapshot return navigation, and real 404 responses.
+- Private collection/chapter/book fixtures pass 868 internal links across 49
+  HTML pages, including the preserved root; no fixture content enters the release.
+- No publication credentials are used. Delivery is disabled while indexing is off.
+- Browser plugin not available; checks use the installed Playwright/Chromium runtime.
+
+Hosted release verification is performed after the exact main revision deploys.

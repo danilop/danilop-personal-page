@@ -9,8 +9,19 @@ concurrency:
   group: notes-publication
   cancel-in-progress: false
 jobs:
+  publication-mode:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.mode.outputs.enabled }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - id: mode
+        run: node -e 'const c=require("./publishing/deployment.json");require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT,`enabled=${c.indexable}\n`)'
   publish-links:
-    if: github.ref == 'refs/heads/main' && vars.PUBLICATION_ROLE_ARN != ''
+    needs: publication-mode
+    if: needs.publication-mode.outputs.enabled == 'true' && github.ref == 'refs/heads/main' && vars.PUBLICATION_ROLE_ARN != ''
     permissions:
       contents: read
       id-token: write

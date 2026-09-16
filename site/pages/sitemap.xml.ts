@@ -1,3 +1,4 @@
+import { siteUrl } from "../../core/deployment.mjs";
 import { loadEditions, editionUrl } from "../../core/editions";
 import { site } from "../data";
 import { siteConfig } from "../../core/config";
@@ -16,7 +17,7 @@ export async function GET() {
       .map(editionUrl),
   ];
   return new Response(
-    `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${escape(config.url + p)}</loc></url>`).join("")}</urlset>`,
+    `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${escape(siteUrl(p, config.url))}</loc></url>`).join("")}</urlset>`,
     { headers: { "Content-Type": "application/xml" } },
   );
 }

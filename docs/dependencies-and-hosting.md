@@ -1,7 +1,7 @@
 # Dependencies and Amplify hosting
 
 Updated 2026-09-15. Local verification and the modernized hosted preview passed.
-The production branch continues serving the original site.
+The production build preserves the original root site and adds the rebuild at `/new/`.
 
 ## Supported versions
 
@@ -66,9 +66,10 @@ The version-1 repository build specification:
   relative to the repository. Puppeteer's cache directory is explicitly exported.
 
 The console fallback build specification was synchronized and read back to verify
-an exact match with the repository recipe. Existing production `main` contains its own `amplify.yml`, so its old-site
-build remains independent until cutover. Production redirects remain staged in
-`infrastructure/amplify-rules.json`; applying them early would affect the old site.
+an exact match with the repository recipe. The combined `main` build packages
+the preserved root site and `/new/` together. Use
+`infrastructure/amplify-coexistence-rules.json` for this stage;
+`infrastructure/amplify-rules.json` remains reserved for final root cutover.
 `customHttp.yml` retains reader/security headers and an uncached build marker,
 and makes hashed `_astro` assets cacheable for a year with `immutable`.
 
@@ -79,6 +80,7 @@ Sources: [AWS build settings](https://docs.aws.amazon.com/amplify/latest/usergui
 
 Official action releases are pinned by immutable commit ID: checkout 7.0.1,
 setup-node 7.0.0, configure-aws-credentials 6.3.0 and upload-artifact 7.0.1.
+A read-only configuration job skips publication when deployment indexing is disabled.
 Checkout does not persist credentials. Both push and manual publication require
 `refs/heads/main`; OIDC permission is scoped to the publication job. Preview
 artifacts expire after seven days. These changes do not provision cloud access or

@@ -1,3 +1,5 @@
+import { deployment, sitePath, siteUrl, siteOutput } from "../core/deployment.mjs";
+import { siteConfig } from "../core/config";
 import fs from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -14,6 +16,7 @@ async function walk(dir: string): Promise<string[]> {
   return files;
 }
 async function main() {
+  const config = await siteConfig();
   const aliases: Record<string, string> = {
     "posts.html": "/archive/posts/",
     "decks.html": "/archive/decks/",
@@ -22,8 +25,8 @@ async function main() {
   };
   for (const [file, target] of Object.entries(aliases))
     await fs.writeFile(
-      "dist/" + file,
-      `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="https://www.danilop.net${target}"><title>Page moved</title></head><body><a href="${target}">Continue to ${target}</a></body></html>`,
+      siteOutput + "/" + file,
+      `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${sitePath(target)}"><link rel="canonical" href="${siteUrl(target, config.url)}"><title>Page moved</title></head><body><a href="${sitePath(target)}">Continue to ${sitePath(target)}</a></body></html>`,
     );
   const site = JSON.parse(
     await fs.readFile(".generated/site.json", "utf8"),
@@ -38,7 +41,7 @@ async function main() {
     expected,
     "Archive parity",
   );
-  const files = await walk("dist");
+  const files = await walk(siteOutput);
   const errors: string[] = [];
   let links = 0;
   for (const file of files) {
@@ -56,6 +59,8 @@ async function main() {
       if (!url.startsWith("/") || url.startsWith("//")) continue;
       const p = url.split(/[?#]/)[0];
       const target = path.join("dist", p, p.endsWith("/") ? "index.html" : "");
+      if (deployment.basePath !== "/" && !p.startsWith(deployment.basePath))
+        errors.push(`${file}: escaped deployment base ${url}`);
       links++;
       try {
         await fs.access(target);

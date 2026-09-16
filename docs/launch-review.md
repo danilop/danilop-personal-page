@@ -111,3 +111,33 @@ return navigation. The remaining hosted missing-page failure was reproduced:
 an unknown preview URL resolves to `/index.html` with the homepage. Apply
 `infrastructure/amplify-rules.json` at production cutover and verify a genuine
 404 response plus the recovery page. See [navigation review](navigation-review.md).
+
+## Temporary launch under `/new/`
+
+Implemented 2026-09-16; local checks pass. The authorized deployment preserves
+all original snapshot files at `/` and mounts the rebuild at `/new/`. Snapshot
+HTML was compared byte-for-byte with the live root pages before release.
+
+`publishing/deployment.json` selects the base path, indexing policy, and original
+site preservation. Astro's base and output directory use that configuration;
+shared helpers handle HTML links/assets, feeds, metadata, and publication URLs.
+The build verifies every original file and rejects new-page links outside the base.
+
+The new section is `noindex`. Short-link and external delivery are disabled in
+both the publication workflow and local apply commands. No credentials or
+short-link infrastructure are needed for this temporary launch.
+
+Deploy the combined artifact through `main`, then apply
+`infrastructure/amplify-coexistence-rules.json`: normalize `/new`, serve its own
+404, and retain the domain redirect. These rules are app-wide; do not apply the
+final root-cutover rules while the original site remains at `/`.
+
+Verification: 37 tests and type checks pass. Root and `/new/` builds each verify
+178 new-site files and 733 links. Private fixtures exercise collection/chapter/
+book routes without publishing sample content. Hosted evidence belongs in
+[verification](verification.md).
+
+Final cutover remains separate: set the base to `/`, disable original-root
+preservation, choose indexing policy, add permanent redirects from temporary
+page/feed URLs, and verify production before enabling integrations. Reserved
+short-link codes can then target final URLs. Fixed-edition targets stay immutable.

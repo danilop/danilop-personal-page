@@ -1,3 +1,4 @@
+import { siteUrl } from "./deployment.mjs";
 import sharp from "sharp";
 import { z } from "zod";
 import { load } from "cheerio";
@@ -286,13 +287,17 @@ export function portableHtml(
   $("a[href^='#']").each((_, element) => {
     $(element).attr("href", canonical + $(element).attr("href"));
   });
+  $("a[href]").each((_, element) => {
+    const href = $(element).attr("href")!;
+    if (href.startsWith("/")) $(element).attr("href", siteUrl(href, origin));
+  });
   $("img").each((_, element) => {
     const node = $(element),
       src = node.attr("src"),
       alt = node.attr("alt");
     if (!src || !alt)
       throw Error("Every cross-post image requires a URL and alternative text");
-    const url = new URL(src, origin);
+    const url = new URL(siteUrl(src, origin));
     if (url.protocol !== "https:" || url.username || url.password)
       throw Error("Cross-post images require public HTTPS URLs");
     node.attr("src", url.href);

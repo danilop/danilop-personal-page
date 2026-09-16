@@ -1,3 +1,5 @@
+import { siteOutput } from "../core/deployment.mjs";
+import { deploymentHtml } from "../core/deployment-html";
 import fs from "node:fs/promises";
 import { loadLibrary, assemble, readYaml, parser } from "../core/model";
 import { renderDocument } from "../core/render";
@@ -47,18 +49,18 @@ async function main() {
     assemble(c, lib, "web"),
     lib,
     await readYaml("publishing/renderers.yaml"),
-    new Assets("dist/media"),
+    new Assets(siteOutput + "/media"),
   );
   const $ = load(
-    await fs.readFile("dist/writing/hello-brave-new-world/index.html", "utf8"),
+    await fs.readFile(siteOutput + "/writing/hello-brave-new-world/index.html", "utf8"),
   );
   $("title").text("Private publishing verification");
   $("head").append('<meta name="robots" content="noindex,nofollow">');
   $("main").html(
     `<article class="reading"><header class="article-heading"><h1>Private publishing verification</h1><p>This fixture is not part of the deployed website.</p></header><div class="prose">${rendered.html}</div></article>`,
   );
-  await fs.mkdir("dist/_qa", { recursive: true });
-  await fs.writeFile("dist/_qa/index.html", $.html());
+  await fs.mkdir(siteOutput + "/_qa", { recursive: true });
+  await fs.writeFile(siteOutput + "/_qa/index.html", deploymentHtml($.html()));
   console.log(
     "Local verification: /_qa/. The next release build removes this fixture.",
   );

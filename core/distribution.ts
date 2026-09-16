@@ -1,3 +1,4 @@
+import { siteUrl } from "./deployment.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
@@ -126,7 +127,7 @@ export async function exportPublication(
   const profile = (options.profiles ?? mediaProfiles()).get(configured ?? "");
   const policy = mediaPolicySchema.parse(a.media ?? {});
   const review: MediaReview[] = [];
-  const canonical_url = new URL(articleUrl(piece), origin).href;
+  const canonical_url = siteUrl(articleUrl(piece), origin);
   let body: string;
   if (a.mode === "excerpt") {
     if (!a.excerpt) throw Error("Excerpt mode requires authored excerpt");

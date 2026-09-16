@@ -1,3 +1,5 @@
+import { deployment, siteUrl } from "../core/deployment.mjs";
+import { deploymentHtml } from "../core/deployment-html";
 import { assignmentSchema, exportPayload } from "../core/distribution";
 import { loadEditions } from "../core/editions";
 import fs from "node:fs/promises";
@@ -67,7 +69,7 @@ async function main() {
           (body) =>
             `${body}<nav aria-label="Return to current website" style="padding:12px 20px;background:#f6f3eb;color:#13191c;font:16px/1.5 system-ui,sans-serif;border-bottom:1px solid #708091">You are viewing the preserved original site. <a href="/" style="color:#164b88;text-decoration:underline">Return to ${escape(config.title)}</a></nav>`,
         );
-      await fs.writeFile(p, s);
+      await fs.writeFile(p, deploymentHtml(s));
     }
   // Keep historical asset URLs usable as well as the dated snapshot.
   await fs.cp("static", ".generated/public", { recursive: true });
@@ -84,7 +86,7 @@ async function main() {
     revision: execFileSync("git", ["rev-parse", "HEAD"], {
       encoding: "utf8",
     }).trim(),
-    isPreview: Boolean(
+    isPreview: !deployment.indexable || Boolean(
       process.env.AWS_BRANCH && process.env.AWS_BRANCH !== "main",
     ),
     buildTime: new Date().toISOString(),
@@ -225,7 +227,7 @@ async function main() {
         canonical &&
         site.articles.some(
           (p) =>
-            new URL(p.url, config.url).href.replace(/\/$/, "") ===
+            siteUrl(p.url, config.url).replace(/\/$/, "") ===
             String(canonical).replace(/\/$/, ""),
         )
       )

@@ -1,3 +1,4 @@
+import { siteUrl } from "./deployment.mjs";
 import { z } from "zod";
 import { editionUrl, type Edition } from "./editions";
 import { allowed, articleUrl, collectionUrl, type Library } from "./model";
@@ -38,7 +39,7 @@ export function compileLinks(
       );
       if (!edition) throw Error("Unknown edition alias target");
       if (edition.status === "published")
-        result[alias] = new URL(editionUrl(edition), origin).href;
+        result[alias] = siteUrl(editionUrl(edition), origin);
       continue;
     }
     if (t.scenario)
@@ -47,9 +48,9 @@ export function compileLinks(
       );
     if (!p && !c) throw Error(`Unknown alias target ${t.ref}`);
     if (p && allowed(p, "standalone"))
-      result[alias] = new URL(articleUrl(p), origin).href;
+      result[alias] = siteUrl(articleUrl(p), origin);
     else if (c?.status === "published")
-      result[alias] = new URL(collectionUrl(c), origin).href;
+      result[alias] = siteUrl(collectionUrl(c), origin);
   }
   const owned = new Map<string, string>();
   for (const p of [...lib.pieces.values(), ...lib.collections])

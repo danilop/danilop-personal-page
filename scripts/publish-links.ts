@@ -1,3 +1,4 @@
+import { deployment, siteUrl } from "../core/deployment.mjs";
 import { loadEditions } from "../core/editions";
 import fs from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -19,6 +20,8 @@ import { compileLinks } from "../core/shortlinks";
 import { siteConfig } from "../core/config";
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 async function main() {
+  if (process.argv.includes("--apply") && !deployment.indexable)
+    throw Error("External publication is disabled for this preview deployment");
   const dry = !process.argv.includes("--apply");
   const rollbackIndex = process.argv.indexOf("--rollback");
   const rollback =
@@ -85,7 +88,7 @@ async function main() {
   }
   const verify = async () => {
     const response = await fetch(
-      config.url + "/build.json?revision=" + revision,
+      siteUrl("/build.json", config.url) + "?revision=" + revision,
       { cache: "no-store" },
     );
     if (!response.ok || (await response.json()).revision !== revision)
