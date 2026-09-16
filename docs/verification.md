@@ -32,7 +32,7 @@ No external post was created. The initial assignments remain empty.
 Opening source attribution is now included in full and excerpt exports. Existing
 DEV/media and Medium embed tests check that the first paragraph links to the same
 article as the canonical metadata, with the embed URL still on its own line.
-This follow-up is verified locally; hosted preview job 5 predates it.
+This follow-up is verified locally and included in hosted preview job 6.
 
 ## Browser checks
 
@@ -89,8 +89,8 @@ npm 12.0.2. See
 [dependencies and hosting](dependencies-and-hosting.md).
 
 The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
-passed Amplify build, deploy and verify stages (job 5) on Amazon Linux 2023.
-Its public build marker matches `5738677bfb5f5c1259b063816574af01c62a464f`.
+passed Amplify build, deploy and verify stages (job 6) on Amazon Linux 2023.
+Its public build marker matches `1672c84cce560f5f7437498a185c5001d0696717`.
 The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 31 tests,
 and generates the static site successfully.
 
@@ -103,7 +103,7 @@ serves the old site. The console fallback recipe matches the repository buildspe
 
 The book-export correction namespaces footnotes by placement, preventing
 collisions when assembled articles reuse the same footnote name. This fix is
-included since preview job 4. Cross-post media export is included in job 5.
+included since preview job 4. Cross-post media export is included in job 6.
 
 ## Not yet verified remotely
 
@@ -132,4 +132,6 @@ recognizable and the row wraps below the biography. The old text-only sentence
 is intentionally replaced by this row. Remote profile pages were not audited.
 
 Local screenshots: `/tmp/notes-about-1440.png`, `/tmp/notes-about-390.png`,
-`/tmp/notes-about-320.png`. Preview deployment verification follows separately.
+`/tmp/notes-about-320.png`. Hosted preview job 6 passed build, deploy and verify;
+the public build marker matches `1672c84`. The About route returns HTTP 200 and
+contains the restored labelled social row. Production remains unchanged.
