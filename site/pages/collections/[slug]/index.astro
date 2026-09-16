@@ -27,7 +27,12 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
   <div class="prose collection-intro" set:html={c.introduction} />
   {first && c.ordered && (
     <p class="collection-start">
-      <a class="read-link" href={`${c.url}read/${first.id}/`}>
+      <a
+        class="read-link"
+        href={`${c.url}read/${first.id}/`}
+        data-collection-type={c.book ? "book" : "collection"}
+        data-collection-id={c.id}
+      >
         Start reading
       </a>
     </p>

@@ -31,7 +31,9 @@ const collection = site.collections.find((c) => c.id === edition.collection);
     <ul>
       {edition.artifacts.map((a) => (
         <li>
-          <a href={a.url}>{a.label}</a>
+          <a href={a.url} data-edition-artifact data-edition-id={edition.id}>
+            {a.label}
+          </a>
         </li>
       ))}
     </ul>

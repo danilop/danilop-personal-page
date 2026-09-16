@@ -157,3 +157,7 @@ vite.config.ts.timestamp-*
 /.generated/
 /exports/
 /.publication-state/
+
+# Local AI installer cache and reports (may contain account context)
+/.posthog-wizard-cache/
+/.posthog-wizard*

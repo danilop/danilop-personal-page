@@ -23,6 +23,7 @@ for (const pre of document.querySelectorAll("pre")) {
   button.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(code.textContent ?? "");
+      document.dispatchEvent(new Event("notes:code-copied"));
       button.textContent = "Copied";
       setTimeout(() => (button.textContent = "Copy code"), 1500);
     } catch {

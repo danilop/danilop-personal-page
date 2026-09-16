@@ -9,6 +9,21 @@ const { config } = Astro.props;
   <nav aria-label="Footer">
     <a href="/original-site/">The Original Site</a>
     <a href="/rss.xml">RSS</a>
+    <a href="/privacy/">Privacy</a>
+    <button class="privacy-settings" type="button" data-privacy-settings hidden>
+      Privacy settings
+    </button>
     <a href="https://github.com/danilop/danilop-personal-page">Source</a>
   </nav>
 </footer>
+<style>
+  .privacy-settings {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>

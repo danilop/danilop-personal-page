@@ -1,0 +1,72 @@
+---
+import Layout from "../components/Layout.astro";
+---
+
+<Layout
+  title="Privacy"
+  description="Visitor statistics, cookies and embedded content on Notes Along the Way."
+>
+  <article class="reading">
+    <h1>Privacy</h1>
+    <div class="prose">
+      <p>
+        This website is published by Danilo Poccia. You can read it without
+        accepting optional analytics.
+      </p>
+      <h2>Visitor statistics</h2>
+      <p>
+        When enabled, optional analytics use PostHog Cloud EU (Frankfurt) to
+        understand visits, approximate reading engagement, collection
+        navigation, code-copy actions, viewer openings, simulator starts and
+        book-download clicks.
+      </p>
+      <p>
+        Analytics start only after you choose Accept analytics. PostHog uses a
+        first-party cookie with a pseudonymous browser identifier to estimate
+        repeat visits. It receives the page path, referring domain,
+        browser/device details and the selected action. Your connection also
+        exposes your IP address to the service, which may be used for
+        approximate location. We do not send URL query strings, fragment text,
+        form contents, code contents or AI prompts. Session recordings and
+        automatic interaction recording are disabled.
+      </p>
+      <p>
+        We remember your choice in this browser for up to 180 days using local
+        storage. Analytics cookies expire after up to 180 days without renewal.
+        Event retention is up to one year under the configured free plan. No
+        separate export archive is currently configured. Refusing analytics does
+        not prevent access to content.
+      </p>
+      <p>
+        Use Privacy settings in the footer whenever analytics are enabled to
+        change your choice. Withdrawal stops future collection and clears the
+        analytics identifier on this browser; it does not automatically delete
+        previously collected events.
+      </p>
+      <p>
+        Read <a href="https://posthog.com/privacy">PostHog’s privacy policy</a>{" "}
+        for details of the service and its processing.
+      </p>
+      <h2>Embedded content</h2>
+      <p>
+        External viewers load when you choose Load viewer. The external provider
+        then receives your connection and may apply its own privacy and cookie
+        policies. Analytics consent is separate. You can use the ordinary
+        external link instead. Reading inside external documents or videos is
+        not measured unless a supported integration is explicitly added.
+      </p>
+      <h2>Hosting and questions</h2>
+      <p>
+        The site is hosted with AWS Amplify. Hosting services process technical
+        requests to deliver and protect the site; optional analytics controls do
+        not disable those essential requests.
+      </p>
+      <p>
+        For privacy questions or data requests, contact Danilo through the
+        profiles on the <a href="/about/">About page</a>. Analytics identifiers
+        are not linked to a login or your name, so locating a particular
+        visitor’s historic events may require additional information.
+      </p>
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,102 @@
+---
+import { deployment, localPath } from "../../core/deployment.mjs";
+const token = import.meta.env.PUBLIC_POSTHOG_PROJECT_TOKEN ?? "";
+const host = import.meta.env.PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com";
+const enabled =
+  import.meta.env.PUBLIC_ANALYTICS_ENABLED === "true" &&
+  deployment.indexable &&
+  /^phc_[a-zA-Z0-9]+$/.test(token) &&
+  host === "https://eu.i.posthog.com";
+const { contentId = "" } = Astro.props;
+---
+
+{enabled && (
+  <div
+    id="analytics-config"
+    hidden
+    data-token={token}
+    data-host={host}
+    data-origin={deployment.origin}
+    data-path={localPath(Astro.url.pathname)}
+    data-content-id={contentId}
+  ></div>
+)}
+<section
+  id="analytics-choice"
+  class="analytics-choice"
+  aria-labelledby="analytics-title"
+  hidden
+>
+  <h2 id="analytics-title" tabindex="-1">
+    Visitor statistics
+  </h2>
+  <p>
+    May we use analytics cookies to understand visits, reading and navigation?
+    Optional statistics are processed by PostHog in the EU.{" "}
+    <a href="/privacy/">Privacy details</a>
+  </p>
+  <div class="analytics-actions">
+    <button type="button" data-analytics-choice="accept">
+      Accept analytics
+    </button>
+    <button type="button" data-analytics-choice="reject">
+      Reject analytics
+    </button>
+    <button type="button" data-analytics-close hidden>
+      Keep current choice
+    </button>
+  </div>
+  <p id="analytics-status" role="status" class="analytics-status"></p>
+</section>
+<script>
+  import "../../runtime/analytics";
+</script>
+<style>
+  .analytics-choice {
+    position: fixed;
+    z-index: 100;
+    inset: auto 1rem 1rem;
+    margin: auto;
+    max-width: 48rem;
+    background: var(--paper, #f6f3eb);
+    color: var(--ink, #13191c);
+    border: 1px solid var(--rule, #708091);
+    padding: 1rem 1.3rem;
+    box-shadow: 0 4px 24px #0002;
+    max-height: 80vh;
+    overflow: auto;
+  }
+  .analytics-choice[hidden] {
+    display: none;
+  }
+  h2 {
+    font: 500 1.35rem var(--serif, Georgia);
+    margin: 0 0 0.4rem;
+  }
+  p {
+    font: 0.92rem/1.5 var(--sans, sans-serif);
+    margin: 0.4rem 0 0.8rem;
+  }
+  .analytics-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  button {
+    background: transparent;
+    color: inherit;
+    border: 1px solid currentColor;
+    padding: 0.65rem 0.8rem;
+    font: inherit;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .analytics-status:empty {
+    display: none;
+  }
+</style>

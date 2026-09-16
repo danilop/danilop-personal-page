@@ -33,6 +33,7 @@
     "gray-matter": "^4.0.3",
     "katex": "^0.18.7",
     "open-graph-scraper": "^6.12.0",
+    "posthog-js": "^1.407.2",
     "rehype-katex": "^7.0.1",
     "rehype-parse": "^9.0.1",
     "rehype-remark": "^10.0.1",
@@ -80,6 +81,7 @@
     "prettier-plugin-astro": "^1.0.0"
   },
   "allowScripts": {
+    "core-js@3.50.0": false,
     "esbuild@0.28.2": true,
     "fsevents@2.3.3": true,
     "puppeteer@25.11.0": true

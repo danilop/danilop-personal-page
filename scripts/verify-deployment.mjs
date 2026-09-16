@@ -68,7 +68,7 @@ export async function checkSite({
     return response;
   };
   let home = "";
-  for (const route of ["/", "/about/", "/writing/", "/archive/"]) {
+  for (const route of ["/", "/about/", "/writing/", "/archive/", "/privacy/"]) {
     const response = await get(at(route));
     assert.match(response.headers.get("content-type") ?? "", /text\/html/);
     const html = await response.text();
@@ -159,7 +159,7 @@ export async function checkSite({
     assert.doesNotMatch(sitemap, /\/new\//);
   }
   return {
-    pages: 4,
+    pages: 5,
     resources: resources.size,
     feed: true,
     missingPage: 404,

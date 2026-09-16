@@ -1,101 +1,168 @@
 # Analytics and visitor privacy
 
-Status: discussion proposal, 2026-09-16. No provider selected, account created,
-analytics script installed, or consent system implemented by this proposal.
+## Status — 16 September 2026
 
-## Product goals proposed for discussion
+PostHog Cloud EU integration is implemented. The owner created the account and
+authorized wizard v2.74.1. The wizard created the
+[dashboard](https://eu.posthog.com/project/276112/dashboard/956457) and a
+[setup notebook](https://eu.posthog.com/project/276112/notebooks/APzk5HLL).
+The notebook describes the initial generated integration; this document describes
+our reviewed version, including changes to consent and collection.
 
-Understand readership: article/collection popularity, trends, referring domains,
-and aggregate counts of book downloads or experiment launches. Treat visits and
-unique-reader estimates as approximate; bot filtering, blockers and consent affect
-coverage. Do not introduce advertising profiles, session recordings, prompt/input
-collection, or cross-site identity matching.
+**Production activation is authorized for this release.** The `main` branch uses
+the EU project token, EU ingestion host and explicit analytics enable flag in
+Amplify. Collection starts only after visitor consent. Deployment completion is
+checked against the public build revision and live consent controls. MCP, exports
+and historical import remain unconfigured. Local browser tests intercept PostHog
+requests rather than sending visitor data.
 
-Keep three measurements separate: requests to a short link, visits to the canonical
-article, and views reported by DEV/Medium. Redirect requests include bots and link
-previews. The website tracker cannot measure reading on another platform. Do not
-add tracking pixels to exported articles.
+Validation: all 45 tests, type checking and the production build pass. Local
+desktop and mobile browser checks cover acceptance, refusal, withdrawal,
+re-acceptance, engagement events and removal of sensitive URL values. No provider
+requests occur before consent; withdrawal removes the analytics cookie. Live
+event ingestion is checked separately during activation.
 
-## Provider choices
+## Setup and deployment
 
-- **GoatCounter — recommended starting point:** open source; hosted service is free
-  for reasonable public usage, including personal sites. Hosted storage is in
-  Finland/Germany. Keep optional individual-pageview storage disabled. Its default
-  aggregates still involve transient IP/User-Agent processing for deduplication;
-  do not describe it as processing no personal information at all.
-  [Offering](https://www.goatcounter.com/),
-  [data handling](https://www.goatcounter.com/help/privacy).
-- **Umami:** MIT-licensed, self-hostable, with a free hosted Hobby plan aimed at
-  personal/low-traffic sites. A stronger candidate if richer event reporting is
-  wanted. Confirm the current event allowance, retention and hosting region at
-  selection; this review did not verify numeric free-plan limits. Page hits and
-  custom event data count toward usage.
-  [Source](https://github.com/umami-software/umami),
-  [hosted FAQ](https://docs.umami.is/docs/cloud/faq).
-- **Plausible:** free, open-source Community Edition to self-host; managed hosting
-  is paid. A paid alternative if dashboard/reporting preferences justify it.
-  [Community Edition](https://plausible.io/self-hosted-web-analytics),
-  [hosted plans](https://plausible.io/#pricing).
-- **Matomo:** free open-source core for self-hosting, with documented configuration
-  for the French audience-measurement exemption. More operational/configuration
-  work than this site's initial readership questions warrant.
-  [On-premise](https://matomo.org/matomo-on-premise/),
-  [configuration](https://matomo.org/faq/how-to/how-do-i-configure-matomo-without-tracking-consent-for-french-visitors-cnil-exemption/).
+The local `.env` contains the public project token and EU ingestion host. It is
+ignored by Git. Use `.env.example` for a new checkout.
 
-Free software does not make hosting, backups, updates or maintenance free. No
-actual traffic baseline has been measured here; hosted free eligibility is a fit
-assessment, not a measured capacity guarantee.
+| Build variable | Value |
+| --- | --- |
+| `PUBLIC_POSTHOG_PROJECT_TOKEN` | Project token beginning `phc_`; public ingestion identifier |
+| `PUBLIC_POSTHOG_HOST` | `https://eu.i.posthog.com` |
+| `PUBLIC_ANALYTICS_ENABLED` | `true` to enable the consent-controlled integration; otherwise disabled |
 
-## Consent and privacy policy
+Set these in the **production branch's Amplify environment**, then rebuild.
+Never put a personal API key, access token or private reporting credential in a
+`PUBLIC_` variable, Git, or the static build. The integration runs only on the
+configured canonical origin; branch previews are excluded. Local development can
+exercise it with `PUBLIC_ANALYTICS_ENABLED=true npm run dev`. Intercept provider
+requests during automated tests to avoid polluting the real dashboard.
 
-Cookie absence is not an automatic exemption: ePrivacy also covers other device
-storage/access technologies, including fingerprinting. Personal-data processing
-has separate GDPR obligations. A vendor's compliance claim does not settle the
-site's obligations across jurisdictions.
-[EDPB final technical guidance](https://www.edpb.europa.eu/system/files/documents/2024-10/edpb_guidelines_202302_technical_scope_art_53_eprivacydirective_v2_en_0.pdf).
+Account administration: keep the EU project region, retention settings and
+processor agreement aligned with `/privacy/` as the setup changes.
+The technical controls below do not by themselves certify legal compliance.
+Activation should include one clearly labelled test visit, confirmation in the
+live dashboard, and removal/exclusion of that test data.
 
-Current UK guidance permits a narrow statistical-purpose exception for improving
-the service. It requires clear information and a simple free means of objection;
-individual tracking/profiling and retaining individual information beyond the
-aggregation need do not fit that exception.
-[ICO exceptions](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/what-are-the-exceptions/).
+The SDK is installed through the lockfile. Its transitive `core-js@3.50.0`
+postinstall is explicitly disabled in `allowScripts`; the rest of the repository's
+strict script policy stays intact. The wizard's dependency conflict is resolved.
+Its local cache and downloaded reference copies are excluded from Git.
 
-EU national requirements vary. France permits certain strictly configured audience
-measurement producing anonymous statistics for the publisher, without cross-site
-tracking or reuse for other purposes. That is not an EU-wide product approval.
-[CNIL guidance](https://www.cnil.fr/fr/cookies-solutions-pour-les-outils-de-mesure-daudience).
+## Visitor controls
 
-Proposed implementation policy, pending a decision:
+- No PostHog SDK initialization, external request or analytics cookie before opt-in.
+- Equal **Accept analytics** and **Reject analytics** controls; refusal leaves the
+  website usable. The footer's **Privacy settings** reopens the choice.
+- A versioned preference in local storage expires after 180 days. The PostHog
+  browser-identifier cookie also has a 180-day expiry, renewed through use.
+- Withdrawal stops capture, clears the analytics identifier and reloads the page
+  to dispose of active SDK work. Re-acceptance resumes with a new identifier.
+- Session replay, broad autocapture, exception capture, performance capture,
+  surveys, feature flags and remote extension loading are disabled.
+- External viewers remain independently activated by their Load viewer controls;
+  analytics consent does not authorize those providers.
 
-1. Use one conservative worldwide baseline rather than relying on IP geolocation
-   as the sole legal switch. Keep optional analytics off until consent unless the
-   exact deployment is assessed as outside consent scope or validly exempt under
-   applicable rules. A banner-free setup remains a goal, not a verified property.
-2. Publish a plain-language privacy page describing fields, purposes, provider,
-   retention, transfers and controls. Provide a persistent Privacy settings link.
-   Where personal data is processed, establish the applicable lawful basis and
-   processor/transfer arrangements separately from the cookie assessment.
-3. For opt-in processing, block requests before consent, offer equally easy accept
-   and reject, separate analytics from external media, and make withdrawal easy.
-   Store only the preference needed to respect the choice. An open-source consent
-   library can implement controls; it does not certify legal compliance.
-   [ICO consent practice](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/how-do-we-manage-consent-in-practice/),
-   [MIT CookieConsent library](https://cookieconsent.orestbida.com/).
-4. Keep Google/video viewers behind informed per-provider activation with a normal
-   external link alternative. The existing Load viewer button is a technical
-   starting point, not proof of valid consent. Public document permissions do not
-   establish permission for visitor tracking. Review actual network/storage behavior.
-5. Implement analytics as a replaceable adapter independent of the consent gate.
-   Strip arbitrary query strings, fragments and sensitive referrer details. Send
-   allowlisted event names/IDs only; exclude previews and development. Define
-   retention and test refusal/withdrawal before production use.
+The bundled SDK is loaded on demand. The consent layer and event-property boundary
+are independent of PostHog, so another adapter can replace it.
 
-Server/CDN log aggregation is another option for basic request totals without
-adding a browser tracker. It still needs a privacy assessment, IP minimization,
-retention controls and a cost check; request counts are not exact human readership.
+## Implemented measurements
 
-## Decision still needed
+| Event | Meaning | Additional fields |
+| --- | --- | --- |
+| `$pageview` | Consented page visit | None |
+| `collection_reading_started` | Start reading link clicked | Collection ID/type |
+| `collection_navigation_used` | Previous, next or contents link clicked | Direction, collection ID |
+| `edition_artifact_opened` | Book artifact link clicked | Edition ID |
+| `article_engagement` | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and article-body depth rounded down to 25% |
+| `code_copied` | Clipboard write succeeded | None |
+| `embed_opened` | External viewer activation clicked | None |
+| `simulator_started` | Simulation run clicked | Experiment ID |
 
-Confirm whether simple readership counts are sufficient (GoatCounter recommendation)
-or richer event analysis is desired (Umami candidate), then choose managed versus
-self-hosted operation and assess the precise consent configuration before enabling it.
+Events include the canonical page path, standalone content ID when available,
+referring domain, necessary pseudonymous/session IDs and broad browser/device
+properties. A closed property list drops arbitrary SDK metadata, query strings,
+fragments, referrer paths, inputs, code text, prompts and profile updates. The
+public project token is retained because ingestion requires it. Person profiles
+and cross-site identification are not enabled.
+
+Time and depth are attention estimates, not proof of reading. Simulator starts and
+artifact clicks do not establish successful completion. The welcome post is the
+only published new article; collection/book handlers require real published
+content before end-to-end production reporting can be verified.
+
+### Further reporting work
+
+Use the collected events to build source-to-engagement comparisons, collection
+progression and consenting-browser 7/30-day return cohorts. Add approved campaign
+labels, complete collection/chapter context, supported video progress and sanitized
+module failures when those reports have concrete uses. Current event filtering
+intentionally excludes campaign query values and error contents.
+
+Treat every metric as approximate. Consent, blockers, bot filtering and different
+browsers affect coverage. Display sample sizes and use longer windows at low
+traffic. Session replay, targeted heatmaps, reader surveys and experiments remain
+separate future choices. Do not infer sensitive traits.
+
+Keep short-link requests, website visits and DEV/Medium views separate. Redirect
+requests include bots and previews; the website cannot measure reading inside
+third-party publications or arbitrary embedded documents. Do not add tracking
+pixels to exported articles.
+
+## Data access, cost and portability
+
+Start with the private dashboard. PostHog offers a free
+[hosted MCP](https://posthog.com/docs/model-context-protocol), and a connector was
+found in the Codex catalogue. Neither is installed. Its tools can write as well as
+read, so verify restricted reporting permissions during connection. A reporting
+skill can standardize definitions and comparisons; none has been created yet.
+Reports queried by Codex are shared with the connected AI provider.
+
+The verified [free plan](https://posthog.com/pricing) includes one million analytics
+events/month, one project, one year of retention and community support. No payment
+card is required; reaching the allowance stops collection. Separate products and
+export/storage services have separate allowances or costs. Recheck these at
+activation; commercial backing does not imply a free-plan uptime guarantee.
+
+[Batch exports](https://posthog.com/docs/cdp/batch-exports) support historical
+backfills and destinations including S3 and Postgres. Downloadable
+[Parquet/JSONLines exports](https://posthog.com/docs/cdp/file-download-exports)
+limit event/person/session requests to one-week intervals. They have not been
+tested against this account. Before relying on an exit strategy:
+
+1. Select private storage: a local disk/Pi or a separately costed storage service.
+2. Export a small interval and reproduce a daily count outside PostHog, deduplicating
+   event UUIDs. Preserve stable content IDs, permitted identity/session mappings
+   and report definitions.
+3. Export before source retention expires when longer history is needed. Apply
+   retention/deletion policies to copies too.
+
+Events are portable; dashboards and visitor/session definitions need rebuilding.
+A replacement provider may not import historical events, even though the files
+remain independently queryable. Never store analytics records in Git or the public
+`danilop.link` bucket.
+
+## Privacy basis and alternatives
+
+Use the conservative worldwide opt-in policy for persistent visitor measurement.
+Cookie-free operation is not automatically exempt: device access and personal-data
+processing have separate obligations. UK statistical-purpose exceptions and
+national EU audience-measurement exemptions apply only to qualifying configurations.
+See [ICO consent guidance](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/how-do-we-manage-consent-in-practice/),
+[ICO exceptions](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/what-are-the-exceptions/),
+[CNIL audience measurement](https://www.cnil.fr/fr/cookies-solutions-pour-les-outils-de-mesure-daudience),
+and [PostHog privacy controls](https://posthog.com/docs/privacy).
+
+PostHog was selected for free managed hosting, commercial backing and official MCP.
+Alternatives reviewed: Cloudflare for basic traffic/performance (no custom events),
+GoatCounter for community-hosted aggregate analytics, Umami Hobby for a free
+100,000-event dashboard (API/MCP require paid Pro), and GA4/Mixpanel for broader
+commercial analytics. Managed Matomo and Plausible do not meet the ongoing free
+hosting preference. A Pi remains an optional export destination rather than the
+primary analytics server.
+
+The ordinary `npx -y @posthog/wizard@latest` was used. Its `self-driving` command
+also connects GitHub and configures background agents; that was not run. Future
+wizard changes must be reviewed against this document before deployment.

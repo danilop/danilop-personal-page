@@ -14,12 +14,22 @@ const { previous, next, finished } = readingContext(collection, nodeId);
     You've reached the end of this collection.
   </p>
 )}
-<nav class="reading-navigation" aria-label="Collection reading">
+<nav
+  class="reading-navigation"
+  aria-label="Collection reading"
+  data-collection-id={collection.id}
+>
   {previous && (
-    <a href={`${collection.url}read/${previous.id}/`}>
+    <a href={`${collection.url}read/${previous.id}/`} data-direction="previous">
       Previous: {previous.title}
     </a>
   )}
-  <a href={collection.url}>Back to contents</a>
-  {next && <a href={`${collection.url}read/${next.id}/`}>Next: {next.title}</a>}
+  <a href={collection.url} data-direction="contents">
+    Back to contents
+  </a>
+  {next && (
+    <a href={`${collection.url}read/${next.id}/`} data-direction="next">
+      Next: {next.title}
+    </a>
+  )}
 </nav>
