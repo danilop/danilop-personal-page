@@ -158,6 +158,11 @@ test("cross-post charts, both diagram engines and local figures become real PNGs
     f.options,
   );
   const body = exported.payload.body_markdown;
+  assert(
+    body.startsWith(
+      `The original article can be found [here](${exported.payload.canonical_url}).\n\n`,
+    ),
+  );
   assert.match(body, /Figure 1\. Notes become a book/);
   assert.match(body, /Figure 4\. Local figure/);
   assert.match(
@@ -298,7 +303,11 @@ test("Medium preserves Google URLs with an editor review step and exact-URL requ
     origin,
     options,
   );
-  assert(exported.payload.body_markdown.startsWith(`${google}\n`));
+  assert(
+    exported.payload.body_markdown.startsWith(
+      `The original article can be found [here](${exported.payload.canonical_url}).\n\n${google}\n`,
+    ),
+  );
   assert.equal(exported.review[0].action, "embed-review");
   assert.doesNotMatch(
     exported.payload.body_markdown,
@@ -355,6 +364,11 @@ test("profiles are replaceable, excerpt images use the same policy, and unsafe S
     f.options,
   );
   assert.equal(external.review[0].action, "external-image");
+  assert(
+    external.payload.body_markdown.startsWith(
+      `The original article can be found [here](${external.payload.canonical_url}).\n\n`,
+    ),
+  );
   assert.match(
     external.payload.body_markdown,
     /https:\/\/example.com\/image.png/,

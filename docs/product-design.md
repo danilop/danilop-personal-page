@@ -296,6 +296,8 @@ websites through replaceable destination plugins. The local article remains the
 editorial source and its public URL is the canonical original. Choose destinations
 per article; support full copies or deliberate excerpts without duplicating the
 source body. Destination-specific titles, summaries and tags may be retained.
+Every external copy or excerpt opens with a short attribution line linking
+directly to the original article, before the exported body content.
 
 After changes, update the existing remote copy where supported. Track whether
 each copy is current, needs an update, failed, or requires manual action. Support

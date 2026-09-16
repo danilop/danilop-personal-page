@@ -29,6 +29,11 @@ also inspected visually; a Mermaid word-spacing defect was fixed before release.
 Unsafe SVG, private Google URLs and unknown profiles fail explicitly.
 No external post was created. The initial assignments remain empty.
 
+Opening source attribution is now included in full and excerpt exports. Existing
+DEV/media and Medium embed tests check that the first paragraph links to the same
+article as the canonical metadata, with the embed URL still on its own line.
+This follow-up is verified locally; hosted preview job 5 predates it.
+
 ## Browser checks
 
 Codex's in-app browser was used directly; no fallback browser was required.

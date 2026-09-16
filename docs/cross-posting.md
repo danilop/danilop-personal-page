@@ -146,6 +146,13 @@ content without a fallback blocks that destination with a clear explanation.
 
 Use the full canonical site URL as the original-source reference, not its short
 alias. `danilop.link` can link to interactive companions or the original in copy.
+Every exported article body, including excerpts, begins with
+`The original article can be found [here](CANONICAL_ARTICLE_URL).`
+This opening attribution uses the direct article URL; aliases are not substituted
+automatically because the registry does not record verified activation. The
+canonical metadata and existing closing attribution retain that same URL.
+The opening line participates in the payload hash, so existing enrolled copies
+receive it on their next permitted update; Medium uses the assisted edit workflow.
 Platform series mapping is optional: one chosen ordered collection can map to a
 remote series, without adding a series entity to the content model. Validate tag
 limits and format differences; do not silently discard editorial choices.

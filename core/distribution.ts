@@ -190,6 +190,7 @@ export async function exportPublication(
     /\]\(\/(?!\/)([^)]+)\)/g,
     (_, p) => `](${new URL("/" + p, origin).href})`,
   );
+  body = `The original article can be found [here](${canonical_url}).\n\n${body.trimStart()}`;
   body += `\n\nOriginally published at [Notes Along the Way](${canonical_url}).\n`;
   const tags = a.overrides.tags ?? piece.tags;
   if (tags.length > 4 && a.destination === "dev")

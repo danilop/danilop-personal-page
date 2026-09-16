@@ -21,7 +21,8 @@ live apart from the content and publishing system.
 - **Interactive examples:** registered JavaScript/WASM simulations and replaceable
   browser model runtimes, with explicit activation and static book alternatives.
 - **Portable publishing:** frozen Markua manuscripts, a Leanpub adapter, DEV
-  synchronization, and an assisted Medium workflow.
+  synchronization, and an assisted Medium workflow. Exported full articles and
+  excerpts open with a direct link to the original article.
 - **Durable links:** reviewed aliases for new work at `danilop.link`, activated
   only after the canonical publication is live.
 - **Earlier Work:** the historical catalogue in the new design. **The Original
