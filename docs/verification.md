@@ -195,4 +195,10 @@ transient failures, superseded commits, and deployment origin/path validation.
 Local release validation passes all 40 tests and 178-file / 733-link checks.
 Prettier is updated to 3.9.7; registry audit reports zero known vulnerabilities.
 Repository workflow defaults were reduced to read-only, with PR approval disabled.
-Hosted job results are checked after deploying this change.
+Amplify main job 6 deployed `2bfb695`, and the independent
+[GitHub live check](https://github.com/danilop/danilop-personal-page/actions/runs/35085047702)
+passed against that exact revision, including original page preservation.
+The first manual validation run found Ubuntu's AppArmor restriction prevented
+Chromium from starting in two rendering tests. The workflow now grants user
+namespaces to the exact downloaded browser path and retains its sandbox;
+the corrected hosted validation is checked before task completion.

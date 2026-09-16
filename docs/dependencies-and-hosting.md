@@ -38,7 +38,9 @@ remains available for a build without the full test/check sequence.
 `.npmrc` enforces engines and explicit lifecycle-script approvals. Review installer
 changes when upgrading esbuild, fsevents, or Puppeteer; do not bypass the allowlist.
 Mermaid rendering requires Chromium and its system libraries. Amplify installs
-AL2023 libraries; GitHub validation installs Chromium's Ubuntu dependencies.
+AL2023 libraries; GitHub validation uses Ubuntu 24.04, installs Chromium's system
+dependencies, and permits user namespaces for the exact installed browser path
+through AppArmor so Chromium's sandbox can run.
 
 ## GitHub → Amplify → live verification
 
