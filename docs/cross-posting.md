@@ -45,31 +45,62 @@ reported as author-confirmed rather than API-verified.
 
 ### Media portability clarification — 2026-09-16
 
-The intended delivery behavior includes figures, charts and diagrams as portable
-images, including PNG renditions, plus live embeds where a destination supports
-the provider and URL. Each destination needs its own media capability profile;
-the book rendering target must not stand in for a platform-specific exporter.
+Implemented on 2026-09-16 in `core/distribution-media.ts`, separately from the
+book target. Each destination plugin has a replaceable media profile. Local
+figures, chart and diagram renditions, inline/reference-style Markdown images,
+and authored static previews become content-addressed PNGs. Captions, alternative
+text and Markdown tables survive export; figure references link to the original.
 
-Current implementation has a gap: `exportPayload` uses the `book` target and
-converts rendered HTML to Markdown. It references images hosted by the original
-website; it does not upload image binaries into DEV. Generated diagrams/charts
-are SVG and image blocks are WebP. Google document/presentation blocks become
-authored static alternatives. Universal PNG export and native destination embed
-syntax are not yet implemented or verified on an actual remote draft.
+PNG output uses a white background and a maximum width of 1600 pixels by default.
+SVG is rasterized at density 144. Static formats supported by the installed Sharp
+build can be converted, including PNG, JPEG, WebP, AVIF and SVG. Animated/multipage
+inputs need an authored static export. SVG must be self-contained, with native
+text and no active/HTML content. Mermaid generates native SVG labels and its word
+spans are normalized before rasterization. Unsupported inputs fail the copy rather
+than silently dropping an image. Remote images remain authored HTTPS URLs and are
+reported for review; the exporter does not download or convert them.
 
-Required completion work:
+Images are hosted by the canonical website, not uploaded as binaries into DEV.
+A changed rendition gets a new URL derived from its PNG bytes; the payload changes
+and delivery updates the stored remote article ID. Delivery checks that image URLs
+are reachable after the exact canonical revision has deployed.
 
-- Select image formats per destination; use PNG for portable chart/diagram
-  delivery, preserving readable resolution, alternative text and captions.
-- Include the rendition bytes/options in asset identity. A changed figure gets
-  a new public URL, and the same remote article is updated to reference it after
-  deployment. Verify the destination's rendered result, including image caching.
-- Preserve a public embed URL using the destination's supported syntax when
-  verified. Otherwise expose an authored preview/summary and link. If the author
-  requires a live embed, block that destination rather than silently flattening it.
-- Report image conversions and embed fallbacks in the export review. Platform
-  uploads, where a supported API exists, are a separate adapter capability from
-  linking to publicly hosted images.
+Built-in profiles preserve YouTube/Vimeo embeds using DEV's native Liquid syntax
+or Medium's editor URL workflow. Published Google Docs/Slides use authored
+fallbacks on DEV. Medium exports their published URL on its own line with an
+explicit instruction to press Enter and verify the viewer in the editor. Arbitrary
+HTML iframes are never copied. Other interactive blocks require an authored
+static/summary alternative and a public HTTPS companion link.
+
+Optional assignment settings:
+
+```yaml
+media:
+  imageWidth: 1600 # 640–3200
+  embeds: prefer # prefer, require, or fallback
+  requiredEmbeds: [] # block IDs that must remain live
+  verifiedEmbeds: [] # exact public URLs already verified in the destination editor
+```
+
+`require` applies to every exported interactive/embed block; `requiredEmbeds`
+selects specific blocks. Unsupported required embeds block that copy. Medium's
+required embeds additionally need their exact normalized URL in `verifiedEmbeds`;
+this records an author check, not an automated provider guarantee. It cannot add
+support to DEV. Required block IDs must appear in a full-article export; excerpt
+assignments cannot declare them.
+
+Exports include `media-review.md` and `media-review.json` alongside the article and
+payload. A failed export clears stale outputs and writes `blocked.json`. Build
+preparation records blocked copies privately in `.generated/distribution-blocked.json`
+and continues building the canonical website; the delivery command independently
+blocks those copies and reports failure. Medium completion requires
+`--embeds-reviewed` when the report contains editor-verification items.
+
+Local tests cover real PNG bytes, captions, fallback links, reference images,
+Mermaid spacing, asset-change identity, repeat-delivery idempotence, provider
+profiles, required-embed blocking, private URLs and unsafe SVG rejection. Actual
+DEV draft rendering/caching and a real Medium Google viewer remain account/content
+dependent checks. No article has been enrolled or remotely published.
 
 DEV documents Markdown images and a supported list of Liquid URL embeds; Google
 Docs and Slides are not on that list. Do not assume a generic iframe will work.

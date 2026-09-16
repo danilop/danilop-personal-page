@@ -7,7 +7,7 @@ import { siteConfig } from "../core/config";
 import { safeUrl } from "../core/assets";
 import {
   assignmentSchema,
-  exportPayload,
+  exportPublication,
   devAdapter,
   mediumAdapter,
   syncCopy,
@@ -80,14 +80,18 @@ async function main() {
     async (ledger, save) => {
       for (const a of assignments) {
         const destination = destinations[a.destination],
-          key = [a.piece, a.destination, destination?.account].join("/");
+          key = [a.piece, a.destination, destination?.account].join("/"),
+          out = path.join("exports", "distribution", a.destination, a.piece);
         try {
+          await fs.rm(out, { recursive: true, force: true });
+          await fs.mkdir(out, { recursive: true });
           const p = lib.pieces.get(a.piece);
           if (!p) throw Error("Unknown piece " + a.piece);
           if (!destination) throw Error("Unknown destination " + a.destination);
-          const payload = await exportPayload(p, lib, a, config.url),
-            out = path.join("exports", "distribution", a.destination, p.id);
-          await fs.mkdir(out, { recursive: true });
+          const exported = await exportPublication(p, lib, a, config.url, {
+              plugin: destination.plugin,
+            }),
+            payload = exported.payload;
           await fs.writeFile(
             path.join(out, "article.md"),
             `# ${payload.title}\n\n${payload.body_markdown}`,
@@ -95,6 +99,25 @@ async function main() {
           await fs.writeFile(
             path.join(out, "payload.json"),
             JSON.stringify(payload, null, 2) + "\n",
+          );
+          await fs.writeFile(
+            path.join(out, "media-review.json"),
+            JSON.stringify(
+              { profile: exported.profile, media: exported.review },
+              null,
+              2,
+            ) + "\n",
+          );
+          await fs.writeFile(
+            path.join(out, "media-review.md"),
+            `# Media review\n\nDestination: ${exported.profile}\n\n` +
+              (exported.review
+                .map(
+                  (item) =>
+                    `- **${item.action}**${item.block ? ` (${item.block})` : ""}: ${item.detail}${item.url ? `\n  ${item.url}` : ""}`,
+                )
+                .join("\n") || "No media conversions or embeds.") +
+              "\n",
           );
           await fs.writeFile(
             path.join(out, "previous.md"),
@@ -117,6 +140,13 @@ async function main() {
               `Configure ${destination.credentialEnv} before delivery`,
             );
           if (completed) {
+            if (
+              exported.review.some((item) => item.action === "embed-review") &&
+              !args.includes("--embeds-reviewed")
+            )
+              throw Error(
+                "Verify the native embeds in the destination editor, then include --embeds-reviewed",
+              );
             if (adapter.capabilities.create)
               throw Error("Use --adopt for API destinations");
             const url = safeUrl(completed);
@@ -179,6 +209,15 @@ async function main() {
           if (["conflict", "failed"].includes(result.status)) failures++;
         } catch (error) {
           failures++;
+          await fs.mkdir(out, { recursive: true });
+          await fs.writeFile(
+            path.join(out, "blocked.json"),
+            JSON.stringify(
+              { status: "blocked", error: String(error) },
+              null,
+              2,
+            ) + "\n",
+          );
           if (apply) {
             ledger[key] = {
               ...(ledger[key] ?? { sourceRevision: revision, payloadHash: "" }),

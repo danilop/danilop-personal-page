@@ -331,7 +331,7 @@ export function registry() {
       ["diagram"],
       ["mermaid"],
       (r) =>
-        cached(r, "mermaid", async () => {
+        cached(r, "mermaid-native-labels-v2", async () => {
           const dir = await fs.mkdtemp(
             path.join(os.tmpdir(), "notes-mermaid-"),
           );
@@ -345,6 +345,7 @@ export function registry() {
               JSON.stringify({
                 securityLevel: "strict",
                 theme: "neutral",
+                htmlLabels: false,
                 flowchart: { htmlLabels: false },
                 ...r.options,
               }),

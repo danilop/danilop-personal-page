@@ -5,7 +5,18 @@ import { unified } from "unified";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
-import { hash, safeUrl, Assets } from "./assets";
+import remarkGfm from "remark-gfm";
+import { visit } from "unist-util-visit";
+import { hash, safeUrl } from "./assets";
+import {
+  mediaPolicySchema,
+  mediaProfiles,
+  PortableAssets,
+  portableRegistry,
+  portableHtml,
+  type MediaProfiles,
+  type MediaReview,
+} from "./distribution-media";
 import {
   allowed,
   articleUrl,
@@ -17,12 +28,13 @@ import {
 import { renderDocument } from "./render";
 export const assignmentSchema = z
   .object({
-    piece: z.string(),
-    destination: z.string(),
+    piece: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    destination: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     mode: z.enum(["full", "excerpt"]).default("full"),
     excerpt: z.string().optional(),
     creation: z.enum(["draft", "automatic", "manual"]).default("draft"),
     updates: z.enum(["automatic", "review", "paused"]).default("review"),
+    media: mediaPolicySchema.optional(),
     overrides: z
       .object({
         title: z.string().optional(),
@@ -94,36 +106,86 @@ export function payloadHash(payload: Payload) {
     }),
   );
 }
-export async function exportPayload(
+export async function exportPublication(
   piece: Piece,
   lib: Library,
   a: Assignment,
   origin: string,
+  options: {
+    plugin?: string;
+    assetsOut?: string;
+    profiles?: MediaProfiles;
+  } = {},
 ) {
   if (!allowed(piece, "standalone"))
     throw Error("Only public standalone articles can be distributed");
+  const configured =
+    options.plugin ??
+    (await readYaml("publishing/destinations.yaml")).destinations[a.destination]
+      ?.plugin;
+  const profile = (options.profiles ?? mediaProfiles()).get(configured ?? "");
+  const policy = mediaPolicySchema.parse(a.media ?? {});
+  const review: MediaReview[] = [];
+  const canonical_url = new URL(articleUrl(piece), origin).href;
   let body: string;
   if (a.mode === "excerpt") {
     if (!a.excerpt) throw Error("Excerpt mode requires authored excerpt");
-    body = a.excerpt;
-  } else {
-    const doc = standalone(piece);
-    doc.target = "book";
+    if (policy.requiredEmbeds.length)
+      throw Error("Required block embeds cannot be omitted by an excerpt");
+  }
+  {
+    const exportedPiece =
+      a.mode === "excerpt"
+        ? {
+            ...piece,
+            body: a.excerpt!,
+            ast: (await import("./model")).parser().parse(a.excerpt!),
+          }
+        : { ...piece, ast: structuredClone(piece.ast) };
+    const definitions = new Map<string, any>();
+    visit(exportedPiece.ast, "definition", (node: any) => {
+      definitions.set(node.identifier, node);
+    });
+    visit(exportedPiece.ast, "imageReference", (node: any) => {
+      const definition = definitions.get(node.identifier);
+      if (!definition)
+        throw Error(`Missing image definition ${node.identifier}`);
+      node.type = "image";
+      node.url = definition.url;
+      node.title = definition.title;
+      delete node.identifier;
+      delete node.referenceType;
+      delete node.label;
+    });
+    const doc = standalone(exportedPiece);
+    const tokens = new Map<string, string>();
     const rendered = await renderDocument(
       doc,
       lib,
       await readYaml("publishing/renderers.yaml"),
-      new Assets(),
+      new PortableAssets(policy, review, options.assetsOut),
+      portableRegistry(exportedPiece, profile, policy, review, tokens),
     );
     body = String(
       await unified()
         .use(rehypeParse, { fragment: true })
         .use(rehypeRemark)
+        .use(remarkGfm)
         .use(remarkStringify)
-        .process(rendered.html),
+        .process(portableHtml(rendered.html, canonical_url, origin, review)),
     );
+    for (const [token, markdown] of tokens)
+      body = body.replaceAll(token, markdown);
+    for (const id of policy.requiredEmbeds)
+      if (
+        !review.some(
+          (item) =>
+            item.block === id &&
+            ["embed", "embed-review"].includes(item.action),
+        )
+      )
+        throw Error(`Required embed ${id} is absent from the exported article`);
   }
-  const canonical_url = new URL(articleUrl(piece), origin).href;
   body = body.replace(
     /\]\(\/(?!\/)([^)]+)\)/g,
     (_, p) => `](${new URL("/" + p, origin).href})`,
@@ -132,7 +194,7 @@ export async function exportPayload(
   const tags = a.overrides.tags ?? piece.tags;
   if (tags.length > 4 && a.destination === "dev")
     throw Error("DEV supports four tags; specify destination overrides");
-  return {
+  const payload = {
     title: a.overrides.title ?? piece.title,
     description: a.overrides.summary ?? piece.summary,
     body_markdown: body,
@@ -141,6 +203,23 @@ export async function exportPayload(
     series: a.overrides.series,
     published: a.creation === "automatic",
   } satisfies Payload;
+  return {
+    payload,
+    profile: profile.id,
+    review: review.map((item) => ({
+      ...item,
+      ...(item.url ? { url: new URL(item.url, origin).href } : {}),
+    })),
+  };
+}
+export async function exportPayload(
+  piece: Piece,
+  lib: Library,
+  a: Assignment,
+  origin: string,
+  options: Parameters<typeof exportPublication>[4] = {},
+) {
+  return (await exportPublication(piece, lib, a, origin, options)).payload;
 }
 export function devAdapter(
   apiKey: string,

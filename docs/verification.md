@@ -1,10 +1,10 @@
 # Release verification
 
-Date: 2026-09-15. Scope: local rebuild and hosted preview; production release pending.
+Date: 2026-09-16. Scope: local rebuild and hosted preview; production release pending.
 
 ## Automated checks
 
-- 24 tests: eight legacy metadata/discovery tests and 16 publishing tests.
+- 31 tests: eight legacy metadata/discovery tests and 23 publishing tests.
 - Astro/TypeScript: zero errors, warnings or hints in the checker.
 - Production build: 29 generated pages, 177 output files, 695 checked local links.
 - Historical parity: 307 records, comprising 201 posts, 92 decks and 14 videos.
@@ -17,6 +17,17 @@ Date: 2026-09-15. Scope: local rebuild and hosted preview; production release pe
 The build reports an empty collection loader (expected with no public collection)
 and a large optional WebLLM chunk. Ordinary reading does not load that model
 runtime or download model weights.
+
+## Cross-post media checks — 2026-09-16
+
+Seven additional tests exercise actual PNG conversions from charts, Mermaid/D2,
+figures, Markdown reference images and dated fallback previews; captions, alt text,
+tables and original-site references; native DEV video syntax; Medium URL review;
+required-embed failures; image revision URLs and same-article update/no-op behavior.
+SVG spacing has a pixel-output regression check. D2, chart and Mermaid PNGs were
+also inspected visually; a Mermaid word-spacing defect was fixed before release.
+Unsafe SVG, private Google URLs and unknown profiles fail explicitly.
+No external post was created. The initial assignments remain empty.
 
 ## Browser checks
 

@@ -76,8 +76,12 @@ async function main() {
     about: await renderProse(
       matter(await fs.readFile("content/about.md", "utf8")).content,
     ),
-    revision: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
-    isPreview: Boolean(process.env.AWS_BRANCH && process.env.AWS_BRANCH !== "main"),
+    revision: execFileSync("git", ["rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim(),
+    isPreview: Boolean(
+      process.env.AWS_BRANCH && process.env.AWS_BRANCH !== "main",
+    ),
     buildTime: new Date().toISOString(),
     shortlinks: compileLinks(
       await readYaml("publishing/links.yaml"),
@@ -126,13 +130,35 @@ async function main() {
   }
   // Prepare portable image renditions before deployment, so remote copies never
   // refer to assets that only exist in the publisher's temporary workspace.
+  const distributionReview: {
+    piece: string;
+    destination: string;
+    error: string;
+  }[] = [];
   for (const raw of (await readYaml("publishing/distribution.yaml"))
     .assignments) {
     const assignment = assignmentSchema.parse(raw);
     const piece = lib.pieces.get(assignment.piece);
     if (!piece) throw Error("Unknown distribution source");
-    await exportPayload(piece, lib, assignment, config.url);
+    try {
+      await exportPayload(piece, lib, assignment, config.url);
+    } catch (error) {
+      distributionReview.push({
+        piece: piece.id,
+        destination: assignment.destination,
+        error: String(error),
+      });
+      console.warn(
+        `Cross-post export blocked for ${piece.id}/${assignment.destination}: ${String(error)}`,
+      );
+    }
   }
+  // Publication re-renders and blocks the affected destination; this private
+  // report must not prevent the canonical website from being deployed.
+  await fs.writeFile(
+    ".generated/distribution-blocked.json",
+    JSON.stringify(distributionReview, null, 2),
+  );
   site.articles.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   if (home.lead && !site.articles.some((p) => p.id === home.lead))
     throw Error("Pinned lead is not a public article");

@@ -479,6 +479,10 @@ canonical deployment and uses a durable remote publication ledger independent of
 the Open Graph cache. Target-specific exports, update/conflict handling, capability
 checks and provider limitations are specified in [cross-posting adapters](cross-posting.md).
 DEV is the first API adapter; Medium starts with assisted import/export.
+`core/distribution-media.ts` registers replaceable media capability profiles by
+plugin ID, independent of delivery and book rendering. It wraps the web renderers
+with PNG asset generation and explicit embed/fallback policy. Rendition bytes
+determine asset URLs; review metadata and blocked-copy reports remain private.
 
 ## 8. Book exporter
 

@@ -106,7 +106,11 @@ and Medium's assisted workflow require no publishing credentials here.
 No article is enrolled initially. Add an explicit assignment to
 `publishing/distribution.yaml` and a destination/account to `destinations.yaml`.
 Run `npm run distribute` to generate an article, payload and previous body under
-`exports/distribution/`; compare these before delivery. Credentials are named
+`exports/distribution/`; compare these before delivery. Each copy also includes
+`media-review.md` and `media-review.json` for conversions, embeds and fallbacks.
+A blocked copy has `blocked.json` instead of stale deliverable files. Build-time
+blocked copies are listed privately in `.generated/distribution-blocked.json`;
+they do not prevent canonical site deployment. Credentials are named
 environment variables. DEV supports API delivery; Medium uses manual import/edit.
 
 `--apply` verifies a clean checkout and the exact live `build.json` revision.
@@ -121,7 +125,9 @@ Updates requiring review use `--reviewed`. Filter to a copy using `--piece ID
   A subsequent reviewed delivery updates the same post.
 - After completing a Medium import/edit, use `--apply --piece ID --destination
   medium --complete-manual https://medium.com/...` to record author verification.
-  It is not reported as API verification.
+  Add `--embeds-reviewed` after checking every editor embed listed in its media
+  report. Required Medium embeds also need their exact verified URL recorded in
+  the assignment before export. Completion is not reported as API verification.
 - A timed-out create retains an intent. The next attempt searches the account for
   its canonical URL. Ambiguous/missing matches require explicit reconciliation;
   the coordinator will not blindly create twice.
