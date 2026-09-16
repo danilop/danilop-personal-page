@@ -1,6 +1,6 @@
 # Implementation and verification status
 
-Status: implemented; root deployment authorized and validated locally. Short-link setup and real provider delivery remain pending.
+Status: implemented; root deployment live and verified. Short-link setup and real provider delivery remain pending.
 Updated: 2026-09-16.
 
 Danilo selected **all planned publishing capabilities before deployment**.

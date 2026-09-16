@@ -1,11 +1,44 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { waitForRevision } from "../scripts/verify-deployment.mjs";
+import { waitForRevision, waitForSite } from "../scripts/verify-deployment.mjs";
 const markerUrl = "https://example.com/new/build.json";
 const response = (revision: string, cache = "no-store") =>
   new Response(JSON.stringify({ revision }), {
     headers: { "cache-control": cache },
   });
+
+test("site verification tolerates CDN propagation but fails persistent route errors", async () => {
+  let time = 0,
+    calls = 0;
+  const options = {
+    timeoutMs: 30,
+    intervalMs: 10,
+    now: () => time,
+    sleep: async (ms: number) => {
+      time += ms;
+    },
+  };
+  assert.equal(
+    await waitForSite(async () => {
+      if (++calls < 3) throw Error("old homepage");
+      return "current website";
+    }, options),
+    "current website",
+  );
+  assert.equal(calls, 3);
+  await assert.rejects(
+    waitForSite(async () => {
+      throw Error("broken route");
+    }, options),
+    /broken route/,
+  );
+  await assert.rejects(
+    waitForSite(async () => {
+      throw Error("immediate failure");
+    }),
+    /immediate failure/,
+  );
+});
 
 test("deployment verification waits through stale markers and transient failures", async () => {
   let time = 0,

@@ -218,4 +218,13 @@ The artifact enables indexing at `/`, retains `/original-site/`, and prepares
 permanent temporary/legacy redirects in `infrastructure/amplify-rules.json`.
 The live verifier now checks indexing, robots/sitemap, and all five snapshot
 pages in addition to root routes/assets, RSS, revision, and true 404 responses.
-Hosted results are verified during cutover before task completion.
+Amplify main job 9 deployed `ff09c23`. Direct live verification passed root pages,
+assets, indexing, robots/sitemap, RSS, true 404s, and all five snapshot pages.
+Ten temporary/legacy redirect cases returned 301 and reached HTTP 200 destinations,
+including the article, RSS, and preserved query parameters.
+
+The initial GitHub check saw old root HTML immediately after the new marker
+arrived at its CDN edge. The verifier now allows up to three additional minutes
+for route convergence and rechecks the marker afterward. A dedicated regression
+test covers transient and persistent failures, bringing the suite to 43 tests.
+This retry does not turn a persistent route failure into success.

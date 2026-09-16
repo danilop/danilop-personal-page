@@ -1,6 +1,6 @@
 # Technical architecture and implementation decisions
 
-Status: implemented and configured for root deployment; short-link cloud setup remains pending.
+Status: implemented and deployed at the root; short-link cloud setup remains pending.
 Date: 2026-09-15. These choices implement the [product design](product-design.md)
 and [content model](content-model.md); they do not redefine those requirements.
 Changing a tool requires updating its adapter/decision, not the editorial model.

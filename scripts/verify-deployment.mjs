@@ -168,6 +168,27 @@ export async function checkSite({
   };
 }
 
+// A new uncached marker can arrive before cached HTML at every CDN edge.
+export async function waitForSite(
+  check,
+  {
+    timeoutMs = 0,
+    intervalMs = 15000,
+    now = () => Date.now(),
+    sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  } = {},
+) {
+  const end = now() + timeoutMs;
+  while (true) {
+    try {
+      return await check();
+    } catch (error) {
+      if (now() >= end) throw error;
+      await sleep(Math.min(intervalMs, end - now()));
+    }
+  }
+}
+
 async function main() {
   const revision =
     process.env.GITHUB_SHA ??
@@ -209,7 +230,18 @@ async function main() {
       await fs.appendFile(process.env.GITHUB_OUTPUT, "verified=false\n");
     return;
   }
-  const checks = await checkSite(deployment);
+  const checks = await waitForSite(
+    async () => {
+      const checked = await checkSite(deployment);
+      // Confirm the marker still identifies this revision after checking pages.
+      await waitForRevision({
+        markerUrl: siteUrl("/build.json", deployment.origin),
+        revision,
+      });
+      return checked;
+    },
+    { timeoutMs: process.argv.includes("--wait") ? 3 * 60 * 1000 : 0 },
+  );
   if (process.env.GITHUB_OUTPUT)
     await fs.appendFile(process.env.GITHUB_OUTPUT, "verified=true\n");
   console.log(

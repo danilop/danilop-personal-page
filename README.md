@@ -36,7 +36,7 @@ with local icons and visible platform names configured in `publishing/site.yaml`
 
 ## Release status
 
-The new site is configured for the main URL, with the historical catalogue at
+The new site is live at the main URL, with the historical catalogue at
 `/archive/` and the preserved snapshot at `/original-site/`. Temporary `/new/`
 links redirect to their root equivalents. See [verification](docs/verification.md)
 for release evidence.

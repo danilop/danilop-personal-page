@@ -1,7 +1,6 @@
 # Launch requirements review
 
-Status: root deployment authorized on 2026-09-16; 42 local tests and release
-artifact checks pass. Third-party creation and updates are manual only.
+Status: root deployment live on 2026-09-16; release tests and artifact checks pass. Third-party creation and updates are manual only.
 
 This is a delivery checklist, not a replacement for the product or technical
 specifications. Keep it updated with implementation and verification evidence.

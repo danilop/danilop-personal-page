@@ -76,13 +76,13 @@ The pre-change main revision `686b116` matched successful Amplify job 5 and the
 live `/new/build.json`; its build took about 2 minutes 24 seconds. The earlier
 GitHub workflow only checked publication mode and skipped delivery, so its green
 status did not prove deployment. The independent verifier closes that gap.
-Local validation passes 40 tests and checks 178 new-site files and 733 links.
+Local validation now passes 43 tests and checks 178 new-site files and 733 links.
 See [verification](verification.md) for hosted results and
 [publishing workflow](publishing-workflow.md) for author steps.
 
 ```sh
 npm run verify:deployment           # verify the current commit is live
-npm run verify:deployment -- --wait # wait up to 20 minutes, then check routes
+npm run verify:deployment -- --wait # wait up to 20 minutes for the marker, plus 3 for CDN convergence
 ```
 
 Sources checked during this review: [Node releases](https://nodejs.org/en/blog/release),
