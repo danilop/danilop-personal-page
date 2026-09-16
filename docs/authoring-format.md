@@ -99,6 +99,15 @@ Bodies omit H1 because the title comes from metadata. During book assembly, a
 piece title becomes a section heading and body headings are shifted beneath it.
 References, captions, and titles are never manually numbered in the source.
 
+### External media
+
+Use `media:images/FILE_HASH.png` in Markdown images and
+`media:documents/FILE_HASH.pdf` in ordinary links or PDF block `source.url` values.
+These resolve through `publishing/media.json`; use the exact reference returned
+by `npm run media`. See [media storage](media-storage.md) for upload, correction,
+configuration and current book-export limitations. Rich image blocks still use
+local source paths.
+
 ### Mathematics
 
 Write TeX/LaTeX-style mathematics directly in Markdown:

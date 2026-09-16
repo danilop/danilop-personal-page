@@ -4,6 +4,10 @@ Keep account-specific dashboard/notebook links, resource inventories, test
 identities and traffic snapshots outside this public repository. The local
 operator index is `~/.config/notes-along-the-way/operations.md` (directory mode
 `700`, file mode `600`). Do not copy it into the repository or build output.
+The media uploader/provisioner also uses a private `media.json` in that directory
+for its bucket and AWS resource IDs; recover these from CloudFormation stack
+parameters/outputs and the related AWS consoles. Its public delivery URL is
+intentionally configured in `publishing/media.json`.
 Keep passwords/API keys in a password manager or the appropriate secret store,
 not in the operations note. Public docs describe architecture, variable names,
 events and reproducible procedures without private account links or measurements.

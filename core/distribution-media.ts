@@ -1,3 +1,4 @@
+import { mediaUrl } from "./media";
 import { siteUrl } from "./deployment.mjs";
 import sharp from "sharp";
 import { z } from "zod";
@@ -209,7 +210,7 @@ export function portableRegistry(
         if (typeof r.block.source.url === "string") {
           url = format.startsWith("google-")
             ? publicEmbed(format, r.block.source.url)
-            : safeUrl(r.block.source.url);
+            : safeUrl(mediaUrl(r.block.source.url));
           const parsed = new URL(url);
           if (
             parsed.protocol !== "https:" ||

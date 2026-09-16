@@ -71,7 +71,9 @@
     "prepare:site": "node --import tsx scripts/prepare.ts",
     "build:prepared": "astro build && node --import tsx scripts/package-site.ts && node --import tsx scripts/verify-build.ts",
     "validate": "npm test && npm run prepare:site && npm run check && npm run build:prepared",
-    "verify:deployment": "node scripts/verify-deployment.mjs"
+    "verify:deployment": "node scripts/verify-deployment.mjs",
+    "media": "node --import tsx scripts/media.ts",
+    "media:provision": "node --import tsx scripts/provision-media.ts"
   },
   "author": "",
   "license": "MIT",

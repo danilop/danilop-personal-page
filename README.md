@@ -110,6 +110,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
 - [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
+- [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
 - [Private operations](docs/private-operations.md): where account-specific notes live and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.

@@ -417,3 +417,29 @@ test("profiles are replaceable, excerpt images use the same policy, and unsafe S
     /No media profile/,
   );
 });
+
+test("configured media references become public HTTPS links in manual exports", async (t) => {
+  const f = await fixture(t);
+  f.setBody(
+    "![Remote][figure]\n\n[figure]: media:images/figure.png\n\n[Paper](media:documents/paper.pdf)",
+  );
+  const exported = await exportPublication(
+    f.piece,
+    f.lib,
+    f.assignment,
+    origin,
+    f.options,
+  );
+  const { mediaUrl } = await import("../core/media");
+  assert(
+    exported.payload.body_markdown.includes(
+      mediaUrl("media:images/figure.png"),
+    ),
+  );
+  assert(
+    exported.payload.body_markdown.includes(
+      mediaUrl("media:documents/paper.pdf"),
+    ),
+  );
+  assert(!exported.payload.body_markdown.includes("(media:"));
+});

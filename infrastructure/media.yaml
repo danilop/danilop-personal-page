@@ -1,0 +1,173 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Private media origin, short-cache CloudFront delivery and DNS
+Parameters:
+  BucketName:
+    Type: String
+    AllowedPattern: "[a-z0-9][a-z0-9-]{1,61}[a-z0-9]"
+  DomainName:
+    Type: String
+  HostedZoneId:
+    Type: AWS::Route53::HostedZone::Id
+  CertificateArn:
+    Type: String
+    AllowedPattern: "arn:aws:acm:us-east-1:[0-9]{12}:certificate/.+"
+  CacheSeconds:
+    Type: Number
+    Default: 300
+    MinValue: 0
+    MaxValue: 3600
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref BucketName
+      OwnershipControls:
+        Rules: [{ ObjectOwnership: BucketOwnerEnforced }]
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+      VersioningConfiguration: { Status: Enabled }
+      LifecycleConfiguration:
+        Rules:
+          - Id: AbortIncompleteUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload: { DaysAfterInitiation: 7 }
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins: ["*"]
+            AllowedMethods: [GET, HEAD]
+            AllowedHeaders: [Range]
+            ExposedHeaders: [ETag, Content-Length, Content-Range, Accept-Ranges]
+            MaxAge: 300
+      Tags: [{ Key: Purpose, Value: website-media }]
+  OriginAccess:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-s3"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+  Cache:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub "${AWS::StackName}-short-cache"
+        MinTTL: 0
+        DefaultTTL: !Ref CacheSeconds
+        MaxTTL: !Ref CacheSeconds
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          CookiesConfig: { CookieBehavior: none }
+          HeadersConfig: { HeaderBehavior: none }
+          QueryStringsConfig: { QueryStringBehavior: none }
+  Headers:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: !Sub "${AWS::StackName}-media-headers"
+        CorsConfig:
+          AccessControlAllowCredentials: false
+          AccessControlAllowHeaders: { Items: [Range] }
+          AccessControlAllowMethods: { Items: [GET, HEAD, OPTIONS] }
+          AccessControlAllowOrigins: { Items: ["*"] }
+          AccessControlExposeHeaders:
+            { Items: [ETag, Content-Length, Content-Range, Accept-Ranges] }
+          AccessControlMaxAgeSec: 300
+          OriginOverride: true
+        SecurityHeadersConfig:
+          ContentTypeOptions: { Override: true }
+          ReferrerPolicy:
+            { ReferrerPolicy: strict-origin-when-cross-origin, Override: true }
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: !Sub "public, max-age=0, s-maxage=${CacheSeconds}, must-revalidate"
+              Override: true
+            - Header: Permissions-Policy
+              Value: camera=(), microphone=(), geolocation=()
+              Override: true
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: Public reviewed media; private S3 origin
+        Aliases: [!Ref DomainName]
+        IPV6Enabled: true
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: media
+            DomainName: !GetAtt Bucket.RegionalDomainName
+            OriginPath: /published
+            OriginAccessControlId: !Ref OriginAccess
+            S3OriginConfig: { OriginAccessIdentity: "" }
+        DefaultCacheBehavior:
+          TargetOriginId: media
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          CachePolicyId: !Ref Cache
+          ResponseHeadersPolicyId: !Ref Headers
+        CustomErrorResponses:
+          - { ErrorCode: 403, ErrorCachingMinTTL: 10 }
+          - { ErrorCode: 404, ErrorCachingMinTTL: 10 }
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: CloudFrontReviewedMediaOnly
+            Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: s3:GetObject
+            Resource: !Sub "${Bucket.Arn}/published/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+          - Sid: RequireTLS
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource: [!GetAtt Bucket.Arn, !Sub "${Bucket.Arn}/*"]
+            Condition:
+              Bool: { aws:SecureTransport: false }
+  DNS:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt Distribution.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+            EvaluateTargetHealth: false
+        - Name: !Ref DomainName
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt Distribution.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+            EvaluateTargetHealth: false
+Outputs:
+  BucketName: { Value: !Ref Bucket }
+  DistributionId: { Value: !Ref Distribution }
+  DistributionDomain: { Value: !GetAtt Distribution.DomainName }
+  BaseUrl: { Value: !Sub "https://${DomainName}" }
+  CacheSeconds: { Value: !Ref CacheSeconds }

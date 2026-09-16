@@ -181,7 +181,8 @@ export const markua: BookExporter = {
               replacement += `\n\n![${item.description}](resources/${path.basename(asset)})`;
             }
           }
-          if (!replacement.startsWith(`{#${n.id}-${id}}`)) replacement=`{#${n.id}-${id}}\n`+replacement;
+          if (!replacement.startsWith(`{#${n.id}-${id}}`))
+            replacement = `{#${n.id}-${id}}\n` + replacement;
           if (block.kind === "code") {
             const token = `NOTESBOOKCODE${protectedCode.size}END`;
             protectedCode.set(token, replacement);
@@ -192,7 +193,7 @@ export const markua: BookExporter = {
         const images = [...body.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)];
         for (const match of images) {
           if (match[2].startsWith("resources/")) continue;
-          if (/^https?:/.test(match[2]))
+          if (/^(https?:|media:)/.test(match[2]))
             throw Error(
               "Freeze remote book images with an explicit local or versioned alternative",
             );

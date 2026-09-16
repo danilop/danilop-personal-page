@@ -34,6 +34,11 @@ captions, references, renderer choices, and publication-specific alternatives.
 - Save generated illustrations with their briefs and review locally. The
   [Codex image workflow](image-authoring-workflow.md) remains proposed.
 
+For externally stored images and PDFs, use the [media upload workflow](media-storage.md):
+preview locally, upload with `npm run media`, verify the public URL, then use the
+returned `media:` reference in Markdown or a PDF block. Bucket settings stay private;
+the public base URL is configured once. The local workflow below remains supported.
+
 Commit selected source assets. Build output and rejected image candidates do not
 belong in the publication commit.
 

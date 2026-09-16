@@ -1,3 +1,4 @@
+import { mediaUrl } from "../core/media";
 import {
   experiments,
   validateExperiment,
@@ -421,7 +422,7 @@ export function registry() {
             throw Error("Document requires exactly one path or URL");
           let url = s.path
             ? await r.assets.copy(r.owner, String(s.path))
-            : safeUrl(text(s.url, "document URL"));
+            : safeUrl(mediaUrl(text(s.url, "document URL")));
           if (format !== "pdf") url = publicEmbed(format, url);
           const view = s.viewUrl ? safeUrl(String(s.viewUrl)) : url;
           return {

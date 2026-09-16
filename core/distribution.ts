@@ -1,3 +1,4 @@
+import { mediaUrl } from "./media";
 import { siteUrl } from "./deployment.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -143,6 +144,10 @@ export async function exportPublication(
             ast: (await import("./model")).parser().parse(a.excerpt!),
           }
         : { ...piece, ast: structuredClone(piece.ast) };
+    visit(exportedPiece.ast, (node: any) => {
+      if (typeof node.url === "string" && node.url.startsWith("media:"))
+        node.url = mediaUrl(node.url);
+    });
     const definitions = new Map<string, any>();
     visit(exportedPiece.ast, "definition", (node: any) => {
       definitions.set(node.identifier, node);

@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { mediaUrl } from "./media";
 import path from "node:path";
 import { unified } from "unified";
 import remarkRehype from "remark-rehype";
@@ -181,6 +182,8 @@ export async function renderDocument(
       });
       const headings = new Set<string>();
       for (const v of nodes) {
+        if (typeof v.url === "string" && v.url.startsWith("media:"))
+          v.url = mediaUrl(v.url);
         if (v.type === "html")
           throw Error(
             `Raw HTML is not part of the portable format (${piece.id})`,
