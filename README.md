@@ -2,7 +2,7 @@
 
 *Notes Along the Way*
 
-Articles, experiments, and ideas that can grow over time.
+Articles, experiments, and ideas that will grow over time.
 
 [Website](https://www.danilop.net) · [Publishing](docs/publishing-workflow.md) · [Design](docs/product-design.md) · [Operations](docs/operations.md)
 

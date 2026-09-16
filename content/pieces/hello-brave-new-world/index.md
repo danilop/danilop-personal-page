@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: hello-brave-new-world
 title: Hello, Brave New World
-summary: A new home for articles, experiments, and ideas that can grow over time.
+summary: A new home for articles, experiments, and ideas that will grow over time.
 language: en
 status: published
 publication:
@@ -15,7 +15,7 @@ shortCode: hello
 ---
 
 Welcome to *Notes Along the Way*: a place for articles, experiments, and ideas
-that can grow over time.
+that will grow over time.
 
 Articles can stand alone or form collections. Some collections may develop into
 books, with chapters and a connected reading path. Code, diagrams, photographs,
