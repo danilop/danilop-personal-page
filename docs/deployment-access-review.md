@@ -7,8 +7,10 @@ access changes. The setup is in `scripts/provision-links.mjs`; the resolver sour
 
 ## Exact resources and access
 
-- AWS account: `600966831890`.
-- Existing CloudFront distribution: `E3FXM6R13U242B`, serving `danilop.link`.
+- AWS account: the existing site account; resolve the exact ID from the private
+  operations note and verify it against the signed-in AWS identity.
+- Existing CloudFront distribution serving `danilop.link`; its exact ID is in
+  the private operations note and the current provisioning script.
 - Add one KeyValueStore and one viewer-request function named
   `danilop-notes-links`; retain the S3 origin and existing distribution settings.
 - The function redirects managed aliases only to `https://www.danilop.net/` URLs.
@@ -17,7 +19,7 @@ access changes. The setup is in `scripts/provision-links.mjs`; the resolver sour
 - Create IAM role `danilop-notes-publication`, trusted only by GitHub Actions in
   `danilop/danilop-personal-page`, branch `main`, using the existing GitHub OIDC
   identity provider with audience `sts.amazonaws.com`.
-- Grant that role `amplify:ListJobs` for app `d26ru7a9pi36wa`, branch `main`;
+- Grant that role `amplify:ListJobs` for the existing production Amplify app, branch `main`;
   KVS describe/list/update only for the new store's exact ARN; and S3 get/put/delete
   only in `danilop-link/publication/shortlinks/*` and
   `danilop-link/publication/distribution/*`.

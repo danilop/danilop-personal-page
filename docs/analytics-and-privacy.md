@@ -3,9 +3,9 @@
 ## Status — 16 September 2026
 
 PostHog Cloud EU integration is implemented. The owner created the account and
-authorized wizard v2.74.1. The wizard created the
-[dashboard](https://eu.posthog.com/project/276112/dashboard/956457) and a
-[setup notebook](https://eu.posthog.com/project/276112/notebooks/APzk5HLL).
+authorized wizard v2.74.1. The wizard created a collection/book dashboard and
+setup notebook. Account-specific links are kept in the private operations note;
+see [private operations and recovery](private-operations.md).
 The notebook describes the initial generated integration; this document describes
 our reviewed version, including changes to consent and collection.
 
@@ -25,9 +25,22 @@ requests occur before consent; withdrawal removes the analytics cookie. The same
 flow passed on the live site at desktop (1280 × 900) and mobile (390 × 844)
 sizes, with no console errors or warnings. The EU ingestion endpoint returned
 HTTP 200 with `{"status":"Ok"}` for labelled test traffic on `/privacy/`.
-Dashboard query results have not been verified. Exclude the test identity
-`notes-deployment-check-096ef19` from visitor reports; no automatic deletion or
-report filter has been configured.
+The signed-in traffic dashboard was verified on 16 September 2026. It contains
+visitor/session/page-view results, including deployment tests. The private
+operations note records the test identity and verification snapshot; exclude
+that identity from visitor reports. No automatic removal/report filter is configured.
+
+## Which dashboard to use
+
+Use the traffic dashboard for page views, active users and sessions. The separate
+collection/book dashboard measures collection starts, navigation directions,
+reading-journey conversion and artifact opens. An ordinary page visit does not
+populate those charts; empty results are expected until those actions occur.
+
+The starter template mentions automatic click capture, but this site deliberately
+disables broad autocapture. Its generic click-based charts will not fill from
+page views alone. Find exact dashboard names and links in the private operations
+note, or recover them from the signed-in project's dashboard list.
 
 ## Setup and deployment
 

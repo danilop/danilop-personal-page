@@ -88,7 +88,7 @@ The dependency modernization passes local and hosted checks on Node 24.21.0 and
 npm 12.0.2. See
 [dependencies and hosting](dependencies-and-hosting.md).
 
-The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
+The hosted preview (URL in the private operations note)
 passed Amplify build, deploy and verify stages (job 7) on Amazon Linux 2023.
 Its public build marker matches `dc433ac87a94dddf371158f67f6a32fc95cf94b2`.
 The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 34 tests,

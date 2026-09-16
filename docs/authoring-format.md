@@ -99,6 +99,50 @@ Bodies omit H1 because the title comes from metadata. During book assembly, a
 piece title becomes a section heading and body headings are shifted beneath it.
 References, captions, and titles are never manually numbered in the source.
 
+### Mathematics
+
+Write TeX/LaTeX-style mathematics directly in Markdown:
+
+```markdown
+Inline: $E = mc^2$.
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
+```
+
+The build renders formulas with KaTeX, including HTML for display and MathML for
+accessibility. No browser-side math engine is required. Raw MathML/HTML is not an
+authoring format; use the supported [KaTeX commands](https://katex.org/docs/supported).
+This supports mathematical expressions, not arbitrary LaTeX documents/packages.
+
+For a captioned, numbered equation that can be cross-referenced, add to
+`blocks.yaml`:
+
+```yaml
+schemaVersion: 1
+blocks:
+  energy:
+    kind: math
+    source: {format: tex, text: 'E = mc^2'}
+    caption: Mass–energy equivalence.
+```
+
+Use it in the article body:
+
+```markdown
+::block{ref="energy"}
+
+See :ref{target="agent-memory#energy"}.
+```
+
+Replace `agent-memory` with the relevant piece/placement ID. A math block can use
+`source: {format: tex, path: ./equation.tex}` instead of inline text. Block numbering
+follows its article or book context; plain dollar-delimited formulas are unnumbered.
+Named math blocks use the configurable `math` renderer; dollar-delimited Markdown
+currently uses the built-in KaTeX pipeline. Third-party publication/export support
+must be checked separately for each destination.
+
 ## 3. Collections and placements
 
 ```yaml

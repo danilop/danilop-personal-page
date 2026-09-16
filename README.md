@@ -106,10 +106,11 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Publishing workflow](docs/publishing-workflow.md): drafting, review, release, distribution, and updates.
 - [Product design](docs/product-design.md): reader and author experience.
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
-- [Authoring format](docs/authoring-format.md): Markdown/YAML and configuration.
+- [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
 - [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
+- [Private operations](docs/private-operations.md): where account-specific notes live and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.

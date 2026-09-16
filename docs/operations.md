@@ -159,7 +159,9 @@ not prevent other enrolled copies from being processed.
 
 ## Deployment and short links
 
-Amplify app `d26ru7a9pi36wa` in `eu-west-1` automatically builds GitHub `main`.
+The production Amplify app in `eu-west-1` automatically builds GitHub `main`.
+Find its ID in the private operations note or recover it from the AWS console
+using the repository/custom domain; see [private operations](private-operations.md).
 `amplify.yml` builds `dist/`; `customHttp.yml` sets response headers.
 The AL2023 build installs the pinned runtime/package manager, installs required
 Chromium libraries with `dnf`, and caches npm downloads, render output and

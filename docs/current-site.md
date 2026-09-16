@@ -89,6 +89,6 @@ AWS/DEV metadata, rerun `sync:posts` or add a manual correction.
 ## Deployment
 
 The current rebuild uses Astro output in `dist/` through the existing Amplify app
-`d26ru7a9pi36wa` in `eu-west-1`. The legacy command writes `public/` solely for
+in `eu-west-1`; its ID is in the private operations note. The legacy command writes `public/` solely for
 maintenance/snapshot comparison. See [rebuild operations](operations.md) for
 automatic main-branch deployment and exact revision checks.

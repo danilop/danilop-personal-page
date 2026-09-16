@@ -24,3 +24,12 @@ repository.
 
 Documentation synchronization is part of task completion, not optional follow-up
 work. Apply it without waiting for another reminder from the user.
+
+## Keep operator details private
+
+Store account-specific dashboard/notebook URLs, resource inventories, test
+identities and traffic snapshots in `~/.config/notes-along-the-way/operations.md`,
+outside this public repository. Keep credentials in secret stores. Public docs
+should contain generic setup/recovery instructions and necessary configuration
+schemas; see `docs/private-operations.md`. Do not copy the private note into build
+artifacts. Update the note when operator details change, preserving existing content.

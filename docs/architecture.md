@@ -406,7 +406,7 @@ Read-only AWS inspection on 2026-09-15 found:
 | Resource | Observed state |
 | --- | --- |
 | Public hostname | `danilop.link` |
-| CloudFront distribution | `E3FXM6R13U242B` |
+| CloudFront distribution | Recorded in the private operations note; discover by domain alias |
 | Origin bucket | `danilop-link` in `eu-west-1` |
 | Origin endpoint | `danilop-link.s3.amazonaws.com` (S3 REST origin) |
 | Bucket contents | Empty at inspection |

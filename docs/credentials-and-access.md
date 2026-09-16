@@ -6,6 +6,10 @@ Updated 2026-09-16: third-party delivery is manual from a reviewed local checkou
 there is no repository-wide copy. No current workflow consumes it.
 No secret value was read, changed, or sent to DEV.
 
+Account-specific console links and operational snapshots belong in the private
+operations note; see [storage and recovery](private-operations.md). Credentials
+remain in secret stores, not in that note.
+
 ## What to set up now
 
 Only DEV needs a new publishing credential for the next integration step.
