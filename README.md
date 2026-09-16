@@ -109,7 +109,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
-- [Analytics and privacy](docs/analytics-and-privacy.md): installed PostHog EU integration, consent controls, event definitions and activation steps; production uses visitor opt-in; MCP and exports remain unconfigured.
+- [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.

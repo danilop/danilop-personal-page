@@ -9,7 +9,9 @@ authorized wizard v2.74.1. The wizard created the
 The notebook describes the initial generated integration; this document describes
 our reviewed version, including changes to consent and collection.
 
-**Production activation is authorized for this release.** The `main` branch uses
+**Deployed and enabled on production.** Amplify job 12 successfully deployed
+revision `096ef19` from `main`; the matching public build marker and GitHub
+deployment checks passed on 16 September 2026. The `main` branch uses
 the EU project token, EU ingestion host and explicit analytics enable flag in
 Amplify. Collection starts only after visitor consent. Deployment completion is
 checked against the public build revision and live consent controls. MCP, exports
@@ -19,8 +21,13 @@ requests rather than sending visitor data.
 Validation: all 45 tests, type checking and the production build pass. Local
 desktop and mobile browser checks cover acceptance, refusal, withdrawal,
 re-acceptance, engagement events and removal of sensitive URL values. No provider
-requests occur before consent; withdrawal removes the analytics cookie. Live
-event ingestion is checked separately during activation.
+requests occur before consent; withdrawal removes the analytics cookie. The same consent
+flow passed on the live site at desktop (1280 × 900) and mobile (390 × 844)
+sizes, with no console errors or warnings. The EU ingestion endpoint returned
+HTTP 200 with `{"status":"Ok"}` for labelled test traffic on `/privacy/`.
+Dashboard query results have not been verified. Exclude the test identity
+`notes-deployment-check-096ef19` from visitor reports; no automatic deletion or
+report filter has been configured.
 
 ## Setup and deployment
 
@@ -43,8 +50,8 @@ requests during automated tests to avoid polluting the real dashboard.
 Account administration: keep the EU project region, retention settings and
 processor agreement aligned with `/privacy/` as the setup changes.
 The technical controls below do not by themselves certify legal compliance.
-Activation should include one clearly labelled test visit, confirmation in the
-live dashboard, and removal/exclusion of that test data.
+Future activation checks should use clearly labelled test visits, confirmation
+in the live dashboard, and removal/exclusion of that test data.
 
 The SDK is installed through the lockfile. Its transitive `core-js@3.50.0`
 postinstall is explicitly disabled in `allowScripts`; the rest of the repository's
