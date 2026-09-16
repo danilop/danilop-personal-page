@@ -30,7 +30,7 @@ jobs:
           PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
       - name: Allow the installed browser to use its sandbox
         run: |
-          chrome_binary=$(node --input-type=module -e 'import puppeteer from "puppeteer"; console.log(await puppeteer.executablePath())')
+          chrome_binary=$(node --input-type=module -e 'import puppeteer from "puppeteer"; console.log(await puppeteer.executablePath({headless: "shell"}))')
           sudo tee /etc/apparmor.d/notes-chrome >/dev/null <<EOF
           abi <abi/4.0>,
           include <tunables/global>
