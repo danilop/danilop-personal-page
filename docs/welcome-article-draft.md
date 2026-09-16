@@ -13,4 +13,5 @@ and interactive examples will offer different ways to explore a subject.
 Earlier articles, talks, and videos remain in Earlier Work. The Original Site
 preserves a snapshot of the previous website.
 
-This first note opens the new site. More to follow.
+This first note opens the new site. The site will grow over time, with more articles,
+collections, and experiments.
