@@ -144,6 +144,11 @@ img {
 .masthead nav a {
   padding: 10px 0;
 }
+.masthead nav a[aria-current] {
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
 .front-page {
   display: grid;
   grid-template-columns: minmax(0, 1.82fr) minmax(0, 1fr);
@@ -545,6 +550,20 @@ video {
   gap: 20px;
   font-size: 14px;
   margin: 35px 0;
+  flex-wrap: wrap;
+}
+.reading-navigation a {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.collection-start {
+  margin: 20px 0 30px;
+}
+.reading-complete {
+  margin-top: 35px;
 }
 .about-grid {
   display: grid;

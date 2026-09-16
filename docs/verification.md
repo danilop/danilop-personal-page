@@ -4,9 +4,9 @@ Date: 2026-09-16. Scope: local rebuild and hosted preview; production release pe
 
 ## Automated checks
 
-- 31 tests: eight legacy metadata/discovery tests and 23 publishing tests.
+- 34 tests: eight legacy metadata/discovery tests and 26 publishing tests.
 - Astro/TypeScript: zero errors, warnings or hints in the checker.
-- Production build: 29 generated pages, 178 output files, 695 checked local links.
+- Production build: 29 generated pages, 178 output files, 733 checked local links.
 - Historical parity: 307 records, comprising 201 posts, 92 decks and 14 videos.
 - Private fixture sentinels absent from output; `/_qa/` removed by a clean build.
 - Documentation file links and new-source whitespace checks pass. The historical
@@ -135,3 +135,16 @@ Local screenshots: `/tmp/notes-about-1440.png`, `/tmp/notes-about-390.png`,
 `/tmp/notes-about-320.png`. Hosted preview job 6 passed build, deploy and verify;
 the public build marker matches `1672c84`. The About route returns HTTP 200 and
 contains the restored labelled social row. Production remains unchanged.
+
+## Cross-section navigation — 2026-09-16
+
+See [navigation review](navigation-review.md). Local checks and 34 tests pass.
+The release build contains 29 pages, 178 files and 733 checked local links.
+An isolated private build exercised 43 pages and 838 local links/anchors, including
+collections, nested parts/chapters, reused pieces and a fixed edition. Desktop
+1440px and mobile 390/320px browser journeys pass with no overflow or errors.
+No private manuscript or edition is added to production content.
+
+Hosted missing-URL behavior remains incorrect: the shared legacy Amplify rule
+fallback targets `/index.html`. It must switch to the prepared `/404.html` rule at
+production cutover. This is not resolved by the template navigation improvements.

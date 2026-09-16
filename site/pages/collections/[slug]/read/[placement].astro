@@ -2,6 +2,8 @@
 import { readingLinks } from "../../../../../core/reading-links";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
+import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
+import { readingContext } from "../../../../../core/reading-navigation";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
     c.nodes
@@ -13,10 +15,8 @@ export function getStaticPaths() {
   );
 }
 const { c, n } = Astro.props;
-const reading = c.nodes.filter((x) => x.kind === "piece"),
-  index = reading.findIndex((x) => x.id === n.id),
-  previous = reading[index - 1],
-  next = reading[index + 1];
+const { parent, position, total } = readingContext(c, n.id);
+const original = site.articles.find((p) => p.id === n.pieceId);
 ---
 
 <Layout title={n.title} canonical={c.url} description={c.summary}>
@@ -29,17 +29,27 @@ const reading = c.nodes.filter((x) => x.kind === "piece"),
         {n.number && `${n.number}. `}
         {n.title}
       </h1>
+      {parent && (
+        <p class="meta">
+          In <a href={`${c.url}chapters/${parent.id}/`}>{parent.title}</a>
+        </p>
+      )}
+      {c.ordered && (
+        <p class="meta">
+          Section {position} of {total}
+        </p>
+      )}
     </header>
     <div
       id={n.id}
       class="prose"
       set:html={readingLinks(n.html, c.url, [n.id])}
     />
-    <nav class="reading-navigation" aria-label="Collection reading">
-      {previous && (
-        <a href={`${c.url}read/${previous.id}/`}>Previous: {previous.title}</a>
-      )}
-      {next && <a href={`${c.url}read/${next.id}/`}>Next: {next.title}</a>}
-    </nav>
+    <ReadingNavigation collection={c} nodeId={n.id} />
+    {original && (
+      <p class="meta">
+        <a href={original.url}>View standalone post</a>
+      </p>
+    )}
   </article>
 </Layout>

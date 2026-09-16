@@ -347,3 +347,25 @@ uses a generous clickable area and clear keyboard focus, and introduces no
 third-party widgets or requests before activation. Keep each icon and label in
 one link. Placement below the short bio is a design choice; icon-plus-text
 accessibility follows [W3C guidance](https://www.w3.org/WAI/tutorials/images/decorative/).
+
+### Navigation across reading surfaces
+
+The main navigation indicates the current page or parent section. Collections &
+Books appears when a public collection or published edition exists; neither empty
+sections nor unreleased content create navigation entries. Writing remains the
+current label; Journal is a recommendation awaiting a decision.
+
+Ordered collections offer Start reading, section position, contextual chapter
+links, previous/next sections and an always-present Back to contents link. Chapter
+pages continue beyond their own sections. The final section acknowledges the end.
+Unordered collections offer contents navigation without imposing a reading order.
+Contextual sections link to their standalone post only if that version is public.
+
+Published editions are discoverable from Collections & Books even without a live
+collection, and link back to the growing collection when available. Fixed editions
+and growing books remain distinct. Planned outline entries are visibly labelled
+and do not pretend to be readable links.
+
+Earlier Work includes explicit Previous/Next pagination. The generated Original
+Site adds a small return banner without changing the preserved snapshot sources.
+See [navigation review](navigation-review.md) for verification and remaining gaps.

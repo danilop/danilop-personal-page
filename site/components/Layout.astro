@@ -9,6 +9,10 @@ import "katex/dist/katex.min.css";
 import { siteConfig } from "../../core/config";
 import { themes } from "../../themes/registry";
 import { site } from "../data";
+import { loadEditions } from "../../core/editions";
+const publishedEditions = (await loadEditions()).filter(
+  (e) => e.status === "published",
+);
 const config = await siteConfig();
 const {
   title = config.name,
@@ -74,7 +78,10 @@ const jsonLd = {
     <a class="skip-link" href="#main">
       Skip to content
     </a>
-    <Shell config={config} collectionsCount={site.collections.length}>
+    <Shell
+      config={config}
+      collectionsCount={site.collections.length + publishedEditions.length}
+    >
       <slot />
     </Shell>
     <script>

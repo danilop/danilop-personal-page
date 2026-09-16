@@ -16,7 +16,7 @@ import {
 } from "../core/model";
 import { siteConfig, homeSchema, tokensCss } from "../core/config";
 import { renderDocument, renderProse } from "../core/render";
-import { Assets, localAsset } from "../core/assets";
+import { Assets, localAsset, escape } from "../core/assets";
 import { compileLinks } from "../core/shortlinks";
 import type { CompiledSite, ArchiveRecord } from "../core/site-data";
 import metadata from "../lib/link-metadata.js";
@@ -61,6 +61,11 @@ async function main() {
         .replace(
           "</head>",
           '<meta name="robots" content="noindex,follow"></head>',
+        )
+        .replace(
+          /<body\b[^>]*>/i,
+          (body) =>
+            `${body}<nav aria-label="Return to current website" style="padding:12px 20px;background:#f6f3eb;color:#13191c;font:16px/1.5 system-ui,sans-serif;border-bottom:1px solid #708091">You are viewing the preserved original site. <a href="/" style="color:#164b88;text-decoration:underline">Return to ${escape(config.title)}</a></nav>`,
         );
       await fs.writeFile(p, s);
     }

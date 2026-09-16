@@ -104,3 +104,10 @@ Cross-post media now uses destination profiles with PNG renditions, supported
 native embeds, explicit authored fallbacks and required-embed blocking. Real
 DEV draft rendering and Medium editor verification remain account-dependent
 checks. See [cross-posting media](cross-posting.md#media-portability-clarification--2026-09-16).
+
+The navigation audit improved active-section indicators, collection/chapter
+reading paths, book-edition discovery, archive pagination and Original Site
+return navigation. The remaining hosted missing-page failure was reproduced:
+an unknown preview URL resolves to `/index.html` with the homepage. Apply
+`infrastructure/amplify-rules.json` at production cutover and verify a genuine
+404 response plus the recovery page. See [navigation review](navigation-review.md).

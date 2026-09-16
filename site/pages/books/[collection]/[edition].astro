@@ -1,7 +1,7 @@
 ---
 import Layout from "../../../components/Layout.astro";
 import { loadEditions, editionUrl } from "../../../../core/editions";
-import { dateLabel } from "../../../data";
+import { dateLabel, site } from "../../../data";
 export async function getStaticPaths() {
   return (await loadEditions())
     .filter((e) => e.status === "published")
@@ -11,6 +11,7 @@ export async function getStaticPaths() {
     }));
 }
 const { edition } = Astro.props;
+const collection = site.collections.find((c) => c.id === edition.collection);
 ---
 
 <Layout
@@ -20,7 +21,9 @@ const { edition } = Astro.props;
 >
   <article class="reading">
     <header class="article-heading">
-      <p class="eyebrow">Book edition</p>
+      <p class="eyebrow">
+        <a href="/collections/">Collections & Books</a> · Book edition
+      </p>
       <h1>{edition.title}</h1>
       <p class="dek">{edition.summary}</p>
       <p class="meta">Published {dateLabel(edition.publishedAt)}</p>
@@ -36,5 +39,11 @@ const { edition } = Astro.props;
       This edition is a fixed publication. Later articles may continue to
       develop independently.
     </p>
+    <nav class="reading-navigation" aria-label="Book navigation">
+      {collection && (
+        <a href={collection.url}>Explore the growing collection</a>
+      )}
+      <a href="/collections/">All collections & books</a>
+    </nav>
   </article>
 </Layout>

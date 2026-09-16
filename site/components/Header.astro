@@ -1,5 +1,11 @@
 ---
 const { config, collectionsCount } = Astro.props;
+const current = (prefix: string) =>
+  Astro.url.pathname === prefix
+    ? "page"
+    : Astro.url.pathname.startsWith(prefix)
+      ? "location"
+      : undefined;
 ---
 
 <header class="masthead">
@@ -19,9 +25,25 @@ const { config, collectionsCount } = Astro.props;
     />
   </a>
   <nav aria-label="Main navigation">
-    <a href="/writing/">Writing</a>
-    {collectionsCount > 0 && <a href="/collections/">Collections & Books</a>}
-    <a href="/archive/">Earlier Work</a>
-    <a href="/about/">About</a>
+    <a href="/writing/" aria-current={current("/writing/")}>
+      Writing
+    </a>
+    {collectionsCount > 0 && (
+      <a
+        href="/collections/"
+        aria-current={
+          current("/collections/") ??
+          (Astro.url.pathname.startsWith("/books/") ? "location" : undefined)
+        }
+      >
+        Collections & Books
+      </a>
+    )}
+    <a href="/archive/" aria-current={current("/archive/")}>
+      Earlier Work
+    </a>
+    <a href="/about/" aria-current={current("/about/")}>
+      About
+    </a>
   </nav>
 </header>

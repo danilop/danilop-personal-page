@@ -548,3 +548,12 @@ an illustrative interface into content configuration. Authoring syntax is in
   S3 conditional writes. Explicit mapping and manual completion commands exist.
 - A date-only relaunch boundary in site configuration separates Earlier Work
   from later Elsewhere records. Empty sections remain hidden.
+
+### Reading navigation implementation
+
+`core/reading-navigation.ts` derives visible placement order and chapter bounds
+from compiled collection nodes. `ReadingNavigation.astro` shares previous/next,
+contents and end-of-collection controls between section and chapter routes.
+Published editions independently keep the collection/book index discoverable.
+`Header.astro` exposes the current page or section through `aria-current`.
+The build injects an Original Site return banner into generated copies only.

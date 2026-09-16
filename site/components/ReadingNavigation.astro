@@ -1,0 +1,25 @@
+---
+import type { CollectionData } from "../../core/site-data";
+import { readingContext } from "../../core/reading-navigation";
+interface Props {
+  collection: CollectionData;
+  nodeId: string;
+}
+const { collection, nodeId } = Astro.props;
+const { previous, next, finished } = readingContext(collection, nodeId);
+---
+
+{finished && (
+  <p class="meta reading-complete">
+    You've reached the end of this collection.
+  </p>
+)}
+<nav class="reading-navigation" aria-label="Collection reading">
+  {previous && (
+    <a href={`${collection.url}read/${previous.id}/`}>
+      Previous: {previous.title}
+    </a>
+  )}
+  <a href={collection.url}>Back to contents</a>
+  {next && <a href={`${collection.url}read/${next.id}/`}>Next: {next.title}</a>}
+</nav>

@@ -26,7 +26,7 @@ live apart from the content and publishing system.
 - **Durable links:** reviewed aliases for new work at `danilop.link`, activated
   only after the canonical publication is live.
 - **Earlier Work:** the historical catalogue in the new design. **The Original
-  Site** preserves the old look. **Elsewhere** is reserved for external writing
+  Site** preserves the old look, with a return link to the current website. **Elsewhere** is reserved for external writing
   published after relaunch. Empty sections stay hidden.
 
 Public PDFs and published Google Docs/Slides load on reader request. iCloud
@@ -49,7 +49,7 @@ Follow [credentials and access](docs/credentials-and-access.md) before adding
 provider keys; protected DEV delivery still needs the documented workflow changes.
 No article is enrolled for cross-posting. Media export now generates portable PNGs,
 preserves supported destination embeds, and reports fallbacks or blocks required
-embeds that cannot be preserved. The local suite passes 31 tests; actual remote
+embeds that cannot be preserved. The local suite passes 34 tests; actual remote
 draft rendering remains to be checked with connected accounts. See [media portability](docs/cross-posting.md#media-portability-clarification--2026-09-16).
 Search and a site-wide AI assistant
 remain future work. See [verification](docs/verification.md) and [launch status](docs/launch-review.md) for evidence and
@@ -127,6 +127,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
+- [Navigation review](docs/navigation-review.md): tested visitor journeys, improvements, and the pending hosted 404 rule.
 
 The README and specifications must change alongside the implementation. This
 standing requirement is recorded in [AGENTS.md](AGENTS.md).

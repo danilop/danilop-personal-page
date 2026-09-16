@@ -12,15 +12,26 @@ const { collection: c } = Astro.props;
 const editions = (await loadEditions()).filter(
   (e) => e.collection === c.id && e.status === "published",
 );
+const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
 ---
 
 <Layout title={c.title} description={c.summary}>
   <header class="page-heading">
+    <p class="eyebrow">
+      <a href="/collections/">Collections & Books</a>
+    </p>
     <p class="eyebrow">{c.book ? "Growing book" : "Collection"}</p>
     <h1>{c.title}</h1>
     <p>{c.summary}</p>
   </header>
   <div class="prose collection-intro" set:html={c.introduction} />
+  {first && c.ordered && (
+    <p class="collection-start">
+      <a class="read-link" href={`${c.url}read/${first.id}/`}>
+        Start reading
+      </a>
+    </p>
+  )}
   <nav class="contents" aria-label="Table of contents">
     <ol>
       {c.nodes.map((n) => (
@@ -62,4 +73,7 @@ const editions = (await loadEditions()).filter(
     <summary>Read the whole collection</summary>
     <div class="prose" set:html={c.html} />
   </details>
+  <a class="back-link" href="/collections/">
+    All collections & books
+  </a>
 </Layout>

@@ -1,22 +1,38 @@
 ---
 import Layout from "../components/Layout.astro";
 import { site } from "../data";
+import { loadEditions, editionUrl } from "../../core/editions";
+const editions = (await loadEditions()).filter((e) => e.status === "published");
 ---
 
 <Layout title="Collections & Books">
   <header class="page-heading">
     <h1>Collections & Books</h1>
   </header>
-  {site.collections.length ? (
+  {site.collections.length > 0 &&
     site.collections.map((c) => (
       <article class="collection-entry">
+        <p class="eyebrow">{c.book ? "Growing book" : "Collection"}</p>
         <h2>
           <a href={c.url}>{c.title}</a>
         </h2>
         <p>{c.summary}</p>
       </article>
-    ))
-  ) : (
+    ))}
+  {editions.length > 0 && (
+    <section class="collection-entry" aria-labelledby="editions-heading">
+      <h2 id="editions-heading">Published editions</h2>
+      <p>Fixed releases to read or download.</p>
+      <ul>
+        {editions.map((e) => (
+          <li>
+            <a href={editionUrl(e)}>{e.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+  {site.collections.length === 0 && editions.length === 0 && (
     <p class="quiet-page">
       Collections will appear here as the writing develops.{" "}
       <a href="/writing/">Explore the writing.</a>

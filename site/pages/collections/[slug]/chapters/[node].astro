@@ -2,6 +2,8 @@
 import { readingLinks } from "../../../../../core/reading-links";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
+import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
+import { readingContext } from "../../../../../core/reading-navigation";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
     c.nodes
@@ -13,10 +15,7 @@ export function getStaticPaths() {
   );
 }
 const { c, n } = Astro.props;
-const start = c.nodes.indexOf(n),
-  children: typeof c.nodes = [];
-for (let i = start + 1; i < c.nodes.length && c.nodes[i].depth > n.depth; i++)
-  children.push(c.nodes[i]);
+const { children } = readingContext(c, n.id);
 ---
 
 <Layout title={n.title} canonical={c.url} description={c.summary}>
@@ -32,7 +31,18 @@ for (let i = start + 1; i < c.nodes.length && c.nodes[i].depth > n.depth; i++)
     </header>
     {children.map((child) => (
       <section id={child.id}>
-        <h2>{child.title}</h2>
+        <h2>
+          {child.number && `${child.number}. `}
+          {child.title}
+          {child.planned && " — Planned"}
+        </h2>
+        {child.kind === "piece" && (
+          <p class="meta">
+            <a href={`${c.url}read/${child.id}/`}>
+              Read this section separately
+            </a>
+          </p>
+        )}
         <div
           class="prose"
           set:html={readingLinks(
@@ -43,5 +53,6 @@ for (let i = start + 1; i < c.nodes.length && c.nodes[i].depth > n.depth; i++)
         />
       </section>
     ))}
+    <ReadingNavigation collection={c} nodeId={n.id} />
   </article>
 </Layout>
