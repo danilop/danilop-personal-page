@@ -21,7 +21,7 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | Leanpub | Preview/status/publication adapter for an existing book | API contract tests; live account/source/preview not configured |
 | DEV / Medium | API and assisted adapters, durable state, mapping/review/recovery commands | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
 | `danilop.link` | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback | Compiler tests; specific infrastructure access approval pending |
-| Main deployment | Existing Amplify integration; build/check/test configuration and console fallback updated | Hosted preview job 4 passed at `008fbc2` with Node 24.21.0/npm 12.0.2; production cutover pending |
+| Main deployment | Existing Amplify integration; build/check/test configuration and console fallback updated | Hosted preview job 5 passed at `5738677` with Node 24.21.0/npm 12.0.2; production cutover pending |
 
 ## Remaining release work
 

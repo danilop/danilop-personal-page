@@ -84,9 +84,9 @@ npm 12.0.2. See
 [dependencies and hosting](dependencies-and-hosting.md).
 
 The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
-passed Amplify build, deploy and verify stages (job 4) on Amazon Linux 2023.
-Its public build marker matches `008fbc27f1ca3de8fb66bc0daced8c40737b65ab`.
-The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 24 tests,
+passed Amplify build, deploy and verify stages (job 5) on Amazon Linux 2023.
+Its public build marker matches `5738677bfb5f5c1259b063816574af01c62a464f`.
+The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 31 tests,
 and generates the static site successfully.
 
 The homepage, approved welcome article, video archive, original snapshot,
@@ -98,7 +98,7 @@ serves the old site. The console fallback recipe matches the repository buildspe
 
 The book-export correction namespaces footnotes by placement, preventing
 collisions when assembled articles reuse the same footnote name. This fix is
-included in preview job 4.
+included since preview job 4. Cross-post media export is included in job 5.
 
 ## Not yet verified remotely
 

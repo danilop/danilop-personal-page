@@ -1,6 +1,7 @@
 # Cross-posting adapters
 
-Status: adapters implemented and locally tested; no external publishing accounts
+Status: adapters and media export implemented; local and hosted preview tests pass.
+No external publishing accounts
 or credentials configured. Provider
 capabilities checked against official documentation on 2026-09-15.
 

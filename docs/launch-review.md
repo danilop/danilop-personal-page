@@ -95,7 +95,7 @@ or model example is published as filler.
 
 Specific short-link AWS/GitHub access approval remains pending after an automatic
 approval rejection; no short-link or access mutation occurred. Production still serves the old
-site. Hosted preview job 4 passed at `008fbc2`, including all 24 tests and public
+site. Hosted preview job 5 passed at `5738677`, including all 31 tests and public
 route checks; see [verification](verification.md). Production cutover and exact
 live revision/alias verification remain release gates. DEV/Leanpub adapters are locally tested but unconnected to live
 publishing accounts; public Google/iCloud permissions await real URLs.
