@@ -81,7 +81,8 @@ specifications. Keep it updated with implementation and verification evidence.
 
 ## Current evidence and remaining gates
 
-Local implementation includes the full selected publishing scope. Core tests
+Local implementation covers the selected publishing systems, with the cross-post
+media gap below still to complete. Core tests
 exercise actual static renderers, JS/WASM parity, reusable collection assembly,
 private-content filtering, frozen editions and cross-posting behavior. Browser
 checks have exercised real local model download/generation/reset/unload/cache
@@ -98,3 +99,9 @@ site. Hosted preview job 4 passed at `008fbc2`, including all 24 tests and publi
 route checks; see [verification](verification.md). Production cutover and exact
 live revision/alias verification remain release gates. DEV/Leanpub adapters are locally tested but unconnected to live
 publishing accounts; public Google/iCloud permissions await real URLs.
+
+The 2026-09-16 media review identified another completion gate: cross-post exports
+currently use book renditions. PNG conversion and native destination embeds need
+implementation and remote draft verification. Unsupported required embeds must
+block delivery or use an explicitly accepted fallback. See
+[cross-posting media](cross-posting.md#media-portability-clarification--2026-09-16).

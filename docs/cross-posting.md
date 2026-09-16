@@ -43,6 +43,49 @@ reported as author-confirmed rather than API-verified.
 
 ## Configuration and contract
 
+### Media portability clarification — 2026-09-16
+
+The intended delivery behavior includes figures, charts and diagrams as portable
+images, including PNG renditions, plus live embeds where a destination supports
+the provider and URL. Each destination needs its own media capability profile;
+the book rendering target must not stand in for a platform-specific exporter.
+
+Current implementation has a gap: `exportPayload` uses the `book` target and
+converts rendered HTML to Markdown. It references images hosted by the original
+website; it does not upload image binaries into DEV. Generated diagrams/charts
+are SVG and image blocks are WebP. Google document/presentation blocks become
+authored static alternatives. Universal PNG export and native destination embed
+syntax are not yet implemented or verified on an actual remote draft.
+
+Required completion work:
+
+- Select image formats per destination; use PNG for portable chart/diagram
+  delivery, preserving readable resolution, alternative text and captions.
+- Include the rendition bytes/options in asset identity. A changed figure gets
+  a new public URL, and the same remote article is updated to reference it after
+  deployment. Verify the destination's rendered result, including image caching.
+- Preserve a public embed URL using the destination's supported syntax when
+  verified. Otherwise expose an authored preview/summary and link. If the author
+  requires a live embed, block that destination rather than silently flattening it.
+- Report image conversions and embed fallbacks in the export review. Platform
+  uploads, where a supported API exists, are a separate adapter capability from
+  linking to publicly hosted images.
+
+DEV documents Markdown images and a supported list of Liquid URL embeds; Google
+Docs and Slides are not on that list. Do not assume a generic iframe will work.
+Medium supports URL-based embeds through Embed.ly and lists Google Drive, but
+does not accept arbitrary embed HTML. Verify the exact public document URL in
+the destination editor; neither provider guarantees every embed works everywhere.
+[DEV editor guide](https://dev.to/p/editor_guide),
+[Medium embeds](https://help.medium.com/hc/en-us/articles/214981378-Using-embeds).
+
+Static image changes require a cross-post update. Changes inside a supported
+live Google embed may appear without changing the article, according to the
+provider's publication and caching behavior. A static preview image will not
+refresh just because the remote document changes.
+
+### Article assignments
+
 Use versioned `publishing/destinations.yaml` for adapter/account references and
 `publishing/distribution.yaml` for explicit piece-to-destination assignments.
 Keep credentials in server-side secret storage; manifests contain references

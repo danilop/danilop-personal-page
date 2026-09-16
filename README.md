@@ -44,7 +44,10 @@ Short-link cloud setup awaits the specific access approval described in
 adapters have local contract tests; live publishing accounts are not connected.
 Follow [credentials and access](docs/credentials-and-access.md) before adding
 provider keys; protected DEV delivery still needs the documented workflow changes.
-No article is enrolled for cross-posting. Search and a site-wide AI assistant
+No article is enrolled for cross-posting. Cross-post media still needs PNG conversion and
+destination-specific embed preservation; current exports use static book
+alternatives. See [media portability](docs/cross-posting.md#media-portability-clarification--2026-09-16).
+Search and a site-wide AI assistant
 remain future work. See [verification](docs/verification.md) and [launch status](docs/launch-review.md) for evidence and
 remaining release gates.
 

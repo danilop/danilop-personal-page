@@ -19,11 +19,16 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | Local browser models | Replaceable runtime, WebLLM worker, pinned model manifest | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified |
 | Frozen editions | Markua exporter, hashed manifest, immutable output directory, public edition routes | Real fixture export and tamper detection; no public edition created |
 | Leanpub | Preview/status/publication adapter for an existing book | API contract tests; live account/source/preview not configured |
-| DEV / Medium | API and assisted adapters, durable state, mapping/review/recovery commands | Local contract tests; no real account delivery authorized/enrolled |
+| DEV / Medium | API and assisted adapters, durable state, mapping/review/recovery commands | Local contract tests; PNG media conversion and native platform embeds remain incomplete; no real account delivery authorized/enrolled |
 | `danilop.link` | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback | Compiler tests; specific infrastructure access approval pending |
 | Main deployment | Existing Amplify integration; build/check/test configuration and console fallback updated | Hosted preview job 4 passed at `008fbc2` with Node 24.21.0/npm 12.0.2; production cutover pending |
 
 ## Remaining release work
+
+Media export review on 2026-09-16 identified an additional completion gate:
+implement destination-specific PNG renditions and supported live embeds, with
+explicit fallbacks or blocking for unsupported embeds. The current exporter uses
+book alternatives. See [cross-posting](cross-posting.md#media-portability-clarification--2026-09-16).
 
 1. Local regression/browser checks are recorded in [verification](verification.md).
    Repeat affected checks only when further release changes require them.
