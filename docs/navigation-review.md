@@ -1,6 +1,6 @@
 # Visitor navigation review
 
-Date: 2026-09-16. Local changes verified; hosted rollout recorded below.
+Date: 2026-09-16. Local changes and hosted preview verified; missing-page rule remains pending.
 The review combines source inspection, browser journeys and internal-link checks.
 It is not a usability study with independent readers.
 
@@ -65,3 +65,11 @@ the private edition test checked navigation and its declared download destinatio
    the first actual collection and edition, including its download artifacts.
 4. The post index currently lists all posts. Pagination/filtering should be revisited
    as the corpus grows; search remains outside the agreed implementation scope.
+
+## Hosted rollout
+
+Amplify preview job 7 passed build, deploy and verify at
+`dc433ac87a94dddf371158f67f6a32fc95cf94b2`. The live build marker matches.
+The public-content browser journey also passed on the hosted preview at all three
+widths, with no browser errors or overflow. The shared missing-page rule remains
+a production-cutover task; production itself still serves the original site.

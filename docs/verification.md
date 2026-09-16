@@ -89,9 +89,9 @@ npm 12.0.2. See
 [dependencies and hosting](dependencies-and-hosting.md).
 
 The [hosted preview](https://rebuild-notes-along-the-way.d26ru7a9pi36wa.amplifyapp.com/)
-passed Amplify build, deploy and verify stages (job 6) on Amazon Linux 2023.
-Its public build marker matches `1672c84cce560f5f7437498a185c5001d0696717`.
-The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 31 tests,
+passed Amplify build, deploy and verify stages (job 7) on Amazon Linux 2023.
+Its public build marker matches `dc433ac87a94dddf371158f67f6a32fc95cf94b2`.
+The pipeline installs pinned Node 24.21.0/npm 12.0.2, passes the checker and all 34 tests,
 and generates the static site successfully.
 
 The homepage, approved welcome article, video archive, original snapshot,
@@ -148,3 +148,8 @@ No private manuscript or edition is added to production content.
 Hosted missing-URL behavior remains incorrect: the shared legacy Amplify rule
 fallback targets `/index.html`. It must switch to the prepared `/404.html` rule at
 production cutover. This is not resolved by the template navigation improvements.
+
+Preview job 7 passed build/deploy/verify at `dc433ac`. The public-content navigation
+journey was repeated successfully against the hosted preview at 1440/390/320px,
+with no browser errors or overflow. The missing-page routing exception above
+remains pending and is not covered by that successful normal-navigation result.
