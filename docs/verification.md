@@ -200,5 +200,8 @@ Amplify main job 6 deployed `2bfb695`, and the independent
 passed against that exact revision, including original page preservation.
 The first manual validation run found Ubuntu's AppArmor restriction prevented
 Chromium from starting in two rendering tests. The workflow now grants user
-namespaces to the exact downloaded browser path and retains its sandbox;
-the corrected hosted validation is checked before task completion.
+namespaces to Mermaid's exact headless-shell path and retains its sandbox.
+The corrected [hosted validation](https://github.com/danilop/danilop-personal-page/actions/runs/35085922379)
+passes all tests, type checks, preparation, packaging, and artifact verification
+at `1527401`. This manually dispatched run exercises the same job used for PRs;
+an actual pull-request event was not needed for this audit.
