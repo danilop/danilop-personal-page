@@ -1,10 +1,12 @@
 # Asset provenance
 
-Updated: 2026-09-15.
+Updated: 2026-09-17.
 
 - The existing portrait photograph belongs to the original site and is reused on
   the biography page. The ink portrait is the generated interpretation selected
   during Ink & Paper prototyping; it is a configurable theme asset.
+- `site-assets/brand/favicon.svg` is an original vector DP monogram in blue ink
+  on warm paper. Browser and Apple touch icons are generated from it during builds.
 - `site-assets/brand/notebooks.png` is generated artwork for the welcome article:
   blue ink, an open book and loose pages on warm ivory, with no lettering.
   It was created on 2026-09-15 and replaces the prototype's topic-specific art.

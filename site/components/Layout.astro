@@ -50,7 +50,9 @@ const jsonLd = {
     <meta name="description" content={description} />
     {site.isPreview && <meta name="robots" content="noindex,nofollow" />}
     <link rel="canonical" href={url} />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href={site.icons.ico} sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/svg+xml" href={site.icons.svg} sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href={site.icons.apple} />
     <link
       rel="alternate"
       type="application/rss+xml"

@@ -35,6 +35,7 @@ export const siteSchema = z
       .default([]),
     theme: z.enum(["ink-and-paper", "plain"]),
     layout: z.enum(["editorial", "linear"]),
+    favicon: z.string().default("site-assets/brand/favicon.svg"),
     tokens: z
       .object({
         paper: color.default("#f6f3eb"),

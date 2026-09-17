@@ -15,6 +15,8 @@ appendices, and other book material without duplicating the original writing.
 The Ink & Paper theme puts reading first: a name-first masthead, blue ink,
 serif headlines, and generous space. Fonts, colors, images, CSS, and templates
 live apart from the content and publishing system.
+The configurable SVG favicon generates browser and iPhone home-screen icons;
+see [branding assets](docs/authoring-format.md#browser-icons).
 
 - **Rich explanations:** source code, CSV tables and charts, Mermaid and D2
   diagrams, equations, citations, figures, audio, and video.

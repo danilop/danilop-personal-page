@@ -23,6 +23,7 @@ import { compileLinks } from "../core/shortlinks";
 import type { CompiledSite, ArchiveRecord } from "../core/site-data";
 import metadata from "../lib/link-metadata.js";
 import matter from "gray-matter";
+import { prepareIcons } from "./prepare-icons";
 async function main() {
   const lib = await loadLibrary(),
     config = await siteConfig(),
@@ -45,7 +46,6 @@ async function main() {
   await fs.cp("site-assets/licenses", ".generated/public/licenses", {
     recursive: true,
   });
-  await fs.copyFile("site-assets/favicon.ico", ".generated/public/favicon.ico");
   await fs.writeFile(".generated/public/theme-tokens.css", tokensCss(config));
   if (config.overrideCss) {
     const file = await localAsset(process.cwd(), config.overrideCss);
@@ -74,6 +74,8 @@ async function main() {
   // Keep historical asset URLs usable as well as the dated snapshot.
   await fs.cp("static", ".generated/public", { recursive: true });
   const site: CompiledSite = {
+    // Generate after legacy copies so the current root favicon wins.
+    icons: await prepareIcons(config.favicon, ".generated/public", config.tokens.paper),
     articles: [],
     collections: [],
     archive: [],

@@ -516,6 +516,14 @@ fonts are Newsreader/Georgia and Inter/system-ui. The HTTPS origin and deploymen
 base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.yaml` contains
 optional lead, recentCount, elsewhereCount, and selected collection IDs.
 
+## Browser icons
+
+Set `favicon: site-assets/brand/favicon.svg` in `publishing/site.yaml` to choose a
+local square SVG. The build generates SVG, 16/32/48px ICO, and 180px Apple touch
+icons. Content-based filenames refresh browser caches when the artwork changes;
+`/favicon.ico` also serves the current icon. The preserved original site retains
+its historical icon. Edit the SVG to change the monogram, colors, or shape.
+
 ## About-page social profiles
 
 Keep biography prose in `content/about.md`; configure the separate profile row in

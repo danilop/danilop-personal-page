@@ -42,6 +42,7 @@ export type ArchiveRecord = {
   kind: string;
 };
 export type CompiledSite = {
+  icons: { svg: string; ico: string; apple: string };
   articles: ArticleData[];
   collections: CollectionData[];
   archive: ArchiveRecord[];

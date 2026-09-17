@@ -10,6 +10,7 @@ socialLinks:
   - {label: Facebook, url: 'https://www.facebook.com/danilopoccia/', icon: facebook}
 theme: ink-and-paper
 layout: editorial
+favicon: site-assets/brand/favicon.svg
 tokens:
   paper: '#f6f3eb'
   ink: '#13191c'
