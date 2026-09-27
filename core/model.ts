@@ -1,3 +1,4 @@
+import { asError } from "./errors";
 import { z } from "zod";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -35,6 +36,28 @@ export type Preferences = Partial<Record<Target, Record<string, Selection>>>;
 const preferences = z
   .partialRecord(z.enum(["web", "book"]), z.record(z.string(), selectionSchema))
   .optional();
+// Normalize author-friendly draft metadata while retaining legacy status compatibility.
+function normalizePublication<
+  T extends { status?: "draft" | "published" | "retired"; draft?: boolean },
+>(value: T) {
+  const { draft, ...rest } = value;
+  return {
+    ...rest,
+    status: value.status ?? (draft ? "draft" : "published"),
+  } as Omit<T, "draft" | "status"> & {
+    status: "draft" | "published" | "retired";
+  };
+}
+function checkPublication(
+  value: { status?: string; draft?: boolean },
+  context: z.RefinementCtx,
+) {
+  if (value.status !== undefined && value.draft !== undefined)
+    context.addIssue({
+      code: "custom",
+      message: "Use draft or legacy status, not both",
+    });
+}
 export const pieceSchema = z
   .object({
     schemaVersion: z.literal(1),
@@ -42,7 +65,8 @@ export const pieceSchema = z
     title: z.string().min(1),
     summary: z.string().min(1),
     language: z.string().default("en"),
-    status: z.enum(["draft", "published", "retired"]),
+    status: z.enum(["draft", "published", "retired"]).optional(),
+    draft: z.boolean().optional(),
     publication: z.object({ surfaces: z.array(surface).min(1) }).strict(),
     slug: id.optional(),
     publishedAt: date.optional(),
@@ -53,6 +77,8 @@ export const pieceSchema = z
     render: preferences,
   })
   .strict()
+  .superRefine(checkPublication)
+  .transform(normalizePublication)
   .superRefine((v, c) => {
     if (
       v.status === "published" &&
@@ -179,7 +205,8 @@ export const collectionSchema = z
     title: z.string().min(1),
     summary: z.string().min(1),
     introduction: z.string().optional(),
-    status: z.enum(["draft", "published", "retired"]),
+    status: z.enum(["draft", "published", "retired"]).optional(),
+    draft: z.boolean().optional(),
     slug: id,
     ordered: z.boolean().default(false),
     book: z.boolean().default(false),
@@ -190,7 +217,9 @@ export const collectionSchema = z
     body: z.array(nodeSchema),
     backMatter: z.array(nodeSchema).default([]),
   })
-  .strict();
+  .strict()
+  .superRefine(checkPublication)
+  .transform(normalizePublication);
 export type Collection = z.infer<typeof collectionSchema>;
 export type Library = { pieces: Map<string, Piece>; collections: Collection[] };
 export type AssemblyNode = {
@@ -216,7 +245,7 @@ export const parser = () =>
     .use(remarkGfm)
     .use(remarkDirective)
     .use(remarkMath);
-export async function readYaml(file: string): Promise<any> {
+export async function readYaml(file: string) {
   const doc = YAML.parseDocument(await fs.readFile(file, "utf8"));
   if (doc.errors.length) throw doc.errors[0];
   return doc.toJS({ maxAliasCount: 0 });
@@ -253,7 +282,8 @@ export async function loadLibrary(root = "content"): Promise<Library> {
         })
         .strict()
         .parse(b).blocks;
-    } catch (e: any) {
+    } catch (caught) {
+      const e = asError(caught);
       if (e.code !== "ENOENT") throw e;
     }
     pieces.set(data.id, {
@@ -273,25 +303,29 @@ export async function loadLibrary(root = "content"): Promise<Library> {
       ),
     );
   }
-  const global = new Set(pieces.keys());
-  const slugs = new Set<string>();
-  for (const p of pieces.values()) {
-    if (p.slug) {
-      if (slugs.has(p.slug)) throw Error(`Duplicate article slug ${p.slug}`);
-      slugs.add(p.slug);
-    }
-    if (p.adaptedFrom && !pieces.has(p.adaptedFrom))
-      throw Error(`Unknown adaptation ${p.adaptedFrom}`);
-  }
-  const cslugs = new Set<string>();
-  for (const c of collections) {
-    if (global.has(c.id) || cslugs.has(c.slug))
-      throw Error(`Duplicate collection identity ${c.id}`);
-    global.add(c.id);
-    cslugs.add(c.slug);
-    validateCollection(c, pieces);
-  }
+  validateIdentities();
   return { pieces, collections };
+
+  function validateIdentities() {
+    const global = new Set(pieces.keys());
+    const slugs = new Set<string>();
+    for (const p of pieces.values()) {
+      if (p.slug) {
+        if (slugs.has(p.slug)) throw Error(`Duplicate article slug ${p.slug}`);
+        slugs.add(p.slug);
+      }
+      if (p.adaptedFrom && !pieces.has(p.adaptedFrom))
+        throw Error(`Unknown adaptation ${p.adaptedFrom}`);
+    }
+    const cslugs = new Set<string>();
+    for (const c of collections) {
+      if (global.has(c.id) || cslugs.has(c.slug))
+        throw Error(`Duplicate collection identity ${c.id}`);
+      global.add(c.id);
+      cslugs.add(c.slug);
+      validateCollection(c, pieces);
+    }
+  }
 }
 export function validateCollection(c: Collection, pieces: Map<string, Piece>) {
   const ids = new Set<string>();
@@ -338,29 +372,11 @@ export function assemble(
       if (!visible) continue;
       const inherited = [...prefs, n.render ?? {}];
       if (n.kind === "planned") {
-        if (target === "book" && !options.excludePlanned)
-          throw Error(`Unfinished book outline: ${n.title}`);
-        if (target === "web" && n.publicOutline)
-          nodes.push({
-            id: n.id,
-            kind: n.kind,
-            title: n.title!,
-            depth,
-            preferences: inherited,
-            planned: true,
-          });
+        appendPlanned(n, inherited);
         continue;
       }
       if (n.kind === "generated") {
-        if (target === "book")
-          nodes.push({
-            id: n.id,
-            kind: n.kind,
-            title: n.title ?? n.role ?? "Contents",
-            depth,
-            preferences: inherited,
-            role: n.role,
-          });
+        appendGenerated(n, inherited);
         continue;
       }
       const piece = n.ref ? lib.pieces.get(n.ref) : undefined;
@@ -371,11 +387,91 @@ export function assemble(
           : allowed(piece, s))
       )
         continue;
+      const number: string | undefined = placementNumber(n, piece);
+      appendPlacement(piece, n, number, inherited, visible);
+    }
+
+    function placementNumber(n: Node, piece: Piece | undefined) {
       let number: string | undefined;
       if (n.kind === "chapter") number = String(++chapter);
       else if (n.kind === "appendix")
         number = String.fromCharCode(65 + appendix++);
       else if (piece && sectionPrefix) number = `${sectionPrefix}.${++section}`;
+      return number;
+    }
+
+    function appendGenerated(
+      n: Node,
+      inherited: Partial<
+        Record<
+          Target,
+          Record<
+            string,
+            {
+              plugin?: string | undefined;
+              options?: Record<string, unknown> | undefined;
+            }
+          >
+        >
+      >[],
+    ) {
+      if (target === "book")
+        nodes.push({
+          id: n.id,
+          kind: n.kind,
+          title: n.title ?? n.role ?? "Contents",
+          depth,
+          preferences: inherited,
+          role: n.role,
+        });
+    }
+
+    function appendPlanned(
+      n: Node,
+      inherited: Partial<
+        Record<
+          Target,
+          Record<
+            string,
+            {
+              plugin?: string | undefined;
+              options?: Record<string, unknown> | undefined;
+            }
+          >
+        >
+      >[],
+    ) {
+      if (target === "book" && !options.excludePlanned)
+        throw Error(`Unfinished book outline: ${n.title}`);
+      if (target === "web" && n.publicOutline)
+        nodes.push({
+          id: n.id,
+          kind: n.kind,
+          title: n.title!,
+          depth,
+          preferences: inherited,
+          planned: true,
+        });
+    }
+
+    function appendPlacement(
+      piece: Piece | undefined,
+      n: Node,
+      number: string | undefined,
+      inherited: Partial<
+        Record<
+          Target,
+          Record<
+            string,
+            {
+              plugin?: string | undefined;
+              options?: Record<string, unknown> | undefined;
+            }
+          >
+        >
+      >[],
+      visible: boolean,
+    ) {
       if (!piece) {
         const start = nodes.length;
         nodes.push({

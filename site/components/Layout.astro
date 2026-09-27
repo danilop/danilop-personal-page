@@ -24,6 +24,29 @@ const {
 } = Astro.props;
 const Shell = themes[config.theme].Shell;
 const url = siteUrl(canonical, config.url);
+const previewLinks = site.authoring
+  ? [
+      ...site.collections
+        .filter((c) => site.authoring!.collections.includes(c.id))
+        .map((c) => ({ title: c.title, url: c.url })),
+      ...site.authoring.pieces.flatMap((id) => {
+        const a = site.articles.find((p) => p.id === id);
+        if (a) return [{ title: a.title, url: a.url }];
+        const c = site.collections.find((c) =>
+          c.nodes.some((n) => n.pieceId === id),
+        );
+        const n = c?.nodes.find((n) => n.pieceId === id);
+        return c && n ? [{ title: n.title, url: `${c.url}read/${n.id}/` }] : [];
+      }),
+    ]
+  : [];
+const isDraftPage =
+  previewLinks.some((p) => p.url === Astro.url.pathname) ||
+  site.collections.some(
+    (c) =>
+      site.authoring?.collections.includes(c.id) &&
+      Astro.url.pathname.startsWith(c.url),
+  );
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": article ? "BlogPosting" : "WebPage",
@@ -79,6 +102,31 @@ const jsonLd = {
     ></script>
   </head>
   <body>
+    {site.authoring && (
+      <aside class="authoring-notice" aria-label="Authoring preview">
+        <strong>Local authoring preview</strong>
+        <p>
+          {isDraftPage ? "Unpublished draft. " : ""}Selected drafts are visible
+          here only. Nothing has been published.
+        </p>
+        {previewLinks.length > 0 && (
+          <details>
+            <summary>Drafts in this preview</summary>
+            <ul>
+              {previewLinks.map((p) => (
+                <li>
+                  <a href={p.url}>{p.title}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+        <small>
+          Rebuild after edits. Missing article dates use {site.authoring.date}{" "}
+          for this preview.
+        </small>
+      </aside>
+    )}
     <a class="skip-link" href="#main">
       Skip to content
     </a>
@@ -88,9 +136,37 @@ const jsonLd = {
     >
       <slot />
     </Shell>
-    <PostHog contentId={article?.id} />
+    {!site.authoring && <PostHog contentId={article?.id} />}
     <script>
       import "../../runtime/enhance";
     </script>
   </body>
 </html>
+<style>
+  .authoring-notice {
+    padding: 12px max(20px, calc((100vw - 1120px) / 2));
+    background: #fff5da;
+    border-bottom: 1px solid #baa876;
+    color: #27231a;
+    font:
+      14px/1.5 system-ui,
+      sans-serif;
+  }
+
+  .authoring-notice p {
+    margin: 4px 0;
+  }
+
+  .authoring-notice summary {
+    cursor: pointer;
+  }
+
+  .authoring-notice a {
+    color: #164b88;
+  }
+
+  .authoring-notice ul {
+    margin: 6px 0;
+    padding-left: 22px;
+  }
+</style>

@@ -15,7 +15,10 @@ test("distribution requires an explicit reviewed copy and rejects GitHub deliver
             stdio: "pipe",
           },
         ),
-      (error: any) => expected.test(String(error.stderr)),
+      (error: unknown) =>
+        error instanceof Error &&
+        "stderr" in error &&
+        expected.test(String(error.stderr)),
     );
   };
   rejected([], /Manual delivery requires/);

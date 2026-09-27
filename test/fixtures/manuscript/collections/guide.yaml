@@ -7,29 +7,29 @@ slug: guide
 ordered: true
 book: true
 frontMatter:
-  - {id: preface-use, kind: piece, ref: preface, surfaces: [book]}
+  - { id: preface-use, kind: piece, ref: preface, surfaces: [book] }
 body:
   - id: chapter-one
     kind: chapter
     title: First chapter
     before:
-      - {id: chapter-opening, kind: piece, ref: opening}
+      - { id: chapter-opening, kind: piece, ref: opening }
     children:
       - id: first-use
         kind: piece
         ref: first
         title: The contextual first section
         after:
-          - {id: first-closing, kind: piece, ref: closing, surfaces: [book]}
-      - {id: draft-use, kind: piece, ref: draft}
+          - { id: first-closing, kind: piece, ref: closing, surfaces: [book] }
+      - { id: draft-use, kind: piece, ref: draft }
   - id: chapter-two
     kind: chapter
     title: Second chapter
     children:
-      - {id: second-use, kind: piece, ref: second}
+      - { id: second-use, kind: piece, ref: second }
 backMatter:
   - id: appendix-a
     kind: appendix
     title: Supplement
     children:
-      - {id: appendix-use, kind: piece, ref: appendix}
+      - { id: appendix-use, kind: piece, ref: appendix }

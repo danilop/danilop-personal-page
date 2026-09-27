@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { z } from "zod";
 
-export const mediaSchema = z
+const mediaSchema = z
   .object({
     schemaVersion: z.literal(1),
     baseUrl: z.url().refine((value) => {

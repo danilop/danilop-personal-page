@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
       - name: Wait for the exact deployed revision and check public routes
         id: verify
         run: node scripts/verify-deployment.mjs --wait
@@ -51,12 +51,12 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
           cache: npm
       - run: npm install --global "$(node -p 'require("./package.json").packageManager')"
       - run: npm ci --include=dev --cache .npm --prefer-offline
         env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+          PUPPETEER_SKIP_DOWNLOAD: "true"
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ vars.PUBLICATION_ROLE_ARN }}

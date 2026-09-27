@@ -1,0 +1,24 @@
+schemaVersion: 1
+tags:
+  - id: history
+    label: History
+    description: Historical developments, their evidence, and their context.
+  - id: computing
+    label: Computing
+    description: Methods and systems for performing computations.
+  - id: programming
+    label: Programming
+    description: Writing, understanding, and maintaining programs.
+  - id: python
+    label: Python
+    description: Substantive Python examples or guidance on using Python.
+    aliases: [python3, python-3]
+  - id: data-representation
+    label: Data representation
+    description: How information is encoded, stored, and interpreted, from tallies to digital formats.
+  - id: website
+    label: Website
+    description: The design, operation, and development of this website.
+  - id: notes
+    label: Notes
+    description: Short observations and personal updates.

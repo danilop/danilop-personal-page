@@ -1,5 +1,18 @@
 # Dependencies and deployment
 
+## Local code-analysis toolchain — 2026-09-25
+
+The [analysis guide](code-analysis.md) documents the new dev-only toolchain and
+setup. ESLint 10.11.0, typescript-eslint 8.70.1, Knip 6.38.0, dependency-cruiser
+18.4.0, c8 12.0.0 and the
+Astro/React/HTML/CSS/configuration adapters are pinned in npm. The existing
+TypeScript 6.0.3 and Node pin are retained for compatible typed analysis. Python
+Ruff 0.16.9, ty 0.0.84, Vulture 2.16, Coverage.py 7.16.1, Bandit 1.9.4 and Radon
+6.0.1 are installed in a separate hash-locked `.venv-analysis` environment.
+Gitleaks 8.30.1, actionlint 1.7.12 and ShellCheck 0.11.0 are verified before runs.
+No previously locked npm package versions changed when adding these analyzers.
+The tools do not become public browser dependencies or run inference.
+
 Reviewed 2026-09-16. The new site uses `/`; its original-site snapshot remains at `/original-site/`.
 
 ## Supported stack

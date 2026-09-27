@@ -16,13 +16,11 @@ export async function waitForRevision({
   currentRevision,
 }) {
   const end = now() + timeoutMs;
-  let observed = "unavailable";
+  let observed;
   while (true) {
-    if (currentRevision) {
-      const current = await currentRevision();
-      if (current && current !== revision)
-        return { status: "superseded", revision: current };
-    }
+    const current = await currentRevision?.();
+    if (current && current !== revision)
+      return { status: "superseded", revision: current };
     try {
       const response = await fetcher(markerUrl + "?revision=" + revision, {
         cache: "no-store",
@@ -87,26 +85,7 @@ export async function checkSite({
     }
     if (route === "/") home = html;
   }
-  const resources = new Set(
-    [...home.matchAll(/(?:src|href)="([^"#]+)"/g)]
-      .map((m) => m[1])
-      .filter(
-        (value) =>
-          value.startsWith(sitePath("/", basePath)) &&
-          /\.(?:css|js|webp|png)(?:\?|$)/.test(value),
-      ),
-  );
-  assert.ok(resources.size > 0, "Homepage has no local resources");
-  for (const resource of resources) {
-    const response = await get(new URL(resource, origin));
-    assert.ok(
-      !response.headers.get("content-type")?.includes("text/html"),
-      `HTML fallback for ${resource}`,
-    );
-    if (resource.includes("/_astro/"))
-      assert.match(response.headers.get("cache-control") ?? "", /immutable/);
-    await response.arrayBuffer();
-  }
+  const resources = await checkResources();
   const feed = await (await get(at("/rss.xml"))).text();
   assert.match(feed, /<rss\b/);
   for (const match of feed.matchAll(/<link>([^<]+)<\/link>/g))
@@ -117,40 +96,7 @@ export async function checkSite({
   const article = feed.match(/<item>[\s\S]*?<link>([^<]+)<\/link>/)?.[1];
   if (article) await get(article);
   await get(at("/missing-deployment-check-" + Date.now() + "/"), 404);
-  if (preserveOriginal) {
-    for (const name of [
-      "index.html",
-      "about.html",
-      "posts.html",
-      "decks.html",
-      "videos.html",
-    ]) {
-      const response = await get(
-        new URL(name === "index.html" ? "/" : "/" + name, origin),
-      );
-      assert.deepEqual(
-        Buffer.from(await response.arrayBuffer()),
-        await fs.readFile("legacy/snapshot-2026-09-15/" + name),
-        `Original page changed: ${name}`,
-      );
-    }
-  } else {
-    for (const name of [
-      "",
-      "about.html",
-      "posts.html",
-      "decks.html",
-      "videos.html",
-    ]) {
-      const html = await (await get(at("/original-site/" + name))).text();
-      assert.match(html, /You are viewing the preserved original site/);
-      assert.match(html, /noindex,follow/);
-      assert.ok(
-        html.includes(`href="${sitePath("/", basePath)}"`),
-        "Snapshot return link missing",
-      );
-    }
-  }
+  await checkOriginalSite();
   if (indexable) {
     const robots = await (await get(at("/robots.txt"))).text();
     assert.ok(robots.includes(`Sitemap: ${at("/sitemap.xml")}`));
@@ -166,6 +112,67 @@ export async function checkSite({
     originalPreserved: preserveOriginal,
     snapshotChecked: !preserveOriginal,
   };
+
+  async function checkOriginalSite() {
+    if (preserveOriginal) {
+      for (const name of [
+        "index.html",
+        "about.html",
+        "posts.html",
+        "decks.html",
+        "videos.html",
+      ]) {
+        const response = await get(
+          new URL(name === "index.html" ? "/" : "/" + name, origin),
+        );
+        assert.deepEqual(
+          Buffer.from(await response.arrayBuffer()),
+          await fs.readFile("legacy/snapshot-2026-09-15/" + name),
+          `Original page changed: ${name}`,
+        );
+      }
+    } else {
+      for (const name of [
+        "",
+        "about.html",
+        "posts.html",
+        "decks.html",
+        "videos.html",
+      ]) {
+        const html = await (await get(at("/original-site/" + name))).text();
+        assert.match(html, /You are viewing the preserved original site/);
+        assert.match(html, /noindex,follow/);
+        assert.ok(
+          html.includes(`href="${sitePath("/", basePath)}"`),
+          "Snapshot return link missing",
+        );
+      }
+    }
+  }
+
+  async function checkResources() {
+    const resources = new Set(
+      [...home.matchAll(/(?:src|href)="([^"#]+)"/g)]
+        .map((m) => m[1])
+        .filter(
+          (value) =>
+            value.startsWith(sitePath("/", basePath)) &&
+            /\.(?:css|js|webp|png)(?:\?|$)/.test(value),
+        ),
+    );
+    assert.ok(resources.size > 0, "Homepage has no local resources");
+    for (const resource of resources) {
+      const response = await get(new URL(resource, origin));
+      assert.ok(
+        !response.headers.get("content-type")?.includes("text/html"),
+        `HTML fallback for ${resource}`,
+      );
+      if (resource.includes("/_astro/"))
+        assert.match(response.headers.get("cache-control") ?? "", /immutable/);
+      await response.arrayBuffer();
+    }
+    return resources;
+  }
 }
 
 // A new uncached marker can arrive before cached HTML at every CDN edge.

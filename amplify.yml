@@ -9,13 +9,14 @@ frontend:
         - sudo dnf install -y atk at-spi2-atk cups-libs gtk3 libXcomposite libXdamage libXrandr libxkbcommon mesa-libgbm nss alsa-lib
         - export PUPPETEER_CACHE_DIR="$PWD/.cache/puppeteer"
         - npm ci --include=dev --cache .npm --prefer-offline
+        - npm --prefix prototypes/ink-and-paper ci --include=dev --cache .npm --prefer-offline
     build:
       commands:
         - npm run validate
   artifacts:
     baseDirectory: dist
     files:
-      - '**/*'
+      - "**/*"
   cache:
     paths:
       - .npm/**/*

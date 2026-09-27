@@ -1,0 +1,7 @@
+title = "Notes Along the Way source secret checks"
+[extend]
+useDefault = true
+# Scan owned source/configuration, not caches, installed tools or generated output.
+[[allowlists]]
+description = "Generated and third-party directories"
+paths = ['''(^|/)(node_modules|\.git|\.venv[^/]*|\.cache|\.analysis|\.generated|\.authoring-state|\.publication-state|coverage|dist|public|legacy|cache|exports)/''']

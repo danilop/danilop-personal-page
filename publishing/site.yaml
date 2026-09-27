@@ -4,20 +4,28 @@ name: Danilo Poccia
 title: Notes Along the Way
 description: Articles, experiments, and ideas that can grow over time.
 socialLinks:
-  - {label: GitHub, url: 'https://github.com/danilop', icon: github}
-  - {label: LinkedIn, url: 'https://www.linkedin.com/in/dpoccia/', icon: linkedin}
-  - {label: X (Twitter), url: 'https://twitter.com/danilop', icon: x}
-  - {label: Facebook, url: 'https://www.facebook.com/danilopoccia/', icon: facebook}
+  - { label: GitHub, url: "https://github.com/danilop", icon: github }
+  - {
+      label: LinkedIn,
+      url: "https://www.linkedin.com/in/dpoccia/",
+      icon: linkedin,
+    }
+  - { label: X (Twitter), url: "https://twitter.com/danilop", icon: x }
+  - {
+      label: Facebook,
+      url: "https://www.facebook.com/danilopoccia/",
+      icon: facebook,
+    }
 theme: ink-and-paper
 layout: editorial
 favicon: site-assets/brand/favicon.svg
 tokens:
-  paper: '#f6f3eb'
-  ink: '#13191c'
-  accent: '#164b88'
-  muted: '#586371'
-  rule: '#708091'
-  hairline: '#c9c9c3'
+  paper: "#f6f3eb"
+  ink: "#13191c"
+  accent: "#164b88"
+  muted: "#586371"
+  rule: "#708091"
+  hairline: "#c9c9c3"
   serif: Newsreader
   sans: Inter
   width: 1230

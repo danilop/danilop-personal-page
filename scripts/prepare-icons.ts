@@ -5,12 +5,21 @@ import sharp from "sharp";
 import { localAsset } from "../core/assets";
 
 /** Derive all browser icons from one editable vector; filenames refresh cached icons. */
-export async function prepareIcons(source: string, publicDir: string, paper: string) {
+export async function prepareIcons(
+  source: string,
+  publicDir: string,
+  paper: string,
+) {
   const svg = await fs.readFile(await localAsset(process.cwd(), source));
   const metadata = await sharp(svg).metadata();
   if (metadata.format !== "svg" || metadata.width !== metadata.height)
     throw new Error("The favicon source must be a square SVG.");
-  const hash = crypto.createHash("sha256").update(svg).update(paper).digest("hex").slice(0, 12);
+  const hash = crypto
+    .createHash("sha256")
+    .update(svg)
+    .update(paper)
+    .digest("hex")
+    .slice(0, 12);
   const base = `/brand/favicon-${hash}`;
   await fs.mkdir(path.join(publicDir, "brand"), { recursive: true });
   await fs.writeFile(path.join(publicDir, `${base}.svg`), svg);
@@ -34,7 +43,10 @@ export async function prepareIcons(source: string, publicDir: string, paper: str
   const ico = Buffer.concat([header, ...images]);
   await fs.writeFile(path.join(publicDir, `${base}.ico`), ico);
   await fs.writeFile(path.join(publicDir, "favicon.ico"), ico);
-  await sharp(svg).resize(180, 180).flatten({ background: paper }).png()
+  await sharp(svg)
+    .resize(180, 180)
+    .flatten({ background: paper })
+    .png()
     .toFile(path.join(publicDir, `${base}-apple.png`));
   return { svg: `${base}.svg`, ico: `${base}.ico`, apple: `${base}-apple.png` };
 }

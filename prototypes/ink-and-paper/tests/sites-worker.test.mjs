@@ -5,14 +5,17 @@ import worker from "../worker/index.js";
 
 test("serves existing static assets without a fallback", async () => {
   const calls = [];
-  const response = await worker.fetch(new Request("https://example.test/assets/app.js"), {
-    ASSETS: {
-      fetch: async (request) => {
-        calls.push(new URL(request.url).pathname);
-        return new Response("asset", { status: 200 });
+  const response = await worker.fetch(
+    new Request("https://example.test/assets/app.js"),
+    {
+      ASSETS: {
+        fetch: async (request) => {
+          calls.push(new URL(request.url).pathname);
+          return new Response("asset", { status: 200 });
+        },
       },
     },
-  });
+  );
 
   assert.equal(response.status, 200);
   assert.deepEqual(calls, ["/assets/app.js"]);
@@ -29,9 +32,12 @@ test("falls back to index.html for an unknown app route", async () => {
         fetch: async (request) => {
           const url = new URL(request.url);
           calls.push(url.pathname + url.search);
-          return new Response(url.pathname === "/index.html" ? "app" : "missing", {
-            status: url.pathname === "/index.html" ? 200 : 404,
-          });
+          return new Response(
+            url.pathname === "/index.html" ? "app" : "missing",
+            {
+              status: url.pathname === "/index.html" ? 200 : 404,
+            },
+          );
         },
       },
     },
@@ -43,8 +49,13 @@ test("falls back to index.html for an unknown app route", async () => {
 
 test("does not turn missing API or write requests into the app shell", async () => {
   for (const request of [
-    new Request("https://example.test/api/missing", { headers: { accept: "application/json" } }),
-    new Request("https://example.test/flow", { method: "POST", headers: { accept: "text/html" } }),
+    new Request("https://example.test/api/missing", {
+      headers: { accept: "application/json" },
+    }),
+    new Request("https://example.test/flow", {
+      method: "POST",
+      headers: { accept: "text/html" },
+    }),
   ]) {
     let calls = 0;
     const response = await worker.fetch(request, {

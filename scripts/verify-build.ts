@@ -1,4 +1,9 @@
-import { deployment, sitePath, siteUrl, siteOutput } from "../core/deployment.mjs";
+import {
+  deployment,
+  sitePath,
+  siteUrl,
+  siteOutput,
+} from "../core/deployment.mjs";
 import { siteConfig } from "../core/config";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -44,31 +49,7 @@ async function main() {
   const files = await walk(siteOutput);
   const errors: string[] = [];
   let links = 0;
-  for (const file of files) {
-    if (/\/_qa\//.test(file)) throw Error("QA content cannot be deployed");
-    if (!file.endsWith(".html") || file.includes("/original-site/")) continue;
-    const $ = load(await fs.readFile(file, "utf8"));
-    const ids = new Set<string>();
-    $("[id]").each((_, el) => {
-      const id = $(el).attr("id")!;
-      if (ids.has(id)) errors.push(`${file}: duplicate ID ${id}`);
-      ids.add(id);
-    });
-    for (const el of $("a[href],img[src],script[src],link[href]").toArray()) {
-      const url = $(el).attr("href") ?? $(el).attr("src")!;
-      if (!url.startsWith("/") || url.startsWith("//")) continue;
-      const p = url.split(/[?#]/)[0];
-      const target = path.join("dist", p, p.endsWith("/") ? "index.html" : "");
-      if (deployment.basePath !== "/" && !p.startsWith(deployment.basePath))
-        errors.push(`${file}: escaped deployment base ${url}`);
-      links++;
-      try {
-        await fs.access(target);
-      } catch {
-        errors.push(`${file}: missing ${url}`);
-      }
-    }
-  }
+  await verifyOutputLinks();
   const lib = await loadLibrary();
   for (const p of lib.pieces.values())
     if (!allowed(p, "standalone"))
@@ -93,6 +74,42 @@ async function main() {
   console.log(
     `Verified ${files.length} output files, ${links} local links, ${expected} legacy records, and private-content sentinels.`,
   );
+
+  async function verifyOutputLinks() {
+    for (const file of files) {
+      if (/\/_qa\//.test(file)) throw Error("QA content cannot be deployed");
+      if (!file.endsWith(".html") || file.includes("/original-site/")) continue;
+      await verifyPageLinks(file);
+    }
+
+    async function verifyPageLinks(file: string) {
+      const $ = load(await fs.readFile(file, "utf8"));
+      const ids = new Set<string>();
+      $("[id]").each((_, el) => {
+        const id = $(el).attr("id")!;
+        if (ids.has(id)) errors.push(`${file}: duplicate ID ${id}`);
+        ids.add(id);
+      });
+      for (const el of $("a[href],img[src],script[src],link[href]").toArray()) {
+        const url = $(el).attr("href") ?? $(el).attr("src")!;
+        if (!url.startsWith("/") || url.startsWith("//")) continue;
+        const p = url.split(/[?#]/)[0];
+        const target = path.join(
+          "dist",
+          p,
+          p.endsWith("/") ? "index.html" : "",
+        );
+        if (deployment.basePath !== "/" && !p.startsWith(deployment.basePath))
+          errors.push(`${file}: escaped deployment base ${url}`);
+        links++;
+        try {
+          await fs.access(target);
+        } catch {
+          errors.push(`${file}: missing ${url}`);
+        }
+      }
+    }
+  }
 }
 main().catch((e) => {
   console.error(e);

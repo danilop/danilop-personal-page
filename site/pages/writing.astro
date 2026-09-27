@@ -1,4 +1,5 @@
 ---
+import DraftBadge from "../components/DraftBadge.astro";
 import Layout from "../components/Layout.astro";
 import { site, dateLabel } from "../data";
 ---
@@ -9,13 +10,15 @@ import { site, dateLabel } from "../data";
     <p>Articles, experiments, and ideas that can grow over time.</p>
   </header>
   <div class="writing-list">
-    {site.articles.map((p) => (
+    {(site.homeWriting ?? site.articles).map((p) => (
       <article>
         <p class="meta">
-          <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
+          {p.publishedAt && (
+            <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
+          )}
         </p>
         <h2>
-          <a href={p.url}>{p.title}</a>
+          <a href={p.url}>{p.title}</a> <DraftBadge pieceId={p.id} />
         </h2>
         <p>{p.summary}</p>
       </article>

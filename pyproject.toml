@@ -1,0 +1,41 @@
+# The application NLP dependencies remain in tools/content-quality/requirements.txt.
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+include = ["tools/**/*.py", "test/fixtures/**/*.py"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "C4", "SIM", "C901"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ty.environment]
+python-version = "3.13"
+extra-paths = ["tools/content-quality"]
+
+[tool.ty.src]
+include = ["tools", "test/fixtures/manuscript/pieces/first/code.py"]
+
+[tool.vulture]
+paths = ["tools", "test/fixtures/manuscript/pieces/first/code.py"]
+min_confidence = 80
+
+[tool.coverage.run]
+branch = true
+source = ["tools/content-quality"]
+omit = ["*/test_*.py"]
+data_file = "coverage/python/.coverage"
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+
+[tool.coverage.json]
+output = "coverage/python/coverage.json"
+
+[tool.coverage.html]
+directory = "coverage/python/html"
+
+[tool.coverage.xml]
+output = "coverage/python/coverage.xml"

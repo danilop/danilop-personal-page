@@ -1,0 +1,19 @@
+schemaVersion: 1
+# Advisory editorial thresholds, not publication scores.
+model: en_core_web_sm
+repetition:
+  minN: 3
+  maxN: 8
+  minCount: 2
+style:
+  longSentenceWords: 40
+  adverbsPerSentence: 3
+  openerMinimum: 4
+  openerFraction: 0.2
+  shortSentenceWords: 8
+  shortSentenceRun: 3
+# Language comes from each piece's metadata. English rules apply only to English.
+# Optional release-specific declarations are documented in docs/content-quality.md.
+baselines: []
+examples: []
+exceptions: []

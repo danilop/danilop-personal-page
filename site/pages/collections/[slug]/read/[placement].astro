@@ -1,9 +1,11 @@
 ---
+import DraftBadge from "../../../../components/DraftBadge.astro";
 import { readingLinks } from "../../../../../core/reading-links";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
 import { readingContext } from "../../../../../core/reading-navigation";
+import TagList from "../../../../components/TagList.astro";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
     c.nodes
@@ -28,6 +30,7 @@ const original = site.articles.find((p) => p.id === n.pieceId);
       <h1>
         {n.number && `${n.number}. `}
         {n.title}
+        <DraftBadge pieceId={n.pieceId} />
       </h1>
       {parent && (
         <p class="meta">
@@ -45,6 +48,7 @@ const original = site.articles.find((p) => p.id === n.pieceId);
       class="prose"
       set:html={readingLinks(n.html, c.url, [n.id])}
     />
+    <TagList tags={n.tags ?? []} />
     <ReadingNavigation collection={c} nodeId={n.id} />
     {original && (
       <p class="meta">

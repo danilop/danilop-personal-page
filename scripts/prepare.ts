@@ -1,3 +1,4 @@
+import { asError } from "../core/errors";
 import { deployment, siteUrl } from "../core/deployment.mjs";
 import { deploymentHtml } from "../core/deployment-html";
 import { assignmentSchema, exportPayload } from "../core/distribution";
@@ -24,7 +25,10 @@ import type { CompiledSite, ArchiveRecord } from "../core/site-data";
 import metadata from "../lib/link-metadata.js";
 import matter from "gray-matter";
 import { prepareIcons } from "./prepare-icons";
+import { homepageWriting } from "../core/homepage";
+import { authoringContext } from "../core/authoring-preview";
 async function main() {
+  const authoring = await authoringContext();
   const lib = await loadLibrary(),
     config = await siteConfig(),
     home = homeSchema.parse(await readYaml("publishing/home.yaml")),
@@ -32,50 +36,23 @@ async function main() {
   await fs.rm(".generated", { recursive: true, force: true });
   await fs.mkdir(".generated/public/brand", { recursive: true });
   const assets = new Assets();
-  for (const [slot, a] of Object.entries(config.assets)) {
-    if (!a) continue;
-    const file = await localAsset(process.cwd(), a.path);
-    await sharp(await fs.readFile(file))
-      .resize({
-        width: slot === "portrait" ? 480 : 1200,
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 90 })
-      .toFile(`.generated/public/brand/${slot}.webp`);
-  }
-  await fs.cp("site-assets/licenses", ".generated/public/licenses", {
-    recursive: true,
-  });
-  await fs.writeFile(".generated/public/theme-tokens.css", tokensCss(config));
-  if (config.overrideCss) {
-    const file = await localAsset(process.cwd(), config.overrideCss);
-    await fs.copyFile(file, ".generated/public/theme-overrides.css");
-  }
-  await fs.cp("legacy/snapshot-2026-09-15", ".generated/public/original-site", {
-    recursive: true,
-  });
-  for (const file of await fs.readdir(".generated/public/original-site"))
-    if (file.endsWith(".html")) {
-      const p = ".generated/public/original-site/" + file;
-      let s = await fs.readFile(p, "utf8");
-      s = s
-        .replace(/(href|src)="\/(?!\/)/g, '$1="/original-site/')
-        .replace(
-          "</head>",
-          '<meta name="robots" content="noindex,follow"></head>',
-        )
-        .replace(
-          /<body\b[^>]*>/i,
-          (body) =>
-            `${body}<nav aria-label="Return to current website" style="padding:12px 20px;background:#f6f3eb;color:#13191c;font:16px/1.5 system-ui,sans-serif;border-bottom:1px solid #708091">You are viewing the preserved original site. <a href="/" style="color:#164b88;text-decoration:underline">Return to ${escape(config.title)}</a></nav>`,
-        );
-      await fs.writeFile(p, deploymentHtml(s));
-    }
-  // Keep historical asset URLs usable as well as the dated snapshot.
-  await fs.cp("static", ".generated/public", { recursive: true });
+  await prepareStaticAssets();
   const site: CompiledSite = {
+    ...(authoring
+      ? {
+          authoring: {
+            pieces: authoring.pieces,
+            collections: authoring.collections,
+            date: authoring.date,
+          },
+        }
+      : {}),
     // Generate after legacy copies so the current root favicon wins.
-    icons: await prepareIcons(config.favicon, ".generated/public", config.tokens.paper),
+    icons: await prepareIcons(
+      config.favicon,
+      ".generated/public",
+      config.tokens.paper,
+    ),
     articles: [],
     collections: [],
     archive: [],
@@ -88,9 +65,9 @@ async function main() {
     revision: execFileSync("git", ["rev-parse", "HEAD"], {
       encoding: "utf8",
     }).trim(),
-    isPreview: !deployment.indexable || Boolean(
-      process.env.AWS_BRANCH && process.env.AWS_BRANCH !== "main",
-    ),
+    isPreview:
+      !deployment.indexable ||
+      Boolean(process.env.AWS_BRANCH && process.env.AWS_BRANCH !== "main"),
     buildTime: new Date().toISOString(),
     shortlinks: compileLinks(
       await readYaml("publishing/links.yaml"),
@@ -99,144 +76,12 @@ async function main() {
       await loadEditions(),
     ),
   };
-  for (const c of lib.collections.filter((c) => c.status === "published")) {
-    const d = await renderDocument(
-      assemble(c, lib, "web"),
-      lib,
-      defaults,
-      assets,
-    );
-    site.collections.push({
-      id: c.id,
-      title: c.title,
-      summary: c.summary,
-      introduction: await renderProse(c.introduction ?? ""),
-      url: collectionUrl(c),
-      ordered: c.ordered,
-      book: c.book,
-      html: d.html,
-      nodes: d.nodes,
-    });
-  }
-  for (const p of [...lib.pieces.values()].filter((p) =>
-    allowed(p, "standalone"),
-  )) {
-    const d = await renderDocument(standalone(p), lib, defaults, assets);
-    site.articles.push({
-      id: p.id,
-      title: p.title,
-      summary: p.summary,
-      url: articleUrl(p),
-      publishedAt: p.publishedAt!,
-      updatedAt: p.updatedAt,
-      tags: p.tags,
-      html: d.html,
-      minutes: Math.max(1, Math.ceil(p.body.split(/\s+/).length / 220)),
-      collections: site.collections
-        .filter((c) => c.nodes.some((n) => n.pieceId === p.id))
-        .map((c) => ({ title: c.title, url: c.url })),
-    });
-  }
+  await prepareWriting();
   // Prepare portable image renditions before deployment, so remote copies never
   // refer to assets that only exist in the publisher's temporary workspace.
-  const distributionReview: {
-    piece: string;
-    destination: string;
-    error: string;
-  }[] = [];
-  for (const raw of (await readYaml("publishing/distribution.yaml"))
-    .assignments) {
-    const assignment = assignmentSchema.parse(raw);
-    const piece = lib.pieces.get(assignment.piece);
-    if (!piece) throw Error("Unknown distribution source");
-    try {
-      await exportPayload(piece, lib, assignment, config.url);
-    } catch (error) {
-      distributionReview.push({
-        piece: piece.id,
-        destination: assignment.destination,
-        error: String(error),
-      });
-      console.warn(
-        `Cross-post export blocked for ${piece.id}/${assignment.destination}: ${String(error)}`,
-      );
-    }
-  }
-  // Publication re-renders and blocks the affected destination; this private
-  // report must not prevent the canonical website from being deployed.
-  await fs.writeFile(
-    ".generated/distribution-blocked.json",
-    JSON.stringify(distributionReview, null, 2),
-  );
-  site.articles.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-  if (home.lead && !site.articles.some((p) => p.id === home.lead))
-    throw Error("Pinned lead is not a public article");
-  for (const id of home.collections)
-    if (!site.collections.some((c) => c.id === id))
-      throw Error(`Invalid homepage collection ${id}`);
-  const imported = JSON.parse(
-      await fs.readFile("data/link-metadata.json", "utf8"),
-    ),
-    overrides = JSON.parse(
-      await fs.readFile("data/link-overrides.json", "utf8"),
-    );
-  let legacy: any = {};
-  try {
-    legacy = JSON.parse(await fs.readFile("data/legacy-metadata.json", "utf8"));
-  } catch (e: any) {
-    if (e.code !== "ENOENT") throw e;
-  }
-  for (const kind of ["posts", "decks", "videos"]) {
-    const urls: string[] = JSON.parse(
-      await fs.readFile(`data/${kind}.json`, "utf8"),
-    );
-    for (const url of urls) {
-      if (!legacy[url] && !imported[url]) {
-        const cache = path.join(
-          "cache",
-          crypto.createHash("sha256").update(url).digest("hex"),
-        );
-        try {
-          legacy[url] = JSON.parse(await fs.readFile(cache, "utf8"));
-        } catch {
-          throw Error(
-            `Missing versioned metadata for ${url}; refresh before building`,
-          );
-        }
-      }
-      const record = await metadata.getLinkData(url, {
-        cacheFolderName: "cache",
-        imported: { ...legacy, ...imported },
-        overrides,
-        scrape: async () => {
-          throw Error("Production build cannot discover metadata");
-        },
-      });
-      const host = new URL(url).hostname;
-      const publisher =
-        host === "aws.amazon.com"
-          ? "AWS"
-          : host === "dev.to"
-            ? "DEV"
-            : host.includes("speakerdeck")
-              ? "Speaker Deck"
-              : host.includes("youtu")
-                ? "YouTube"
-                : host;
-      const r: ArchiveRecord = { ...record, sourceUrl: url, publisher, kind };
-      const canonical = imported[url]?.canonicalUrl;
-      if (
-        canonical &&
-        site.articles.some(
-          (p) =>
-            siteUrl(p.url, config.url).replace(/\/$/, "") ===
-            String(canonical).replace(/\/$/, ""),
-        )
-      )
-        site.externalCopies.push(url);
-      else site.archive.push(r);
-    }
-  }
+  await prepareDistribution();
+  validateHomepage();
+  await prepareArchive();
   // The relaunch is a boundary, not a new publication date for historical work.
   const cutoff = config.relaunchDate;
   site.elsewhere = site.archive.filter(
@@ -263,6 +108,243 @@ async function main() {
   console.log(
     `Prepared ${site.articles.length} articles, ${site.collections.length} collections, ${site.archive.length} historical records.`,
   );
+
+  async function prepareArchive() {
+    const imported = JSON.parse(
+        await fs.readFile("data/link-metadata.json", "utf8"),
+      ),
+      overrides = JSON.parse(
+        await fs.readFile("data/link-overrides.json", "utf8"),
+      );
+    let legacy: Record<string, unknown> = {};
+    try {
+      legacy = JSON.parse(
+        await fs.readFile("data/legacy-metadata.json", "utf8"),
+      );
+    } catch (caught) {
+      const e = asError(caught);
+      if (e.code !== "ENOENT") throw e;
+    }
+    for (const kind of ["posts", "decks", "videos"]) {
+      const urls: string[] = JSON.parse(
+        await fs.readFile(`data/${kind}.json`, "utf8"),
+      );
+      for (const url of urls) {
+        await prepareArchiveRecord(url, kind);
+      }
+    }
+
+    async function prepareArchiveRecord(url: string, kind: string) {
+      if (!legacy[url] && !imported[url]) {
+        const cache = path.join(
+          "cache",
+          crypto.createHash("sha256").update(url).digest("hex"),
+        );
+        try {
+          legacy[url] = JSON.parse(await fs.readFile(cache, "utf8"));
+        } catch {
+          throw Error(
+            `Missing versioned metadata for ${url}; refresh before building`,
+          );
+        }
+      }
+      const record = await metadata.getLinkData(url, {
+        cacheFolderName: "cache",
+        imported: { ...legacy, ...imported },
+        overrides,
+        scrape: async () => {
+          throw Error("Production build cannot discover metadata");
+        },
+      });
+      const publisher = archivePublisher();
+      const r: ArchiveRecord = { ...record, sourceUrl: url, publisher, kind };
+      const canonical = imported[url]?.canonicalUrl;
+      if (
+        canonical &&
+        site.articles.some(
+          (p) =>
+            siteUrl(p.url, config.url).replace(/\/$/, "") ===
+            String(canonical).replace(/\/$/, ""),
+        )
+      )
+        site.externalCopies.push(url);
+      else site.archive.push(r);
+
+      function archivePublisher() {
+        const host = new URL(url).hostname;
+        const publisher =
+          host === "aws.amazon.com"
+            ? "AWS"
+            : host === "dev.to"
+              ? "DEV"
+              : host.includes("speakerdeck")
+                ? "Speaker Deck"
+                : host.includes("youtu")
+                  ? "YouTube"
+                  : host;
+        return publisher;
+      }
+    }
+  }
+
+  function validateHomepage() {
+    for (const announcement of home.newIn) {
+      const book = lib.collections.find(
+        (c) => c.id === announcement.collection && c.book,
+      );
+      const references = (nodes: import("../core/model").Node[]): boolean =>
+        nodes.some(
+          (n) =>
+            n.ref === announcement.piece ||
+            references(n.before ?? []) ||
+            references(n.children ?? []) ||
+            references(n.after ?? []),
+        );
+      if (
+        !book ||
+        !lib.pieces.has(announcement.piece) ||
+        !references([...book.frontMatter, ...book.body, ...book.backMatter])
+      )
+        throw Error(
+          `Invalid new-in-book announcement for ${announcement.piece}`,
+        );
+    }
+    site.homeWriting = homepageWriting(site, lib);
+    if (
+      home.lead &&
+      !lib.pieces.has(home.lead) &&
+      !lib.collections.some((c) => c.id === home.lead)
+    )
+      throw Error("Unknown homepage feature");
+    for (const id of home.collections)
+      if (!site.collections.some((c) => c.id === id))
+        throw Error(`Invalid homepage collection ${id}`);
+  }
+
+  async function prepareDistribution() {
+    const distributionReview: {
+      piece: string;
+      destination: string;
+      error: string;
+    }[] = [];
+    for (const raw of (await readYaml("publishing/distribution.yaml"))
+      .assignments) {
+      const assignment = assignmentSchema.parse(raw);
+      const piece = lib.pieces.get(assignment.piece);
+      if (!piece) throw Error("Unknown distribution source");
+      try {
+        await exportPayload(piece, lib, assignment, config.url);
+      } catch (error) {
+        distributionReview.push({
+          piece: piece.id,
+          destination: assignment.destination,
+          error: String(error),
+        });
+        console.warn(
+          `Cross-post export blocked for ${piece.id}/${assignment.destination}: ${String(error)}`,
+        );
+      }
+    }
+    // Publication re-renders and blocks the affected destination; this private
+    // report must not prevent the canonical website from being deployed.
+    await fs.writeFile(
+      ".generated/distribution-blocked.json",
+      JSON.stringify(distributionReview, null, 2),
+    );
+    site.articles.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  }
+
+  async function prepareWriting() {
+    for (const c of lib.collections.filter((c) => c.status === "published")) {
+      const d = await renderDocument(
+        assemble(c, lib, "web"),
+        lib,
+        defaults,
+        assets,
+      );
+      site.collections.push({
+        id: c.id,
+        title: c.title,
+        summary: c.summary,
+        introduction: await renderProse(c.introduction ?? ""),
+        url: collectionUrl(c),
+        ordered: c.ordered,
+        book: c.book,
+        html: d.html,
+        nodes: d.nodes.map((n) => ({
+          ...n,
+          ...(n.pieceId ? { tags: lib.pieces.get(n.pieceId)!.tags } : {}),
+        })),
+      });
+    }
+    for (const p of [...lib.pieces.values()].filter((p) =>
+      allowed(p, "standalone"),
+    )) {
+      const d = await renderDocument(standalone(p), lib, defaults, assets);
+      site.articles.push({
+        id: p.id,
+        title: p.title,
+        summary: p.summary,
+        url: articleUrl(p),
+        publishedAt: p.publishedAt!,
+        updatedAt: p.updatedAt,
+        tags: p.tags,
+        html: d.html,
+        minutes: Math.max(1, Math.ceil(p.body.split(/\s+/).length / 220)),
+        collections: site.collections
+          .filter((c) => c.nodes.some((n) => n.pieceId === p.id))
+          .map((c) => ({ title: c.title, url: c.url })),
+      });
+    }
+  }
+
+  async function prepareStaticAssets() {
+    for (const [slot, a] of Object.entries(config.assets)) {
+      if (!a) continue;
+      const file = await localAsset(process.cwd(), a.path);
+      await sharp(await fs.readFile(file))
+        .resize({
+          width: slot === "portrait" ? 480 : 1200,
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 90 })
+        .toFile(`.generated/public/brand/${slot}.webp`);
+    }
+    await fs.cp("site-assets/licenses", ".generated/public/licenses", {
+      recursive: true,
+    });
+    await fs.writeFile(".generated/public/theme-tokens.css", tokensCss(config));
+    if (config.overrideCss) {
+      const file = await localAsset(process.cwd(), config.overrideCss);
+      await fs.copyFile(file, ".generated/public/theme-overrides.css");
+    }
+    await fs.cp(
+      "legacy/snapshot-2026-09-15",
+      ".generated/public/original-site",
+      {
+        recursive: true,
+      },
+    );
+    for (const file of await fs.readdir(".generated/public/original-site"))
+      if (file.endsWith(".html")) {
+        const p = ".generated/public/original-site/" + file;
+        let s = await fs.readFile(p, "utf8");
+        s = s
+          .replace(/(href|src)="\/(?!\/)/g, '$1="/original-site/')
+          .replace(
+            "</head>",
+            '<meta name="robots" content="noindex,follow"></head>',
+          )
+          .replace(
+            /<body\b[^>]*>/i,
+            (body) =>
+              `${body}<nav aria-label="Return to current website" style="padding:12px 20px;background:#f6f3eb;color:#13191c;font:16px/1.5 system-ui,sans-serif;border-bottom:1px solid #708091">You are viewing the preserved original site. <a href="/" style="color:#164b88;text-decoration:underline">Return to ${escape(config.title)}</a></nav>`,
+          );
+        await fs.writeFile(p, deploymentHtml(s));
+      }
+    // Keep historical asset URLs usable as well as the dated snapshot.
+    await fs.cp("static", ".generated/public", { recursive: true });
+  }
 }
 main().catch((e) => {
   console.error(e);

@@ -1,3 +1,3 @@
 schemaVersion: 1
 links:
-  hello: {ref: hello-brave-new-world}
+  hello: { ref: hello-brave-new-world }

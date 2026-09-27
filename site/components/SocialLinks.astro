@@ -27,11 +27,6 @@ const icons = { github, linkedin, x, facebook };
 )}
 
 <style>
-  .social-links {
-    margin-top: 1.75rem;
-    border-top: 1px solid var(--hairline);
-    padding-top: 1rem;
-  }
   ul {
     display: flex;
     flex-wrap: wrap;
@@ -40,6 +35,7 @@ const icons = { github, linkedin, x, facebook };
     padding: 0;
     list-style: none;
   }
+
   a {
     display: inline-flex;
     align-items: center;
@@ -52,18 +48,28 @@ const icons = { github, linkedin, x, facebook };
     text-decoration-color: var(--hairline);
     text-underline-offset: 0.25em;
   }
-  a:hover {
-    color: var(--blue);
-    text-decoration-color: currentColor;
+
+  .social-links {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--hairline);
+    padding-top: 1rem;
   }
-  a:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: 4px;
-  }
+
   .social-icon {
     display: inline-flex;
     flex: 0 0 20px;
   }
+
+  a:hover {
+    color: var(--blue);
+    text-decoration-color: currentcolor;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 4px;
+  }
+
   .social-icon :global(svg) {
     stroke: none;
   }

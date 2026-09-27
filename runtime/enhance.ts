@@ -20,19 +20,30 @@ for (const pre of document.querySelectorAll("pre")) {
   const button = document.createElement("button");
   button.textContent = "Copy code";
   button.className = "copy-code";
-  button.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(code.textContent ?? "");
-      document.dispatchEvent(new Event("notes:code-copied"));
-      button.textContent = "Copied";
-      setTimeout(() => (button.textContent = "Copy code"), 1500);
-    } catch {
+  button.addEventListener("click", () => {
+    void (async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent ?? "");
+        document.dispatchEvent(new Event("notes:code-copied"));
+        button.textContent = "Copied";
+        setTimeout(() => (button.textContent = "Copy code"), 1500);
+      } catch {
+        button.textContent = "Select code to copy";
+      }
+    })().catch((error: unknown) => {
       button.textContent = "Select code to copy";
-    }
+      console.error(error);
+    });
   });
   pre.before(button);
 }
 if (document.querySelector(".experiment"))
-  import("./simulations").then((m) => m.mountSimulations());
+  import("./simulations")
+    .then((m) => m.mountSimulations())
+    .catch((error: unknown) =>
+      console.error("Could not load simulations", error),
+    );
 if (document.querySelector(".model-experiment"))
-  import("./models").then((m) => m.mountModels());
+  import("./models")
+    .then((m) => m.mountModels())
+    .catch((error: unknown) => console.error("Could not load models", error));

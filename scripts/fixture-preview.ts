@@ -52,7 +52,10 @@ async function main() {
     new Assets(siteOutput + "/media"),
   );
   const $ = load(
-    await fs.readFile(siteOutput + "/writing/hello-brave-new-world/index.html", "utf8"),
+    await fs.readFile(
+      siteOutput + "/writing/hello-brave-new-world/index.html",
+      "utf8",
+    ),
   );
   $("title").text("Private publishing verification");
   $("head").append('<meta name="robots" content="noindex,nofollow">');

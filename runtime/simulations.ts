@@ -20,7 +20,7 @@ export function mountSimulations() {
             String(scenario.input[field.name]);
       });
     let worker: Worker | undefined;
-    let recorded: any;
+    let recorded: import("./contracts").RecordedRun | undefined;
     const output = root.querySelector("output")!;
     const initialText = output.textContent;
     const results = root.querySelector(".experiment-results")!;

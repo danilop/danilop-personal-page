@@ -1,3 +1,5 @@
+import type { Definition } from "mdast";
+import { asError } from "./errors";
 import { mediaUrl } from "./media";
 import { siteUrl } from "./deployment.mjs";
 import fs from "node:fs/promises";
@@ -9,7 +11,7 @@ import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
 import remarkGfm from "remark-gfm";
 import { visit } from "unist-util-visit";
-import { hash, safeUrl } from "./assets";
+import { hash } from "./assets";
 import {
   mediaPolicySchema,
   mediaProfiles,
@@ -58,7 +60,7 @@ export type Payload = {
   series?: string;
   published: boolean;
 };
-export type Remote = { id: number; url: string; payload: Payload };
+type Remote = { id: number; url: string; payload: Payload };
 export type Delivery = {
   sourceRevision: string;
   payloadHash: string;
@@ -78,7 +80,22 @@ export interface Destination {
   create(payload: Payload): Promise<Remote>;
   update(id: number, payload: Payload): Promise<Remote>;
 }
-export function normalizeRemote(raw: any): Remote {
+function normalizeRemote(input: unknown): Remote {
+  const raw = z
+    .object({
+      id: z.number(),
+      url: z.string(),
+      title: z.string(),
+      body_markdown: z.string().optional(),
+      canonical_url: z.string(),
+      description: z.string().optional(),
+      tags: z.union([z.string(), z.array(z.string())]).optional(),
+      tag_list: z.union([z.string(), z.array(z.string())]).optional(),
+      series: z.string().optional(),
+      published: z.boolean().optional(),
+      published_at: z.string().nullable().optional(),
+    })
+    .parse(input);
   return {
     id: raw.id,
     url: raw.url,
@@ -141,27 +158,33 @@ export async function exportPublication(
         ? {
             ...piece,
             body: a.excerpt!,
-            ast: (await import("./model")).parser().parse(a.excerpt!),
+            ast: (await import("./model")).parser().parse(a.excerpt),
           }
         : { ...piece, ast: structuredClone(piece.ast) };
-    visit(exportedPiece.ast, (node: any) => {
-      if (typeof node.url === "string" && node.url.startsWith("media:"))
+    visit(exportedPiece.ast, (node) => {
+      if (
+        "url" in node &&
+        typeof node.url === "string" &&
+        node.url.startsWith("media:")
+      )
         node.url = mediaUrl(node.url);
     });
-    const definitions = new Map<string, any>();
-    visit(exportedPiece.ast, "definition", (node: any) => {
+    const definitions = new Map<string, Definition>();
+    visit(exportedPiece.ast, "definition", (node) => {
       definitions.set(node.identifier, node);
     });
-    visit(exportedPiece.ast, "imageReference", (node: any) => {
+    visit(exportedPiece.ast, "imageReference", (node, index, parent) => {
       const definition = definitions.get(node.identifier);
       if (!definition)
         throw Error(`Missing image definition ${node.identifier}`);
-      node.type = "image";
-      node.url = definition.url;
-      node.title = definition.title;
-      delete node.identifier;
-      delete node.referenceType;
-      delete node.label;
+      if (parent && index !== undefined)
+        parent.children[index] = {
+          type: "image",
+          url: definition.url,
+          title: definition.title,
+          alt: node.alt,
+          position: node.position,
+        };
     });
     const doc = standalone(exportedPiece);
     const tokens = new Map<string, string>();
@@ -368,52 +391,8 @@ export async function syncCopy(
           "Uncertain creation: reconcile the remote post before another create attempt.",
       });
   }
-  if (entry.remote) {
-    const observed = await adapter.read(entry.remote.id);
-    payload = { ...payload, published: observed.payload.published };
-    desired = payloadHash(payload);
-    if (
-      entry.intent?.operation === "update" &&
-      payloadHash(observed.payload) === entry.intent.hash &&
-      entry.intent.hash === desired
-    )
-      return persist({
-        sourceRevision: revision,
-        payloadHash: desired,
-        remote: observed,
-        status: "current",
-        verification: "api",
-        lastVerifiedAt: new Date().toISOString(),
-      });
-    if (payloadHash(observed.payload) !== payloadHash(entry.remote.payload))
-      return persist({
-        ...entry,
-        status: "conflict",
-        error: "Remote copy was edited. Review before overwriting.",
-      });
-    if (entry.payloadHash === desired && !entry.intent)
-      return persist({
-        ...entry,
-        status: "current",
-        lastVerifiedAt: new Date().toISOString(),
-        verification: "api",
-      });
-    if (policy.updates === "review" && !reviewed)
-      return persist({
-        ...entry,
-        status: "pending",
-        error: "Revision awaits review.",
-      });
-    payload = { ...payload, published: observed.payload.published };
-  } else {
-    const existing = await adapter.find(payload.canonical_url);
-    if (existing.length)
-      return persist({
-        ...entry,
-        status: "conflict",
-        error: "An existing remote copy requires an explicit mapping.",
-      });
-  }
+  const reconciled = await reconcileRemote();
+  if (reconciled) return reconciled;
   await persist({
     ...entry,
     status: "pending",
@@ -438,6 +417,54 @@ export async function syncCopy(
   } catch (error) {
     await persist({ ...entry, status: "failed", error: String(error) });
     throw error;
+  }
+  async function reconcileRemote(): Promise<Delivery | undefined> {
+    if (entry.remote) {
+      const observed = await adapter.read(entry.remote.id);
+      payload = { ...payload, published: observed.payload.published };
+      desired = payloadHash(payload);
+      if (
+        entry.intent?.operation === "update" &&
+        payloadHash(observed.payload) === entry.intent.hash &&
+        entry.intent.hash === desired
+      )
+        return persist({
+          sourceRevision: revision,
+          payloadHash: desired,
+          remote: observed,
+          status: "current",
+          verification: "api",
+          lastVerifiedAt: new Date().toISOString(),
+        });
+      if (payloadHash(observed.payload) !== payloadHash(entry.remote.payload))
+        return persist({
+          ...entry,
+          status: "conflict",
+          error: "Remote copy was edited. Review before overwriting.",
+        });
+      if (entry.payloadHash === desired && !entry.intent)
+        return persist({
+          ...entry,
+          status: "current",
+          lastVerifiedAt: new Date().toISOString(),
+          verification: "api",
+        });
+      if (policy.updates === "review" && !reviewed)
+        return persist({
+          ...entry,
+          status: "pending",
+          error: "Revision awaits review.",
+        });
+      payload = { ...payload, published: observed.payload.published };
+    } else {
+      const existing = await adapter.find(payload.canonical_url);
+      if (existing.length)
+        return persist({
+          ...entry,
+          status: "conflict",
+          error: "An existing remote copy requires an explicit mapping.",
+        });
+    }
   }
 }
 export async function withLedger<T>(
@@ -465,7 +492,8 @@ export async function withLedger<T>(
     let ledger: Record<string, Delivery> = {};
     try {
       ledger = JSON.parse(await fs.readFile(file, "utf8"));
-    } catch (e: any) {
+    } catch (caught) {
+      const e = asError(caught);
       if (e.code !== "ENOENT") throw e;
     }
     return await run(ledger, async () => {
@@ -508,7 +536,8 @@ export async function withRemoteLedger<T>(
       );
       ledger = JSON.parse(await obj.Body!.transformToString());
       etag = obj.ETag;
-    } catch (e: any) {
+    } catch (caught) {
+      const e = asError(caught);
       if (e.name !== "NoSuchKey") throw e;
     }
     return await run(ledger, async () => {

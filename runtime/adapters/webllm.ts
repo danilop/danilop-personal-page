@@ -17,7 +17,11 @@ export const webllm: ModelRuntime = {
   locality: "local",
   formats: ["mlc"],
   async probe(model) {
-    const gpu = (navigator as any).gpu;
+    const gpu = (
+      navigator as Navigator & {
+        gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> };
+      }
+    ).gpu;
     if (!gpu)
       return {
         supported: false,

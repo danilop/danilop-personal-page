@@ -14,6 +14,7 @@ it is parsed and rendered. Schema versioning applies to all manifests.
 
 ```text
 content/
+  tags.yaml                   # extensible topic vocabulary, labels and aliases
   pieces/
     agent-memory/
       index.md
@@ -36,6 +37,7 @@ publishing/
   site.yaml                   # brand and theme configuration
   deployment.json             # origin, base path, indexing, original-root preservation
   renderers.yaml
+  quality.yaml                # local editorial thresholds and optional release checks
   links.yaml
   destinations.yaml           # cross-posting adapters/account references
   distribution.yaml           # piece assignments and update policies
@@ -58,6 +60,10 @@ theme is `ink-and-paper`; the configuration schema is validated by core/config.t
 [theme boundary](architecture.md#theme-and-template-boundary--required-for-the-rebuild).
 Editorial homepage selections and book-export settings remain separate concerns.
 
+For tag keys, display labels, aliases, and private usage review, see the
+[tag authoring reference](tagging.md). Tags remain a list of strings in each piece;
+unknown keys are reviewed rather than rejected.
+
 ## 2. Piece metadata and body
 
 ```markdown
@@ -67,7 +73,7 @@ id: agent-memory
 title: Why agents need more than conversation history
 summary: Understanding the roles of working and persistent memory.
 language: en
-status: draft
+draft: true
 publication:
   surfaces: [standalone, collection, book]
 slug: agent-memory
@@ -91,7 +97,7 @@ Markdown viewer. Plain prose, headings, links, lists, and fences remain ordinary
 Markdown. Unsupported directives must produce a clear export error.
 
 Publishing a standalone piece requires an explicit `publishedAt` date. Optional
-`updatedAt` marks a substantive revision. Setting `status: published` makes the
+`updatedAt` marks a substantive revision. Removing `draft: true` (or setting it to `false`) makes the
 piece eligible only on its declared surfaces. `shortCode` is optional for public
 pieces; drafts may reserve a code without activating it.
 
@@ -159,7 +165,7 @@ schemaVersion: 1
 id: reliable-agents
 title: Building Reliable Agents
 summary: A growing guide to designing useful, dependable agents.
-status: draft
+draft: true
 slug: reliable-agents
 ordered: true
 shortCode: reliable-agents
@@ -515,6 +521,11 @@ and portrait/biography assets; individual token values have defaults. Supported
 fonts are Newsreader/Georgia and Inter/system-ui. The HTTPS origin and deployment
 base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.yaml` contains
 optional lead, recentCount, elsewhereCount, and selected collection IDs.
+`lead` accepts a piece or collection ID. An unavailable draft feature falls back to
+the newest visible piece; unknown IDs fail validation. Publication dates determine
+latest order; undated collection pieces follow dated pieces. Draft preview dates
+are provisional only. Set `publishedAt` on collection articles for meaningful
+chronological discovery.
 
 ## Browser icons
 
@@ -539,3 +550,90 @@ URLs and ordering are configurable; an empty list hides the row. Add future icon
 artwork to the local icon set and schema. Each icon/name pair is one link, with
 the icon hidden from assistive technology to avoid duplicate announcements.
 Local Font Awesome SVG attribution is in `site-assets/licenses/font-awesome-social-icons.txt`.
+
+## Content review profiles
+
+The [content review reference](content-quality.md#profile-configuration-and-reviewed-exceptions)
+defines optional source baselines, declared Python examples/fragments, and
+fingerprinted editorial exceptions in a separate profile. These do not alter piece
+identity, book placement, or publishing eligibility. Piece language controls the
+linguistic profile; no required content fields were added.
+
+## Importing an existing authoring library
+
+The [content importer](content-import.md) reads the same canonical piece folders
+and collection YAML described here; no import-specific metadata is required.
+Selections use metadata IDs. The command copies piece-local files, preserves body
+bytes, stages new content as drafts, and validates the proposed combined library.
+Generated HTML, private review profiles, and global publishing/tag configuration
+outside piece directories are not imported. Review those dependencies separately.
+
+## Draft flag and compatibility
+
+New pieces and collections use optional `draft: true`. Absence or `false` means
+published eligibility; each collection and piece controls its own visibility.
+The model normalizes this to its internal status. Existing `status: draft`,
+`status: published`, and `status: retired` remain supported for compatibility.
+Use only one convention per file: specifying both `status` and `draft` fails.
+Retired content continues to use `status: retired`. Standalone publication still
+requires a valid slug and publication date. Preview includes drafts but never
+changes source flags; release builds omit them.
+
+## Book labels and new-material announcements
+
+Use **Book** as the permanent reader-facing category. **New in [book title]**
+announces newly published material; it is not inferred from collection membership
+or from a book being created. Existing articles assembled into a book do not
+automatically become new. **New book** is reserved for introducing the book itself
+and is not automatically generated by the current templates.
+
+Optional `newIn` entries in `publishing/home.yaml` explicitly identify new material:
+
+```yaml
+newIn:
+  - piece: chronicles-ch01
+    collection: chronicles-of-computation
+```
+
+The piece must belong to the named book. The label appears only when both are
+visible, including draft-inclusive authoring preview. Remove the entry when the
+announcement is no longer current; it has no automatic expiry and does not change
+publication dates, flags, ordering, topic tags, or book structure. Without it, the
+normal book/chapter context remains. The featured book itself remains labelled Book; its Introduction card introduces
+the book, while Chapter 1 is announced as new material.
+
+The chosen opening/announcement card can use `kind: introducing` in its `newIn`
+entry to show **Introducing [book title]**. Omitting `kind` retains **New in…**.
+This is an explicit announcement choice, not inferred from reading order or
+article age, and works for books assembled from existing writing. The Chronicles
+Introduction introduces the book; Chapter 1 retains New in.
+
+
+## Unpublish and removed short links
+
+Set `draft: true` (remove legacy `status` if present) to unpublish on the next
+release. Preserve `id`, `slug`, `publishedAt`, placements and reserved short codes.
+The local editor provides an explicit action and guarded draft deletion.
+
+`publishing/links.yaml` supports an optional `removed` ownership map. Draft
+aliases stay in `links` and are inactive until republished. Deletion moves every
+alias for the article from `links` to `removed`, for example:
+
+```yaml
+schemaVersion: 1
+links: {}
+removed:
+  former-article: former-piece-id
+```
+
+A code cannot occur in both maps. Tombstones intentionally outlive source deletion
+so the cloud publisher can withdraw previously deployed redirects and prevent
+reuse. Do not remove a tombstone merely because its piece no longer exists.
+The publisher preserves unrelated aliases and rejects conflicting ownership.
+
+The [social publishing plan](social-publishing-plan.md) proposes a versioned
+alias-record migration, automatic primary-alias allocation, assistant configuration
+and explicit social-image metadata. Those proposed fields and commands are not
+part of this implemented format yet. Preserve existing codes and immutable edition
+snapshots during migration. Planned Trash restoration recovers reservations for
+the same content identity; it does not make removed codes available for reuse.

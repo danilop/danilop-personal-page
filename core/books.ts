@@ -1,3 +1,4 @@
+import { asError } from "./errors";
 import { selectCode } from "./code-source";
 import { visit } from "unist-util-visit";
 import fs from "node:fs/promises";
@@ -9,11 +10,12 @@ import {
   type Library,
   type Collection,
   type AssemblyNode,
+  type Block,
 } from "./model";
 import { renderDocument } from "./render";
 import { Assets, hash } from "./assets";
 import { bookMatter } from "./book-matter";
-export type BookExporter = {
+type BookExporter = {
   id: string;
   version: string;
   export: (context: {
@@ -24,7 +26,7 @@ export type BookExporter = {
     preview: boolean;
   }) => Promise<string[]>;
 };
-export const markua: BookExporter = {
+const markua: BookExporter = {
   id: "markua",
   version: "1",
   async export({ collection, lib, output, excludePlanned, preview }) {
@@ -36,198 +38,23 @@ export const markua: BookExporter = {
     await fs.mkdir(path.join(output, "manuscript"), { recursive: true });
     const files: string[] = [];
     const refs = new Map<string, string[]>();
-    for (const n of doc.nodes)
-      if (n.piece) {
-        const list = refs.get(n.piece.id) ?? [];
-        list.push(n.id);
-        refs.set(n.piece.id, list);
-      }
+    indexPiecePlacements();
     let part: "front" | "body" | "back" | undefined;
     const frontIds = new Set(collection.frontMatter.map((n) => n.id)),
       backIds = new Set(collection.backMatter.map((n) => n.id));
     const partDepths: number[] = [];
     for (let i = 0; i < doc.nodes.length; i++) {
       const n = doc.nodes[i];
-      while (partDepths.length && partDepths.at(-1)! >= n.depth)
-        partDepths.pop();
-      const bookDepth = Math.max(1, n.depth - partDepths.length);
-      if (n.kind === "part") partDepths.push(n.depth);
+      const bookDepth = bookDepthFor(n);
       let body = "";
       if (frontIds.has(n.id)) part = "front";
       else if (backIds.has(n.id)) part = "back";
       else if (collection.body.some((x) => x.id === n.id)) part = "body";
-      const marker =
-        i === 0 ||
-        frontIds.has(n.id) ||
-        backIds.has(n.id) ||
-        collection.body.some((x) => x.id === n.id)
-          ? part === "front"
-            ? "{frontmatter}\n\n"
-            : part === "back"
-              ? "{backmatter}\n\n"
-              : "{mainmatter}\n\n"
-          : "";
+      const marker = matterMarker(i, n);
       if (n.kind === "generated") {
-        if (n.role === "toc")
-          body =
-            "## Contents\n\n" +
-            doc.nodes
-              .filter((x) => x.kind === "chapter" || x.kind === "appendix")
-              .map((x) => `* [${x.title}](#${x.id})`)
-              .join("\n");
-        else if (["glossary", "index", "bibliography"].includes(n.role ?? "")) {
-          body = matter.sections[n.role as keyof typeof matter.sections];
-        } else throw Error(`Unsupported generated book material ${n.role}`);
+        body = generatedMatter(n, body);
       } else if (n.piece) {
-        body = n.piece.body;
-        const headingEdits: { start: number; end: number; value: string }[] =
-          [];
-        const headings = new Set<string>();
-        visit(n.piece.ast, "heading", (v: any) => {
-          const depth = v.depth + Math.max(0, bookDepth - 1);
-          if (depth > 6) throw Error("Book heading too deep");
-          const start = v.position.start.offset;
-          const text = (v.children ?? [])
-            .map((c: any) => c.value ?? "")
-            .join("");
-          const slug =
-            text
-              .toLowerCase()
-              .normalize("NFKD")
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/^-|-$/g, "") || "section";
-          let unique = slug,
-            index = 2;
-          while (headings.has(unique)) unique = slug + "-" + index++;
-          headings.add(unique);
-          headingEdits.push({
-            start,
-            end: start + v.depth,
-            value: `{#${n.id}-${unique}}\n\n` + "#".repeat(depth),
-          });
-        });
-        const protectedCode = new Map<string, string>();
-        visit(n.piece.ast, (v: any) => {
-          if (v.type !== "code" && v.type !== "inlineCode") return;
-          const token = `NOTESBOOKCODE${protectedCode.size}END`;
-          const start = v.position.start.offset,
-            end = v.position.end.offset;
-          protectedCode.set(token, body.slice(start, end));
-          headingEdits.push({ start, end, value: token });
-        });
-        for (const edit of headingEdits.sort((a, b) => b.start - a.start))
-          body = body.slice(0, edit.start) + edit.value + body.slice(edit.end);
-
-        body = body.replace(
-          /\]\(#([^)]*)\)/g,
-          (_, target) => `](#${n.id}-${target})`,
-        );
-        body = body.replace(/\[\^([^\]]+)\]/g, (_, id) => `[^${n.id}-${id}]`);
-        // Source stays Markdown; contextual block renditions replace directives only.
-        for (const [id, block] of Object.entries(n.piece.blocks)) {
-          const expression = new RegExp(
-            "::block\\{ref=[\"\\']" + id + "[\"\\']\\}",
-            "g",
-          );
-          if (!expression.test(body)) continue;
-          expression.lastIndex = 0;
-          const asset = rendered.blockAssets[`${n.id}#${id}`];
-          let replacement: string;
-          if (asset)
-            replacement = `{#${n.id}-${id}}\n![${block.description ?? block.caption ?? ""}](resources/${path.basename(asset)})${block.caption ? "\n\n" + block.caption : ""}`;
-          else if (block.kind === "code") {
-            let code = block.source.path
-              ? (
-                  await assets.read(n.piece.dir, String(block.source.path))
-                ).toString()
-              : String(block.source.text);
-            code = selectCode(
-              code,
-              block.source.region ? String(block.source.region) : undefined,
-            );
-            replacement = `{#${n.id}-${id}}\n{lang="${block.source.language}"}\n\`\`\`\n${code}\n\`\`\``;
-          } else if (block.alternative)
-            replacement =
-              block.alternative.text +
-              (block.alternative.url
-                ? `\n\n[Companion material](${block.alternative.url})`
-                : "");
-          else if (block.kind === "math")
-            replacement = `{$$}\n${block.source.path ? (await assets.read(n.piece.dir, String(block.source.path))).toString() : block.source.text}\n{/$$}`;
-          else if (block.kind === "table") {
-            const { parse } = await import("csv-parse/sync");
-            const rows = parse(
-              (
-                await assets.read(n.piece.dir, String(block.source.path))
-              ).toString(),
-              { columns: true, skip_empty_lines: true },
-            );
-            const cols = Object.keys(rows[0] as Record<string, string>);
-            const cell = (v: unknown) =>
-              String(v).replaceAll("|", "\\|").replaceAll("\n", " ");
-            replacement =
-              `| ${cols.map(cell).join(" | ")} |\n| ${cols.map(() => "---").join(" | ")} |\n` +
-              rows
-                .map(
-                  (r: any) => `| ${cols.map((c) => cell(r[c])).join(" | ")} |`,
-                )
-                .join("\n");
-          } else if (["callout", "exercise"].includes(block.kind))
-            replacement = `**${block.title ?? "Note"}**\n\n${block.source.text ?? ""}`;
-          else throw Error(`No Markua rendition for ${block.kind}`);
-          if (block.alternative?.mode === "static") {
-            for (const item of block.alternative.assets ?? []) {
-              const asset = await assets.copy(n.piece.dir, item.path);
-              replacement += `\n\n![${item.description}](resources/${path.basename(asset)})`;
-            }
-          }
-          if (!replacement.startsWith(`{#${n.id}-${id}}`))
-            replacement = `{#${n.id}-${id}}\n` + replacement;
-          if (block.kind === "code") {
-            const token = `NOTESBOOKCODE${protectedCode.size}END`;
-            protectedCode.set(token, replacement);
-            replacement = token;
-          }
-          body = body.replace(expression, replacement);
-        }
-        const images = [...body.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)];
-        for (const match of images) {
-          if (match[2].startsWith("resources/")) continue;
-          if (/^(https?:|media:)/.test(match[2]))
-            throw Error(
-              "Freeze remote book images with an explicit local or versioned alternative",
-            );
-          const url = await assets.copy(n.piece.dir, match[2]);
-          body = body.replace(
-            match[0],
-            `![${match[1]}](resources/${path.basename(url)})`,
-          );
-        }
-        body = body.replace(/:ref\{([^}]+)\}/g, (_, raw) => {
-          const attrs = Object.fromEntries(
-            [...raw.matchAll(/(\w+)=(?:"([^"]*)"|'([^']*)')/g)].map(
-              (m: any) => [m[1], m[2] ?? m[3]],
-            ),
-          );
-          const target = String(attrs.target ?? ""),
-            placement = attrs.placement;
-          const [pieceId, blockId] = target.split("#");
-          const occurrences = refs.get(pieceId) ?? [];
-          if (occurrences.length > 1 && !placement)
-            throw Error(`Ambiguous book reference ${target}`);
-          const selected = placement ?? occurrences[0];
-          if (!selected || !occurrences.includes(selected))
-            throw Error(`Unresolved book reference ${target}`);
-          return `[${blockId ?? lib.pieces.get(pieceId)!.title}](#${selected}${blockId ? "-" + blockId : ""})`;
-        });
-        body = body
-          .replace(/\[@([^\]]+)\]|:cite\{key="([^"]+)"\}/g, (_, a, b) =>
-            matter.citation(a ?? b),
-          )
-          .replace(/:term\{ref="([^"]+)"\}/g, (_, key) => matter.term(key))
-          .replace(/:index\{term="([^"]+)"\}/g, (_, term) => term);
-        for (const [token, code] of protectedCode)
-          body = body.replaceAll(token, code);
+        body = await renderPiece(body, n, bookDepth);
       }
       const title =
         n.kind === "generated"
@@ -240,16 +67,7 @@ export const markua: BookExporter = {
       );
       files.push(filename);
     }
-    for (const [role, body] of Object.entries(matter.sections)) {
-      if (body && !doc.nodes.some((n) => n.role === role)) {
-        const filename = role + ".md";
-        await fs.writeFile(
-          path.join(output, "manuscript", filename),
-          "{backmatter}\n\n" + body + "\n",
-        );
-        files.push(filename);
-      }
-    }
+    await appendBackMatter();
     await fs.writeFile(
       path.join(output, "manuscript", "Book.txt"),
       files.join("\n") + "\n",
@@ -263,9 +81,262 @@ export const markua: BookExporter = {
       files.join("\n") + "\n",
     );
     return files;
+
+    function bookDepthFor(n: AssemblyNode) {
+      while (partDepths.length && partDepths.at(-1)! >= n.depth)
+        partDepths.pop();
+      const bookDepth = Math.max(1, n.depth - partDepths.length);
+      if (n.kind === "part") partDepths.push(n.depth);
+      return bookDepth;
+    }
+
+    function indexPiecePlacements() {
+      for (const n of doc.nodes)
+        if (n.piece) {
+          const list = refs.get(n.piece.id) ?? [];
+          list.push(n.id);
+          refs.set(n.piece.id, list);
+        }
+    }
+
+    async function appendBackMatter() {
+      for (const [role, body] of Object.entries(matter.sections)) {
+        if (body && !doc.nodes.some((n) => n.role === role)) {
+          const filename = role + ".md";
+          await fs.writeFile(
+            path.join(output, "manuscript", filename),
+            "{backmatter}\n\n" + body + "\n",
+          );
+          files.push(filename);
+        }
+      }
+    }
+
+    function generatedMatter(n: AssemblyNode, body: string) {
+      if (n.role === "toc")
+        body =
+          "## Contents\n\n" +
+          doc.nodes
+            .filter((x) => x.kind === "chapter" || x.kind === "appendix")
+            .map((x) => `* [${x.title}](#${x.id})`)
+            .join("\n");
+      else if (["glossary", "index", "bibliography"].includes(n.role ?? "")) {
+        body = matter.sections[n.role as keyof typeof matter.sections];
+      } else throw Error(`Unsupported generated book material ${n.role}`);
+      return body;
+    }
+
+    function matterMarker(i: number, n: AssemblyNode) {
+      return i === 0 ||
+        frontIds.has(n.id) ||
+        backIds.has(n.id) ||
+        collection.body.some((x) => x.id === n.id)
+        ? part === "front"
+          ? "{frontmatter}\n\n"
+          : part === "back"
+            ? "{backmatter}\n\n"
+            : "{mainmatter}\n\n"
+        : "";
+    }
+
+    async function renderPiece(
+      body: string,
+      n: AssemblyNode,
+      bookDepth: number,
+    ) {
+      body = n.piece!.body;
+      let protectedCode;
+      ({ protectedCode, body } = prepareHeadingsAndCode(n, bookDepth, body));
+
+      body = body.replace(
+        /\]\(#([^)]*)\)/g,
+        (_, target) => `](#${n.id}-${target})`,
+      );
+      body = body.replace(/\[\^([^\]]+)\]/g, (_, id) => `[^${n.id}-${id}]`);
+      // Source stays Markdown; contextual block renditions replace directives only.
+      body = await renderBlocks(n, body, protectedCode);
+      body = await freezeImages(body, n);
+      body = body.replace(/:ref\{([^}]+)\}/g, (_, raw) => {
+        const attrs = Object.fromEntries(
+          [...raw.matchAll(/(\w+)=(?:"([^"]*)"|'([^']*)')/g)].map((m) => [
+            m[1],
+            m[2] ?? m[3],
+          ]),
+        );
+        const target = String(attrs.target ?? ""),
+          placement = attrs.placement;
+        const [pieceId, blockId] = target.split("#");
+        const occurrences = refs.get(pieceId) ?? [];
+        if (occurrences.length > 1 && !placement)
+          throw Error(`Ambiguous book reference ${target}`);
+        const selected = placement ?? occurrences[0];
+        if (!selected || !occurrences.includes(selected))
+          throw Error(`Unresolved book reference ${target}`);
+        return `[${blockId ?? lib.pieces.get(pieceId)!.title}](#${selected}${blockId ? "-" + blockId : ""})`;
+      });
+      body = body
+        .replace(/\[@([^\]]+)\]|:cite\{key="([^"]+)"\}/g, (_, a, b) =>
+          matter.citation(a ?? b),
+        )
+        .replace(/:term\{ref="([^"]+)"\}/g, (_, key) => matter.term(key))
+        .replace(/:index\{term="([^"]+)"\}/g, (_, term) => term);
+      for (const [token, code] of protectedCode)
+        body = body.replaceAll(token, code);
+      return body;
+    }
+
+    async function renderBlocks(
+      n: AssemblyNode,
+      body: string,
+      protectedCode: Map<string, string>,
+    ) {
+      for (const [id, block] of Object.entries(n.piece!.blocks)) {
+        const expression = new RegExp(
+          "::block\\{ref=[\"\\']" + id + "[\"\\']\\}",
+          "g",
+        );
+        if (!expression.test(body)) continue;
+        expression.lastIndex = 0;
+        const asset = rendered.blockAssets[`${n.id}#${id}`];
+        let replacement: string = await renderBlock(asset, n, id, block);
+        if (block.alternative?.mode === "static") {
+          for (const item of block.alternative.assets ?? []) {
+            const asset = await assets.copy(n.piece!.dir, item.path);
+            replacement += `\n\n![${item.description}](resources/${path.basename(asset)})`;
+          }
+        }
+        if (!replacement.startsWith(`{#${n.id}-${id}}`))
+          replacement = `{#${n.id}-${id}}\n` + replacement;
+        if (block.kind === "code") {
+          const token = `NOTESBOOKCODE${protectedCode.size}END`;
+          protectedCode.set(token, replacement);
+          replacement = token;
+        }
+        body = body.replace(expression, replacement);
+      }
+      return body;
+    }
+
+    async function freezeImages(body: string, n: AssemblyNode) {
+      const images = [...body.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)];
+      for (const match of images) {
+        if (match[2].startsWith("resources/")) continue;
+        if (/^(https?:|media:)/.test(match[2]))
+          throw Error(
+            "Freeze remote book images with an explicit local or versioned alternative",
+          );
+        const url = await assets.copy(n.piece!.dir, match[2]);
+        body = body.replace(
+          match[0],
+          `![${match[1]}](resources/${path.basename(url)})`,
+        );
+      }
+      return body;
+    }
+
+    async function renderBlock(
+      asset: string,
+      n: AssemblyNode,
+      id: string,
+      block: Block,
+    ) {
+      let replacement: string;
+      if (asset)
+        replacement = `{#${n.id}-${id}}\n![${block.description ?? block.caption ?? ""}](resources/${path.basename(asset)})${block.caption ? "\n\n" + block.caption : ""}`;
+      else if (block.kind === "code") {
+        replacement = await renderCodeBlock();
+      } else if (block.alternative)
+        replacement =
+          block.alternative.text +
+          (block.alternative.url
+            ? `\n\n[Companion material](${block.alternative.url})`
+            : "");
+      else if (block.kind === "math")
+        replacement = `{$$}\n${block.source.path ? (await assets.read(n.piece!.dir, String(block.source.path))).toString() : block.source.text}\n{/$$}`;
+      else if (block.kind === "table") {
+        const { parse } = await import("csv-parse/sync");
+        const rows = parse<Record<string, string>>(
+          (
+            await assets.read(n.piece!.dir, String(block.source.path))
+          ).toString(),
+          { columns: true, skip_empty_lines: true },
+        );
+        const cols = Object.keys(rows[0]);
+        const cell = (v: unknown) =>
+          String(v).replaceAll("|", "\\|").replaceAll("\n", " ");
+        replacement =
+          `| ${cols.map(cell).join(" | ")} |\n| ${cols.map(() => "---").join(" | ")} |\n` +
+          rows
+            .map(
+              (r: Record<string, unknown>) =>
+                `| ${cols.map((c) => cell(r[c])).join(" | ")} |`,
+            )
+            .join("\n");
+      } else if (["callout", "exercise"].includes(block.kind))
+        replacement = `**${block.title ?? "Note"}**\n\n${block.source.text ?? ""}`;
+      else throw Error(`No Markua rendition for ${block.kind}`);
+      return replacement;
+
+      async function renderCodeBlock() {
+        let code = block.source.path
+          ? (
+              await assets.read(n.piece!.dir, String(block.source.path))
+            ).toString()
+          : String(block.source.text);
+        code = selectCode(
+          code,
+          block.source.region ? String(block.source.region) : undefined,
+        );
+        return `{#${n.id}-${id}}\n{lang="${block.source.language}"}\n\`\`\`\n${code}\n\`\`\``;
+      }
+    }
+
+    function prepareHeadingsAndCode(
+      n: AssemblyNode,
+      bookDepth: number,
+      body: string,
+    ) {
+      const headingEdits: { start: number; end: number; value: string }[] = [];
+      const headings = new Set<string>();
+      visit(n.piece!.ast, "heading", (v) => {
+        const depth = v.depth + Math.max(0, bookDepth - 1);
+        if (depth > 6) throw Error("Book heading too deep");
+        const start = v.position!.start.offset!;
+        const text = (v.children ?? [])
+          .map((c) => ("value" in c ? c.value : ""))
+          .join("");
+        const slug =
+          text
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "") || "section";
+        let unique = slug,
+          index = 2;
+        while (headings.has(unique)) unique = slug + "-" + index++;
+        headings.add(unique);
+        headingEdits.push({
+          start,
+          end: start + v.depth,
+          value: `{#${n.id}-${unique}}\n\n` + "#".repeat(depth),
+        });
+      });
+      const protectedCode = new Map<string, string>();
+      visit(n.piece!.ast, (v) => {
+        if (v.type !== "code" && v.type !== "inlineCode") return;
+        const token = `NOTESBOOKCODE${protectedCode.size}END`;
+        const start = v.position!.start.offset!,
+          end = v.position!.end.offset!;
+        protectedCode.set(token, body.slice(start, end));
+        headingEdits.push({ start, end, value: token });
+      });
+      for (const edit of headingEdits.sort((a, b) => b.start - a.start))
+        body = body.slice(0, edit.start) + edit.value + body.slice(edit.end);
+      return { protectedCode, body };
+    }
   },
 };
-export const bookExporters: Record<string, BookExporter> = { markua };
+const bookExporters: Record<string, BookExporter> = { markua };
 async function inventory(
   folder: string,
   prefix = "",
@@ -299,7 +370,8 @@ export async function freezeEdition(
   try {
     await fs.access(output);
     throw Error("Edition already exists; use a new edition ID");
-  } catch (e: any) {
+  } catch (caught) {
+    const e = asError(caught);
     if (e.code !== "ENOENT") throw e;
   }
   const exporter = bookExporters[options.exporter ?? "markua"];

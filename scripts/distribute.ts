@@ -15,6 +15,7 @@ import {
   withLedger,
   withRemoteLedger,
   payloadHash,
+  type Destination,
 } from "../core/distribution";
 async function main() {
   if (process.argv.includes("--apply") && !deployment.indexable)
@@ -30,16 +31,7 @@ async function main() {
   };
   const selectedPiece = value("--piece"),
     selectedDestination = value("--destination");
-  if (apply) {
-    if (!selectedPiece || !selectedDestination || !args.includes("--reviewed"))
-      throw Error(
-        "Manual delivery requires --piece ID --destination ID --reviewed",
-      );
-    if (process.env.GITHUB_ACTIONS === "true")
-      throw Error(
-        "Third-party delivery is manual from a reviewed local checkout; GitHub jobs only deploy the website",
-      );
-  }
+  validateDeliveryRequest();
   const adopt = value("--adopt"),
     completed = value("--complete-manual");
   if (
@@ -94,6 +86,9 @@ async function main() {
     process.env.PUBLICATION_BUCKET ?? ".publication-state",
     async (ledger, save) => {
       for (const a of assignments) {
+        await processAssignment(a);
+      }
+      async function processAssignment(a: (typeof assignments)[number]) {
         const destination = destinations[a.destination],
           key = [a.piece, a.destination, destination?.account].join("/"),
           out = path.join("exports", "distribution", a.destination, a.piece);
@@ -107,40 +102,10 @@ async function main() {
               plugin: destination.plugin,
             }),
             payload = exported.payload;
-          await fs.writeFile(
-            path.join(out, "article.md"),
-            `# ${payload.title}\n\n${payload.body_markdown}`,
-          );
-          await fs.writeFile(
-            path.join(out, "payload.json"),
-            JSON.stringify(payload, null, 2) + "\n",
-          );
-          await fs.writeFile(
-            path.join(out, "media-review.json"),
-            JSON.stringify(
-              { profile: exported.profile, media: exported.review },
-              null,
-              2,
-            ) + "\n",
-          );
-          await fs.writeFile(
-            path.join(out, "media-review.md"),
-            `# Media review\n\nDestination: ${exported.profile}\n\n` +
-              (exported.review
-                .map(
-                  (item) =>
-                    `- **${item.action}**${item.block ? ` (${item.block})` : ""}: ${item.detail}${item.url ? `\n  ${item.url}` : ""}`,
-                )
-                .join("\n") || "No media conversions or embeds.") +
-              "\n",
-          );
-          await fs.writeFile(
-            path.join(out, "previous.md"),
-            ledger[key]?.remote?.payload.body_markdown ?? "",
-          );
+          await writePreview(out, payload, exported, key);
           if (!apply) {
             console.log(`${key}: preview ready at ${out}`);
-            continue;
+            return;
           }
           await verify();
           const token = process.env[destination.credentialEnv ?? "DEV_API_KEY"];
@@ -155,59 +120,14 @@ async function main() {
               `Configure ${destination.credentialEnv} before delivery`,
             );
           if (completed) {
-            if (
-              exported.review.some((item) => item.action === "embed-review") &&
-              !args.includes("--embeds-reviewed")
-            )
-              throw Error(
-                "Verify the native embeds in the destination editor, then include --embeds-reviewed",
-              );
-            if (adapter.capabilities.create)
-              throw Error("Use --adopt for API destinations");
-            const url = safeUrl(completed);
-            if (
-              new URL(url).hostname !== "medium.com" &&
-              !new URL(url).hostname.endsWith(".medium.com")
-            )
-              throw Error("Completion URL must be on Medium");
-            ledger[key] = {
-              sourceRevision: revision,
-              payloadHash: payloadHash(payload),
-              manualUrl: url,
-              status: "current",
-              verification: "author",
-              lastVerifiedAt: new Date().toISOString(),
-            };
-            await save();
-            console.log(`${key}: author-confirmed ${url}`);
-            continue;
+            await completeManualCopy(completed, exported, adapter, payload);
+            return;
           }
           if (adopt) {
-            if (!/^\d+$/.test(adopt)) throw Error("Remote ID must be numeric");
-            const remote = await adapter.read(Number(adopt));
-            if (remote.payload.canonical_url !== payload.canonical_url)
-              throw Error("Remote canonical URL does not match");
-            ledger[key] = {
-              sourceRevision: revision,
-              payloadHash: "",
-              remote,
-              status: "pending",
-              verification: "api",
-              lastVerifiedAt: new Date().toISOString(),
-            };
-            await save();
-            console.log(
-              `${key}: mapped existing ID ${remote.id}; run a reviewed delivery to reconcile`,
-            );
-            continue;
+            await adoptCopy(adopt, adapter, payload);
+            return;
           }
-          for (const match of payload.body_markdown.matchAll(
-            /!\[[^\]]*\]\((https:\/\/[^\s)]+)\)/g,
-          )) {
-            const r = await fetch(match[1], { method: "HEAD" });
-            if (!r.ok)
-              throw Error("Published image is unavailable: " + match[1]);
-          }
+          await verifyPublishedImages(payload);
           const result = await syncCopy(
             adapter,
             payload,
@@ -243,6 +163,185 @@ async function main() {
           }
           console.error(`${key}: ${String(error)}`);
         }
+
+        async function verifyPublishedImages(payload: {
+          title: string;
+          description: string;
+          body_markdown: string;
+          canonical_url: string;
+          tags: string[];
+          series: string | undefined;
+          published: boolean;
+        }) {
+          for (const match of payload.body_markdown.matchAll(
+            /!\[[^\]]*\]\((https:\/\/[^\s)]+)\)/g,
+          )) {
+            const r = await fetch(match[1], { method: "HEAD" });
+            if (!r.ok)
+              throw Error("Published image is unavailable: " + match[1]);
+          }
+        }
+
+        async function adoptCopy(
+          adopt: string,
+          adapter: Destination,
+          payload: {
+            title: string;
+            description: string;
+            body_markdown: string;
+            canonical_url: string;
+            tags: string[];
+            series: string | undefined;
+            published: boolean;
+          },
+        ) {
+          if (!/^\d+$/.test(adopt)) throw Error("Remote ID must be numeric");
+          const remote = await adapter.read(Number(adopt));
+          if (remote.payload.canonical_url !== payload.canonical_url)
+            throw Error("Remote canonical URL does not match");
+          ledger[key] = {
+            sourceRevision: revision,
+            payloadHash: "",
+            remote,
+            status: "pending",
+            verification: "api",
+            lastVerifiedAt: new Date().toISOString(),
+          };
+          await save();
+          console.log(
+            `${key}: mapped existing ID ${remote.id}; run a reviewed delivery to reconcile`,
+          );
+        }
+
+        async function completeManualCopy(
+          completed: string,
+          exported: {
+            payload: {
+              title: string;
+              description: string;
+              body_markdown: string;
+              canonical_url: string;
+              tags: string[];
+              series: string | undefined;
+              published: boolean;
+            };
+            profile: string;
+            review: {
+              url?: string;
+              block?: string;
+              action:
+                | "png"
+                | "embed"
+                | "embed-review"
+                | "fallback"
+                | "external-image";
+              source?: string;
+              detail: string;
+            }[];
+          },
+          adapter: Destination,
+          payload: {
+            title: string;
+            description: string;
+            body_markdown: string;
+            canonical_url: string;
+            tags: string[];
+            series: string | undefined;
+            published: boolean;
+          },
+        ) {
+          if (
+            exported.review.some((item) => item.action === "embed-review") &&
+            !args.includes("--embeds-reviewed")
+          )
+            throw Error(
+              "Verify the native embeds in the destination editor, then include --embeds-reviewed",
+            );
+          if (adapter.capabilities.create)
+            throw Error("Use --adopt for API destinations");
+          const url = safeUrl(completed);
+          if (
+            new URL(url).hostname !== "medium.com" &&
+            !new URL(url).hostname.endsWith(".medium.com")
+          )
+            throw Error("Completion URL must be on Medium");
+          ledger[key] = {
+            sourceRevision: revision,
+            payloadHash: payloadHash(payload),
+            manualUrl: url,
+            status: "current",
+            verification: "author",
+            lastVerifiedAt: new Date().toISOString(),
+          };
+          await save();
+          console.log(`${key}: author-confirmed ${url}`);
+        }
+      }
+
+      async function writePreview(
+        out: string,
+        payload: {
+          title: string;
+          description: string;
+          body_markdown: string;
+          canonical_url: string;
+          tags: string[];
+          series: string | undefined;
+          published: boolean;
+        },
+        exported: {
+          payload: {
+            title: string;
+            description: string;
+            body_markdown: string;
+            canonical_url: string;
+            tags: string[];
+            series: string | undefined;
+            published: boolean;
+          };
+          profile: string;
+          review: {
+            url?: string;
+            block?: string;
+            action:
+              "png" | "embed" | "embed-review" | "fallback" | "external-image";
+            source?: string;
+            detail: string;
+          }[];
+        },
+        key: string,
+      ) {
+        await fs.writeFile(
+          path.join(out, "article.md"),
+          `# ${payload.title}\n\n${payload.body_markdown}`,
+        );
+        await fs.writeFile(
+          path.join(out, "payload.json"),
+          JSON.stringify(payload, null, 2) + "\n",
+        );
+        await fs.writeFile(
+          path.join(out, "media-review.json"),
+          JSON.stringify(
+            { profile: exported.profile, media: exported.review },
+            null,
+            2,
+          ) + "\n",
+        );
+        await fs.writeFile(
+          path.join(out, "media-review.md"),
+          `# Media review\n\nDestination: ${exported.profile}\n\n` +
+            (exported.review
+              .map(
+                (item) =>
+                  `- **${item.action}**${item.block ? ` (${item.block})` : ""}: ${item.detail}${item.url ? `\n  ${item.url}` : ""}`,
+              )
+              .join("\n") || "No media conversions or embeds.") +
+            "\n",
+        );
+        await fs.writeFile(
+          path.join(out, "previous.md"),
+          ledger[key]?.remote?.payload.body_markdown ?? "",
+        );
       }
     },
   );
@@ -250,6 +349,23 @@ async function main() {
     throw Error(
       `${failures} deliveries need attention; other destinations were processed`,
     );
+
+  function validateDeliveryRequest() {
+    if (apply) {
+      if (
+        !selectedPiece ||
+        !selectedDestination ||
+        !args.includes("--reviewed")
+      )
+        throw Error(
+          "Manual delivery requires --piece ID --destination ID --reviewed",
+        );
+      if (process.env.GITHUB_ACTIONS === "true")
+        throw Error(
+          "Third-party delivery is manual from a reviewed local checkout; GitHub jobs only deploy the website",
+        );
+    }
+  }
 }
 main().catch((e) => {
   console.error(e);

@@ -9,9 +9,7 @@
       "modelLib": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/025bcaf3780fa8254f5e5efd3bfea0a5397248f4/web-llm-models/v0_2_84/base/SmolLM2-135M-Instruct-q0f16_cs1k-webgpu.wasm",
       "revision": "06fc409f2212adff29d93cbc742c1d6957302df5",
       "vramMB": 359.69,
-      "requiredFeatures": [
-        "shader-f16"
-      ],
+      "requiredFeatures": ["shader-f16"],
       "artifacts": [
         {
           "path": "mlc-chat-config.json",

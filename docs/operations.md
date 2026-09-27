@@ -8,10 +8,11 @@ This reference covers configuration, delivery commands, and recovery.
 
 ## Build and preview
 
-Use pinned Node 24.21.0 LTS and npm 12.0.2, then `npm ci`. The project enforces
+Use pinned Node 24.21.0 LTS and npm 12.0.2, then `npm ci` and
+`npm --prefix prototypes/ink-and-paper ci` (required by the unified test suite). The project enforces
 Node 24 and npm 12 and version-specific dependency install-script approvals.
 See [dependencies and hosting](dependencies-and-hosting.md) for upgrades. Run `npm run dev` for the website, or
-`npm run build` followed by `npm run preview` to inspect production output.
+`npm run build` followed by `npm run preview -- --release` to inspect production output.
 `npm run validate` is the shared local/CI release gate: tests, clean content
 preparation, type checks, build, and artifact verification. Run the build first on a fresh checkout to create the
 content-loader inputs. Mermaid CLI needs its installed Chromium and Linux system
@@ -67,8 +68,9 @@ every build; do not edit disposable cache entries to make a lasting correction.
 Edit `publishing/site.yaml` for theme (`ink-and-paper` or `plain`), layout
 (`editorial` or `linear`), design tokens, portrait/biography/hero assets, and an
 optional local `overrideCss` file. Token fields have defaults. `publishing/home.yaml`
-selects a lead article, counts and collection IDs. Invalid or private selections
-fail preparation. Empty homepage sections and empty navigation sections are hidden.
+selects a lead article or collection, counts and collection IDs. If the selected
+lead is still a draft, the homepage falls back to the latest public writing.
+Empty homepage sections and empty navigation sections are hidden.
 
 New page templates belong in the theme registry. Publishing rules remain in
 `core/`. Home, Article and Shell are theme components; collection/archive routes
@@ -135,13 +137,13 @@ Every delivery requires `--reviewed` and an exact copy selection using `--piece 
 --destination ID`; GitHub Actions delivery is rejected. Images must already be reachable from production.
 
 - Adopt an existing owned DEV post with `--apply --reviewed --piece ID --destination dev
-  --adopt REMOTE_ID`. This checks its owner and canonical URL. It records the
+--adopt REMOTE_ID`. This checks its owner and canonical URL. It records the
   observed remote body without publishing; review before a subsequent update.
 - Resolve a direct-edit conflict by reviewing remote changes and updating local
   source/overrides, then explicitly adopting that observed remote ID again.
   A subsequent reviewed delivery updates the same post.
 - After completing a Medium import/edit, use `--apply --reviewed --piece ID --destination
-  medium --complete-manual https://medium.com/...` to record author verification.
+medium --complete-manual https://medium.com/...` to record author verification.
   Add `--embeds-reviewed` after checking every editor embed listed in its media
   report. Required Medium embeds also need their exact verified URL recorded in
   the assignment before export. Completion is not reported as API verification.
@@ -192,7 +194,24 @@ origin. No aliases are generated for historical work.
 `npm run publish:links` previews aliases. `--apply --wait` publishes after deployment.
 Each run retains a uniquely named snapshot under `publication/shortlinks/snapshots/`.
 An interrupted run may leave some validated aliases updated; rerunning converges
-the registry. Existing aliases and ownership are retained.
+the registry. Unrelated aliases and all ownership history are retained. Aliases
+still assigned to unpublished targets are deactivated; `removed` tombstones
+withdraw deleted articles' aliases even when unpublish and deletion ship together.
+The dry run lists active targets, deactivations and removal tombstones. Cloud
+reconciliation rejects ownership mismatches and existing keys without recorded
+owners, uses ETags for deletion batches, and records ownership before changing
+keys so interrupted first publications can be retried. Republish the same article
+to reactivate its reserved aliases; deleted codes cannot be reassigned.
+
+The [next implementation plan](social-publishing-plan.md) adds configurable
+short-domain inputs, automatic alias reservation, a private link manager and a
+public read-only readiness contract. These are planned; the current commands and
+infrastructure behavior above remain authoritative. Resolver/DNS/TLS verification
+and actual platform-card/handoff checks are release prerequisites. Do not equate a
+local alias reservation, a responding intent endpoint or basic Open Graph tags
+with a verified live share. Trash will have no automatic expiration; recovery and
+permanent deletion remain explicit author operations, with ownership tombstones
+retained. Account-specific diagnostics continue to belong in the private note.
 
 For rollback, select the exact snapshot key and inspect:
 
@@ -206,6 +225,15 @@ newer aliases or change fixed-edition destinations. A site rollback is a reviewe
 Git revert deployed through the same pipeline; do not erase publication ledgers.
 
 ## Documentation
+
+Local commits now run the [code-analysis gate](code-analysis.md). Install its
+locked tool environment with `npm run analysis:setup` and use
+`npm run verify:worktree` before staging. Read `.analysis/report.md` and its final
+verdict rather than treating a completed scan as a pass. The initial findings were
+corrected without lowering thresholds or bypassing the hook. The
+workflow update runs the same analysis on PRs/main and retains diagnostic and
+coverage artifacts. Required-check/branch-protection settings and deployment
+permissions are unchanged.
 
 Keep the README, product/content specifications, authoring examples, architecture,
 launch status and operating instructions synchronized in the same change.

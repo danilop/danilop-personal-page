@@ -34,7 +34,7 @@ function clearIdentifier() {
   const name = `ph_${data.token}_posthog`;
   document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax`;
 }
-export function track(name: string, properties: Record<string, unknown> = {}) {
+function track(name: string, properties: Record<string, unknown> = {}) {
   if (accepted === true && client && allowedHost)
     client.capture(name, properties);
 }

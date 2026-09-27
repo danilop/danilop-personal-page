@@ -28,7 +28,7 @@ export class Registry {
   resolve(
     block: Block,
     target: Target,
-    defaults: any,
+    defaults: Preferences & { formats?: Record<string, Selection> },
     layers: Preferences[] = [],
   ) {
     let chosen: Selection = {};

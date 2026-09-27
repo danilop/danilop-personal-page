@@ -66,6 +66,21 @@ export const homeSchema = z
   .object({
     schemaVersion: z.literal(1),
     lead: z.string().optional(),
+    newIn: z
+      .array(
+        z
+          .object({
+            piece: z.string().min(1),
+            collection: z.string().min(1),
+            kind: z.enum(["new-in", "introducing"]).optional(),
+          })
+          .strict(),
+      )
+      .default([])
+      .refine(
+        (items) => new Set(items.map((i) => i.piece)).size === items.length,
+        "Only one new-in announcement per piece",
+      ),
     recentCount: z.number().int().min(0).max(20),
     elsewhereCount: z.number().int().min(0).max(20),
     collections: z.array(z.string()),

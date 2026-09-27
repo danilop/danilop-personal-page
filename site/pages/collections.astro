@@ -1,4 +1,5 @@
 ---
+import DraftBadge from "../components/DraftBadge.astro";
 import Layout from "../components/Layout.astro";
 import { site } from "../data";
 import { loadEditions, editionUrl } from "../../core/editions";
@@ -12,9 +13,9 @@ const editions = (await loadEditions()).filter((e) => e.status === "published");
   {site.collections.length > 0 &&
     site.collections.map((c) => (
       <article class="collection-entry">
-        <p class="eyebrow">{c.book ? "Growing book" : "Collection"}</p>
+        <p class="eyebrow">{c.book ? "Book" : "Collection"}</p>
         <h2>
-          <a href={c.url}>{c.title}</a>
+          <a href={c.url}>{c.title}</a> <DraftBadge collectionId={c.id} />
         </h2>
         <p>{c.summary}</p>
       </article>

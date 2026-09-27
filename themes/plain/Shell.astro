@@ -14,19 +14,23 @@ const { config, collectionsCount } = Astro.props;
 </div>
 <style is:global>
   .theme-plain {
-    --serif: Georgia, serif;
+    --serif: georgia, serif;
     --paper: #fff;
     --blue: #333;
   }
+
   .theme-plain .identity .name {
     font-size: clamp(2.2rem, 6vw, 4.2rem);
   }
+
   .theme-plain .portrait-link {
     display: none;
   }
+
   .theme-plain .masthead {
     grid-template-columns: 1fr;
   }
+
   .theme-plain h1,
   .theme-plain h2 {
     font-weight: 400;

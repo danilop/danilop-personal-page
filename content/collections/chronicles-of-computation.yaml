@@ -1,0 +1,22 @@
+schemaVersion: 1
+id: chronicles-of-computation
+title: Chronicles of Computation
+summary: A Practical History of Software Engineering.
+slug: chronicles-of-computation
+ordered: true
+book: true
+frontMatter:
+  - id: introduction
+    kind: piece
+    role: introduction
+    ref: chronicles-introduction
+body:
+  - id: before-written-arithmetic
+    kind: chapter
+    title: Before Written Arithmetic
+    children:
+      - id: early-records
+        kind: piece
+        ref: chronicles-ch01
+backMatter: []
+draft: true

@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { z } from "zod";
 import {
   loadLibrary,
   assemble,
@@ -172,7 +171,7 @@ const payload: Payload = {
   published: true,
 };
 test("cross-post reruns update one ID, preserve overrides and detect remote edits", async () => {
-  let remote: any;
+  let remote: Awaited<ReturnType<Destination["read"]>> | undefined;
   let creates = 0,
     updates = 0;
   const adapter: Destination = {
@@ -182,6 +181,7 @@ test("cross-post reruns update one ID, preserve overrides and detect remote edit
       return remote ? [remote] : [];
     },
     async read() {
+      assert(remote);
       return structuredClone(remote);
     },
     async create(p) {
@@ -191,12 +191,15 @@ test("cross-post reruns update one ID, preserve overrides and detect remote edit
         url: "https://dev.to/test/hello",
         payload: structuredClone(p),
       };
+      assert(remote);
       return structuredClone(remote);
     },
     async update(id, p) {
       updates++;
       assert.equal(id, 123);
+      assert(remote);
       remote.payload = structuredClone(p);
+      assert(remote);
       return structuredClone(remote);
     },
   };
@@ -226,6 +229,7 @@ test("cross-post reruns update one ID, preserve overrides and detect remote edit
     true,
   );
   assert.equal(updates, 1);
+  assert(remote);
   remote.payload.body_markdown = "Remote edit";
   await syncCopy(
     adapter,
@@ -372,7 +376,7 @@ test("theme configuration accepts a second theme and rejects unknown templates",
 
 test("Leanpub publisher targets the selected book and disables reader emails", async () => {
   const { leanpub } = await import("../core/leanpub");
-  const calls: any[] = [];
+  const calls: { url: string; init?: RequestInit }[] = [];
   const provider = leanpub("test-only", async (input, init) => {
     calls.push({ url: String(input), init });
     return new Response('{"success":true}', {
@@ -383,7 +387,7 @@ test("Leanpub publisher targets the selected book and disables reader emails", a
   await provider.preview("test-book");
   await provider.publish("test-book", "Corrected edition");
   assert.match(calls[0].url, /test-book\/preview.json/);
-  const body = new URLSearchParams(calls[1].init.body);
+  const body = new URLSearchParams(String(calls[1].init?.body));
   assert.equal(body.get("publish[email_readers]"), "false");
   assert.equal(body.get("api_key"), "test-only");
 });
@@ -422,7 +426,22 @@ test("replacement local model runtime follows the session lifecycle without netw
     async clear() {},
   };
   const controller = new AbortController();
-  const session = await adapter.load({} as any, () => {}, controller.signal);
+  const session = await adapter.load(
+    {
+      id: "fixture-model",
+      runtime: "fixture-model",
+      format: "fixture",
+      model: "fixture",
+      modelLib: "fixture",
+      downloadBytes: 0,
+      vramMB: 0,
+      requiredFeatures: [],
+      revision: "1",
+      artifacts: [],
+    },
+    () => {},
+    controller.signal,
+  );
   let output = "";
   await session.run("example", (s) => (output = s), controller.signal);
   assert.equal(output, "Recorded fixture: example");
@@ -480,12 +499,12 @@ test("contextual fragments, article references and heading transformations prese
 });
 
 test("a timed-out successful update is reconciled without another update", async () => {
-  let remote = {
-      id: 42,
-      url: "https://dev.to/test/example",
-      payload: structuredClone(payload),
-    },
-    updates = 0;
+  const remote = {
+    id: 42,
+    url: "https://dev.to/test/example",
+    payload: structuredClone(payload),
+  };
+  let updates = 0;
   const changed = { ...payload, body_markdown: "Updated" };
   const adapter: Destination = {
     id: "fixture",
@@ -494,6 +513,7 @@ test("a timed-out successful update is reconciled without another update", async
       return [remote];
     },
     async read() {
+      assert(remote);
       return structuredClone(remote);
     },
     async create() {
@@ -501,6 +521,7 @@ test("a timed-out successful update is reconciled without another update", async
     },
     async update(_, p) {
       updates++;
+      assert(remote);
       remote.payload = p;
       throw Error("response timed out");
     },
@@ -579,7 +600,7 @@ test("short-link resolver redirects only managed site targets and never falls th
   const { runInNewContext } = await import("node:vm");
   const source = (
     await fs.readFile("infrastructure/shortlinks.js", "utf8")
-  ).replace("import cf from 'cloudfront';", "");
+  ).replace(/import cf from ["']cloudfront["'];/, "");
   const handler = runInNewContext(source + "\nhandler;", {
     cf: {
       kvs: () => ({

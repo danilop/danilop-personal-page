@@ -5,4 +5,4 @@ summary: Reuse without duplication.
 status: published
 slug: another
 body:
-  - {id: reused, kind: piece, ref: first}
+  - { id: reused, kind: piece, ref: first }

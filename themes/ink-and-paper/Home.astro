@@ -1,4 +1,6 @@
 ---
+import DraftBadge from "../../site/components/DraftBadge.astro";
+import { homepageSelection } from "../../core/homepage";
 import { dateLabel } from "../../site/data";
 import type { CompiledSite } from "../../core/site-data";
 import type { SiteConfig } from "../../core/config";
@@ -7,11 +9,7 @@ interface Props {
   config: SiteConfig;
 }
 const { site, config } = Astro.props;
-const lead =
-  site.articles.find((p) => p.id === site.home.lead) ?? site.articles[0];
-const recent = site.articles
-  .filter((p) => p.id !== lead?.id)
-  .slice(0, site.home.recentCount);
+const { lead, recent, featured } = homepageSelection(site);
 const collections = site.home.collections.length
   ? site.home.collections.map((id) =>
       site.collections.find((c) => c.id === id)!,
@@ -28,16 +26,28 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
 >
   {lead && (
     <article class="lead">
-      <p class="eyebrow">{site.home.lead ? "Featured" : "Latest"}</p>
+      <p class="eyebrow">{featured ? "Featured" : "Latest"}</p>
+      {lead.context && <p class="eyebrow">{lead.context}</p>}
       <h1>
         <a href={lead.url}>{lead.title}</a>
+        <DraftBadge
+          pieceId={lead.kind === "piece" ? lead.id : undefined}
+          collectionId={lead.kind === "collection" ? lead.id : undefined}
+        />
       </h1>
       <p class="lead-summary">{lead.summary}</p>
       <p class="meta">
-        <time datetime={lead.publishedAt}>{dateLabel(lead.publishedAt)}</time>
-        <span> · {lead.minutes} min read</span>
+        {lead.publishedAt && (
+          <time datetime={lead.publishedAt}>{dateLabel(lead.publishedAt)}</time>
+        )}
+        {lead.minutes && (
+          <span>
+            {lead.publishedAt ? " · " : ""}
+            {lead.minutes} min read
+          </span>
+        )}
       </p>
-      {config.assets.hero && (
+      {config.assets.hero && lead.kind === "piece" && (
         <a href={lead.url} class="article-art" tabindex="-1" aria-hidden="true">
           <img
             src="/brand/hero.webp"
@@ -49,7 +59,7 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
         </a>
       )}
       <a class="read-link" href={lead.url}>
-        Read the article{" "}
+        {lead.kind === "collection" ? "Start reading" : "Read the article"}{" "}
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 12h15m-6-6 6 6-6 6" />
         </svg>
@@ -63,12 +73,15 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
       </h2>
       {recent.map((p) => (
         <article>
+          {p.context && <p class="eyebrow">{p.context}</p>}
           <h3>
-            <a href={p.url}>{p.title}</a>
+            <a href={p.url}>{p.title}</a> <DraftBadge pieceId={p.id} />
           </h3>
           <p>{p.summary}</p>
           <p class="meta">
-            <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
+            {p.publishedAt && (
+              <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
+            )}
           </p>
         </article>
       ))}
@@ -87,9 +100,9 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
     <div class="collection-grid">
       {collections.map((c) => (
         <article>
-          <p class="eyebrow">{c.book ? "Growing book" : "Collection"}</p>
+          <p class="eyebrow">{c.book ? "Book" : "Collection"}</p>
           <h3>
-            <a href={c.url}>{c.title}</a>
+            <a href={c.url}>{c.title}</a> <DraftBadge collectionId={c.id} />
           </h3>
           <p>{c.summary}</p>
           <a class="read-link" href={c.url}>

@@ -1,17 +1,38 @@
-a, a:hover {
+a {
   color: maroon;
 }
 
-h1 {
-    font-family: 'Special Elite', cursive;
-    margin-top: .5em;
+h2 {
+  font-family: "Playfair Display", serif;
+  margin-top: 1em;
 }
 
-h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
-    margin-top: 1em;
+h3 {
+  font-family: "Playfair Display", serif;
+  margin-top: 1em;
+}
+
+h4 {
+  font-family: "Playfair Display", serif;
+  margin-top: 1em;
+}
+
+h5 {
+  font-family: "Playfair Display", serif;
+  margin-top: 1em;
+}
+
+h6 {
+  font-family: "Playfair Display", serif;
+  margin-top: 1em;
 }
 
 h1 {
-    font-weight: bold;
+  font-family: "Special Elite", cursive;
+  margin-top: 0.5em;
+  font-weight: bold;
+}
+
+a:hover {
+  color: maroon;
 }

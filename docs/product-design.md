@@ -115,6 +115,13 @@ The author must be able to:
 The initial workflow uses files and version control. A future browser editor
 must preserve the source format and publication rules.
 
+The [local editor](local-authoring.md) implements Markdown/source editing, live
+prose preview, explicit saves, undo/redo and saved-version restoration. Restoring
+creates a new revision and retains later history. Post details have forms;
+collection order, homepage settings and aliases currently use YAML. Expensive
+publication checks remain outside the typing loop. The [design review](local-authoring-proposal.md)
+records remaining scope, including incremental full-site preparation.
+
 ## 4. Reader experience
 
 ### Homepage — editorial front page
@@ -150,7 +157,10 @@ carousel as the only way to discover them. No image is required for every post;
 typography can carry the hierarchy. Exact visual placement and section names will
 be compared in mockups before selection.
 
-The automatic recent list initially uses eligible standalone first-party pieces.
+The automatic recent list includes eligible standalone and collection-only pieces,
+counted once per identity. Collection-only entries link directly to their reading
+page and carry book/chapter context. A piece or collection can be featured; a
+featured book links to its first readable piece while its articles remain recent.
 Earlier Work shows pre-relaunch AWS/DEV publications and other historical material.
 Elsewhere is reserved for external publications after relaunch and remains hidden
 until populated. Identify publishers and external destinations clearly.
@@ -160,6 +170,20 @@ until populated. Identify publishers and external destinations clearly.
 Articles should offer clear titles, summaries, dates, readable prose,
 illustrations, and references. Collection memberships and reading paths should
 be discoverable without requiring search.
+
+Book-component identity is now an explicit requirement: distinguish Introduction,
+Chapter 1, Appendix A, and other roles/positions from their actual titles. The
+[serialization proposal](book-serialization.md#component-names-and-article-context--proposal-2026-09-20)
+records the accepted linked book context above an article's subject headline and onward
+navigation below it, including for visitors arriving directly from search.
+This treatment is implemented in the local Chronicles preview. Production
+integration remains pending; the standalone template currently lists collection
+membership only below the article.
+
+The [accepted reading-unit design](book-serialization.md#reading-units-and-release-groups--accepted)
+uses separate pages for meaningful book components released in the same week,
+with a prominent Next link. The local preview follows Introduction → Chapter 1;
+continuous reading is secondary, and numbered weekly instalments are not shown.
 
 ### Collections
 
@@ -370,3 +394,151 @@ and do not pretend to be readable links.
 Earlier Work includes explicit Previous/Next pagination. The generated Original
 Site adds a small return banner without changing the preserved snapshot sources.
 See [navigation review](navigation-review.md) for verification and remaining gaps.
+
+## Topic discovery — local implementation, 2026-09-20
+
+Article topics appear as quiet labels below the prose, separate from book roles
+and publication groups. A private searchable tag inventory helps authors review
+existing vocabulary, scope, usage counts, and possible duplicates before publishing.
+Counts distinguish published, draft, and retired pieces, with each piece counted
+once regardless of placements. Tag changes require editorial judgment. The
+[tagging reference](tagging.md) describes the implemented local tools. Public topic
+landing pages remain future work; the new tagging behavior is not deployed.
+
+## Importing prepared content — local implementation, 2026-09-20
+
+An author can inspect all import candidates, select individual pieces or whole
+collections, and exclude unwanted candidates before copying. Collection selection
+includes its dependencies without changing reading order. Applying requires an
+explicit scope. New imports are drafts, existing revisions require an explicit
+update choice, and publication identity remains under the release workflow's
+control. Every copied file is visible in the plan; a filter cannot silently create
+a broken collection. Import does not publish or delete the source. See the
+[import guide](content-import.md) for implemented commands and limits.
+
+## Full-site draft review — local implementation, 2026-09-20
+
+Visual authoring review opens the full website at its root, using production
+templates and intended URLs. Existing published content and explicitly selected
+drafts can be reviewed together through homepage, collection and reading navigation.
+A clear authoring notice identifies unpublished pages and provides draft links.
+This preview neither changes source status nor imports or publishes material.
+Release preview remains a separate view of production-eligible content; tag and
+quality reports remain separate tools. See [authoring preview](authoring-preview.md).
+
+The everyday workflow is now import/create once → edit in `content/` → plain
+`npm run preview` → remove the draft flags when approved → release checks and push.
+The default preview includes all non-retired local content and runs content checks
+automatically. Source selections remain advanced options for external libraries.
+Release preview is explicitly requested with `--release`.
+
+Reader-facing book labels use **Book**, not Growing book. New material can carry
+**New in [book title]**, independent of the book's age. Creating a collection from
+existing articles must not relabel those articles as new. New book is reserved
+for the initial book announcement. These announcements belong to publishing,
+not the permanent content structure; see the authoring reference.
+
+The opening card can explicitly announce **Introducing [book title]**, including
+when the book assembles existing articles. It is not assigned automatically to
+the first placement. Later additions retain **New in [book title]**.
+
+### Author review tools
+
+**Writing checks** offers repeatable local language feedback; **Editorial review**
+asks an explicitly selected installed CLI for contextual suggestions. Both review
+snapshots, preserve source text and show stale results after edits. Findings link
+to passages; suggestions are never applied automatically and do not assign an
+AI-authorship score. Collection scope is optional and deduplicates pieces.
+The model-provider transfer is disclosed beside the explicit run control.
+See [workflow and scope](editorial-review.md).
+
+### Local editor visual hierarchy (implemented)
+
+Use an editorial workspace with serif headings, quiet forest-green actions,
+neutral surfaces and thin dividers. Give writing and its preview equal space on
+desktop; stack them on narrow screens. Keep Save distinct from review actions,
+expose saved/unsaved state, and progressively disclose metadata and advanced
+review settings. Writing checks and Editorial review remain separate actions;
+suggestions do not edit the source. Typography and keyboard focus must remain
+legible across both layouts.
+
+### Article image creation (implemented locally)
+
+The companion panel has an **Images** view in the same visual system as Review.
+Three numbered stages separate shaping an editable brief, generating a candidate,
+and choosing/describing it. Manual briefs and local imports are supported. Brief
+writers are selectable installed agents; image generation is always Codex with
+ChatGPT subscription authentication. Keep transmission/usage explanations adjacent
+to their actions, preserve previous candidates, and require explicit insertion.
+
+### Finding-specific fixes (implemented locally)
+
+Add **Suggest a fix** to every review finding, using a focused detail view within
+Review. Preserve the writing pane and return location. Default to minimal edits,
+with multiple agent checkboxes and progressively disclosed prompt/context settings.
+Named proposal controls compare independent agent responses; apply only the selected
+proposal and preserve successful results if another agent fails. Compare
+exact changes before explicit application to unsaved text; retain undo and require
+fresh source anchors. Operational findings offer advice, not automatic actions.
+See [finding fix design](finding-fixes-design.md) for states and validation rules.
+
+Authoring fix proposals are automatically checked locally before application. A compact
+Writing check summary compares new, no-longer-reported and remaining findings;
+details and coverage expand on demand. Edited proposals are rechecked, failed
+checks can be retried, and Apply remains explicit. This is advisory checking, not
+a guarantee of factual or editorial correctness.
+
+## Authoring experience audit
+
+See [the 24 September authoring UX review](authoring-ux-review.md) for observed
+workflow issues and their implementation status. The resolution section records
+the local improvements, preserving the current visual identity.
+
+### Browse to edit (implemented locally)
+
+Local authoring uses the same discreet **Edit** text link in the heading metadata
+for drafts and published pages. The Draft badge communicates status only. Book
+overviews edit the collection outline; individual reading pages edit their source
+piece. **View on site** preserves that reading context and opens the saved page
+in another tab, leaving unsaved editor changes in place. No author toolbar or
+additional reader-facing visual layer is added.
+
+### One preview command
+
+Accepted and implemented locally: `npm run preview` starts the complete browsing,
+editing and review workspace. Browse first at `/`, use the quiet Edit links, and
+return through View on site. The separate author command and compatibility aliases
+are removed. `--release` serves built public output; `--snapshot` is an explicit
+advanced read-only mode. All modes use port 4322 by default, with `--port` available.
+
+
+## Article publication controls
+
+Implemented in the local editor: **Unpublish to draft** preserves the article for
+revision and republication. **Delete draft…** requires saved draft state and shows
+which article assets and dependent assignments will be removed before confirmation.
+Incoming references must be resolved; shared resources and external publications
+are preserved. Deletion retains a local recovery copy. Public availability changes
+only after deployment and short-link reconciliation. See the [content lifecycle](content-model.md#3-piece)
+and [author workflow](local-authoring.md#unpublish-and-delete).
+
+### Accepted next scope: sharing, links and Trash
+
+The [detailed plan](social-publishing-plan.md) is proposed implementation work.
+Readers get one compact Share control with normal platform/copy actions and no AI.
+Authors get a private, editable social composer supporting X and Bluesky single
+posts/threads and LinkedIn posts. Adaptation must retain the published article's
+language, tone, meaning and qualifications. A shared assistant picker is used
+across author tools; no social post is sent automatically.
+
+Publication will reserve a primary short link automatically. Sharing uses that
+verified short link; canonical and short domains are configurable. A private
+Short links section supports search, configurable sorting (newest first), alias
+management and visible publication status. Social previews use article-specific
+metadata and images, subject to each platform's rendering and caches.
+
+Draft removal will be labelled **Move to Trash**. Trash supports **Restore as
+draft** and separately confirmed **Delete permanently**, with no automatic
+expiration. Restoration preserves identity and resolves dependency conflicts
+without overwriting newer work. Published articles must first be unpublished.
+These controls are not yet implemented; the current recovery copy remains manual.

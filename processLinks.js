@@ -1,22 +1,30 @@
 const fs = require("fs-extra");
 const path = require("path");
-const { getLinkData, escapeHtml } = require('./lib/link-metadata');
-const importedMetadata = require('./data/link-metadata.json');
-const linkOverrides = require('./data/link-overrides.json');
+const { getLinkData, escapeHtml } = require("./lib/link-metadata");
+const importedMetadata = require("./data/link-metadata.json");
+const linkOverrides = require("./data/link-overrides.json");
 
 async function getLinksData(links, cacheFolderName) {
   const linksData = [];
   for (const link of links) {
-    linksData.push(await getLinkData(link, {
-      cacheFolderName,
-      imported: importedMetadata,
-      overrides: linkOverrides
-    }));
+    linksData.push(
+      await getLinkData(link, {
+        cacheFolderName,
+        imported: importedMetadata,
+        overrides: linkOverrides,
+      }),
+    );
   }
   return linksData;
 }
 
-async function processLinks(fileName, cacheFolderName, firstWidth, secondWidth, limit) {
+async function processLinks(
+  fileName,
+  cacheFolderName,
+  firstWidth,
+  secondWidth,
+  limit,
+) {
   let links = fs.readJsonSync(fileName);
 
   if (limit) {
@@ -32,7 +40,9 @@ async function processLinks(fileName, cacheFolderName, firstWidth, secondWidth, 
   let htmlLinks = [];
 
   for (const record of linksData) {
-    const linkData = Object.fromEntries(Object.entries(record).map(([key, value]) => [key, escapeHtml(value)]));
+    const linkData = Object.fromEntries(
+      Object.entries(record).map(([key, value]) => [key, escapeHtml(value)]),
+    );
     htmlLinks.push(
       '<div class="row bg-light p-1 m-1">' +
         '<div class="col-sm-' +
@@ -60,27 +70,32 @@ async function processLinks(fileName, cacheFolderName, firstWidth, secondWidth, 
         '">' +
         '<h6 class="mt-1">' +
         linkData.title +
-        '</h6>' +
-        '</a>' +
+        "</h6>" +
+        "</a>" +
         (linkData.subtitle
-          ? '<p class="font-italic small">' + linkData.subtitle + '</p>'
-          : '') +
-        '</div>' +
-        '</div>'
+          ? '<p class="font-italic small">' + linkData.subtitle + "</p>"
+          : "") +
+        "</div>" +
+        "</div>",
     );
   }
 
   return htmlLinks.join("\r\n");
 }
 
-async function processHtmlFile(inputFileName, outputFileName, dataFolderName, cacheFolderName) {
+async function processHtmlFile(
+  inputFileName,
+  outputFileName,
+  dataFolderName,
+  cacheFolderName,
+) {
   const htmlData = fs.readFileSync(inputFileName);
   const htmlLines = htmlData.toString().split(/(?:\r\n|\r|\n)/g);
   const outputLines = [];
 
   for (let line of htmlLines) {
     let linksToProcess = line.match(
-      /^\s*<!--\s?processLinks\s?([^\s]*)\s?([^\s]*)\s?([^\s]*)\s?(.*)?\s?-->\s*$/
+      /^\s*<!--\s?processLinks\s?([^\s]*)\s?([^\s]*)\s?([^\s]*)\s?(.*)?\s?-->\s*$/,
     );
     if (linksToProcess) {
       console.log(line);
@@ -89,7 +104,13 @@ async function processHtmlFile(inputFileName, outputFileName, dataFolderName, ca
       const secondWidth = linksToProcess[3];
       const limit = linksToProcess[4];
       outputLines.push(
-        await processLinks(linksFileName, cacheFolderName, firstWidth, secondWidth, limit)
+        await processLinks(
+          linksFileName,
+          cacheFolderName,
+          firstWidth,
+          secondWidth,
+          limit,
+        ),
       );
     } else {
       outputLines.push(line);
@@ -99,13 +120,19 @@ async function processHtmlFile(inputFileName, outputFileName, dataFolderName, ca
   fs.writeFileSync(outputFileName, outputLines.join("\r\n"));
 }
 
-async function processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName) {
+async function processFolder(
+  dataFolderName,
+  inputFolderName,
+  outputFolderName,
+  cacheFolderName,
+) {
   const files = fs.readdirSync(inputFolderName);
   for (const file of files) {
     await processHtmlFile(
       path.join(inputFolderName, file),
       path.join(outputFolderName, file),
-      dataFolderName, cacheFolderName
+      dataFolderName,
+      cacheFolderName,
     );
   }
 }
@@ -120,8 +147,13 @@ async function processFolder(dataFolderName, inputFolderName, outputFolderName, 
   const cacheFolderName = process.argv[6];
   fs.copySync(staticFolderName, outputFolderName);
   await fs.ensureDir(cacheFolderName);
-  await processFolder(dataFolderName, inputFolderName, outputFolderName, cacheFolderName);
-})().catch(e => {
+  await processFolder(
+    dataFolderName,
+    inputFolderName,
+    outputFolderName,
+    cacheFolderName,
+  );
+})().catch((e) => {
   console.error(e);
   process.exitCode = 1;
 });

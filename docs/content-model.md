@@ -6,6 +6,12 @@ See [implementation status](implementation-plan.md) for verification and deploym
 This is the logical model. File syntax belongs in [the authoring format](authoring-format.md),
 and library choices in [the architecture](architecture.md).
 
+Authoring now defaults to draft-inclusive local preview. Each piece and collection
+has its own draft flag; removing it makes that entity eligible for release, subject
+to required metadata and publication surfaces. Import happens once into the normal
+content library. Draft status does not hide committed source in a public repository.
+Legacy status values remain supported, including retirement.
+
 ## 1. Entities
 
 | Entity | Meaning |
@@ -23,6 +29,29 @@ and library choices in [the architecture](architecture.md).
 Tags classify subjects. Collections select and contextualize material. “Series,”
 “guide,” and “growing book” may describe a collection to readers; they are not
 separate entity types.
+
+An extensible tag vocabulary defines stable keys, display labels, scope descriptions,
+and aliases. Piece assignments remain independent of book placements and releases.
+Usage counts refer to distinct pieces and separate published, draft, and retired
+states. Unregistered assignments are permitted and flagged for editorial review;
+aliases share a counter without silently rewriting content. See [tag authoring](tagging.md).
+
+### Content structure and publication are independent
+
+Accepted on 2026-09-20: pieces, component roles/titles, and collection reading
+order describe the content. Release dates, weekly groupings, and choices about
+homepage/feed announcements or distribution describe publishing. Changing the
+release calendar must not by itself change piece identities, titles, URLs, or
+book structure, or require another editable copy of the prose.
+
+Several pieces may be released together while keeping separate reading pages
+with clear Next/Previous and contents links. Separate pages do not require
+separate announcements. Choose reading units for coherence: a short chapter
+opener can stay with its first substantive section, while a book introduction
+can have its own page. An optional continuous view assembles the same pieces.
+No public weekly “instalment” entity is required. See the
+[accepted reading and release workflow](book-serialization.md#reading-units-and-release-groups--accepted)
+for the local preview and remaining production work.
 
 ## 2. Identity and references
 
@@ -46,6 +75,24 @@ publication/revision dates, short code, renderer preferences, and `adaptedFrom`.
 
 Lifecycle states: `draft`, `published`, `retired`. A published piece is eligible
 only for its declared surfaces; it does not automatically get a public web page.
+Unpublishing returns a piece to draft without changing its identity, original
+publication date, content, placements or reserved aliases. Drafts disappear from
+public publication surfaces on the next deployment; private preview remains.
+
+Deletion requires draft state and removes the piece with its owned assets and
+assignments: collection placements, homepage promotions, distribution assignments
+and short-link targets. It preserves shared resources, structural book groups,
+immutable editions and historical records. Incoming references and adaptation
+provenance must be resolved explicitly. Local recovery storage is an authoring
+implementation detail, not another publication state.
+
+Accepted next behavior: draft removal moves the article and its owned dependencies
+to Trash with no automatic expiration. Restore recovers the same identity as a
+draft and its alias reservations without publishing; changed dependencies require
+conflict resolution. Permanent deletion is a separate explicit action, retaining
+minimal alias-ownership tombstones to prevent code reuse. The recovery UI and
+permanent-delete operation are not implemented yet; see the
+[Trash plan](social-publishing-plan.md#9-trash-restore-and-permanent-deletion).
 
 | Publication surface | Effect |
 | --- | --- |
@@ -89,6 +136,16 @@ Chapters are groups, including when they initially contain one article. Parts
 group chapters. Appendices may group pieces through the same placement mechanism.
 Pieces do not carry a global chapter/section number.
 
+Component identity combines structural kind or placement role, position and
+actual title. For example, “Chapter 2” and “Keeping Records and Following
+Procedures” are distinct from the title of an article placed inside that chapter.
+These relationships are not topic tags. The
+[component-context proposal](book-serialization.md#component-names-and-article-context--proposal-2026-09-20)
+requires standalone articles to expose their book context. The local Chronicles
+preview presents Introduction and Chapter 1 as separate reading pages, with an
+optional continuous view. Weekly release grouping is editorial information, not
+a new content entity. Primary collection selection remains proposed production work.
+
 Front/back matter can be authored pieces or generated material such as a table
 of contents, bibliography, or index. Display titles and numbering belong to the
 collection/export style. Tags may suggest additions, but do not silently change
@@ -103,6 +160,14 @@ Chapters can also have opening and closing placements.
 This supports a short opening attached to one article's use in a book, as well
 as an introduction to the whole chapter. Ordinary introductions can remain in
 an article's body; separate pieces are useful for distinct context or visibility.
+
+A weekly release can include several pieces; each piece may contain several
+original manuscript sections. Release grouping is separate from chapter numbering.
+Short front matter can be released with the first substantive article while
+retaining its own reading page and place in the book. Currently, standalone
+articles render one piece body; collection `before`/`after` placements do not
+compose standalone articles. The [serialization plan](book-serialization.md)
+records the accepted separate-page workflow and optional continuous book view.
 
 Visibility is the intersection of piece permissions, placement permissions,
 parent visibility, lifecycle state, and requested target. A placement cannot
@@ -197,6 +262,10 @@ native Markdown bodies. A collection can reference them as external resources.
 New short links identify public pieces, collections, editions, or companions.
 Resolve canonical destinations during publication. Codes are unique, checked
 for collisions, and never generated automatically for legacy records.
+An unpublished target keeps its reserved codes but has no active redirects.
+Deleting a draft removes its alias assignments and explicitly withdraws existing
+redirects; ownership history prevents reassignment to unrelated content. This
+does not remove aliases for unrelated collections or immutable editions.
 
 ### Distribution assignments and remote copies
 

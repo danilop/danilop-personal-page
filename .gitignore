@@ -161,3 +161,18 @@ vite.config.ts.timestamp-*
 # Local AI installer cache and reports (may contain account context)
 /.posthog-wizard-cache/
 /.posthog-wizard*
+
+# Local content-quality runtime
+/.venv-quality/
+**/__pycache__/
+
+# Private local editor recovery and revision history
+/.authoring-state/
+
+# Local static analysis tools and private reports
+/.venv-analysis/
+/.analysis/
+/.ruff_cache/
+
+# Machine-specific local model benchmark reports
+/outputs/cli/tune/

@@ -1,7 +1,9 @@
 ---
+import DraftBadge from "../../site/components/DraftBadge.astro";
 import Layout from "../../site/components/Layout.astro";
 import { dateLabel } from "../../site/data";
 import type { ArticleData } from "../../core/site-data";
+import TagList from "../../site/components/TagList.astro";
 interface Props {
   article: ArticleData;
 }
@@ -19,7 +21,9 @@ const { article } = Astro.props;
       <p class="eyebrow">
         <a href="/writing/">Writing</a>
       </p>
-      <h1>{article.title}</h1>
+      <h1>
+        {article.title} <DraftBadge pieceId={article.id} />
+      </h1>
       <p class="dek">{article.summary}</p>
       <p class="meta">
         <time datetime={article.publishedAt}>
@@ -38,6 +42,7 @@ const { article } = Astro.props;
       </p>
     </header>
     <div class="prose" set:html={article.html} />
+    <TagList tags={article.tags} />
     {article.collections.length > 0 && (
       <aside class="memberships">
         <h2>Continue exploring</h2>

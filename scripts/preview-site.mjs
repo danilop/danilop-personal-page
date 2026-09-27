@@ -1,11 +1,45 @@
 import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { deployment, siteOutput, sitePath } from "../core/deployment.mjs";
+import { spawn } from "node:child_process";
+import {
+  previewOptions,
+  previewHelp,
+  previewLaunchArgs,
+} from "../core/preview-cli.mjs";
+import { siteOutput, sitePath } from "../core/deployment.mjs";
 
-const portIndex = process.argv.indexOf("--port");
-const port = portIndex < 0 ? 4321 : Number(process.argv[portIndex + 1]);
-const root = path.resolve("dist");
+let options;
+try {
+  options = previewOptions(process.argv.slice(2));
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
+if (options.help) {
+  console.log(previewHelp);
+  process.exit(0);
+}
+if (options.mode === "live" || options.mode === "snapshot") {
+  const child = spawn(process.execPath, previewLaunchArgs(options), {
+    stdio: "inherit",
+  });
+  process.on("SIGINT", () => child.kill("SIGINT"));
+  process.on("SIGTERM", () => child.kill("SIGTERM"));
+  const code = await new Promise((resolve) => {
+    child.on("error", (error) => {
+      console.error(error.message);
+      resolve(1);
+    });
+    child.on("exit", (code) => resolve(code ?? 0));
+  });
+  process.exit(code);
+}
+const authoring = options.mode === "snapshot-output";
+const port = options.port;
+const root = path.resolve(
+  authoring ? "exports/authoring-preview/site" : "dist",
+);
 const types = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css",
@@ -52,12 +86,13 @@ const server = http.createServer(async (req, res) => {
     let status = 200;
     if (!body) {
       status = 404;
-      file = siteOutput + "/404.html";
+      file = authoring ? path.join(root, "404.html") : siteOutput + "/404.html";
       body = await fs.readFile(file);
     }
     res.writeHead(status, {
       "content-type": types[path.extname(file)] ?? "application/octet-stream",
       "cache-control": "no-store",
+      ...(authoring ? { "x-robots-tag": "noindex, nofollow" } : {}),
     });
     res.end(req.method === "HEAD" ? undefined : body);
   } catch {
@@ -65,8 +100,12 @@ const server = http.createServer(async (req, res) => {
     res.end("Bad request");
   }
 });
+server.on("error", (error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});
 server.listen(port, "127.0.0.1", () =>
   console.log(
-    `Preview: http://127.0.0.1:${port}${sitePath("/")}${deployment.preserveOriginal ? ` (original: http://127.0.0.1:${port}/)` : ""}`,
+    `${authoring ? "Read-only snapshot" : "Release preview"}: http://127.0.0.1:${port}${authoring ? "/" : sitePath("/")}`,
   ),
 );

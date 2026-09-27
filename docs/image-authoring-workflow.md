@@ -1,80 +1,96 @@
 # Image authoring workflow
 
-**Status:** proposal, 2026-09-16. The shared style guide, Codex skill, and approval
-validator are not implemented. For the full release process, see
-[publishing workflow](publishing-workflow.md).
+**Status:** implemented locally, 2026-09-24. The author editor has an **Images**
+panel. Generation uses the installed Codex CLI, signed in with ChatGPT, and its
+built-in image-generation tool. It uses subscription allowances; it never calls
+an image API or falls back to API-key billing. Nothing generates during builds,
+saves or deployment. See [local authoring](local-authoring.md).
 
-## Files and style
+## Create an illustration
 
-Proposed convention:
+1. Run `npm run preview`, open an article and select **Images**.
+2. Write an **Illustration brief**, or select an installed **Brief writer**
+   (Claude Code, Codex or Pi) and click **Suggest brief**. Optional direction can
+   specify a subject, mood or exclusions. This sends the current article,
+   including unsaved edits, and the shared style to that agent's provider.
+3. Edit the brief. It is retained per article in this browser. New suggestions
+   do not overwrite a brief or article changed while the agent was working.
+   A delayed suggestion retains its original result and can be loaded only while
+   viewing the same article text used to generate it. Later jobs do not replace
+   the saved suggestion behind its recovery button.
+4. Select **Continue to generate** (or the Generate stage). Choose landscape, square or portrait, and draft, standard or high quality.
+   These are instructions to Codex's image tool, not guaranteed output dimensions
+   or price tiers. Click **Generate image**. Only the brief, shared style and
+   reference image are sent for this step; not the full article.
+5. Inspect the candidate. **Use this brief again** lets you revise it and generate
+   another candidate. Earlier candidates remain available; this is a fresh
+   generation, not a pixel-preserving edit of the selected image.
+6. Add an image description (alt text) and optional caption, then **Insert into
+   article**. Choose **Remembered cursor** or **End of article**. This prepares an
+   article-local asset and inserts Markdown into the unsaved editor. If the cursor
+   is in metadata, End of article is selected; a stale insertion position requires
+   choosing a new position. Preview, reposition if desired, then **Save**. Undo removes the
+   insertion without deleting the candidate or asset. Saving does not deploy.
 
-```text
-publishing/image-style.md
-content/pieces/my-article/
-  index.md
-  blocks.yaml
-  assets/
-    opening.image.md
-    opening.png
-    architecture.d2
-```
+The Brief, Generate and Choose stage buttons allow moving back and forth.
+Candidates have thumbnails; Choose opens directly when candidates already exist.
 
-Each `*.image.md` brief describes one illustration; its adjacent PNG is the
-approved source asset. Briefs are authoring inputs, never executed by the build.
-Use Mermaid/D2 for factual diagrams and data/specifications for charts.
+**Use an existing image** in Generate imports PNG, JPEG or WebP locally, up to 20 MB and
+40 million pixels. Imported images pass through the same candidate selection and
+insertion flow; no provider request is made. Images are normalised to PNG and
+metadata is stripped by the image processor.
 
-The shared guide would define blue pen-and-ink artwork, warm ivory, restrained
-hatching, generous space, and small-size clarity. Approved images such as
-`site-assets/brand/notebooks.png` provide style references. Individual articles
-or collections may override the default.
+## Style and storage
 
-Example brief:
+`publishing/image-style.md` defines the default: fine blue pen-and-ink on warm
+ivory, restrained hatching, generous space and mobile legibility. Generation also
+receives `site-assets/brand/notebooks.png` as a style reference. The image brief
+can specify a subject and composition; exact charts and factual diagrams should
+continue to use data, Mermaid or D2.
 
-> Wide opening illustration: three notebooks joined by fine threads, suggesting
-> different forms of memory. Follow the shared Ink & Paper style. Keep the subject
-> clear in a narrow mobile crop, with essential details away from the edges.
-> No readable text, logos, or interface elements. Output: opening.png.
+Candidates and generation records (brief, combined prompt, source article path,
+time, dimensions, provider label and checksum) are stored under ignored
+`.authoring-state/images/` and survive server restarts. The original output also
+remains in Codex's generated-images folder. Candidates have no automatic cleanup.
+The browser retains editable briefs separately in local storage.
 
-## Generate and review
+Explicit insertion copies a checksum-named PNG into the article's `assets/`
+folder and does not overwrite an existing different file. These local assets
+work with web/book rendering. For published media delivery, use the existing
+[media upload workflow](media-storage.md) and replace the local Markdown reference
+with the returned `media:` reference when appropriate. This panel does not upload
+to S3 or publish content. Local assets remain supported; review repository size
+before committing large originals.
 
-1. Write the brief, or ask Codex to suggest concepts from the article.
-2. Explicitly generate candidates into an ignored review directory. Preserve any
-   approved image until its replacement is selected.
-3. Review and refine. Record the brief, style/reference versions, available
-   generator metadata, and selected image checksum. Regeneration may differ.
-4. Integrate the image through Markdown or `blocks.yaml`. Add alt text and captions
-   after inspecting it; keep important labels in actual page text.
-5. Review desktop/mobile composition, cropping, legibility, factual accuracy,
-   background blending, and file weight. Check book and destination previews
-   where relevant. Obtain visual approval before committing and pushing.
+The panel inserts inline illustrations. Dedicated covers reused across homepage
+cards, article headers and social previews remain future metadata/template work.
 
-Keep approved source images and briefs in Git. The existing rendering pipeline
-creates web and cross-post derivatives. A future validator could flag changed
-briefs or references for review; it should never silently regenerate artwork.
-CI should validate approved assets without calling image-generation services.
+## Local setup and limits
 
-## Tooling and limits
+Codex must be on the author server's PATH and `codex login status` must report
+ChatGPT authentication. Use `codex login` if needed, then reload the editor.
+Brief writers only require executable discovery; provider authentication and
+account limits are checked when a task runs. Disabled controls explain missing
+setup. No credentials are stored in browser code, content or Git.
 
-A proposed repository skill, `article-art`, would coordinate the generator and
-local preview. Codex supports repository skills in `.agents/skills/` and
-interactive CLI image generation through `$imagegen`. Check tool availability
-in the target session. The workflow should produce ordinary assets and remain
-independent of any particular generator.
+Generation ignores user configuration, forces ChatGPT login, removes API-key
+environment variables, disables shell/web/app tools and runs in an isolated
+read-only workspace. The built-in image tool is explicitly enabled. Only fresh
+files within Codex's generated-images directory can become candidates, and their
+image format and size are checked. A missing tool, usage limit, invalid output or
+timeout is a failure, never a fallback to paid API generation. Cancel stops the
+local task; it cannot promise to reverse usage already consumed remotely.
 
-Built-in generation needs no separate API key when available. An explicitly
-chosen API implementation could support later batch work, with separate API
-costs. Keep keys in the local environment or a secret manager, never in content,
-Git, or browser code. Deployment would require no generation credentials.
-
-Article-local image blocks, diagram rendering, and portable derivatives already
-work. The homepage hero is currently global: per-article covers for cards,
-headers, and social previews need a separate metadata/template change.
+Image jobs and brief results are kept in memory while running. Reloading during a
+job does not resume its progress display; completed image candidates can be
+reloaded from disk. The suggested brief itself should be copied into the editable
+field before leaving the session. Broader persistent job history is future work.
 
 ## References
 
 - [Authoring format](authoring-format.md)
-- [Cross-posting](cross-posting.md)
-- [OpenAI: skills](https://learn.chatgpt.com/docs/build-skills)
-- [OpenAI: image generation](https://learn.chatgpt.com/docs/image-generation)
+- [Editorial review](editorial-review.md)
+- [OpenAI image generation](https://learn.chatgpt.com/docs/image-generation)
 
-Provider documentation checked 2026-09-16.
+Official documentation and installed CLI checked 2026-09-24. Built-in image
+availability and usage remain subject to the signed-in account and CLI version.

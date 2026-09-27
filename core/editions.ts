@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { z } from "zod";
 import { id, readYaml } from "./model";
-export const editionSchema = z
+const editionSchema = z
   .object({
     schemaVersion: z.literal(1),
     id,

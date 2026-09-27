@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.core.json",
+  "include": [
+    "core/**/*.ts",
+    "scripts/**/*.ts",
+    "runtime/**/*.ts",
+    "renderers/**/*.ts",
+    "themes/**/*.ts",
+    "site/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": ["node_modules", "prototypes", "test/fixtures"]
+}

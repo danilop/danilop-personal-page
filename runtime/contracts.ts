@@ -6,12 +6,6 @@ export type RecordedRun = {
   output: unknown;
   capturedAt: string;
 };
-export interface ExperimentSession {
-  run(input: RuntimeInput, signal: AbortSignal): Promise<number[]>;
-  stop(): void;
-  reset(): void;
-  dispose(): void;
-}
 export interface ModelSession {
   run(
     prompt: string,

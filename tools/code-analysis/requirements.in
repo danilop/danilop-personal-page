@@ -1,0 +1,10 @@
+# Resolve to requirements.txt with hashes; installs are offline during commits.
+-r ../content-quality/requirements.txt
+ruff
+ty
+vulture
+coverage
+bandit
+radon
+
+shellcheck-py==0.11.0.1

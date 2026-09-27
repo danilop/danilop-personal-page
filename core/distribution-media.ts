@@ -205,26 +205,11 @@ export function portableRegistry(
           ].includes(r.block.kind)
         )
           return plugin.render(r);
-        const format = String(r.block.source.format);
-        let url: string | undefined;
-        if (typeof r.block.source.url === "string") {
-          url = format.startsWith("google-")
-            ? publicEmbed(format, r.block.source.url)
-            : safeUrl(mediaUrl(r.block.source.url));
-          const parsed = new URL(url);
-          if (
-            parsed.protocol !== "https:" ||
-            parsed.username ||
-            parsed.password ||
-            /[{}\s]/.test(url)
-          )
-            throw Error(
-              "Cross-post embeds require a public HTTPS URL without credentials",
-            );
-        }
+        const { url, format }: { url: string | undefined; format: string } =
+          embedUrl();
         const required =
           policy.embeds === "require" ||
-          Boolean(block && policy.requiredEmbeds.includes(block));
+          policy.requiredEmbeds.includes(block ?? "");
         const embed =
           url && policy.embeds !== "fallback"
             ? profile.embed(new URL(url), format)
@@ -249,29 +234,58 @@ export function portableRegistry(
           throw Error(
             `Required embed ${block ?? r.block.kind} is unsupported or lacks exact-URL editor verification on ${profile.id}`,
           );
-        if (!r.block.alternative)
-          throw Error(
-            `Cross-post fallback required for ${block ?? r.block.kind} on ${profile.id}`,
-          );
-        // Reuse the authored alternative, not the book's renderer selection or document target.
-        const rendered = await plugin.render({ ...r, target: "book" });
-        const destination = r.block.alternative.url ?? url;
-        if (!destination)
-          throw Error(
-            `Cross-post fallback requires a companion URL for ${block ?? r.block.kind}`,
-          );
-        const parsed = new URL(safeUrl(destination));
-        if (parsed.protocol !== "https:" || parsed.username || parsed.password)
-          throw Error("Fallback links require public HTTPS URLs");
-        if (!r.block.alternative.url)
-          rendered.html += `<p><a href="${e(destination)}">Open ${e(r.block.title ?? "companion content")}</a></p>`;
-        review.push({
-          block,
-          action: "fallback",
-          url: destination,
-          detail: `${policy.embeds === "fallback" ? "Static delivery selected" : "No supported native embed"}; authored ${r.block.alternative.mode} alternative retained.`,
-        });
-        return rendered;
+        return renderFallback();
+
+        async function renderFallback() {
+          if (!r.block.alternative)
+            throw Error(
+              `Cross-post fallback required for ${block ?? r.block.kind} on ${profile.id}`,
+            );
+          // Reuse the authored alternative, not the book's renderer selection or document target.
+          const rendered = await plugin.render({ ...r, target: "book" });
+          const destination = r.block.alternative.url ?? url;
+          if (!destination)
+            throw Error(
+              `Cross-post fallback requires a companion URL for ${block ?? r.block.kind}`,
+            );
+          const parsed = new URL(safeUrl(destination));
+          if (
+            parsed.protocol !== "https:" ||
+            parsed.username ||
+            parsed.password
+          )
+            throw Error("Fallback links require public HTTPS URLs");
+          if (!r.block.alternative.url)
+            rendered.html += `<p><a href="${e(destination)}">Open ${e(r.block.title ?? "companion content")}</a></p>`;
+          review.push({
+            block,
+            action: "fallback",
+            url: destination,
+            detail: `${policy.embeds === "fallback" ? "Static delivery selected" : "No supported native embed"}; authored ${r.block.alternative.mode} alternative retained.`,
+          });
+          return rendered;
+        }
+
+        function embedUrl() {
+          const format = String(r.block.source.format);
+          let url: string | undefined;
+          if (typeof r.block.source.url === "string") {
+            url = format.startsWith("google-")
+              ? publicEmbed(format, r.block.source.url)
+              : safeUrl(mediaUrl(r.block.source.url));
+            const parsed = new URL(url);
+            if (
+              parsed.protocol !== "https:" ||
+              parsed.username ||
+              parsed.password ||
+              /[{}\s]/.test(url)
+            )
+              throw Error(
+                "Cross-post embeds require a public HTTPS URL without credentials",
+              );
+          }
+          return { url, format };
+        }
       },
     });
   return result;

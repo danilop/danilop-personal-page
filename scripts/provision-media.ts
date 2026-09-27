@@ -69,7 +69,8 @@ try {
       ),
     );
     config.distributionId = outputs.find(
-      (o: any) => o.OutputKey === "DistributionId",
+      (o: { OutputKey: string; OutputValue: string }) =>
+        o.OutputKey === "DistributionId",
     ).OutputValue;
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", {
       mode: 0o600,

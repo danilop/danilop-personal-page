@@ -1,7 +1,7 @@
 declare module "@citation-js/core" {
   export class Cite {
     constructor(data: unknown);
-    data: any[];
+    data: { id: string; [key: string]: unknown }[];
     format(type: string, options: unknown): string;
   }
 }

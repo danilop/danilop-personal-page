@@ -46,7 +46,7 @@ const sdkProperties = [
 ];
 /** Only documented properties cross the provider boundary. */
 export function cleanEvent<
-  T extends { event: string; properties: Record<string, any> },
+  T extends { event: string; properties: Record<string, unknown> },
 >(
   event: T,
   context: {
@@ -60,15 +60,14 @@ export function cleanEvent<
     ? eventProperties[event.event]
     : undefined;
   if (!allowed) return null;
-  const properties: Record<string, any> = {};
+  const properties: Record<string, unknown> = {};
   for (const name of [...sdkProperties, ...allowed]) {
     const value = event.properties[name];
-    if (typeof value === "number" && Number.isFinite(value))
-      properties[name] = value;
-    else if (
-      typeof value === "string" &&
-      value.length <= 160 &&
-      /^[\w. /:-]+$/.test(value)
+    if (
+      (typeof value === "number" && Number.isFinite(value)) ||
+      (typeof value === "string" &&
+        value.length <= 160 &&
+        /^[\w. /:-]+$/.test(value))
     )
       properties[name] = value;
   }

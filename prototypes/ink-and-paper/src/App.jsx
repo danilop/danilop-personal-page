@@ -120,19 +120,19 @@ function TextLink({ children, onClick, className = "" }) {
 
 export function App() {
   const [panel, setPanel] = useState(null);
-  const dialog = useRef(null);
-  const origin = useRef(null);
+  const dialogRef = useRef(null);
+  const originRef = useRef(null);
   const lead = articles[0];
   const open = (type, id) => {
-    if (!panel) origin.current = document.activeElement;
+    if (!panel) originRef.current = document.activeElement;
     setPanel({ type, id });
   };
   const close = () => {
     setPanel(null);
-    origin.current?.focus();
+    originRef.current?.focus();
   };
   useEffect(() => {
-    const el = dialog.current;
+    const el = dialogRef.current;
     if (panel && !el.open) el.showModal();
     if (panel) {
       el.scrollTop = 0;
@@ -321,7 +321,7 @@ export function App() {
         </footer>
       </div>
       <dialog
-        ref={dialog}
+        ref={dialogRef}
         className={
           panel?.type === "gallery" ? "reader gallery-dialog" : "reader"
         }
@@ -329,18 +329,8 @@ export function App() {
           e.preventDefault();
           close();
         }}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            const r = e.currentTarget.getBoundingClientRect();
-            if (
-              e.clientX < r.left ||
-              e.clientX > r.right ||
-              e.clientY < r.top ||
-              e.clientY > r.bottom
-            )
-              close();
-          }
-        }}
+        closedby="any"
+        onClose={close}
         aria-labelledby="panel-title"
       >
         <button className="close-dialog" onClick={close} aria-label="Close">

@@ -7,15 +7,74 @@ Write → prepare media → preview → approve → deploy → distribute.
 push to `main`; third-party creation and updates are always manual. Short-link
 infrastructure and live provider verification remain separate setup tasks.
 
+## Where authoring runs
+
+Authoring and editorial review run on the author's computer. Markdown/YAML files
+are the editable sources. `npm run preview` starts the full local site and private
+editor together. Browse `/`, use Edit links, and save explicitly; source changes
+refresh the site automatically. Writing checks run on demand from Review.
+
+The tag inventory and content-quality reports remain static output under ignored
+`exports/`. `npm run tags` and `npm run quality` generate those reports; their
+browser controls inspect existing output. Regenerate them after source edits.
+Use `npm run preview -- --snapshot` for advanced read-only content selections and
+`npm run preview -- --release` for the existing production build. All preview modes
+default to port 4322; stop the current server before switching modes. No separate
+author command or compatibility alias remains.
+
+These are loopback-only local tools, not public administration routes. See the
+[preview modes](authoring-preview.md), [local editor](local-authoring.md),
+[tag source selection](tagging.md#selecting-sources-and-reviewing-new-content), and
+[content review](content-quality.md#setup-and-daily-workflow).
+
+The checked-in GitHub validation workflow runs `npm run verify:ci`, including
+analysis, coverage and release checks; Amplify runs `npm run validate`.
+Amplify publishes only the generated `dist/` artifact. Tests start disposable
+loopback authoring servers with fixture content; no public authoring service is
+deployed, and release validation does not run manuscript NLP; `npm run prepublish:check` is currently a local
+release step, not an enforced CI requirement. Draft status controls website
+visibility, not GitHub access: never commit confidential drafts to the public repo.
+
 ## 1. Write the article
+
+For content already prepared in a separate private library, use the
+[content importer](content-import.md) instead of copying an entire preview folder.
+Inspect a dry run with `--from` and `--collection` or `--piece`, then add `--apply`.
+New content arrives as drafts; dependencies are validated before copying, and
+changed existing content requires `--update`. Generated reports and preview pages
+outside piece directories are not imported. Continue the same review/release steps
+below after import; the command does not publish anything.
 
 Create `content/pieces/<id>/index.md`. Use the
 [welcome article](../content/pieces/hello-brave-new-world/index.md) as a template,
-with a new `id` and `slug`, and set `status: draft`.
+with a new `id` and `slug`, and set `draft: true`.
 
 Set the title, summary, language, tags, and publication surfaces (`standalone`,
 `collection`, `book`). Reference the piece ID in collection outlines as needed.
 Chapters group pieces; book-only material omits `standalone`.
+
+Select existing pieces for a release independently of their reading order and
+book structure. A shared release date does not require merging pages, creating
+an “instalment” entity, or announcing every piece separately. Follow the
+[content/publishing separation](content-model.md#content-structure-and-publication-are-independent).
+
+For weekly articles drawn from an existing manuscript, follow the
+[book serialization plan](book-serialization.md). It covers consecutive section
+grouping, exact source extraction, accompanying notes/code, and short introductions.
+The later Chronicles groupings remain proposed. Its opening uses separate
+Introduction and Chapter 1 preview pages, a prominent Next link, and an optional
+continuous book view with the accepted book/component labels;
+it is not a deployed series or an automatic publication schedule.
+
+Before integrating the separate book pages into production, review the proposed
+[search work](content-discovery.md), including preferred reading URLs, piece-specific
+metadata, and sitemap coverage. Those search changes remain unimplemented.
+
+Review tags with `npm run tags -- --review <piece-id>` before creating new vocabulary.
+The [internal tag inventory](tagging.md) lists scopes, existing uses, and separate
+published/draft/retired counts; its findings are advisory. Explicitly include private
+draft files when needed. Regenerate the report after edits; it does not publish or
+change assignments.
 
 See [authoring format](authoring-format.md) for Markdown, metadata, and collection
 examples. This repository is public: draft status hides a page from the website,
@@ -44,19 +103,35 @@ belong in the publication commit.
 
 ## 3. Preview and approve locally
 
-Install using the [README](../README.md#develop). The normal website excludes
-drafts. For local review, temporarily set the article and relevant collection to
-`published`; supply the article's `publishedAt` and `slug`. Restore `draft` if
-not ready. Do not push before approval. Future dates do not schedule publication.
+Run the implemented [content review](content-quality.md) before approving a release.
+Install its local environment once with `npm run quality:setup`, then use
+`npm run prepublish:check` (with source/config arguments for private drafts). It
+runs NLP, repeated-stem counts, references, optional provenance and declared example
+checks, and tag review before the existing site validation. Resolve technical
+failures and incomplete checks; assess editorial suggestions in their source context.
+The command does not rewrite or publish content. Re-run after content changes.
+
+Install using the [README](../README.md#develop). Review selected drafts with the
+[full-site authoring preview](authoring-preview.md), using production templates and
+normal routes at `/` without changing source publication status:
 
 ```sh
-npm run validate
 npm run preview
+```
+
+After approval and final publication settings, check the release output separately.
+Do not push before approval. Future dates do not schedule publication.
+
+```sh
+npm run prepublish:check
+npm run preview -- --release
 ```
 
 Open the printed local address. Check desktop/mobile layout, media, links,
 collection/book navigation, keyboard access, homepage placement, and `/rss.xml`.
 RSS rebuilds automatically with summaries of public standalone articles.
+`npm run validate` remains available for technical website checks alone; it is not
+a substitute for the local content review or factual/source verification.
 
 If cross-posting is planned, configure the destination and explicit assignment,
 then run:
@@ -74,7 +149,10 @@ never authorize a send on commit, push, or tag.
 
 After editorial and visual approval:
 
-1. Set the final `publishedAt` date and `status: published`.
+1. Remove `draft: true` (or set `draft: false`) from the pieces and collection
+   being released. Supply a final `publishedAt` date for standalone articles.
+   For legacy files, replace `status: draft` with `draft: true` during authoring;
+   do not combine the two fields.
 2. Optionally select the article or collection in `publishing/home.yaml` and
    reserve a `shortCode` or alias. Short links are not required to publish.
 3. Rebuild and review any changes made since the preview.
@@ -86,6 +164,11 @@ After editorial and visual approval:
 
 A push to `main` triggers Amplify; a local commit does not. The original snapshot
 ships with the new website. The separate Amplify branch preview requires a manual release.
+
+Draft flags control website publication, not repository access. This repository
+is public: pushing a draft makes its source readable on GitHub even while
+`draft: true` excludes it from the website. Keep confidential writing in an
+external local library until it can be shared.
 
 ## 5. Manually publish an external copy, when wanted
 
@@ -158,3 +241,78 @@ and commit the resulting data. Put lasting metadata fixes in
 Rollback by reverting and redeploying. Reconcile short links and remote copies
 separately; see [operations](operations.md). Keep this guide and the README brief
 and synchronized with workflow changes.
+
+## Homepage placement
+
+New visible articles enter homepage/ Writing discovery automatically, including
+collection-only pieces. Use `publishedAt` for latest ordering; undated collection
+pieces follow dated ones. Set `lead` in `publishing/home.yaml` to a piece or
+collection ID only when an editorial feature is desired. A featured book starts
+at its first readable piece and keeps its articles in recent writing. A draft
+feature is ignored in release output until visible, with latest content as fallback.
+Draft badges are preview-only status indicators, separate from topic tags.
+
+For newly published material in a book, optionally add a `newIn` announcement to
+`publishing/home.yaml`; remove it when no longer current. Do not use it simply
+because older articles were collected into a book. The permanent category is Book.
+See [announcement syntax](authoring-format.md#book-labels-and-new-material-announcements).
+
+The chosen opening/announcement card can use `kind: introducing` in its `newIn`
+entry to show **Introducing [book title]**. Omitting `kind` retains **New in…**.
+This is an explicit announcement choice, not inferred from reading order or
+article age, and works for books assembled from existing writing. The Chronicles
+Introduction introduces the book; Chapter 1 retains New in.
+
+## Local browser editing
+
+`npm run preview` serves the full site at `/` and the [local editor](local-authoring.md) at `/_author/`. Explicit saves
+update the canonical files; Undo/Redo and Saved versions support recovery. Draft
+removal makes content eligible for a later deployment. Neither saving nor restoring
+a version deploys. Run the existing prepublication checks before committing.
+
+## Unpublish or delete an article
+
+Implemented locally; public effects require deployment. In the editor's **Post
+details**, use **Unpublish to draft** after saving edits. It preserves identity,
+dates, assets, placements and reserved short links. Review the release output:
+the article is omitted from routes, listings, feed and sitemap, including public
+collection readings. Resolve incoming references before deploying. Existing
+external copies and immutable editions are separate publications.
+
+For deletion, first save the article as draft, then use **Delete draft…**. Review
+the dependency list before confirming. The editor removes the source folder,
+collection placements, homepage promotions, distribution assignments and alias
+assignments together, with a local recovery copy. See [local authoring](local-authoring.md#unpublish-and-delete)
+for conflict handling, blockers and recovery.
+
+Deploy the changed source and run `npm run publish:links` to inspect active,
+deactivated and explicitly removed aliases. `--apply --wait` verifies the exact
+site deployment before reconciling cloud redirects. An unpublished alias can
+reactivate for the same article on republication; a deleted alias remains reserved
+by a removal tombstone. Public pages and withdrawn aliases return 404 after
+publication/cache propagation. Website and short-link publication are separate
+steps, so a failed link run must be retried. No cloud action runs from the editor.
+
+### Planned publication and recovery additions
+
+The [social publishing plan](social-publishing-plan.md) adds automatic primary-alias
+reservation to the publication transaction, with activation still gated on the
+verified deployment. Social handoff uses the verified short URL; an unready alias
+must be visible as pending. The author reviews generated text before opening a
+platform composer, and opening it never counts as a confirmed post. Reader
+sharing is independent of AI. Published-source revisions and language/voice
+fidelity are required inputs to private composition.
+
+Draft deletion will move to Trash with no expiration. Restoration returns the
+article to draft and reserves its original aliases without republishing; permanent
+deletion requires a separate explicit action. These workflows, new commands and
+schema changes are planned, not available in the current editor.
+
+## Code quality before committing
+
+The [installed analysis hook](code-analysis.md) checks the staged snapshot and
+enforces explicit complexity and coverage thresholds. Run `npm run verify:worktree`
+to inspect all current source before staging. Review and address failures; neither
+the hook nor the CI configuration automatically suppresses initial findings.
+These engineering checks complement editorial review and release validation.
+They do not publish content or change the existing approval/deployment workflow.

@@ -1,6 +1,8 @@
 name: Validate website
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -10,20 +12,33 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # Commit frequency needs history, not a one-commit checkout.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
           cache: npm
       - run: npm install --global "$(node -p 'require("./package.json").packageManager')"
       - name: Install locked dependencies
         run: npm ci --include=dev
         env:
           PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
+      - name: Install locked prototype dependencies
+        run: npm --prefix prototypes/ink-and-paper ci --include=dev
+      - name: Install pinned free analysis tools
+        run: |
+          python3 -m venv .cache/analysis-bootstrap
+          .cache/analysis-bootstrap/bin/pip install uv==0.12.19
+          echo "$GITHUB_WORKSPACE/.cache/analysis-bootstrap/bin" >> "$GITHUB_PATH"
+          echo "$GITHUB_WORKSPACE/.cache/analysis-bin" >> "$GITHUB_PATH"
+          GOBIN="$GITHUB_WORKSPACE/.cache/analysis-bin" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          GOBIN="$GITHUB_WORKSPACE/.cache/analysis-bin" go install github.com/zricethezav/gitleaks/v8@v8.30.1
+      - name: Set up locked Python analyzers and commit hook
+        run: npm run analysis:setup
       - name: Install browser system libraries
         run: sudo env "PATH=$PATH" "PUPPETEER_CACHE_DIR=$PUPPETEER_CACHE_DIR" npx puppeteer browsers install chrome --install-deps
         env:
@@ -41,7 +56,18 @@ jobs:
           sudo apparmor_parser -r /etc/apparmor.d/notes-chrome
         env:
           PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
-      - name: Validate release artifact
-        run: npm run validate
+      - name: Analyze source, enforce complexity and coverage, and validate release
+        run: npm run verify:ci
         env:
           PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
+      - name: Save analysis and coverage reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: code-analysis
+          path: |
+            .analysis/
+            coverage/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

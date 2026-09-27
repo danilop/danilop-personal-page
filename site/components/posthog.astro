@@ -66,36 +66,43 @@ const { contentId = "" } = Astro.props;
     max-height: 80vh;
     overflow: auto;
   }
+
   .analytics-choice[hidden] {
     display: none;
   }
+
   h2 {
     font: 500 1.35rem var(--serif, Georgia);
     margin: 0 0 0.4rem;
   }
+
   p {
     font: 0.92rem/1.5 var(--sans, sans-serif);
     margin: 0.4rem 0 0.8rem;
   }
+
   .analytics-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
   }
+
   button {
     background: transparent;
     color: inherit;
-    border: 1px solid currentColor;
+    border: 1px solid currentcolor;
     padding: 0.65rem 0.8rem;
     font: inherit;
     cursor: pointer;
     min-height: 44px;
   }
+
   button:focus-visible,
   a:focus-visible {
     outline: 3px solid var(--blue);
     outline-offset: 3px;
   }
+
   .analytics-status:empty {
     display: none;
   }

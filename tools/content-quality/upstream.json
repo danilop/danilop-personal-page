@@ -1,0 +1,31 @@
+{
+  "project": "Chronicles of Computation",
+  "recorded": "2026-09-20",
+  "files": [
+    {
+      "file": "tools/british_english_check.py",
+      "sha256": "a2422dddf3e8c2e31d68384642cee69c883ee6f62ca607798eb56e59b9c01f79"
+    },
+    {
+      "file": "tools/prose_health.py",
+      "sha256": "4ffaefc008f91086d20e6a836943c3eb0d66c25d161174949c6bca7d354d89bf"
+    },
+    {
+      "file": "tools/anthropomorphic_verb_check.py",
+      "sha256": "b49b830da52e3fe74202538685f7ca95de0993d786a4036597a6cbc3c7a3f681"
+    },
+    {
+      "file": "tools/silly_language_check.py",
+      "sha256": "a28e42ff6de38d5c4a0dbb2db86c2b6b9277119814c2555004d8d47606d091c3"
+    },
+    {
+      "file": "tools/ngram_repeats.py",
+      "sha256": "d0d9d6de72ecbedfc95880438f5ecc07dd902c80b44fc8b67b30a8504806203b"
+    },
+    {
+      "file": "tools/rhythm_check.py",
+      "sha256": "56961314ca68d1e599ef3bb0691a7f02eb68cf1c0f4fb4c7e62a779be6e4ce48"
+    }
+  ],
+  "reuse": "British spelling pairs extracted directly. Prose, agency, rhythm, and stem-sequence concepts adapted with new structured input and dependency parsing; no book paths, editorial exceptions, or edit functions copied."
+}

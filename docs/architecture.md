@@ -7,28 +7,28 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 
 ## 1. Decision summary
 
-| Area | Initial choice | Reason / boundary |
-| --- | --- | --- |
-| Website | Astro, static output | Content-oriented rendering with optional interactive islands |
-| Implementation | TypeScript in strict mode | Explicit schemas and plugin contracts |
-| Runtime/package manager | Node.js 24.21.0 LTS; npm 12.0.2 | Pinned across local, Amplify and GitHub builds |
-| Authoring | Markdown + YAML metadata/manifests | Portable prose and inspectable structure |
-| Parsing | unified / remark / rehype, with remark-directive | Parse semantic blocks before HTML generation |
-| Validation | Zod schemas; exportable JSON Schema where practical | Build validation plus future editor assistance |
-| Content integration | Astro Content Collections around a framework-independent content core | Use Astro for loading/pages without binding the book model to Astro |
-| Styling | Versioned themes, validated site configuration, CSS custom properties and scoped CSS | Replace appearance/layouts without rewriting content or publishing logic |
-| Code | Shiki adapter | Build-time highlighting; source code remains portable |
-| Tables | Semantic HTML adapter; structured export adapter | Preserve values/header semantics |
-| Charts | Vega-Lite adapter, accepting chart-v1 or native Vega-Lite input | Shared data/specification with static export |
-| Diagrams | Mermaid and D2 adapters; ELK initial layout where supported | Different source languages behind a common figure contract |
-| Mathematics | KaTeX web adapter | Typeset equations with a separate book-export path |
-| Images | Image adapter using Astro/Sharp for web derivatives | Keep originals, captions, and export renditions distinct |
-| Interactivity | Registered JS modules; Web Workers for computation; WASM where useful | Load only the requested experiment |
-| Browser model runtime | Replaceable runtime; WebLLM worker adapter | Never a content-model dependency; validate model compatibility |
-| Hosting | Existing AWS Amplify app, Amazon Linux 2023 | Preserve automatic deployment from main |
-| Short links | CloudFront Function + KeyValueStore; S3 registry snapshots | HTTP redirects compatible with the actual existing origin setup |
-| Book output | Markua export and separate Leanpub adapter | Preserve an independent route to other formats/publishers |
-| Tests | node:test for the core; browser testing for the implemented UI | Exercise semantics and user behavior at the appropriate layer |
+| Area                    | Initial choice                                                                       | Reason / boundary                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| Website                 | Astro, static output                                                                 | Content-oriented rendering with optional interactive islands             |
+| Implementation          | TypeScript in strict mode                                                            | Explicit schemas and plugin contracts                                    |
+| Runtime/package manager | Node.js 24.21.0 LTS; npm 12.0.2                                                      | Pinned across local, Amplify and GitHub builds                           |
+| Authoring               | Markdown + YAML metadata/manifests                                                   | Portable prose and inspectable structure                                 |
+| Parsing                 | unified / remark / rehype, with remark-directive                                     | Parse semantic blocks before HTML generation                             |
+| Validation              | Zod schemas; exportable JSON Schema where practical                                  | Build validation plus future editor assistance                           |
+| Content integration     | Astro Content Collections around a framework-independent content core                | Use Astro for loading/pages without binding the book model to Astro      |
+| Styling                 | Versioned themes, validated site configuration, CSS custom properties and scoped CSS | Replace appearance/layouts without rewriting content or publishing logic |
+| Code                    | Shiki adapter                                                                        | Build-time highlighting; source code remains portable                    |
+| Tables                  | Semantic HTML adapter; structured export adapter                                     | Preserve values/header semantics                                         |
+| Charts                  | Vega-Lite adapter, accepting chart-v1 or native Vega-Lite input                      | Shared data/specification with static export                             |
+| Diagrams                | Mermaid and D2 adapters; ELK initial layout where supported                          | Different source languages behind a common figure contract               |
+| Mathematics             | KaTeX web adapter                                                                    | Typeset equations with a separate book-export path                       |
+| Images                  | Image adapter using Astro/Sharp for web derivatives                                  | Keep originals, captions, and export renditions distinct                 |
+| Interactivity           | Registered JS modules; Web Workers for computation; WASM where useful                | Load only the requested experiment                                       |
+| Browser model runtime   | Replaceable runtime; WebLLM worker adapter                                           | Never a content-model dependency; validate model compatibility           |
+| Hosting                 | Existing AWS Amplify app, Amazon Linux 2023                                          | Preserve automatic deployment from main                                  |
+| Short links             | CloudFront Function + KeyValueStore; S3 registry snapshots                           | HTTP redirects compatible with the actual existing origin setup          |
+| Book output             | Markua export and separate Leanpub adapter                                           | Preserve an independent route to other formats/publishers                |
+| Tests                   | node:test for the core; browser testing for the implemented UI                       | Exercise semantics and user behavior at the appropriate layer            |
 
 Use the current stable release of each selected library when the corresponding
 phase begins, pin resolved versions in the lockfile, and record tool/binary/font
@@ -58,7 +58,7 @@ flowchart TD
     G --> I[Astro static website]
     H --> J[Edition artifacts and publisher adapter]
     I --> K[Deploy and verify canonical routes]
-    K --> L[Publish new short-link mappings]
+    K --> L[Reconcile short-link mappings]
 ```
 
 The core uses a typed intermediate document containing prose, headings,
@@ -185,7 +185,7 @@ schemas, and capabilities. Static rendering and browser execution use separate
 contracts. The signatures below are design interfaces, not implemented APIs.
 
 ```typescript
-type Target = 'web' | 'book';
+type Target = "web" | "book";
 
 interface RendererPlugin {
   id: string;
@@ -198,14 +198,14 @@ interface RendererPlugin {
 }
 
 interface RenderRequest {
-  block: ResolvedBlock;       // core-owned semantic block
+  block: ResolvedBlock; // core-owned semantic block
   target: Target;
-  options: unknown;           // already validated for this plugin
-  assets: AssetResolver;      // resolves source-owned, versioned assets
+  options: unknown; // already validated for this plugin
+  assets: AssetResolver; // resolves source-owned, versioned assets
 }
 
 interface RenderResult {
-  rendition: Rendition;       // typed HTML, SVG, image, or structured export data
+  rendition: Rendition; // typed HTML, SVG, image, or structured export data
   assets: GeneratedAsset[];
   dependencies: DependencyVersion[];
   diagnostics: Diagnostic[];
@@ -217,7 +217,7 @@ interface ExperimentRuntimePlugin {
   capabilities: string[];
   modelFormats: string[];
   backends: string[];
-  locality: 'local' | 'remote';
+  locality: "local" | "remote";
   probe(request: ExperimentRequest): Promise<CompatibilityReport>;
   load(request: ExperimentRequest, signal: AbortSignal): Promise<Session>;
 }
@@ -403,17 +403,17 @@ Sources: [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API),
 
 Read-only AWS inspection on 2026-09-15 found:
 
-| Resource | Observed state |
-| --- | --- |
-| Public hostname | `danilop.link` |
-| CloudFront distribution | Recorded in the private operations note; discover by domain alias |
-| Origin bucket | `danilop-link` in `eu-west-1` |
-| Origin endpoint | `danilop-link.s3.amazonaws.com` (S3 REST origin) |
-| Bucket contents | Empty at inspection |
-| Website configuration | None |
-| Edge functions / Lambda@Edge | None attached |
-| Additional cache behaviors / error responses | None |
-| Viewer protocol policy | Redirect HTTP to HTTPS |
+| Resource                                     | Observed state                                                    |
+| -------------------------------------------- | ----------------------------------------------------------------- |
+| Public hostname                              | `danilop.link`                                                    |
+| CloudFront distribution                      | Recorded in the private operations note; discover by domain alias |
+| Origin bucket                                | `danilop-link` in `eu-west-1`                                     |
+| Origin endpoint                              | `danilop-link.s3.amazonaws.com` (S3 REST origin)                  |
+| Bucket contents                              | Empty at inspection                                               |
+| Website configuration                        | None                                                              |
+| Edge functions / Lambda@Edge                 | None attached                                                     |
+| Additional cache behaviors / error responses | None                                                              |
+| Viewer protocol policy                       | Redirect HTTP to HTTPS                                            |
 
 The bucket is named `danilop-link`, not `danilop.link`. Existing resources provide
 hosting infrastructure but no observed short-link resolution. Initial resolver/IAM setup remains pending the specific access approval in
@@ -459,8 +459,11 @@ commit is already live. Bound waits and surface failures.
 
 Give this job only the AWS permissions needed to inspect deployment, write the
 managed snapshot prefix, and update its registry. Initial edge-function/IAM setup
-is a separate infrastructure change. A failure after site deployment leaves
-existing aliases intact and reports the pending new aliases for retry. Site and
+is a separate infrastructure change. Reconciliation deactivates explicitly managed
+aliases whose targets are no longer public, and applies `removed` tombstones for
+deleted articles. Unrelated aliases and ownership history remain. Puts/deletes
+use ETag-guarded batches; snapshots record the intended resulting registry. A
+failure may leave a partially applied registry; rerunning converges. Site and
 link updates are not assumed to be one atomic transaction.
 
 For ongoing updates use the KeyValueStore API with ETag checks; S3 import is an
@@ -571,3 +574,222 @@ The build writes new-site output beneath the configured base in `dist/`, then
 copies the frozen original snapshot to the root when preservation is enabled.
 Every original file is verified byte-for-byte. Local preview serves the complete
 artifact. Root-only builds use the same pipeline without snapshot packaging.
+
+## Tag vocabulary and private review — implemented locally, 2026-09-20
+
+`core/tags.ts` validates the extensible `content/tags.yaml` registry, resolves labels
+and aliases, reads explicitly selected piece sources, and produces unique-piece
+counts and advisory findings. `scripts/tags.ts` writes an independent private
+HTML/JSON snapshot to ignored `exports/tag-review/`. It is not an Astro route or
+input to site packaging. `core/tag-review.ts` supplies its local search, filtering,
+sorting, and piece review interface. Public templates use `TagList.astro`; the
+private manuscript preview uses the same label renderer. Collection node data
+carries piece tags for individual reading pages. No taxonomy data drives book
+order, feed eligibility, or automated publication. See [tagging](tagging.md).
+
+## Content review — implemented locally, 2026-09-20
+
+`core/content-quality.ts` extracts source-positioned prose from the existing Markdown
+AST, checks selected references/baselines, applies fingerprinted review decisions,
+and renders the private report. `scripts/quality.ts` uses the tag source selector,
+optionally selects a collection, and invokes the Python JSON worker once per corpus.
+`tools/content-quality/analyze.py` combines a pinned spaCy English pipeline with
+Snowball stem counts and optional declared-example subprocesses. Model resources
+are installed explicitly into an ignored environment, never downloaded by review.
+Reports stay in ignored exports, outside Astro routes and site packaging. The local
+`prepublish:check` command runs review then the existing Node validation on success;
+the deployed build remains Node-only. See [content quality](content-quality.md).
+
+## Content import — implemented locally, 2026-09-20
+
+`scripts/import-content.ts` exposes selection, dry-run/apply, update and fingerprint
+options. `core/content-import.ts` inventories canonical sources, expands collection
+and adaptation dependencies, and validates the merged library in a temporary
+directory before writing. It preserves body/asset bytes and existing publication
+identity while making new imports drafts. Destination changes invalidate the plan;
+an exclusive lock, exclusive file creation, temporary-file replacement and rollback
+on caught failures limit partial writes. Import is not a crash-proof transaction.
+No Git operation, publication, NLP, article-code execution or external fetch runs
+inside import. See [behavior and commands](content-import.md).
+
+## Full-site authoring preview — implemented locally, 2026-09-20
+
+`core/authoring-preview.ts` snapshots versionable project files into a temporary
+workspace, overlays selected canonical sources using the importer, and enables
+draft visibility only in that copy. A workspace-bound manifest and explicit local
+build flag guard preparation; CI/Amplify reject authoring mode. `preview-authoring.ts`
+runs the normal prepare/build/verification pipeline with a root, non-indexable
+configuration, then retains only output under ignored `exports/authoring-preview`.
+It never writes the original `.generated` or `dist` directories. Layout renders
+draft notices and omits analytics only when authoring context is present. The
+loopback server serves this separate output; release preview still serves `dist`.
+See [lifecycle and options](authoring-preview.md).
+
+Plain preview starts the live workspace with all active local content; quality
+checks run on demand. `--snapshot` selects the static builder described above and
+runs quality checks before staging. `--release` serves existing deployable output. Piece/collection
+schemas normalize optional `draft` metadata to internal status values; absent/false
+means published, true means draft. Legacy status is accepted but cannot coexist
+with draft in the same file. Import writes new draft flags; preview removes them
+only in its isolated workspace. Release builds use unchanged source metadata.
+
+## Homepage discovery and authoring badges
+
+`core/homepage.ts` builds a deduplicated discovery list from standalone article data
+and visible collection placements without creating extra standalone routes or RSS
+entries. Standalone URLs take precedence for reused pieces; otherwise the first
+visible placement supplies the reading URL and chapter context. Known unavailable
+features fall back to visible writing. `DraftBadge.astro` reads original source
+state from authoring context and emits nothing in release builds.
+
+Homepage `newIn` declarations are validated against source book membership, then
+rendered only for visible book/piece pairs. They override the discovery context
+label without changing URLs, chronology or the content model. No newness heuristic
+runs on collection creation, membership edits or build timestamps.
+
+## Local authoring service
+
+`npm run preview` routes through `scripts/preview-site.mjs` to the loopback-only
+editor and isolated live site in `scripts/author.ts`. `core/preview-cli.mjs`
+validates modes/options. `--snapshot` invokes the read-only snapshot builder;
+`--release` serves existing `dist/`. All modes default to port 4322. The separate
+npm author and preview:authoring aliases are removed.
+`core/author-store.ts` restricts editable paths and implements revision-checked
+atomic saves with an exclusive local lock and ignored durable history. Unsaved
+working text is recovered from browser storage. In-memory overrides use the
+existing model/assembler/renderer for fast prose feedback; the previous site
+template provides presentation. Saved/external changes trigger coalesced isolated
+full builds; incremental preparation is not yet implemented. Editor assets and
+state are excluded from release output. See [usage and limits](local-authoring.md).
+
+The [review service](editorial-review.md) in `core/author-review.ts` captures
+source snapshots, runs the existing Python worker asynchronously, and invokes
+fixed CLI adapters in isolated temporary working directories. Review jobs have
+cancellation, time/output limits and fingerprints; local reports are ignored
+publication artifacts. `authoring/editorial-review.md` is the shared model-neutral
+prompt. `authoring/review.js` renders findings as text and guards stale navigation.
+
+### Local illustration service
+
+`core/author-images.ts` manages asynchronous brief/generation tasks and persistent
+candidates behind the local author server's authenticated API. It reuses the
+restricted agent runner for briefs and enables only Codex built-in image generation
+for artwork, requiring ChatGPT login. `authoring/images.js` owns the Images view.
+Generation records and images stay in ignored authoring state until explicit
+asset preparation/insertion. Shared style is `publishing/image-style.md`; candidate
+bytes are format-validated and checksum-verified before article-local insertion.
+
+### Finding fixes
+
+`core/author-fixes.ts` validates exact source targets, constructs provider-neutral
+requests and runs one isolated CLI job per selected agent. Outputs must match the
+provided target indices and original text; invented or duplicate edits fail.
+`authoring/fixes.js` compares proposals, guards against source changes and applies
+selected non-overlapping replacements in reverse source order as one undo step.
+Jobs do not write manuscript files. Results are session-local; preferences can be
+remembered in browser storage.
+
+Editorial review requests an explanation plus a concrete edit in a single CLI
+response. `replacement.before/after` carries prose; `suggestion` carries rationale.
+A nullable `question` identifies missing facts or author decisions and suppresses
+any simultaneous replacement. Legacy free-text advice never becomes replacement
+text: it needs an explicit drafting request. The fix schema carries advice,
+question and answer separately and rejects unanswered questions. Source anchoring
+and local checks still gate Apply; changing an answer/scope invalidates the draft.
+
+Local editor interaction helpers in `authoring/ux.js` synchronize the article-text
+view with canonical full source, measure wrapped-text selection positions, and
+provide article-focused preview, grouped navigation and tag reuse. Local
+`catalog` and `tags` endpoints use the editable file allowlist and tag inventory;
+neither is part of the static site. Writing-check results and editorial results
+are retained separately per file in memory.
+
+### Local browse and edit navigation
+
+Live preview can opt into Node's native server-code watch mode with
+`npm run preview -- --watch`. Imported code changes restart the author server;
+the existing content/template watcher still rebuilds the served site. Reading
+pages reload on a changed session as well as a new build version. The editor
+uses its existing token-recovery path without forced reload, protecting in-progress
+work; browser script changes need an explicit refresh. Release/snapshot modes
+cannot use this flag. No watcher dependency or extra package script is introduced.
+
+The author server maps URLs from its successful staged build to allowlisted
+source files by content ID. `core/author-navigation.ts` injects a quiet Edit link
+into the served page heading, identically for draft and published content.
+Neither source paths nor author links are added to static build artifacts.
+The token-protected navigation endpoint resolves the editor return URL only
+against this map, preserving collection placement and rejecting arbitrary return
+destinations. Editor deep links validate the requested file against the editable
+file list. View on site opens the saved page in a separate tab.
+
+### Review decisions and moving source locations
+
+`authoring/review-decisions.js` keeps author decisions in memory per report ID,
+kind and finding identity. They are separate from checker output and exported as
+`authorDecisions`; a new report never inherits suppression. `finding-range.js`
+relocates passage links against the reviewed snapshot using unchanged ranges,
+unique exact quotes or unchanged surrounding text. Missing/ambiguous matches
+return no range. This navigation is independent of whole-report freshness, which
+still guards generated suggestions. Only the local author server serves these
+helpers.
+
+### Article lifecycle in local authoring
+
+`core/author-lifecycle.ts` implements unpublish and draft deletion behind the same
+Host/Origin/token checks as saving. Unpublish uses normal saved-version history.
+Deletion prepares a dependency plan, fingerprints source/configuration and owned
+assets, then rechecks it under the shared write lock before applying. The entire
+piece directory moves into ignored local trash; the recovery manifest contains
+before/after dependent settings. Ordinary failures roll back writes; a failed
+rollback keeps the lock and reports the recovery path. Process crashes require
+manual recovery. Independent filesystem editors do not honor the lock, so this
+is single-author tooling rather than a database transaction.
+
+Deletion prunes placements without deleting structural groups, removes homepage
+and distribution assignments, and converts aliases into ownership tombstones.
+Incoming semantic/prose links and adaptation provenance block deletion. Shared
+resources and historical records are retained. This is implemented locally and
+does not trigger cloud writes; see [local authoring](local-authoring.md#unpublish-and-delete).
+
+## Planned social publishing and lifecycle architecture
+
+The [technical plan](social-publishing-plan.md) specifies the next changes; none
+are implied by the current implementation above. Extract CLI configuration,
+adapters, bounded execution and a capability-based picker from review into a shared
+assistant service consumed by review, fixes, images and social composition. Keep
+task prompts and schemas with their features. Public sharing depends only on the
+platform/URL registry and public metadata; it has no assistant dependency.
+
+Centralize canonical/short URL construction, version the alias manifest and reserve
+aliases transactionally at first publication. Keep desired link state separate
+from deployment-verified live state. Share the social metadata model between
+static HTML/cards and the author preview. Build on lifecycle recovery manifests
+for versioned Trash entries, conflict-aware restoration and scoped permanent
+deletion, with no automatic retention timer. The plan includes migrations, module
+boundaries, platform constraints and validation gates.
+
+## Code-analysis execution — implemented 2026-09-25, extended 2026-09-27
+
+`tools/code-analysis/` provides a common runner for the native Git pre-commit hook,
+manual worktree validation and CI. It uses a temporary source snapshot with its
+own Git metadata and explicitly attached dependency environments. The real index
+and working files are not reformatted, stashed or staged. Missing tools, analyzer
+failures and absent reports fail closed; checks continue to collect independent
+findings. Tool versions, complexity and coverage thresholds are versioned. Reports
+remain ignored artifacts; see [code analysis](code-analysis.md) for scope and limits.
+
+The runtime import graph now enforces cycles and browser/server, core/entrypoint
+and production/prototype boundaries through `.dependency-cruiser.cjs`. A small
+adapter enforces the JSON verdict because upstream JSON output alone does not set
+a failing exit status. Type-only and Astro/HTML embedded dependencies are outside
+this graph. The advisory report joins function violations with file coverage and
+90-day Git commit frequency; raw signals stay separate and missing data stays
+explicit. CI retrieves full history; local snapshot metadata preserves shallow
+history boundaries. These reports do not change application behavior or thresholds.
+
+Browser tests exercise authoring edits, review decisions, image insertion and
+prototype dialogs. Real local server tests use disposable repositories; publication,
+analytics and model tests substitute external boundaries. Verified Chromium source
+coverage joins Node V8 coverage. The same unified JS/TS command runs locally and
+in release validation, with prototype dependencies installed in both CI and Amplify.

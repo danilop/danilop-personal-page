@@ -1,4 +1,5 @@
 ---
+import DraftBadge from "../../../components/DraftBadge.astro";
 import { loadEditions, editionUrl } from "../../../../core/editions";
 import Layout from "../../../components/Layout.astro";
 import { site } from "../../../data";
@@ -20,8 +21,10 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
     <p class="eyebrow">
       <a href="/collections/">Collections & Books</a>
     </p>
-    <p class="eyebrow">{c.book ? "Growing book" : "Collection"}</p>
-    <h1>{c.title}</h1>
+    <p class="eyebrow">{c.book ? "Book" : "Collection"}</p>
+    <h1>
+      {c.title} <DraftBadge collectionId={c.id} />
+    </h1>
     <p>{c.summary}</p>
   </header>
   <div class="prose collection-intro" set:html={c.introduction} />
@@ -58,6 +61,7 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
               {n.title}
             </a>
           )}
+          <DraftBadge pieceId={n.pieceId} />
         </li>
       ))}
     </ol>

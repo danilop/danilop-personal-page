@@ -27,6 +27,7 @@ export type CollectionData = {
     planned?: boolean;
     html: string;
     pieceId?: string;
+    tags?: string[];
     depth: number;
   }[];
 };
@@ -42,6 +43,8 @@ export type ArchiveRecord = {
   kind: string;
 };
 export type CompiledSite = {
+  homeWriting?: import("./homepage").HomeEntry[];
+  authoring?: { pieces: string[]; collections: string[]; date: string };
   icons: { svg: string; ico: string; apple: string };
   articles: ArticleData[];
   collections: CollectionData[];
@@ -50,6 +53,11 @@ export type CompiledSite = {
   externalCopies: string[];
   home: {
     lead?: string;
+    newIn?: {
+      piece: string;
+      collection: string;
+      kind?: "new-in" | "introducing";
+    }[];
     recentCount: number;
     elsewhereCount: number;
     collections: string[];

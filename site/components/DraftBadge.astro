@@ -1,0 +1,28 @@
+---
+import { site } from "../data";
+const { pieceId, collectionId } = Astro.props;
+const draft = Boolean(
+  site.authoring &&
+  ((pieceId && site.authoring.pieces.includes(pieceId)) ||
+    (collectionId && site.authoring.collections.includes(collectionId))),
+);
+---
+
+{draft && <span class="draft-badge">Draft</span>}
+<style>
+  .draft-badge {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.4em;
+    padding: 0.15em 0.5em;
+    border: 1px solid #aa8843;
+    border-radius: 3px;
+    background: #fff5da;
+    color: #624c20;
+    font:
+      500 12px/1.4 system-ui,
+      sans-serif;
+    letter-spacing: normal;
+    white-space: nowrap;
+  }
+</style>

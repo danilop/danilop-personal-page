@@ -1,0 +1,2188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author-session" content="__TOKEN__" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Author · Notes Along the Way</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          14px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 32px;
+        border-bottom: 1px solid var(--line);
+        gap: 20px;
+      }
+
+      h1 {
+        margin: 0;
+        font:
+          26px/1.2 Georgia,
+          serif;
+        letter-spacing: -0.7px;
+      }
+
+      a {
+        color: var(--green);
+        text-underline-offset: 5px;
+      }
+
+      small {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      select {
+        font: inherit;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface);
+        padding: 9px 12px;
+        min-height: 40px;
+      }
+
+      input {
+        font: inherit;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface);
+        padding: 9px 12px;
+        min-height: 40px;
+      }
+
+      button {
+        font: inherit;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface);
+        padding: 9px 12px;
+        min-height: 40px;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        white-space: nowrap;
+      }
+
+      summary {
+        cursor: pointer;
+        padding: 11px 16px;
+        color: var(--ink);
+      }
+
+      textarea {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        resize: none;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 22px;
+        background: var(--surface);
+        color: #344139;
+        font:
+          14px/1.85 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        tab-size: 2;
+      }
+
+      iframe {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        border: 0;
+        background: white;
+      }
+
+      dialog {
+        width: min(850px, 95vw);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 28px;
+        color: var(--ink);
+        box-shadow: 0 24px 80px #18291f30;
+      }
+
+      main {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 0 32px;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      h1 small {
+        font:
+          14px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        display: inline-block;
+        border-left: 1px solid #b9c0b9;
+        padding-left: 18px;
+        margin-left: 18px;
+        letter-spacing: 0;
+      }
+
+      dialog::backdrop {
+        background: #202b2355;
+      }
+
+      dialog h2 {
+        font:
+          28px Georgia,
+          serif;
+        margin-top: 0;
+      }
+
+      dialog textarea {
+        height: 40vh;
+        margin-top: 16px;
+      }
+
+      :root {
+        --paper: #f8f7f4;
+        --surface: #fff;
+        --ink: #272d29;
+        --muted: #667069;
+        --line: #dedfd9;
+        --green: #31594b;
+        --soft: #edf2ee;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--green);
+        outline-offset: 3px;
+      }
+
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 32px;
+      }
+
+      .content-picker {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .history-actions {
+        display: flex;
+        gap: 2px;
+      }
+
+      .pane {
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 20px;
+        gap: 12px;
+      }
+
+      .review-tabs {
+        display: flex;
+        gap: 22px;
+        border-bottom: 1px solid var(--line);
+        flex-shrink: 0;
+      }
+
+      .review-intro {
+        font:
+          18px/1.5 Georgia,
+          serif;
+      }
+
+      .review-section {
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+        margin-top: 14px;
+      }
+
+      .review-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin: 12px 0;
+      }
+
+      .review-finding {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .review-warning {
+        color: #8a3c1d !important;
+      }
+
+      .footer {
+        justify-content: space-between;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .publication-status {
+        font-size: 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px 8px;
+      }
+
+      .finding-group {
+        border-top: 1px solid var(--line);
+        padding: 12px 0;
+      }
+
+      .preview-options {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .write-heading {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      button:disabled {
+        opacity: 0.42;
+        cursor: default;
+      }
+
+      .history-actions button {
+        border-color: transparent;
+        background: transparent;
+        color: var(--muted);
+      }
+
+      input[type="checkbox"] {
+        min-height: auto;
+        accent-color: var(--green);
+      }
+
+      .write-heading label {
+        font:
+          27px/1.2 Georgia,
+          serif;
+      }
+
+      .mobile iframe {
+        max-width: 390px;
+        align-self: center;
+        border: 1px solid var(--line);
+      }
+
+      .review-tabs button {
+        border: 0;
+        border-radius: 0;
+        padding: 0 0 12px;
+        background: transparent;
+        color: var(--muted);
+      }
+
+      .preview-options label {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .review-finding blockquote {
+        margin: 12px 0;
+        border-left: 2px solid #a8bcae;
+        padding: 6px 14px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: #f6f8f5;
+      }
+
+      .review-finding button {
+        margin: 4px 8px 0 0;
+      }
+
+      main > .review-tabs {
+        grid-column: 2;
+        grid-row: 1;
+        margin: 0;
+        align-items: center;
+      }
+
+      .finding-group > summary {
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .preview-options > label {
+        flex: 1 0 100%;
+      }
+
+      .write-heading button {
+        margin-left: auto;
+        font-size: 12px;
+      }
+
+      .review-tabs [aria-pressed="true"] {
+        color: var(--ink);
+        box-shadow: inset 0 -2px var(--green);
+        font-weight: 600;
+      }
+
+      .review-section + .review-section {
+        margin-top: 0;
+      }
+
+      button:hover:not(:disabled) {
+        background: var(--soft);
+        border-color: #a9bcb0;
+      }
+
+      #run-editorial {
+        color: white;
+        background: var(--green);
+        border-color: var(--green);
+      }
+
+      #save {
+        color: white;
+        background: var(--green);
+        border-color: var(--green);
+        min-width: 84px;
+      }
+
+      #files {
+        width: 270px;
+        max-width: 100%;
+      }
+
+      #status {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      #metadata {
+        margin: 0 32px 14px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+      }
+
+      #context {
+        min-width: 0;
+        max-width: 100%;
+        flex: 1;
+      }
+
+      #preview-status {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      #review-panel {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 6px 2px 20px;
+        scrollbar-gutter: stable;
+      }
+
+      #run-checks {
+        color: var(--green);
+        border-color: var(--green);
+      }
+
+      #review-prompt {
+        height: 240px;
+        min-height: 240px;
+        font-size: 12px;
+      }
+
+      #review-notice {
+        padding: 16px;
+        background: var(--paper);
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+
+      #review-raw {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
+      #error {
+        color: #942d24;
+        margin: 0 32px;
+        white-space: pre-wrap;
+        max-height: 100px;
+        overflow: auto;
+      }
+
+      #history {
+        max-height: 180px;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      #images-panel {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 6px 2px 24px;
+        scrollbar-gutter: stable;
+      }
+
+      #generate-image {
+        background: var(--green);
+        color: white;
+        border-color: var(--green);
+      }
+
+      #insert-image {
+        background: var(--green);
+        color: white;
+        border-color: var(--green);
+      }
+
+      #image-notice {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        padding: 12px;
+        margin: 16px 0;
+        border-radius: 4px;
+      }
+
+      #image-preview {
+        width: 100%;
+        max-height: 330px;
+        object-fit: contain;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+
+      #image-candidates {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+
+      #fix-panel {
+        padding-bottom: 24px;
+      }
+
+      #fix-back {
+        margin-bottom: 20px;
+      }
+
+      #fix-run {
+        background: var(--green);
+        color: white;
+      }
+
+      #fix-apply {
+        background: var(--green);
+        color: white;
+      }
+
+      #fix-notice {
+        padding: 12px 0;
+      }
+
+      #fix-agents {
+        border: 0;
+        padding: 0;
+        margin: 12px 0;
+      }
+
+      #fix-validation {
+        margin-block: 20px;
+        padding: 18px;
+        border: 1px solid #cec8b9;
+        border-radius: 12px;
+        background: #f5f3eb;
+      }
+
+      #write-pane {
+        grid-column: 1;
+        grid-row: 1 / 3;
+      }
+
+      #preview-pane {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      #show-write {
+        display: none;
+      }
+
+      #tag-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      #review-setup {
+        margin: 14px 0;
+      }
+
+      #review-kinds {
+        position: sticky;
+        top: 0;
+        background: var(--surface);
+        z-index: 2;
+        padding: 8px 0;
+      }
+
+      #review-progress {
+        margin: 10px 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      #fix-proposal-tabs {
+        position: sticky;
+        top: 0;
+        background: var(--surface);
+        z-index: 2;
+        padding: 8px 0;
+      }
+
+      #fix-settings {
+        margin-bottom: 12px;
+      }
+
+      #image-steps {
+        display: flex;
+        gap: 8px;
+        position: sticky;
+        top: 0;
+        background: var(--surface);
+        padding: 8px 0;
+        z-index: 2;
+      }
+
+      #version-diff {
+        white-space: pre-wrap;
+        max-height: 45vh;
+        overflow: auto;
+        line-height: 1.7;
+        margin: 16px 0;
+      }
+
+      #preview-heading {
+        max-width: 100%;
+        flex: 1;
+        min-width: 140px;
+      }
+
+      #status::before {
+        content: "";
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--green);
+        margin-right: 8px;
+      }
+
+      #review-panel h2 {
+        font:
+          30px/1.2 Georgia,
+          serif;
+        letter-spacing: -0.6px;
+        margin: 0 0 8px;
+      }
+
+      #review-panel h3 {
+        font:
+          23px/1.25 Georgia,
+          serif;
+        margin: 0 0 8px;
+      }
+
+      #review-panel p {
+        margin: 6px 0 10px;
+        color: var(--muted);
+      }
+
+      #review-panel label {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      #review-panel select {
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      #review-panel input {
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      #review-panel details {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      #images-panel h2 {
+        font:
+          30px/1.2 Georgia,
+          serif;
+        margin: 0 0 8px;
+        letter-spacing: -0.6px;
+      }
+
+      #images-panel h3 {
+        font:
+          23px/1.3 Georgia,
+          serif;
+        margin: 0 0 10px;
+      }
+
+      #images-panel p {
+        color: var(--muted);
+        margin: 8px 0 14px;
+      }
+
+      #images-panel label {
+        display: grid;
+        gap: 6px;
+        margin: 12px 0;
+      }
+
+      #images-panel textarea {
+        flex: none;
+        height: 170px;
+        font: 14px/1.6 system-ui;
+        padding: 12px;
+      }
+
+      #images-panel input {
+        width: 100%;
+        min-width: 0;
+      }
+
+      #images-panel select {
+        width: 100%;
+        min-width: 0;
+      }
+
+      #images-panel pre {
+        white-space: pre-wrap;
+        font: 13px/1.6 system-ui;
+        color: var(--muted);
+      }
+
+      #fix-panel label {
+        display: grid;
+        gap: 6px;
+        margin: 12px 0;
+      }
+
+      #fix-panel textarea {
+        min-height: 130px;
+        flex: none;
+        font: 14px/1.65 system-ui;
+        padding: 12px;
+      }
+
+      #fix-panel select {
+        width: 100%;
+      }
+
+      #fix-panel blockquote {
+        margin: 12px 0;
+        padding: 12px 16px;
+        border-left: 2px solid #9caf9f;
+        background: var(--paper);
+        white-space: pre-wrap;
+      }
+
+      #fix-panel pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font:
+          12px/1.5 ui-monospace,
+          monospace;
+      }
+
+      #fix-agents label {
+        display: inline-flex;
+        align-items: center;
+        margin: 8px 16px 0 0;
+      }
+
+      #fix-validation li {
+        margin-block: 10px;
+      }
+
+      #metadata textarea {
+        min-height: 70px;
+        padding: 10px;
+        font: inherit;
+      }
+
+      #tag-suggestions button {
+        padding: 5px 9px;
+        font-size: 12px;
+        min-height: 32px;
+      }
+
+      #review-setup > summary {
+        padding: 10px 0;
+      }
+
+      #fix-settings > summary {
+        padding: 10px 0;
+      }
+
+      #image-candidates img {
+        width: 70px;
+        height: 50px;
+        object-fit: contain;
+        display: block;
+      }
+
+      #version-diff del {
+        background: #fbe8e1;
+      }
+
+      #version-diff ins {
+        background: #e3eee4;
+      }
+
+      #review-panel details summary {
+        padding-left: 0;
+      }
+
+      #error:not(:empty) {
+        padding: 12px 16px;
+        background: #fff0ea;
+        border-left: 3px solid #a14e36;
+        margin-bottom: 12px;
+      }
+
+      #images-panel .image-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: end;
+      }
+
+      #images-panel .review-section {
+        margin-top: 16px;
+      }
+
+      #fix-panel .fix-change {
+        border-top: 1px solid var(--line);
+        padding: 16px 0;
+      }
+
+      #fix-validation[data-warning="true"] {
+        border-color: #a57236;
+      }
+
+      #fix-proposal-tabs [aria-pressed="true"] {
+        background: var(--soft);
+        border-color: var(--green);
+      }
+
+      #metadata .bar {
+        padding: 6px 16px 16px;
+        align-items: end;
+        flex-wrap: wrap;
+      }
+
+      #review-kinds [aria-pressed="true"] {
+        background: var(--green);
+        color: white;
+      }
+
+      #image-steps [aria-pressed="true"] {
+        background: var(--green);
+        color: white;
+      }
+
+      #version-diff:empty {
+        display: none;
+      }
+
+      #images-panel .image-row label {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      #image-candidates button[aria-pressed="true"] {
+        border-color: var(--green);
+        background: var(--soft);
+      }
+
+      #fix-panel input:not([type="checkbox"]) {
+        width: 100%;
+      }
+
+      #review-results .review-finding button {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: left;
+      }
+
+      #fix-panel .fix-diff del {
+        background: #fae9e3;
+        text-decoration: line-through;
+      }
+
+      #fix-panel .fix-diff ins {
+        background: #e5f0e5;
+        text-decoration: underline;
+      }
+
+      #fix-panel input[type="checkbox"] {
+        width: auto;
+      }
+
+      #fix-panel .fix-change label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #metadata .bar > small {
+        flex-basis: 100%;
+      }
+
+      #metadata label:not(:has(input[type="checkbox"])) {
+        display: grid;
+        gap: 5px;
+        flex: 1;
+        min-width: 180px;
+      }
+
+      #fix-panel label:has(input[type="checkbox"]) {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #save:hover:not(:disabled) {
+        background: #244638;
+      }
+
+      #run-editorial:hover:not(:disabled) {
+        background: #244638;
+      }
+
+      #fix-result > .review-controls:last-of-type {
+        position: sticky;
+        bottom: 0;
+        background: var(--surface);
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        z-index: 2;
+      }
+
+      #review-panel.fix-open > :not(#fix-panel) {
+        display: none !important;
+      }
+
+      @media (width <= 1050px) {
+        header {
+          padding: 16px 20px;
+        }
+
+        main {
+          margin: 0 20px;
+        }
+
+        .bar {
+          padding: 12px 20px;
+        }
+
+        .history-actions {
+          order: 3;
+          width: 100%;
+        }
+
+        .pane {
+          padding: 16px;
+        }
+
+        #metadata {
+          margin: 0 20px 12px;
+        }
+      }
+
+      @media (width <= 760px) {
+        body {
+          height: auto;
+          min-height: 100dvh;
+        }
+
+        header {
+          padding: 16px;
+          align-items: flex-start;
+        }
+
+        h1 {
+          font-size: 21px;
+        }
+
+        main {
+          display: flex;
+          flex-direction: column;
+          margin: 0 16px;
+          gap: 16px;
+        }
+
+        textarea {
+          padding: 16px;
+          font-size: 13px;
+        }
+
+        h1 small {
+          display: block;
+          border: 0;
+          margin: 6px 0 0;
+          padding: 0;
+          font-size: 12px;
+        }
+
+        header a {
+          font-size: 12px;
+          white-space: nowrap;
+        }
+
+        .bar {
+          padding: 12px 16px;
+          gap: 8px;
+        }
+
+        .content-picker {
+          width: 100%;
+        }
+
+        .history-actions {
+          overflow: auto;
+        }
+
+        .pane {
+          height: 60dvh;
+          min-height: 380px;
+        }
+
+        .history-actions button {
+          padding: 8px;
+          font-size: 12px;
+        }
+
+        .footer small {
+          display: none;
+        }
+
+        #files {
+          flex: 1;
+          width: 0;
+        }
+
+        #status {
+          margin-left: 0;
+        }
+
+        #save {
+          margin-left: auto;
+        }
+
+        #metadata {
+          margin: 0 16px 12px;
+        }
+
+        #preview-pane {
+          height: 78dvh;
+          min-height: 520px;
+        }
+
+        #error {
+          margin-left: 16px;
+          margin-right: 16px;
+        }
+
+        #review-panel h2 {
+          font-size: 26px;
+        }
+
+        #review-panel label {
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+
+      /* The author works in one document; tools share a compact workspace. */
+
+      @media (width <= 760px) {
+        body {
+          height: 100dvh;
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        header {
+          padding: 10px 16px;
+        }
+
+        main {
+          min-height: 0;
+          flex: 1;
+          gap: 8px;
+        }
+
+        .history-actions {
+          width: auto;
+          order: initial;
+        }
+
+        .bar {
+          padding: 8px 16px;
+        }
+
+        .pane {
+          height: auto;
+          min-height: 0;
+          flex: 1;
+        }
+
+        .footer {
+          display: none;
+        }
+
+        main > .review-tabs {
+          order: -1;
+          flex-shrink: 0;
+          gap: 0;
+          justify-content: space-between;
+        }
+
+        #show-write {
+          display: block;
+        }
+
+        #preview-pane {
+          height: auto;
+          min-height: 0;
+          flex: 1;
+        }
+
+        #metadata {
+          max-height: 35dvh;
+          overflow: auto;
+        }
+
+        .history-actions #versions {
+          font-size: 11px;
+          padding: 6px;
+        }
+
+        .history-actions #reload {
+          font-size: 11px;
+          padding: 6px;
+        }
+
+        body[data-pane="write"] #preview-pane {
+          display: none;
+        }
+
+        body:not([data-pane="write"]) #write-pane {
+          display: none;
+        }
+
+        body[data-pane="write"]
+          .review-tabs
+          [aria-pressed="true"]:not(#show-write) {
+          border-color: transparent;
+          color: var(--muted);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Notes Along the Way <small>Author</small></h1>
+      </div>
+      <a
+        id="view-on-site"
+        href="/"
+        target="_blank"
+        rel="noopener"
+        title="Opens the saved site in a new tab"
+        >View on site ↗</a
+      >
+    </header>
+    <div class="bar">
+      <label class="content-picker"
+        >Content
+        <select id="files" aria-label="Content file"></select
+      ></label>
+      <div class="history-actions">
+        <button type="button" id="undo" title="Undo · ⌘/Ctrl Z">Undo</button
+        ><button type="button" id="redo" title="Redo · ⌘/Ctrl Shift Z">
+          Redo</button
+        ><button type="button" id="versions">Saved versions</button
+        ><button type="button" id="reload">Reload file</button>
+      </div>
+      <span id="publication-status" class="publication-status"></span
+      ><span id="status" role="status">Loading…</span
+      ><button type="button" id="save" title="Save locally · ⌘/Ctrl S">
+        Save
+      </button>
+    </div>
+    <details id="metadata">
+      <summary>Post details</summary>
+      <div class="bar">
+        <label>Title <input type="text" id="title-field" /></label
+        ><label>Summary <textarea id="summary-field" rows="2"></textarea></label
+        ><label
+          >Tags (comma separated) <input type="text" id="tags-field" /></label
+        ><label><input id="draft-field" type="checkbox" /> Draft</label
+        ><small
+          >Changes update your working draft. Save writes them locally; removing
+          Draft makes this eligible for the next deployment.</small
+        >
+        <div class="bar" id="publication-actions">
+          <button id="unpublish" type="button">Unpublish to draft</button>
+          <button id="delete-draft" type="button">Delete draft…</button>
+          <small id="lifecycle-hint"
+            >Save any edits before changing publication.</small
+          >
+        </div>
+        <div id="tag-suggestions" role="group" aria-label="Existing tags"></div>
+      </div>
+    </details>
+    <div id="error" role="alert"></div>
+    <main>
+      <section class="pane" id="write-pane">
+        <div class="write-heading">
+          <label for="source">Write</label
+          ><small>Markdown / publishing settings</small>
+        </div>
+        <textarea
+          id="source"
+          spellcheck="false"
+          aria-label="Source editor"
+        ></textarea>
+      </section>
+      <section class="pane" id="preview-pane">
+        <div class="review-tabs" role="group" aria-label="Editor view">
+          <button type="button" id="show-write" aria-pressed="false">
+            Write
+          </button>
+          <button type="button" id="show-preview" aria-pressed="true">
+            Preview</button
+          ><button type="button" id="show-review" aria-pressed="false">
+            Review
+          </button>
+          <button type="button" id="show-images" aria-pressed="false">
+            Images
+          </button>
+        </div>
+        <div class="preview-options">
+          <label
+            >Context
+            <select id="context">
+              <option value="">Standalone</option>
+            </select></label
+          ><button type="button" id="preview-mode" aria-pressed="false">
+            Full page</button
+          ><button type="button" id="width">Mobile width</button>
+        </div>
+        <span id="preview-status" role="status">Preparing preview…</span
+        ><iframe
+          title="Live content preview"
+          sandbox="allow-same-origin"
+        ></iframe>
+        <section id="images-panel" hidden aria-label="Article images">
+          <h2>Illustrate your article</h2>
+          <p class="review-intro">An idea, a brief, an image that belongs.</p>
+          <p>
+            <small>Blue ink on ivory · the Notes Along the Way style</small>
+          </p>
+          <nav id="image-steps" aria-label="Image workflow">
+            <button type="button" data-step="brief" aria-pressed="true">
+              1 Brief</button
+            ><button type="button" data-step="generate" aria-pressed="false">
+              2 Generate</button
+            ><button type="button" data-step="choose" aria-pressed="false">
+              3 Choose
+            </button>
+          </nav>
+          <section class="review-section" id="image-brief-step">
+            <h3>Shape the brief</h3>
+            <p>Write your own, or ask an agent for a starting point.</p>
+            <label
+              >Direction (optional)<input
+                type="text"
+                id="image-direction"
+                maxlength="1500"
+                placeholder="A subject, a mood, or something to avoid"
+            /></label>
+            <div class="image-row">
+              <label
+                >Brief writer<select id="image-agent">
+                  <option>Checking installed agents…</option>
+                </select></label
+              ><button type="button" id="suggest-brief">Suggest brief</button>
+            </div>
+            <small
+              >Suggest brief sends this article, including unsaved edits, to the
+              selected agent’s provider.</small
+            >
+            <label
+              >Illustration brief<textarea
+                id="image-brief"
+                maxlength="6000"
+                placeholder="Describe the subject and composition. The blog’s style is added automatically."
+              ></textarea>
+            </label>
+            <details>
+              <summary>Blog style</summary>
+              <pre id="image-style"></pre>
+            </details>
+          </section>
+          <section class="review-section" id="image-generate-step" hidden>
+            <h3>Create an image</h3>
+            <div class="image-row">
+              <label
+                >Shape<select id="image-size">
+                  <option value="1536x1024">Landscape</option>
+                  <option value="1024x1024">Square</option>
+                  <option value="1024x1536">Portrait</option>
+                </select></label
+              ><label
+                >Quality<select id="image-quality">
+                  <option value="low">Draft</option>
+                  <option value="medium" selected>Standard</option>
+                  <option value="high">High</option>
+                </select></label
+              >
+            </div>
+            <p><small id="image-provider">Checking image generation…</small></p>
+            <button type="button" id="generate-image" disabled>
+              Generate image
+            </button>
+            <button type="button" id="cancel-image" hidden>Cancel</button>
+            <details>
+              <summary>Use an existing image</summary>
+              <label
+                >PNG, JPEG or WebP · up to 20 MB<input
+                  id="image-upload"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp" /></label
+              ><small
+                >Imported locally; nothing is uploaded to a provider.</small
+              >
+            </details>
+          </section>
+          <div id="image-notice" role="status" aria-live="polite">
+            Your candidates will appear here. Nothing is inserted automatically.
+          </div>
+          <section id="image-selection" hidden>
+            <h3>Choose and describe</h3>
+            <div
+              id="image-candidates"
+              role="group"
+              aria-label="Image candidates"
+            ></div>
+            <img
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+              id="image-preview"
+              alt="Selected illustration candidate"
+            />
+            <p><small id="image-candidate-info"></small></p>
+            <button type="button" id="reuse-brief">Use this brief again</button>
+            <label
+              >Image description (alt text)<input
+                type="text"
+                id="image-alt"
+                maxlength="1000"
+                placeholder="Describe what a reader needs to know"
+            /></label>
+            <label
+              >Caption (optional)<input
+                type="text"
+                id="image-caption"
+                maxlength="2000"
+            /></label>
+            <label
+              >Insert at<select id="image-position">
+                <option value="cursor">Remembered cursor</option>
+                <option value="end">End of article</option>
+              </select></label
+            >
+            <p id="image-insert-hint"></p>
+            <button type="button" id="insert-image">Insert into article</button>
+            <p>
+              <small
+                >Adds the image at your chosen position. Preview it, then Save.
+                Undo removes the insertion; the candidate stays
+                available.</small
+              >
+            </p>
+          </section>
+        </section>
+        <section id="review-panel" hidden aria-label="Writing review">
+          <h2>Review your writing</h2>
+          <div id="review-kinds" class="review-controls">
+            <button type="button" id="checks-view" aria-pressed="true">
+              Writing checks</button
+            ><button type="button" id="editorial-view" aria-pressed="false">
+              Editorial review
+            </button>
+          </div>
+          <details id="review-setup" open>
+            <summary>Review settings and run</summary>
+            <p class="review-intro">A second look, with you in control.</p>
+            <label
+              >Scope
+              <select id="review-scope">
+                <option value="piece">Current piece</option>
+                <option value="collection">Current book / collection</option>
+              </select></label
+            >
+            <p>
+              <small
+                >A collection review adds its other saved pieces. Neither review
+                replaces publication checks or fact-checking.</small
+              >
+            </p>
+            <section class="review-section">
+              <h3>Writing checks</h3>
+              <p>
+                Find repetition, patterns and common writing tics. Runs locally,
+                including unsaved edits.
+              </p>
+              <button type="button" id="run-checks">Run writing checks</button>
+            </section>
+            <section class="review-section">
+              <h3>Editorial review</h3>
+              <p>Get suggestions from your chosen reviewer.</p>
+              <div class="review-controls">
+                <label
+                  >Reviewer
+                  <select id="review-agent" aria-label="Reviewer">
+                    <option disabled>Checking installed CLIs…</option>
+                  </select></label
+                ><button type="button" id="refresh-agents">Refresh</button>
+              </div>
+              <p>
+                <small
+                  >Sends the selected text to your reviewer’s provider and uses
+                  your account’s allowance. Suggestions never change your
+                  files.</small
+                >
+              </p>
+              <details>
+                <summary>Model and review prompt</summary>
+                <p>
+                  <label
+                    >Model (optional)
+                    <input
+                      type="text"
+                      id="review-model"
+                      placeholder="CLI default"
+                      maxlength="120"
+                  /></label>
+                </p>
+                <p>
+                  <small
+                    >Use a model supported by the selected CLI. Codex uses its
+                    default without loading user configuration; authentication
+                    is retained.</small
+                  >
+                </p>
+                <button type="button" id="view-review-prompt">
+                  View exact prompt</button
+                ><textarea
+                  id="review-prompt"
+                  aria-label="Editorial review prompt"
+                  readonly
+                  hidden
+                ></textarea>
+              </details>
+              <div class="review-controls">
+                <button type="button" id="run-editorial" disabled>
+                  Run editorial review</button
+                ><button type="button" id="cancel-review" hidden>
+                  Cancel review
+                </button>
+              </div>
+            </section>
+          </details>
+          <h3>Results</h3>
+          <div id="review-notice" role="status" aria-live="polite">
+            Your feedback will appear here.
+          </div>
+          <div class="review-controls">
+            <label
+              >Findings
+              <select id="review-filter">
+                <option value="all">All</option>
+                <option value="repetition">Repetition</option>
+                <option value="style">Style and clarity</option>
+                <option value="technical">Technical / incomplete</option>
+                <option value="metadata">Tags and metadata</option>
+              </select></label
+            ><button type="button" id="download-review" hidden>
+              Download report
+            </button>
+          </div>
+          <div id="review-progress" role="status"></div>
+          <div id="review-results"></div>
+        </section>
+      </section>
+    </main>
+    <div class="bar footer">
+      <span id="site-status"></span
+      ><small
+        >Local files · saving does not deploy &nbsp; · &nbsp; Save: ⌘/Ctrl S ·
+        Undo: ⌘/Ctrl Z · Redo: ⌘/Ctrl Shift Z</small
+      >
+    </div>
+    <dialog id="dialog">
+      <h2>Saved versions</h2>
+      <p>
+        Load a version into the editor, review it, then Save to restore. Later
+        versions remain available.
+      </p>
+      <div id="history"></div>
+      <div
+        id="version-diff"
+        role="group"
+        aria-label="Changes from current text"
+      ></div>
+      <details id="version-source" hidden>
+        <summary>Full version source</summary>
+        <textarea
+          id="version-text"
+          readonly
+          aria-label="Saved version contents"
+        ></textarea>
+      </details>
+      <p>
+        <button type="button" id="restore">Load this version</button>
+        <button type="button" id="close">Close</button>
+      </p>
+    </dialog>
+    <script>
+      let token = document.querySelector('meta[name="author-session"]').content;
+      let reconnecting = null;
+      let metadataPending = false,
+        metadataVersion = 0,
+        metadataTask = null,
+        metadataTimer;
+      const $ = (id) => document.getElementById(id),
+        editor = $("source");
+      let savedPublication = null,
+        lifecycleBusy = false;
+      let file = "",
+        base = "",
+        saved = "",
+        stack = [],
+        cursor = 0,
+        timer,
+        sequence = 0,
+        lastBuild = -1,
+        versionText = "";
+      const key = () => "author-recovery:" + location.origin + ":" + file;
+      async function api(action, data, retry = true) {
+        const r = await fetch("/_author/api/" + action, {
+          method: data ? "POST" : "GET",
+          headers: {
+            "X-Author-Token": token,
+            ...(data ? { "Content-Type": "application/json" } : {}),
+          },
+          body: data ? JSON.stringify(data) : undefined,
+        });
+        if (r.status === 403 && retry) {
+          if (!reconnecting)
+            reconnecting = (async () => {
+              const page = await fetch("/_author/", { cache: "no-store" });
+              if (!page.ok)
+                throw Error(
+                  "Cannot reconnect to the authoring server. Your editor text is unchanged.",
+                );
+              const doc = new DOMParser().parseFromString(
+                await page.text(),
+                "text/html",
+              );
+              const next = doc.querySelector(
+                'meta[name="author-session"]',
+              )?.content;
+              if (!next || !/^[a-f0-9]{64}$/.test(next))
+                throw Error(
+                  "The authoring session changed. Reload this page; unsaved edits are retained in this browser.",
+                );
+              token = next;
+            })().finally(() => {
+              reconnecting = null;
+            });
+          await reconnecting;
+          return api(action, data, false);
+        }
+        const raw = await r.text();
+        let d;
+        try {
+          d = JSON.parse(raw);
+        } catch {
+          throw Error(
+            "The authoring server returned an unreadable response (" +
+              r.status +
+              "). Reload the page to reconnect; your editor text is unchanged.",
+          );
+        }
+        if (!r.ok) throw Error(d.error || "Request failed");
+        return d;
+      }
+      function error(e) {
+        $("error").textContent = e.message || String(e);
+      }
+      function controls() {
+        window.syncAuthorEditor?.();
+        const clean = !metadataPending && editor.value === saved;
+        $("unpublish").hidden = savedPublication !== "published";
+        $("delete-draft").hidden = savedPublication !== "draft";
+        $("unpublish").disabled = $("delete-draft").disabled =
+          !clean || lifecycleBusy;
+        $("lifecycle-hint").textContent = !clean
+          ? "Save your edits before unpublishing or deleting."
+          : savedPublication === "draft"
+            ? "Delete removes this draft and its dependent settings. A local recovery copy is retained."
+            : "Unpublish preserves the article as a draft. Public removal takes effect after deployment and short-link publication.";
+        document.querySelector("main").inert = lifecycleBusy;
+        for (const id of [
+          "files",
+          "title-field",
+          "summary-field",
+          "tags-field",
+          "draft-field",
+          "reload",
+          "versions",
+        ])
+          $(id).disabled = lifecycleBusy;
+        $("undo").disabled = lifecycleBusy || cursor <= 0;
+        $("redo").disabled = lifecycleBusy || cursor >= stack.length - 1;
+        $("save").disabled =
+          lifecycleBusy ||
+          !file ||
+          (!metadataPending && editor.value === saved);
+        $("status").textContent =
+          metadataPending || editor.value !== saved
+            ? "Unsaved changes"
+            : "Saved locally";
+      }
+      function recover() {
+        localStorage.setItem(
+          key(),
+          JSON.stringify({
+            text: editor.value,
+            base,
+            pendingMetadata: metadataPending
+              ? {
+                  title: $("title-field").value,
+                  summary: $("summary-field").value,
+                  tags: $("tags-field").value,
+                  draft: $("draft-field").checked,
+                }
+              : null,
+          }),
+        );
+      }
+      function changed(record = true) {
+        if (record && stack[cursor] !== editor.value) {
+          stack = stack.slice(0, cursor + 1);
+          stack.push(editor.value);
+          cursor++;
+        }
+        controls();
+        recover();
+        clearTimeout(timer);
+        sequence++;
+        if (
+          $("metadata").open &&
+          (document.activeElement === editor ||
+            document.activeElement?.id === "proseEditor")
+        )
+          fields().catch(error);
+        $("preview-status").textContent = "Preview updating…";
+        timer = setTimeout(render, 350);
+      }
+      async function render() {
+        const seq = sequence,
+          selected = file;
+        try {
+          const d = await api("preview", {
+            file,
+            text: editor.value,
+            context: $("context").value,
+          });
+          if (seq !== sequence || file !== selected) return;
+          $("error").textContent = "";
+          if (d.html)
+            document.querySelector("iframe").srcdoc = window.authorPreview
+              ? window.authorPreview(d.html)
+              : d.html;
+          else
+            document.querySelector("iframe").srcdoc =
+              '<p style="font:18px system-ui;padding:24px">Save these settings to refresh the full-site preview.</p>';
+          if (d.url) $("view-on-site").href = d.url;
+          $("preview-status").textContent = d.message;
+          const choices = [{ id: "", title: "Standalone" }, ...d.contexts];
+          $("context").replaceChildren(
+            ...choices.map((c) => new Option(c.title, c.id)),
+          );
+          $("context").value = d.context || "";
+        } catch (e) {
+          if (seq !== sequence) return;
+          error(e);
+          $("preview-status").textContent =
+            "Preview is out of date — fix the error to refresh";
+        }
+      }
+      async function openFile(next) {
+        await flushMetadata();
+        if (file) recover();
+        sequence++;
+        clearTimeout(timer);
+        file = next;
+        const d = await api("read?file=" + encodeURIComponent(next));
+        if (file !== next) return;
+        base = d.revision;
+        savedPublication = d.publication;
+        saved = d.text;
+        editor.value = d.text;
+        stack = [d.text];
+        cursor = 0;
+        const recovery = JSON.parse(localStorage.getItem(key()) || "null");
+        if (recovery && recovery.text !== d.text) {
+          editor.value = recovery.text;
+          stack.push(recovery.text);
+          cursor = 1;
+          if (recovery.base !== base) {
+            base = recovery.base;
+            error(
+              "Recovered unsaved text differs from a newer disk version. Review before saving.",
+            );
+          } else error("Recovered unsaved edits.");
+        }
+        controls();
+        $("files").value = next;
+        const params = new URLSearchParams(location.search);
+        const navigation = await api(
+          "navigation?" +
+            new URLSearchParams({
+              file: next,
+              from: params.get("file") === next ? params.get("from") || "" : "",
+            }),
+        );
+        if (file !== next) return;
+        $("view-on-site").href = navigation?.url || "/";
+        $("context").replaceChildren(new Option("Standalone", ""));
+        if (navigation?.context)
+          $("context").add(new Option(navigation.context, navigation.context));
+        $("context").value = navigation?.context || "";
+        history.replaceState(
+          null,
+          "",
+          "/_author/?" +
+            new URLSearchParams({ file: next, from: navigation?.url || "/" }),
+        );
+        await render();
+        await fields();
+        if (recovery?.pendingMetadata) {
+          const m = recovery.pendingMetadata;
+          $("title-field").value = m.title;
+          $("summary-field").value = m.summary;
+          $("tags-field").value = m.tags;
+          $("draft-field").checked = m.draft;
+          metadataPending = true;
+          metadataVersion++;
+          controls();
+          error("Recovered unsaved post details. Save when ready.");
+          await flushMetadata();
+        }
+      }
+      async function fields() {
+        $("metadata").hidden = !file.endsWith("/index.md");
+        if ($("metadata").hidden || metadataPending) return;
+        const selected = file,
+          text = editor.value;
+        const d = await api("metadata", { file, text });
+        if (file !== selected || editor.value !== text || metadataPending)
+          return;
+        $("title-field").value = d.fields.title || "";
+        const option = Array.from($("files").options).find(
+          (o) => o.value === selected,
+        );
+        if (option && d.fields.title)
+          option.textContent =
+            d.fields.title +
+            (d.fields.draft === true || d.fields.status === "draft"
+              ? " · Draft"
+              : "");
+        $("summary-field").value = d.fields.summary || "";
+        $("tags-field").value = (d.fields.tags || []).join(", ");
+        $("publication-status").textContent =
+          d.fields.draft === true || d.fields.status === "draft"
+            ? "Draft"
+            : "Eligible for deployment";
+        $("draft-field").checked =
+          d.fields.draft === true || d.fields.status === "draft";
+      }
+      $("metadata").ontoggle = () => {
+        if ($("metadata").open) fields().catch(error);
+      };
+      async function flushMetadata() {
+        clearTimeout(metadataTimer);
+        if (metadataTask) await metadataTask;
+        if (!metadataPending) return;
+        metadataTask = (async () => {
+          while (metadataPending) {
+            const version = metadataVersion,
+              selected = file,
+              text = editor.value;
+            const values = {
+              title: $("title-field").value,
+              summary: $("summary-field").value,
+              tags: $("tags-field")
+                .value.split(",")
+                .map((x) => x.trim())
+                .filter(Boolean),
+              draft: $("draft-field").checked,
+            };
+            const d = await api("metadata", {
+              file: selected,
+              text,
+              fields: values,
+            });
+            if (file !== selected)
+              throw Error("Article changed while updating details.");
+            if (editor.value !== text || version !== metadataVersion) continue;
+            metadataPending = false;
+            editor.value = d.text;
+            changed();
+            editor.dispatchEvent(new Event("input"));
+            $("publication-status").textContent = values.draft
+              ? "Draft"
+              : "Eligible for deployment";
+          }
+        })();
+        try {
+          await metadataTask;
+        } finally {
+          metadataTask = null;
+          controls();
+        }
+      }
+      for (const id of [
+        "title-field",
+        "summary-field",
+        "tags-field",
+        "draft-field",
+      ]) {
+        $(id).addEventListener("input", () => {
+          metadataPending = true;
+          metadataVersion++;
+          controls();
+          recover();
+          clearTimeout(metadataTimer);
+          metadataTimer = setTimeout(() => flushMetadata().catch(error), 250);
+        });
+      }
+      editor.addEventListener("input", () => changed());
+      $("undo").onclick = async () => {
+        try {
+          await flushMetadata();
+        } catch (e) {
+          error(e);
+          return;
+        }
+        if (cursor > 0) {
+          editor.value = stack[--cursor];
+          changed(false);
+          fields().catch(error);
+          editor.dispatchEvent(new Event("author-history"));
+        }
+      };
+      $("redo").onclick = async () => {
+        try {
+          await flushMetadata();
+        } catch (e) {
+          error(e);
+          return;
+        }
+        if (cursor < stack.length - 1) {
+          editor.value = stack[++cursor];
+          changed(false);
+          fields().catch(error);
+          editor.dispatchEvent(new Event("author-history"));
+        }
+      };
+      $("save").onclick = async () => {
+        try {
+          await flushMetadata();
+        } catch (e) {
+          error(e);
+          return;
+        }
+        const selected = file,
+          text = editor.value;
+        try {
+          $("status").textContent = "Saving…";
+          const d = await api("save", {
+            file: selected,
+            text,
+            revision: base,
+            context: $("context").value,
+          });
+          if (file !== selected) return;
+          base = d.revision;
+          saved = text;
+          const disk = await api("read?file=" + encodeURIComponent(selected));
+          if (file !== selected) return;
+          savedPublication = disk.publication;
+          recover();
+          controls();
+          $("error").textContent = "";
+        } catch (e) {
+          error(e);
+          controls();
+        }
+      };
+      $("unpublish").onclick = async () => {
+        if (lifecycleBusy || metadataPending || editor.value !== saved) return;
+        const selected = file;
+        if (
+          !confirm(
+            "Return this article to draft? Its text, dates and reserved short links are preserved. Public removal takes effect after deployment and short-link publication.",
+          )
+        )
+          return;
+        lifecycleBusy = true;
+        controls();
+        try {
+          const d = await api("unpublish", { file: selected, revision: base });
+          if (file !== selected) return;
+          base = d.revision;
+          saved = d.text;
+          editor.value = d.text;
+          savedPublication = "draft";
+          changed();
+          await fields();
+          editor.dispatchEvent(new Event("author-history"));
+          $("status").textContent = "Unpublished locally · deployment required";
+        } catch (e) {
+          error(e);
+        } finally {
+          lifecycleBusy = false;
+          controls();
+        }
+      };
+      $("delete-draft").onclick = async () => {
+        if (lifecycleBusy || metadataPending || editor.value !== saved) return;
+        const selected = file,
+          expected = base;
+        lifecycleBusy = true;
+        controls();
+        try {
+          const plan = await api("delete-plan", {
+            file: selected,
+            revision: expected,
+          });
+          if (
+            file !== selected ||
+            base !== expected ||
+            metadataPending ||
+            editor.value !== saved
+          )
+            return;
+          const details = [
+            `Delete “${plan.title}”?`,
+            `${plan.files.length} article source/asset files`,
+            plan.aliases.length
+              ? "Short links: " + plan.aliases.join(", ")
+              : "No short links",
+            plan.placements.length
+              ? "Collection placements: " + plan.placements.join(", ")
+              : "No collection placements",
+            `${plan.assignments} distribution assignments`,
+            plan.changes.length
+              ? "Settings updated: " + plan.changes.join(", ")
+              : "No dependent settings",
+            "A local recovery copy is retained. Shared media and external copies remain. Public removal requires deployment and short-link publication.",
+          ];
+          if (!confirm(details.join("\n\n"))) return;
+          const result = await api("delete-draft", {
+            file: selected,
+            revision: expected,
+            planRevision: plan.revision,
+          });
+          if (file !== selected) return;
+          localStorage.removeItem(key());
+          file = "";
+          base = "";
+          saved = "";
+          editor.value = "";
+          metadataPending = false;
+          sequence++;
+          clearTimeout(timer);
+          // Reload the catalog and clear stale review/image state for the deleted article.
+          sessionStorage.setItem(
+            "author-deletion",
+            "Draft deleted locally. Recovery: " +
+              result.recovery +
+              ". Deploy and publish short links to update the public site.",
+          );
+          location.replace("/_author/");
+        } catch (e) {
+          error(e);
+        } finally {
+          lifecycleBusy = false;
+          controls();
+        }
+      };
+      $("reload").onclick = async () => {
+        try {
+          await flushMetadata();
+        } catch (e) {
+          error(e);
+          return;
+        }
+        if (
+          editor.value !== saved &&
+          !confirm("Reload disk version? Current edits remain in Undo history.")
+        )
+          return;
+        try {
+          const d = await api("read?file=" + encodeURIComponent(file));
+          base = d.revision;
+          saved = d.text;
+          savedPublication = d.publication;
+          editor.value = d.text;
+          changed();
+        } catch (e) {
+          error(e);
+        }
+      };
+      $("files").onchange = () =>
+        openFile($("files").value).catch((e) => {
+          $("files").value = file;
+          error(e);
+        });
+      $("context").onchange = () => {
+        sequence++;
+        render();
+      };
+      $("width").onclick = () => {
+        $("preview-pane").classList.toggle("mobile");
+        $("width").textContent = $("preview-pane").classList.contains("mobile")
+          ? "Desktop width"
+          : "Mobile width";
+      };
+      $("versions").onclick = async () => {
+        try {
+          await flushMetadata();
+          const list = await api("history?file=" + encodeURIComponent(file));
+          $("history").replaceChildren();
+          $("version-text").value = "";
+          versionText = "";
+          $("version-diff").replaceChildren();
+          $("version-source").hidden = !list.length;
+          $("restore").hidden = !list.length;
+          $("restore").disabled = true;
+          if (!list.length)
+            $("history").textContent =
+              "No saved versions yet. Your first save preserves the original.";
+          for (const v of list) {
+            const b = document.createElement("button");
+            b.textContent = new Date(v.date).toLocaleString() + " · " + v.kind;
+            b.onclick = () => {
+              versionText = v.text;
+              $("version-text").value = v.text;
+              $("restore").disabled = false;
+              window.authorDiff($("version-diff"), editor.value, v.text);
+            };
+            $("history").append(b);
+          }
+          $("dialog").showModal();
+        } catch (e) {
+          error(e);
+        }
+      };
+      $("restore").onclick = async () => {
+        try {
+          await flushMetadata();
+        } catch (e) {
+          error(e);
+          return;
+        }
+        editor.value = versionText;
+        changed();
+        $("dialog").close();
+      };
+      $("close").onclick = () => $("dialog").close();
+      document.addEventListener("keydown", (e) => {
+        if (!(e.metaKey || e.ctrlKey) || $("dialog").open) return;
+        const k = e.key.toLowerCase();
+        if (
+          k !== "s" &&
+          e.target !== editor &&
+          e.target.id !== "proseEditor" &&
+          /INPUT|TEXTAREA/.test(e.target.tagName)
+        )
+          return;
+        if (k === "s") {
+          e.preventDefault();
+          $("save").click();
+        }
+        if (k === "z") {
+          e.preventDefault();
+          $(e.shiftKey ? "redo" : "undo").click();
+        }
+        if (k === "y") {
+          e.preventDefault();
+          $("redo").click();
+        }
+      });
+      window.addEventListener("beforeunload", (e) => {
+        if (metadataPending || editor.value !== saved) {
+          recover();
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+      async function poll() {
+        if (lifecycleBusy) return;
+        try {
+          const d = await api("files");
+          if (lifecycleBusy) return;
+          $("site-status").textContent =
+            "Full site: " +
+            d.build.state +
+            (d.build.error ? " — " + d.build.error.slice(-250) : "");
+          if (lastBuild !== d.build.version) {
+            lastBuild = d.build.version;
+            sequence++;
+            if (file) render();
+          }
+          if (!file) return;
+          {
+            const selected = file;
+            const disk = await api("read?file=" + encodeURIComponent(selected));
+            if (file !== selected || lifecycleBusy) return;
+            if (disk.revision !== base) {
+              if (editor.value === saved) {
+                base = disk.revision;
+                saved = disk.text;
+                savedPublication = disk.publication;
+                editor.value = disk.text;
+                changed();
+              } else
+                error(
+                  "File changed outside the editor. Your edits are preserved; reload or compare before saving.",
+                );
+            }
+          }
+        } catch (e) {
+          error(e);
+        }
+      }
+      (async () => {
+        const d = await api("files");
+        $("files").replaceChildren(
+          ...d.files.map(
+            (f) =>
+              new Option(
+                f.replace("content/pieces/", "").replace("/index.md", ""),
+                f,
+              ),
+          ),
+        );
+        const requested = new URLSearchParams(location.search).get("file");
+        if (requested && !d.files.includes(requested))
+          throw Error(
+            "This content is not editable. Choose an item from Content.",
+          );
+        if (d.files.length) await openFile(requested || d.files[0]);
+        const deletion = sessionStorage.getItem("author-deletion");
+        if (deletion) {
+          sessionStorage.removeItem("author-deletion");
+          alert(deletion);
+        }
+        setInterval(poll, 2000);
+        poll();
+      })().catch(error);
+    </script>
+    <script src="/_author/ux.js"></script>
+    <script src="/_author/finding-range.js"></script>
+    <script src="/_author/review-decisions.js"></script>
+    <script src="/_author/review.js"></script>
+    <script src="/_author/images.js"></script>
+    <script src="/_author/fix-checks.js"></script>
+    <script src="/_author/fixes.js"></script>
+  </body>
+</html>

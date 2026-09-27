@@ -1,3 +1,4 @@
+import { asError } from "../core/errors";
 import { mediaUrl } from "../core/media";
 import {
   experiments,
@@ -56,7 +57,7 @@ async function cached(
   for (const field of ["path", "data"])
     if (typeof r.block.source[field] === "string")
       inputs[field] = (
-        await r.assets.read(r.owner, r.block.source[field] as string)
+        await r.assets.read(r.owner, r.block.source[field])
       ).toString();
   const lock = await fs.readFile("package-lock.json", "utf8");
   const key = hash(
@@ -73,7 +74,8 @@ async function cached(
   let svg: string;
   try {
     svg = await fs.readFile(file, "utf8");
-  } catch (err: any) {
+  } catch (caught) {
+    const err = asError(caught);
     if (err.code !== "ENOENT") throw err;
     svg = await generate();
     await fs.mkdir(path.dirname(file), { recursive: true });
@@ -207,11 +209,11 @@ export function registry() {
   );
   reg.register(
     plugin("table", ["table"], ["csv"], async (r) => {
-      const rows = parseCsv(await source(r), {
+      const rows = parseCsv<Record<string, string>>(await source(r), {
         columns: true,
         skip_empty_lines: true,
         bom: true,
-      }) as Record<string, string>[];
+      });
       if (!rows.length) throw Error("Table dataset is empty");
       const columns =
         (r.block.source.columns as string[] | undefined) ??
@@ -232,7 +234,7 @@ export function registry() {
         cached(r, "vega-lite", async () => {
           const { compile } = await import("vega-lite");
           const { View, parse } = await import("vega");
-          let spec: any;
+          let spec: Record<string, unknown>;
           if (r.block.source.format === "vega-lite")
             spec = JSON.parse(
               selectCode(
@@ -267,9 +269,10 @@ export function registry() {
               }),
             };
           }
-          const inspect = (v: any): void => {
+          const inspect = (v: unknown): void => {
             if (!v || typeof v !== "object") return;
-            if (v.url) throw Error("Chart data must be local and versioned");
+            if ("url" in v && v.url)
+              throw Error("Chart data must be local and versioned");
             Object.values(v).forEach(inspect);
           };
           inspect(spec);
@@ -279,9 +282,14 @@ export function registry() {
             height: Number(r.options.height ?? 300),
             background: "transparent",
           };
-          const view = new View(parse(compile(spec).spec), {
-            renderer: "none",
-          });
+          const view = new View(
+            parse(
+              compile(spec as unknown as import("vega-lite").TopLevelSpec).spec,
+            ),
+            {
+              renderer: "none",
+            },
+          );
           try {
             return await view.toSVG();
           } finally {

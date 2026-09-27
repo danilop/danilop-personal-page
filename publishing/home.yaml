@@ -1,5 +1,11 @@
 schemaVersion: 1
-lead: hello-brave-new-world
+lead: chronicles-of-computation
 recentCount: 3
 elsewhereCount: 4
 collections: []
+newIn:
+  - piece: chronicles-introduction
+    kind: introducing
+    collection: chronicles-of-computation
+  - piece: chronicles-ch01
+    collection: chronicles-of-computation

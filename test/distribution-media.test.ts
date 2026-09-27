@@ -20,7 +20,7 @@ import {
 } from "../core/distribution-media";
 
 const origin = "https://www.danilop.net";
-async function fixture(t: any) {
+async function fixture(t: import("node:test").TestContext) {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), "notes-crosspost-"));
   t.after(() => fs.rm(temp, { recursive: true, force: true }));
   const lib = await loadLibrary("test/fixtures/manuscript");
@@ -119,8 +119,10 @@ test("reference-style images and dated fallback previews are rasterized without 
   );
   assert(exported.review.some((item) => item.action === "fallback"));
   assert.equal(
-    f.piece.ast.children.some((node: any) =>
-      node.children?.some((child: any) => child.type === "imageReference"),
+    f.piece.ast.children.some(
+      (node) =>
+        "children" in node &&
+        node.children.some((child) => child.type === "imageReference"),
     ),
     true,
   );
@@ -185,8 +187,8 @@ test("cross-post charts, both diagram engines and local figures become real PNGs
       ),
     ).metadata();
     assert.equal(image.format, "png");
-    assert(image.width! > 0 && image.width! <= 1600);
-    assert(image.height! > 0);
+    assert(image.width > 0 && image.width <= 1600);
+    assert(image.height > 0);
   }
   assert(exported.review.filter((item) => item.action === "png").length >= 4);
 });

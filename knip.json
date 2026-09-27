@@ -1,0 +1,70 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "scripts/**/*.{ts,js,mjs}",
+        "processLinks.js",
+        "site/pages/**/*.{astro,ts}",
+        "site/middleware.ts",
+        "site/content.config.ts",
+        "authoring/*.js",
+        "runtime/enhance.ts",
+        "runtime/*.worker.ts",
+        "infrastructure/shortlinks.js",
+        "test/*.{test.ts,test.js}",
+        "tools/code-analysis/*.mjs"
+      ],
+      "project": [
+        "core/**/*.{ts,js,mjs}",
+        "scripts/**/*.{ts,js,mjs}",
+        "runtime/**/*.ts",
+        "renderers/**/*.ts",
+        "themes/**/*.{ts,astro}",
+        "site/**/*.{ts,astro}",
+        "authoring/*.js",
+        "lib/*.js",
+        "infrastructure/*.js",
+        "test/*.{ts,js}",
+        "tools/code-analysis/*.mjs",
+        "*.{js,mjs}"
+      ],
+      "astro": {
+        "entry": [
+          "site/pages/**/*.{astro,ts}",
+          "site/middleware.ts",
+          "site/content.config.ts",
+          "astro.config.mjs"
+        ]
+      },
+      "ignoreDependencies": [
+        "@fontsource/inter",
+        "@fontsource/newsreader",
+        "@mermaid-js/mermaid-cli",
+        "@types/katex",
+        "@types/unist",
+        "c8",
+        "html-validate",
+        "cloudfront"
+      ],
+      "ignoreBinaries": ["uv"],
+      "ignoreUnresolved": [".venv-quality/bin/python"]
+    },
+    "prototypes/ink-and-paper": {
+      "entry": [
+        "src/main.jsx",
+        "worker/index.js",
+        "scripts/*.mjs",
+        "tests/*.test.mjs",
+        "vite.config.mjs"
+      ],
+      "project": [
+        "src/**/*.{jsx,js}",
+        "worker/**/*.js",
+        "scripts/*.mjs",
+        "tests/*.mjs",
+        "vite.config.mjs"
+      ]
+    }
+  }
+}

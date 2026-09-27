@@ -1,0 +1,7 @@
+---
+import { loadTagRegistry, renderTagList } from "../../core/tags";
+const { tags = [] } = Astro.props;
+const registry = await loadTagRegistry();
+---
+
+<Fragment set:html={renderTagList(tags, registry)} />
