@@ -912,3 +912,8 @@ then exposed a coverage HTML filename containing a generated bundler identifier
 (colon and angle-bracket characters), which GitHub artifacts reject as individual paths. The
 workflow now uploads both complete report directories in `code-analysis.tar.gz`,
 without dropping reports or altering measured source or thresholds.
+
+A later Amplify run passed 174 tests but exceeded the prototype browser test's
+five-second initial page-load timeout during cold Vite compilation. Initial
+navigation now allows 30 seconds within a 60-second test limit; interaction
+assertions, console-error checks and coverage requirements are unchanged.

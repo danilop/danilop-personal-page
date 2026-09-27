@@ -96,7 +96,9 @@ for the current checkout. Fixes are never automatically applied by the hook. Exi
 tests. Install both npm workspaces first. Playwright drives the pinned Puppeteer
 Chrome headless shell, reusing the renderer browser installation and Linux system
 libraries. Tests start disposable loopback authoring/Vite servers and temporary Git
-repositories. Model, analytics and cloud-publication tests mock external boundaries;
+repositories. Cold prototype navigation has a bounded 30-second timeout, separate
+from the five-second interaction timeout, because Vite compiles while other CI
+integration tests run. Model, analytics and cloud-publication tests mock external boundaries;
 they do not publish content, upload media, send analytics or download models. The
 server fixture explicitly flushes real V8 coverage before shutdown so renderer
 cleanup timing cannot silently discard its measurements.

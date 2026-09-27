@@ -9,7 +9,7 @@ const { browserCoverage } = require("./browser-coverage");
 
 test(
   "prototype dialogs render each reader surface and restore the page through close, Escape, and backdrop",
-  { timeout: 30000 },
+  { timeout: 60000 },
   async (t) => {
     const root = path.resolve("prototypes/ink-and-paper");
     const cache = await fs.mkdtemp(path.join(os.tmpdir(), "prototype-vite-"));
@@ -34,6 +34,8 @@ test(
       viewport: { width: 1440, height: 1000 },
     });
     page.setDefaultTimeout(5000);
+    // Cold Vite compilation shares CI resources with the release integration tests.
+    page.setDefaultNavigationTimeout(30000);
     const errors = [];
     page.on("console", (message) => {
       if (message.type() === "error") errors.push(message.text());
