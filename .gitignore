@@ -176,3 +176,6 @@ vite.config.ts.timestamp-*
 
 # Machine-specific local model benchmark reports
 /outputs/cli/tune/
+
+# Compressed CI diagnostics (including generated virtual-source filenames)
+/code-analysis.tar.gz

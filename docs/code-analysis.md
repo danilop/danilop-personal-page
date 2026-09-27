@@ -161,7 +161,10 @@ Read `.analysis/report.md`, `.analysis/summary.json` and `.analysis/metrics.json
 results and complexity locations. Full diagnostics remain beside them. Coverage
 reports are under `coverage/javascript/` and `coverage/python/`. Missing/incomplete
 measurements are not reported as zero findings or successful checks. Reports may
-contain source snippets and stay out of website artifacts.
+contain source snippets and stay out of website artifacts. CI uploads the complete
+report directories inside `code-analysis.tar.gz`; extract it locally to browse the
+HTML reports. Archiving preserves generated virtual-source filenames that GitHub's
+artifact service rejects when uploaded individually.
 
 ### Dependency boundaries
 

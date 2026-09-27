@@ -906,3 +906,9 @@ Both corrected Go commands were rebuilt in a disposable directory and accepted b
 the unchanged version gate. The application commit also completed Amplify
 validation and passed the live revision, page, resource, RSS and 404 checks; the
 CI installation correction requires a subsequent GitHub run.
+
+The corrected GitHub run passed all analysis and release checks. Its final upload
+then exposed a coverage HTML filename containing a generated bundler identifier
+(colon and angle-bracket characters), which GitHub artifacts reject as individual paths. The
+workflow now uploads both complete report directories in `code-analysis.tar.gz`,
+without dropping reports or altering measured source or thresholds.
