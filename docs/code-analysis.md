@@ -56,9 +56,12 @@ pinned Gitleaks/actionlint releases (macOS Homebrew currently supplies them). Wi
 the latter can be installed reproducibly with:
 
 ```sh
-go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
-go install github.com/zricethezav/gitleaks/v8@v8.30.1
+go install -ldflags="-X github.com/rhysd/actionlint.version=1.7.12" github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+go install -ldflags="-X github.com/zricethezav/gitleaks/v8/version.Version=8.30.1" github.com/zricethezav/gitleaks/v8@v8.30.1
 ```
+
+The linker flags set the version metadata to the same pinned source release;
+unversioned Go-built binaries fail the exact-version gate.
 
 Ensure those executables are on PATH. ShellCheck is provided by the hash-locked
 `shellcheck-py` package in the analysis environment. Then:

@@ -35,8 +35,8 @@ jobs:
           .cache/analysis-bootstrap/bin/pip install uv==0.12.19
           echo "$GITHUB_WORKSPACE/.cache/analysis-bootstrap/bin" >> "$GITHUB_PATH"
           echo "$GITHUB_WORKSPACE/.cache/analysis-bin" >> "$GITHUB_PATH"
-          GOBIN="$GITHUB_WORKSPACE/.cache/analysis-bin" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
-          GOBIN="$GITHUB_WORKSPACE/.cache/analysis-bin" go install github.com/zricethezav/gitleaks/v8@v8.30.1
+          GOBIN="$GITHUB_WORKSPACE/.cache/analysis-bin" go install -ldflags="-X github.com/rhysd/actionlint.version=1.7.12" github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          GOBIN="$GITHUB_WORKSPACE/.cache/analysis-bin" go install -ldflags="-X github.com/zricethezav/gitleaks/v8/version.Version=8.30.1" github.com/zricethezav/gitleaks/v8@v8.30.1
       - name: Set up locked Python analyzers and commit hook
         run: npm run analysis:setup
       - name: Install browser system libraries

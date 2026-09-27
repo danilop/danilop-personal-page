@@ -895,3 +895,14 @@ updated for the unified browser suite and both npm workspace installations.
 The Chronicles pieces and collection still have `draft: true`; the release tests
 verify their absence from public pages, feeds and indexes. This local validation
 does not itself establish production deployment.
+
+The first GitHub run stopped during tool setup: Go-installed Gitleaks lacked
+release version metadata, and Actionlint's Go version string did not match the
+required plain version. CI and the documented Go commands now explicitly embed
+the same pinned source versions through linker flags; exact-version enforcement
+remains unchanged.
+
+Both corrected Go commands were rebuilt in a disposable directory and accepted by
+the unchanged version gate. The application commit also completed Amplify
+validation and passed the live revision, page, resource, RSS and 404 checks; the
+CI installation correction requires a subsequent GitHub run.
