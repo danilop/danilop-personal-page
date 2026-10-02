@@ -1,8 +1,10 @@
 # Reader sharing
 
-Status: implemented locally on 2 October 2026; production activation is checked
-after pushing main. This feature hands off links; it never generates social copy
-with an assistant or posts on the reader's behalf.
+Status: implemented, tested and deployed on 2 October 2026. Live desktop/mobile
+checks confirmed both controls, the active short URL, focus return, mobile fit and
+a clean console; the short URL's crawler/social-card check passed. This feature
+hands off links; it never generates social copy with an assistant or posts on the
+reader's behalf.
 
 ## Experience
 

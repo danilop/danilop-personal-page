@@ -397,7 +397,7 @@ automatic short-code allocation and richer link management; further social previ
 free analysis hooks/CI. Draft removal will become **Move to Trash**, with restore
 as draft, explicit permanent deletion and **no automatic expiration**. These
 composer, link-management and Trash additions remain planned. Reader sharing is
-implemented: **Share ↗** beside article metadata and **Share this article** after
+implemented, tested and deployed: **Share ↗** beside article metadata and **Share this article** after
 topic tags open one accessible panel with copy, Email, device sharing and platform
 links. An on-demand status check confirms a short link before using it; an explicit
 full-link fallback handles unavailable aliases. Drafts have no sharing controls.
