@@ -173,13 +173,19 @@ test(
     assert.equal(disk.publication, "draft");
     assert.equal(disk.text, original);
     // Switch the actual rendered preview, not just visibility of existing cards.
+    let readyState;
     for (let i = 0; i < 600; i++) {
       const state = (await api("files")).build;
       assert.notEqual(state.state, "error", state.error);
-      if (state.state === "ready") break;
+      if (state.state === "ready") {
+        readyState = state;
+        break;
+      }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    assert.equal((await api("files")).build.state, "ready", log);
+    // Restoring a missing source may queue another equivalent watch build. Assert
+    // the observed ready snapshot; a second request can legitimately see building.
+    assert.equal(readyState?.state, "ready", log);
     const draftHtml = await (
       await fetch(origin + "/writing/server-fixture/")
     ).text();

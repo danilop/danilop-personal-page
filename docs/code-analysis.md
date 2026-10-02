@@ -98,6 +98,9 @@ against their committed checksums.
 The collector's pure Python tests also support Amplify's Python 3.10 runtime;
 the deployed collector runs on Python 3.13. Tests of local preparation isolate
 their disposable environment and separately assert that CI cannot prepare assets.
+Preview integration checks use the observed ready snapshot: restoring missing
+source assets can legitimately queue a second watch build. The tests then check
+the rendered pages rather than assuming a later status request stays idle.
 
 An empty staged diff reports that there is nothing to check; use `verify:worktree`
 for the current checkout. Fixes are never automatically applied by the hook. Existing
