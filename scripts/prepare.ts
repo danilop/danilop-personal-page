@@ -1,3 +1,4 @@
+import { publicationOrder } from "../core/publication-time.mjs";
 import { asError } from "../core/errors";
 import { deployment, siteUrl } from "../core/deployment.mjs";
 import { deploymentHtml } from "../core/deployment-html";
@@ -26,7 +27,9 @@ import metadata from "../lib/link-metadata.js";
 import matter from "gray-matter";
 import { prepareIcons } from "./prepare-icons";
 import { homepageWriting } from "../core/homepage";
+import { collectionCover } from "../core/collection-cover";
 import { authoringContext } from "../core/authoring-preview";
+import { prepareSocialPreviews } from "../core/social-preview";
 async function main() {
   const authoring = await authoringContext();
   const lib = await loadLibrary(),
@@ -77,6 +80,7 @@ async function main() {
     ),
   };
   await prepareWriting();
+  site.social = await prepareSocialPreviews(site, assets, config.title);
   // Prepare portable image renditions before deployment, so remote copies never
   // refer to assets that only exist in the publisher's temporary workspace.
   await prepareDistribution();
@@ -210,6 +214,12 @@ async function main() {
         );
     }
     site.homeWriting = homepageWriting(site, lib);
+    for (const article of site.homeWriting) {
+      if (!article.publishedAt && !authoring)
+        throw Error(
+          `Publish ${article.id} locally to set publishedAt before building a release.`,
+        );
+    }
     if (
       home.lead &&
       !lib.pieces.has(home.lead) &&
@@ -251,7 +261,7 @@ async function main() {
       ".generated/distribution-blocked.json",
       JSON.stringify(distributionReview, null, 2),
     );
-    site.articles.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    site.articles.sort(publicationOrder);
   }
 
   async function prepareWriting() {
@@ -263,6 +273,11 @@ async function main() {
         assets,
       );
       site.collections.push({
+        cover: await collectionCover(
+          c.cover,
+          path.resolve("content/collections"),
+          assets,
+        ),
         id: c.id,
         title: c.title,
         summary: c.summary,
@@ -273,7 +288,15 @@ async function main() {
         html: d.html,
         nodes: d.nodes.map((n) => ({
           ...n,
-          ...(n.pieceId ? { tags: lib.pieces.get(n.pieceId)!.tags } : {}),
+          ...(n.pieceId
+            ? {
+                tags: lib.pieces.get(n.pieceId)!.tags,
+                language: lib.pieces.get(n.pieceId)!.language,
+                summary: lib.pieces.get(n.pieceId)!.summary,
+                publishedAt: lib.pieces.get(n.pieceId)!.publishedAt,
+                updatedAt: lib.pieces.get(n.pieceId)!.updatedAt,
+              }
+            : {}),
         })),
       });
     }
@@ -285,8 +308,9 @@ async function main() {
         id: p.id,
         title: p.title,
         summary: p.summary,
+        language: p.language,
         url: articleUrl(p),
-        publishedAt: p.publishedAt!,
+        publishedAt: p.publishedAt,
         updatedAt: p.updatedAt,
         tags: p.tags,
         html: d.html,

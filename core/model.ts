@@ -1,3 +1,4 @@
+import { validPublicationDate } from "./publication-time.mjs";
 import { asError } from "./errors";
 import { z } from "zod";
 import fs from "node:fs/promises";
@@ -17,14 +18,10 @@ export type Surface = z.infer<typeof surface>;
 export type Target = "web" | "book";
 const date = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine((v) => {
-    try {
-      return new Date(v).toISOString().slice(0, 10) === v;
-    } catch {
-      return false;
-    }
-  }, "Invalid date");
+  .refine(
+    validPublicationDate,
+    "Invalid publication date or timezone-qualified timestamp",
+  );
 export const selectionSchema = z
   .object({
     plugin: z.string().optional(),
@@ -83,13 +80,21 @@ export const pieceSchema = z
     if (
       v.status === "published" &&
       v.publication.surfaces.includes("standalone") &&
-      (!v.slug || !v.publishedAt)
+      !v.slug
     )
       c.addIssue({
         code: "custom",
-        message: "Public standalone pieces require slug and publishedAt",
+        message: "Public standalone pieces require a slug",
       });
-    if (v.updatedAt && v.publishedAt && v.updatedAt < v.publishedAt)
+    if (
+      v.updatedAt &&
+      v.publishedAt &&
+      Date.parse(
+        v.updatedAt.length === 10
+          ? v.updatedAt + "T23:59:59.999Z"
+          : v.updatedAt,
+      ) < Date.parse(v.publishedAt)
+    )
       c.addIssue({ code: "custom", message: "updatedAt precedes publication" });
   });
 export type Piece = z.infer<typeof pieceSchema> & {
@@ -198,6 +203,23 @@ export const nodeSchema: z.ZodType<Node> = z.lazy(() =>
         });
     }),
 );
+const coverSchema = z
+  .object({
+    path: z
+      .string()
+      .refine(
+        (value) =>
+          value.startsWith("assets/") &&
+          !value.includes("\\") &&
+          !value
+            .split("/")
+            .some((part) => !part || part === "." || part === "..") &&
+          /\.(png|jpe?g|webp)$/i.test(value),
+        "Cover must be a PNG, JPEG or WebP under the collection's assets directory",
+      ),
+    alt: z.string().trim().min(1).max(1000),
+  })
+  .strict();
 export const collectionSchema = z
   .object({
     schemaVersion: z.literal(1),
@@ -205,6 +227,7 @@ export const collectionSchema = z
     title: z.string().min(1),
     summary: z.string().min(1),
     introduction: z.string().optional(),
+    cover: coverSchema.optional(),
     status: z.enum(["draft", "published", "retired"]).optional(),
     draft: z.boolean().optional(),
     slug: id,

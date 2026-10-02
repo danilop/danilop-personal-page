@@ -6,6 +6,10 @@ tags:
   - id: computing
     label: Computing
     description: Methods and systems for performing computations.
+  - id: ai
+    label: AI
+    description: Artificial intelligence, how it learns, its capabilities, applications and limitations.
+    aliases: [artificial-intelligence]
   - id: programming
     label: Programming
     description: Writing, understanding, and maintaining programs.

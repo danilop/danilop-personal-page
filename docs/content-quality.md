@@ -42,6 +42,9 @@ and are unaffected by how many times a piece is placed in a book. Raw short-phra
 counts may be commonplace; the editorial queue prioritizes longer sequences and
 reduces nested duplicates. The HTML shows the first 60 repeated groups; JSON retains
 all counts and occurrences. Stemming handles inflections, not semantic equivalence.
+The local editor can send the full current-article list for one
+[contextual repetition review](editorial-review.md#review-all-repetitions), considering
+distance, technical terminology and deliberate echoes before proposing changes.
 
 ## Setup and daily workflow
 
@@ -200,6 +203,10 @@ snapshot, optionally with saved collection peers. It preserves source line numbe
 and lets the author navigate findings. The editor syntax-checks code but deliberately
 does not execute examples. **Editorial review** is a separate explicit CLI/model
 review with advisory suggestions; it is not part of deterministic release validation.
+
+Finding previews in the editor and HTML report collapse whitespace left by masked
+Markdown syntax and link destinations, including padding before punctuation. Raw
+report excerpts and source ranges remain unchanged for navigation and edits.
 
 Prose segments retain their source offsets. The Python worker returns UTF-16
 start/end positions for precise author-editor selection (end exclusive), including

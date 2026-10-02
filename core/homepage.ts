@@ -1,3 +1,5 @@
+import { publicationOrder } from "./publication-time.mjs";
+import { load } from "cheerio";
 import type { Library } from "./model";
 import type { CompiledSite } from "./site-data";
 import { readingContext } from "./reading-navigation";
@@ -11,22 +13,25 @@ export type HomeEntry = {
   context?: string;
   kind: "piece" | "collection";
   draft?: boolean;
+  image?: { src: string; alt: string; width?: number; height?: number };
 };
+function articleImage(html: string) {
+  const image = load(html)("img[src]").first();
+  const src = image.attr("src");
+  return src ? { src, alt: image.attr("alt") ?? "" } : undefined;
+}
 export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
   const entries = new Map<string, HomeEntry>();
   for (const a of site.articles)
     entries.set(a.id, {
       ...a,
+      image: articleImage(a.html),
       kind: "piece",
       draft: site.authoring?.pieces.includes(a.id),
     });
   addCollectionWriting();
   applyAnnouncements();
-  return [...entries.values()].sort(
-    (a, b) =>
-      (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "") ||
-      a.id.localeCompare(b.id),
-  );
+  return [...entries.values()].sort(publicationOrder);
 
   function applyAnnouncements() {
     for (const announcement of site.home.newIn ?? []) {
@@ -73,6 +78,7 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
         context,
         kind: "piece",
         draft,
+        image: articleImage(n.html),
       });
     }
   }
@@ -80,7 +86,11 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
 export function homepageSelection(site: CompiledSite) {
   const writing: HomeEntry[] =
     site.homeWriting ??
-    site.articles.map((a) => ({ ...a, kind: "piece" as const }));
+    site.articles.map((a) => ({
+      ...a,
+      image: articleImage(a.html),
+      kind: "piece" as const,
+    }));
   const featured = site.collections.find((c) => c.id === site.home.lead);
   const first = featured?.nodes.find((n) => n.kind === "piece" && !n.planned);
   const book: HomeEntry | undefined =
@@ -92,6 +102,7 @@ export function homepageSelection(site: CompiledSite) {
           url: `${featured.url}read/${first.id}/`,
           context: featured.book ? "Book" : "Collection",
           kind: "collection",
+          image: featured.cover,
           draft: site.authoring?.collections.includes(featured.id),
         }
       : undefined;

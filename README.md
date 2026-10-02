@@ -47,18 +47,24 @@ Third-party publication is manual: assignments prepare exports; commits and tags
 never send or update external posts. No articles are enrolled. The DEV key is
 not consumed by website builds or GitHub workflows. See
 [credentials and access](docs/credentials-and-access.md) before first delivery.
-Short-link setup still awaits [access approval](docs/deployment-access-review.md).
+Short-link infrastructure is active with private S3, OAC, one CloudFront Function
+and the Free flat-rate plan. The local editor has **Short links** controls for
+reservations, verified activation and live checks. Article aliases require a
+committed registry and verified deployment; see the
+[design and operating instructions](docs/short-link-design.md).
 Article illustrations can be generated explicitly in the local editor through a
 ChatGPT-signed-in Codex CLI. Search and a site-wide AI assistant remain future work.
 
 ## Develop
 
-Use the pinned Node.js 24.21.0 LTS and npm 12.0.2. With nvm installed:
+Use the pinned Node.js 24.21.0 LTS and npm 12.2.0. Dependencies were refreshed on
+1 October 2026; [compatibility exceptions and the transitive security override](docs/dependencies-and-hosting.md)
+are documented. With nvm installed:
 
 ```sh
 nvm install --skip-default-packages
 nvm use
-npm install --global npm@12.0.2
+npm install --global npm@12.2.0
 npm ci
 npm --prefix prototypes/ink-and-paper ci
 npm run dev
@@ -82,11 +88,25 @@ npm run preview
 ```
 
 Open `http://127.0.0.1:4322/`. The site uses production templates and normal URLs,
-with draft notices and quiet Edit links. The editor is at `/_author/`; saved changes
+with draft notices and quiet Edit links. Follow Edit to reach the editor; `/_author/`
+is an optional direct shortcut, not a separate launch step. Saved changes
 refresh the site automatically. Saving writes local sources but does not deploy.
 Run writing checks from Review when needed; startup does not run NLP.
+In the repetition list, **Review all repetitions in this article** sends the complete
+current-article list and text to selected Claude Code, Codex or Pi agents. The review
+considers distance and context, keeps useful repetition, and proposes edits for
+your approval. **Small changes per passage** means small edits to every worthwhile
+case, returned together. Batch reviews must assess every affected paragraph;
+their saved instructions are separate from single-finding preferences.
+**Rephrase where useful** permits broader sentence changes with the same complete
+review scope. Batch review offers only these two approaches.
+Fix proposals are validated before display; invalid output gets one
+automatic retry with validation feedback, using the same selected agent and model.
+Apply updates the editor; Save remains explicit.
 For application development, run `./preview.sh` (equivalent to
-`npm run preview -- --watch`). The script selects the pinned Node version through
+`npm run preview -- --watch --open`). It opens the homepage in your default browser
+once the first build succeeds; restarts do not open extra tabs. Use
+`./preview.sh --no-open` to keep the browser closed. The script selects the pinned Node version through
 nvm when needed and can be launched by its path from any directory. It also restarts
 the editor server when its entrypoint or imported code changes. Leave it running;
 there is no need to repeat `nvm use` between edits. Reading pages reconnect and
@@ -106,8 +126,10 @@ Follow the [publishing workflow](docs/publishing-workflow.md) from draft to rele
 1. Import once, or create/edit the Markdown article and media under `content/`.
    Keep `draft: true` while it is being written.
 2. Run `npm run preview` to browse, edit and review the full site, including drafts.
-   When approved, remove `draft: true` from the pieces and collection to release;
-   standalone articles also require a slug and publication date. Run
+   When approved, clear Draft and Save in the editor, or run
+   `npm run article:publish -- <piece-id>`. The local save sets `publishedAt` once;
+   standalone articles also require a slug. Enable the collection separately if
+   needed. Run
    `npm run prepublish:check` and `npm run preview -- --release` before pushing.
 3. Commit and merge into `main`; verify the production deployment.
 4. Optionally review and manually deliver an explicitly selected external copy.
@@ -134,6 +156,17 @@ The guide also covers collections, book editions, updates, and recovery. Use the
 [authoring reference](docs/authoring-format.md) for file formats and the
 [image authoring workflow](docs/image-authoring-workflow.md) for subscription-based Codex generation.
 
+The article on the limits of reward-based AI training has a
+[article](content/pieces/clever-enough-to-find-the-loophole/index.md),
+[researched outline](docs/ai-taming-outline.md) and
+[source notes and reading guide](docs/ai-taming-research.md), comparing RLHF,
+Jev's RLCD and methods outside RL alongside recent agent safety evidence,
+including AISI and FelonyBench. The article uses sourced stories to explain the
+mechanisms for readers interested in AI, with detailed method comparisons kept
+in the research notes. Sources were checked on 1 October 2026.
+The article is saved with `draft: false` and a publication timestamp; delivery
+requires the next committed `main` deployment. The Chronicles pieces remain drafts.
+
 Keep [content structure separate from publishing](docs/content-model.md#content-structure-and-publication-are-independent):
 pieces and book order remain independent of weekly release groups and announcements.
 
@@ -151,6 +184,11 @@ topic pages are not implemented; tagging changes have not been deployed. The
 [content discovery review](docs/content-discovery.md) retains proposed search
 improvements for separate book reading pages.
 
+The [reading-time comparison](docs/reading-time-experiment.md) records a local
+experiment with parsed text and `reading-time`. It left all four current reading-time
+labels unchanged; the production calculation remains raw word count at 220 words
+per minute, rounded up. No new runtime dependency was adopted.
+
 The [content review workflow](docs/content-quality.md) combines local NLP, stem-sequence
 counts, source/reference checks, tag reuse, and declared Python example tests.
 Run `npm run quality:setup` once, then `npm run prepublish:check` for the review
@@ -166,10 +204,23 @@ remain read-only tools. No separate `author` command is provided.
 
 Run `npm run preview` for the [local editor](docs/local-authoring.md): live prose
 preview, explicit saves, undo/redo, post details and recoverable saved versions.
+Use **Preview content → Published only** in the local site banner to rebuild the
+view without drafts, or **Show drafts** to restore them. This does not publish content.
 The editor pairs a spacious **Write** pane with **Preview** and **Review** views,
 with local save status and history controls above the workspace.
 The **Images** panel offers editable briefs from installed agents, Codex subscription
-image generation, preserved candidates, and explicit insertion with alt text.
+image generation, preserved candidates, and explicit insertion with automatically
+suggested, editable alt text for generated images. Insert at the beginning (after
+the title and summary) or the end of the article.
+For books and collections, the same panel generates or imports a dedicated cover;
+**Use as cover** assigns it to the unsaved collection, then **Save** applies it.
+Cover briefs and generation use the chosen shape and ask for artwork filling the
+canvas, with modest margins and no blank area reserved for title lettering.
+Image filenames describe their visible content and retain a hash suffix for uniqueness.
+Automatic image cleanup runs after saves, at startup and daily while preview runs.
+Unused candidates and managed source assets get a seven-day grace period, then
+30 days in recoverable trash before deletion. Saved versions and browser recovery
+protect their images. See [cleanup and recovery](docs/image-authoring-workflow.md#automatic-cleanup).
 The **Review** panel adds [Writing checks and Editorial review](docs/editorial-review.md):
 local language analysis and an explicit review through installed Claude Code, Codex or Pi.
 Browse `http://127.0.0.1:4322/` and click **Edit** beneath an article or book
@@ -233,6 +284,8 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
 - [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
 - [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
+- [Asset release design](docs/asset-release-design.md): proposed off-repository media, checksum manifests, release/deployment gates and remote retention.
+- [Social link previews](docs/social-previews.md): implemented local Open Graph/X cards, article illustrations, book covers and full/short URL verification; live activation remains pending.
 - [Private operations](docs/private-operations.md): where account-specific notes live and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
@@ -255,6 +308,13 @@ the publication workflow requires that verification before activating
 short links. Third-party delivery is a separate manual operation. Local commits
 must be pushed to trigger website deployment.
 
+Inserted article images and collection covers currently become files in Amplify's
+deployment artifact; they are not automatically uploaded to the separate S3 media
+bucket. Source copies remain eligible for Git commits. The proposed
+[asset release design](docs/asset-release-design.md) moves managed editorial bytes
+out of Git and adds verification for the exact commit before push and deployment.
+That integration and remote garbage collection are not implemented yet.
+
 ## License
 
 [MIT](LICENSE) — Copyright © 2026 Danilo Poccia.
@@ -262,10 +322,22 @@ See [asset provenance](docs/assets.md) for fonts, artwork, and preserved materia
 
 ### Homepage discovery and draft labels
 
+The featured article uses its first rendered body image, with the same alt text.
+Articles without images show no homepage artwork; the site-wide decorative hero
+is not used as an article fallback. Switching preview visibility therefore changes
+the artwork along with the selected article.
+Featured books and collections use their explicitly assigned cover, also shown on
+their overview page. They never inherit the first chapter's illustration.
+
 The homepage and Writing index include visible collection articles as well as
 standalone posts, without duplicate entries. Book articles show their collection
 and chapter context and link to the reading page. Publication dates determine
-latest order; undated entries follow dated ones.
+latest order. The [publication timestamp workflow](docs/publication-time.md) is
+implemented locally, not deployed: first local publication saves a UTC timestamp
+in the article's `publishedAt` metadata. Commit and push to `main`; Amplify delivers
+the dated article in one deployment. Drafting dates stay internal, and edits or
+republishing preserve the original publication time. Actual delivery can be later
+than the local publication action.
 
 Set `lead` in `publishing/home.yaml` to a piece or collection ID to feature it, or
 omit it for automatic latest selection. Chronicles of Computation is selected;
@@ -316,10 +388,14 @@ article has been unpublished or deleted as part of this implementation.
 The [social publishing and Trash plan](docs/social-publishing-plan.md) records the
 next agreed scope: public sharing without AI; a private social composer preserving
 each article's language and voice; a reusable assistant catalog; automatic,
-configurable short links and their management; improved social preview cards; and
+automatic short-code allocation and richer link management; further social preview controls; and
 free analysis hooks/CI. Draft removal will become **Move to Trash**, with restore
 as draft, explicit permanent deletion and **no automatic expiration**. These
-social and Trash additions remain planned. The plan includes platform limitations,
+composer, sharing, link-management and Trash additions remain planned. Automatic
+Open Graph/X preview cards are now implemented locally: article illustrations and
+book covers become hashed JPEGs, with title-card fallback, complete static metadata
+and `npm run verify:social -- <url>` for crawler checks. They have not been deployed.
+See [social previews](docs/social-previews.md). The plan includes platform limitations,
 ordered technical milestones and acceptance tests. The
 [code-analysis pipeline](docs/code-analysis.md) is now implemented locally: the
 installed pre-commit hook checks the staged snapshot without changing other work,
@@ -339,6 +415,16 @@ If information is missing, **Answer question** collects the author's answer befo
 an explicit drafting request. Older generic advice uses **Draft an edit** and is
 never inserted as article text. Alternatives remain optional. See the
 [finding-fix workflow](docs/finding-fixes-design.md#reuse-an-editorial-suggestion).
+
+Machine-readable reviews and fixes use schema-constrained output with Claude and
+Codex, or Pi's final completed JSON-event answer followed by local validation.
+Generated-image results also use a Codex output schema; illustration briefs stay
+plain text. Source and image-file checks remain in place. See
+[CLI response handling](docs/editorial-review.md#cli-implementation).
+
+Both review types expose **Run … again** beside their results. Reloading a file
+refreshes review state, and a lost review job unlocks retry controls with an error;
+no editorial rerun is sent automatically.
 
 For fixes in your own words, use **Edit myself**, change the article, then **Mark
 as addressed**. Addressed and Kept as written remain separate, reversible decisions

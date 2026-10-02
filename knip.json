@@ -9,6 +9,8 @@
         "site/middleware.ts",
         "site/content.config.ts",
         "authoring/*.js",
+        "lib/finding-range.js",
+        "lib/repetition-batch.js",
         "runtime/enhance.ts",
         "runtime/*.worker.ts",
         "infrastructure/shortlinks.js",

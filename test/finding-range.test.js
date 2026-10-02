@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { findingRange } = require("../authoring/finding-range");
+const { findingRange } = require("../lib/finding-range");
 test("precise ranges distinguish repeated occurrences on the same line", () => {
   const s = "😀 marks count, marks counted.";
   const at = s.indexOf("marks", 5);
@@ -24,7 +24,7 @@ test("missing exact quotes never expand to a line or match another line", () => 
     { start: 0, end: 0 },
   );
 });
-const { relocateFinding } = require("../authoring/finding-range");
+const { relocateFinding } = require("../lib/finding-range");
 test("editing one passage leaves other findings navigable at their new offsets", () => {
   const old = "First issue.\n\nSecond finding.\n\nThird finding.";
   const changed =
@@ -63,4 +63,31 @@ test("unmatched and ambiguous locations stay disabled while unique exact quotes 
   const text = "New start.\n\n😀 Exact phrase.\n\nNew ending.";
   const r = relocateFinding(text, { line: 3, excerpt: "Exact phrase." }, old);
   assert.equal(text.slice(r.start, r.end), "Exact phrase.");
+});
+
+test("finding excerpt display removes masking padding without changing source ranges", () => {
+  const { displayFindingExcerpt } = require("../lib/finding-range");
+  const source =
+    "🧭 This can [improve reasoning](https://example.com/research), but a passing test may miss a defect.";
+  const excerpt =
+    "This can  improve reasoning                                   , but a passing test may miss a defect.";
+  const location = {
+    start: source.indexOf("This"),
+    end: source.length,
+    excerpt,
+  };
+  assert.equal(
+    displayFindingExcerpt(excerpt),
+    "This can improve reasoning, but a passing test may miss a defect.",
+  );
+  assert.equal(
+    displayFindingExcerpt("  A line\n  continues\t here.  "),
+    "A line continues here.",
+  );
+  assert.equal(location.excerpt, excerpt);
+  const range = findingRange(source, location);
+  assert.equal(
+    source.slice(range.start, range.end),
+    source.slice(source.indexOf("This")),
+  );
 });

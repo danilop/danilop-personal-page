@@ -295,3 +295,33 @@ test("block dependencies are carried with the piece and remain readable after co
     "print(6)\n",
   );
 });
+
+test("collection import includes its cover and rejects replacement of a conflicting shared asset", async (t) => {
+  const f = await fixture(t);
+  await f.piece("intro");
+  await f.collection("book", ["intro"]);
+  const cover = Buffer.from([0, 1, 2, 3]);
+  await fs.mkdir(path.join(f.from, "collections/assets"));
+  await fs.writeFile(path.join(f.from, "collections/assets/cover.png"), cover);
+  await fs.appendFile(
+    path.join(f.from, "collections/book.yaml"),
+    "cover:\n  path: assets/cover.png\n  alt: The book illustration\n",
+  );
+  await applyImport(await prepareImport({ ...f, collections: ["book"] }));
+  assert.deepEqual(
+    await fs.readFile(path.join(f.to, "collections/assets/cover.png")),
+    cover,
+  );
+  assert.match(
+    await fs.readFile(path.join(f.to, "collections/book.yaml"), "utf8"),
+    /assets\/cover.png/,
+  );
+  await fs.writeFile(
+    path.join(f.from, "collections/assets/cover.png"),
+    "different bytes",
+  );
+  await assert.rejects(
+    prepareImport({ ...f, collections: ["book"], update: true }),
+    /belongs to other content/,
+  );
+});

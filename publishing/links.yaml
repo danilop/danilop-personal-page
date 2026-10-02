@@ -1,3 +1,7 @@
 schemaVersion: 1
+removed: {}
 links:
-  hello: { ref: hello-brave-new-world }
+  hello:
+    ref: hello-brave-new-world
+  clever-loophole:
+    ref: clever-enough-to-find-the-loophole

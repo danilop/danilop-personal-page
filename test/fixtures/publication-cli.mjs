@@ -19,20 +19,24 @@ mock.module("node:child_process", {
   },
 });
 const handlers = {
-  DescribeKeyValueStoreCommand: () => ({ ETag: "fixture-etag" }),
-  ListKeysCommand: () => ({
-    Items: [{ Key: "removed", Value: "https://danilop.net/old/" }],
+  ListObjectsV2Command: () => ({
+    Contents: [{ Key: "redirects/removed" }, { Key: "redirects/removed/" }],
   }),
-  UpdateKeysCommand: () => ({}),
+  HeadObjectCommand: () => ({
+    ETag: "fixture-etag",
+    WebsiteRedirectLocation: "https://danilop.net/old/",
+    Metadata: { owner: "retired-fixture" },
+  }),
   ListJobsCommand: () => ({
     jobSummaries: [{ commitId: revision, status: "SUCCEED" }],
   }),
-  PutObjectCommand: () => ({}),
+  PutObjectCommand: () => ({ ETag: "fixture-etag" }),
   DeleteObjectCommand: () => ({}),
   CreateInvalidationCommand: () => ({
     Invalidation: { Id: "fixture-invalidation" },
   }),
   GetObjectCommand: (command) => ({
+    ETag: "fixture-etag",
     Body: {
       transformToString: async () =>
         JSON.stringify(
@@ -45,7 +49,6 @@ const handlers = {
 };
 for (const [moduleName, clientName] of [
   ["s3", "S3Client"],
-  ["cloudfront-keyvaluestore", "CloudFrontKeyValueStoreClient"],
   ["amplify", "AmplifyClient"],
   ["cloudfront", "CloudFrontClient"],
 ]) {

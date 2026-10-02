@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import { stampPublication } from "./author-publication";
 export const revision = (s: string) =>
   crypto.createHash("sha256").update(s).digest("hex");
 export class AuthorStore {
@@ -83,6 +84,8 @@ export class AuthorStore {
         throw Error(
           "Conflict: file changed outside this editor. Reload before saving; your edits are still recoverable.",
         );
+      if (/^content\/pieces\/[^/]+\/index\.md$/.test(p))
+        text = stampPublication(old.text, text);
       await validate(text);
       if (old.text === text) return old;
       const dir = this.historyDir(p);

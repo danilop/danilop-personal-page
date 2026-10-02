@@ -14,8 +14,8 @@ site configuration and theme registry. See the
 
 ## Preview
 
-Use the root project's pinned Node 24.21.0 and npm 12.0.2. This prototype now uses
-React 19.3.0, Vite 8.3.0 and the React plugin 6.1.1. Its lockfile and version-specific
+Use the root project's pinned Node 24.21.0 and npm 12.2.0. The 1 October 2026
+dependency refresh uses React 19.3.0, Vite 8.3.2 and the React plugin 6.1.1. Its lockfile and version-specific
 install-script approvals are independent of the production Astro application.
 
 From this folder:

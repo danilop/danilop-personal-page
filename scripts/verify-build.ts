@@ -11,6 +11,8 @@ import assert from "node:assert/strict";
 import { load } from "cheerio";
 import type { CompiledSite } from "../core/site-data";
 import { loadLibrary, allowed } from "../core/model";
+import { verifySocialMetadata } from "../core/social-metadata";
+import sharp from "sharp";
 async function walk(dir: string): Promise<string[]> {
   const files: string[] = [];
   for (const d of await fs.readdir(dir, { withFileTypes: true })) {
@@ -49,6 +51,7 @@ async function main() {
   const files = await walk(siteOutput);
   const errors: string[] = [];
   let links = 0;
+  const socialImages = new Set<string>();
   await verifyOutputLinks();
   const lib = await loadLibrary();
   for (const p of lib.pieces.values())
@@ -83,7 +86,27 @@ async function main() {
     }
 
     async function verifyPageLinks(file: string) {
-      const $ = load(await fs.readFile(file, "utf8"));
+      const html = await fs.readFile(file, "utf8");
+      const $ = load(html);
+      if ($('meta[property="og:title"]').length) {
+        const social = verifySocialMetadata(html);
+        const image = new URL(social.image);
+        assert.equal(
+          image.origin,
+          config.url,
+          "Unexpected social image origin",
+        );
+        const imageFile = path.join("dist", decodeURIComponent(image.pathname));
+        if (!socialImages.has(imageFile)) {
+          const bytes = await fs.readFile(imageFile);
+          const metadata = await sharp(bytes).metadata();
+          assert.equal(metadata.format, "jpeg");
+          assert.equal(metadata.width, 1200);
+          assert.equal(metadata.height, 630);
+          assert(bytes.length <= 1_000_000, "Social image exceeds 1 MB");
+          socialImages.add(imageFile);
+        }
+      }
       const ids = new Set<string>();
       $("[id]").each((_, el) => {
         const id = $(el).attr("id")!;

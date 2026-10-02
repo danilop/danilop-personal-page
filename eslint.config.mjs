@@ -111,7 +111,12 @@ export default [
     languageOptions: { sourceType: "script", globals: globals.browser },
   },
   {
-    files: ["authoring/*.js", "static/**/*.js"],
+    files: [
+      "authoring/*.js",
+      "static/**/*.js",
+      "lib/finding-range.js",
+      "lib/repetition-batch.js",
+    ],
     languageOptions: {
       sourceType: "script",
       globals: {
@@ -120,6 +125,8 @@ export default [
         // Shared classic-script bindings owned by authoring/index.html; no implicit globals elsewhere.
         $: "readonly",
         editor: "readonly",
+        stack: "readonly",
+        error: "readonly",
         api: "readonly",
         file: "readonly",
         base: "readonly",

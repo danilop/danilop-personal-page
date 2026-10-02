@@ -5,7 +5,9 @@
     reviewedText = "",
     stale = false,
     timer = null,
-    refreshCount = 0;
+    refreshCount = 0,
+    starting = false,
+    generation = 0;
   let installed = [],
     viewKind = "checks";
   const reviews = {},
@@ -97,7 +99,7 @@
     };
   }
   function controls() {
-    const running = active?.state === "running",
+    const running = starting || active?.state === "running",
       piece = file.endsWith("/index.md");
     $("run-checks").disabled = running || !piece;
     $("run-editorial").disabled =
@@ -109,6 +111,15 @@
     $("editorial-view").disabled = running;
     $("review-agent").disabled = running;
     $("review-scope").disabled = running;
+    $("rerun-review").hidden = !active;
+    $("rerun-review").textContent =
+      viewKind === "checks"
+        ? "Run writing checks again"
+        : "Run editorial review again";
+    $("rerun-review").disabled =
+      viewKind === "checks"
+        ? $("run-checks").disabled
+        : $("run-editorial").disabled;
     $("review-scope").options[1].disabled = !$("context").value;
     if (!$("context").value) $("review-scope").value = "piece";
   }
@@ -354,6 +365,35 @@
             `All repeated stem sequences (${r.repetitions.length})`,
           ),
         );
+        const batch = node("button", "Review all repetitions in this article");
+        batch.id = "review-repetitions";
+        const rows = r.repetitions
+          .map((row) => ({
+            ...row,
+            locations: row.locations.filter(
+              (l) => r.files[l.piece] === reportFile,
+            ),
+          }))
+          .filter((row) => row.locations.length > 1);
+        batch.disabled = stale || !rows.length || file !== reportFile;
+        batch.onclick = () =>
+          window.openFindingFix(
+            {
+              rule: "article-repetitions",
+              message: `${rows.length} repeated stem groups. Review them together; keep useful repetition.`,
+              repetitions: rows,
+            },
+            r.files,
+            batch,
+            active.sources,
+          );
+        d.append(
+          batch,
+          node(
+            "p",
+            "Sends the full list for this article and its text to your selected agent. You review proposed changes before applying them.",
+          ),
+        );
         for (const row of r.repetitions) {
           const div = node("div", undefined, "review-finding");
           div.append(
@@ -365,7 +405,7 @@
           for (const l of row.locations) {
             const b = node(
               "button",
-              `${(l.text || l.excerpt || "Show passage").slice(0, 48)} · line ${l.line}`,
+              `${window.displayFindingExcerpt(l.text || l.excerpt || "Show passage").slice(0, 48)} · line ${l.line}`,
             );
             b.disabled = !passageAvailable({}, l);
             b.onclick = () =>
@@ -423,7 +463,10 @@
               node("strong", f.rule.replaceAll("-", " ")),
               node("p", f.message),
             );
-            if (f.excerpt) card.append(node("blockquote", f.excerpt));
+            if (f.excerpt)
+              card.append(
+                node("blockquote", window.displayFindingExcerpt(f.excerpt)),
+              );
             const reopen = node("button", "Reopen finding");
             reopen.onclick = () => mark(f, "open");
             card.append(reopen);
@@ -445,7 +488,10 @@
         ),
       );
       card.append(node("p", f.message));
-      if (f.excerpt) card.append(node("blockquote", f.excerpt));
+      if (f.excerpt)
+        card.append(
+          node("blockquote", window.displayFindingExcerpt(f.excerpt)),
+        );
       if (f.suggestion) card.append(node("p", "Suggestion: " + f.suggestion));
       if (f.question) card.append(node("p", "Question: " + f.question));
       if (f.accepted)
@@ -457,7 +503,7 @@
         if (!l.line) continue;
         const b = node(
           "button",
-          `${(l.text || l.excerpt || "Show passage").slice(0, 48)} · line ${l.line}`,
+          `${window.displayFindingExcerpt(l.text || l.excerpt || "Show passage").slice(0, 48)} · line ${l.line}`,
         );
         b.title = "Edit this passage in your own words";
         b.disabled = !passageAvailable(f, l);
@@ -508,11 +554,16 @@
   }
   async function poll() {
     if (!active) return;
+    const id = active.id,
+      run = generation;
     try {
-      active = await api("review-job?id=" + encodeURIComponent(active.id));
+      const job = await api("review-job?id=" + encodeURIComponent(id));
+      if (run !== generation || active?.id !== id) return;
+      active = job;
       freshness();
       controls();
       if (active.state !== "running") {
+        ++generation;
         preserve();
         $("review-setup").open = false;
         results();
@@ -521,29 +572,53 @@
         timer = setInterval(checkFreshness, 5000);
       }
     } catch (e) {
-      notice(e.message);
+      if (run !== generation || active?.id !== id) return;
+      ++generation;
       clearInterval(timer);
+      timer = null;
+      active = {
+        ...active,
+        state: "failed",
+        error:
+          "Could not retrieve review status. " +
+          e.message +
+          " Run the review again to retry.",
+      };
+      stale = true;
+      preserve();
+      freshness();
+      results();
+      controls();
+      $("review-setup").open = true;
     }
   }
   async function checkFreshness() {
     if (!active || !request || active.state === "running") return;
+    const id = active.id,
+      run = generation;
     try {
       const d = await api("review-fingerprint", {
         ...request,
         text: file === request.file ? editor.value : request.text,
       });
+      if (run !== generation || active?.id !== id) return;
       if ((d.fingerprint !== active.fingerprint) !== stale) {
         stale = d.fingerprint !== active.fingerprint;
         freshness();
         results();
       }
     } catch {
+      if (run !== generation || active?.id !== id) return;
       stale = true;
       freshness();
       results();
     }
   }
   async function start(kind) {
+    if (starting || active?.state === "running") return;
+    starting = true;
+    ++generation;
+    controls();
     try {
       await flushMetadata();
       chooseView(kind);
@@ -563,9 +638,12 @@
       timer = setInterval(poll, 1000);
     } catch (e) {
       notice(e.message);
+    } finally {
+      starting = false;
       controls();
     }
   }
+  $("rerun-review").onclick = () => start(viewKind);
   $("run-checks").onclick = () => start("checks");
   $("run-editorial").onclick = () => start("ai");
   $("cancel-review").onclick = () =>
@@ -640,6 +718,17 @@
       freshness();
       results();
     }
+  });
+  editor.addEventListener("author-reload", () => {
+    if (active) {
+      stale = true;
+      freshness();
+      results();
+      if (active.state === "running") void poll();
+      else void checkFreshness();
+    }
+    $("review-setup").open = true;
+    controls();
   });
   editor.addEventListener("input", () => {
     if (active?.sources?.[file]) {

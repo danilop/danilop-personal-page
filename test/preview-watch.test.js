@@ -8,11 +8,7 @@ const { once } = require("node:events");
 const vm = require("node:vm");
 
 test("reading pages refresh after server restarts without reloading during temporary outages", async () => {
-  const source = await fs.readFile("scripts/author.ts", "utf8");
-  const script = source
-    .match(/`<script>(setInterval[\s\S]*?)<\/script><\/body>`/)[1]
-    .replaceAll("${token}", "fixture-token")
-    .replaceAll("${build.version}", "1");
+  const script = await fs.readFile("authoring/preview.js", "utf8");
   for (const [status, version, expected] of [
     [200, 1, 0],
     [200, 2, 1],
@@ -23,6 +19,12 @@ test("reading pages refresh after server restarts without reloading during tempo
     let reloads = 0,
       poll;
     vm.runInNewContext(script, {
+      document: {
+        currentScript: {
+          dataset: { token: "fixture-token", version: "1", drafts: "true" },
+        },
+        getElementById: () => null,
+      },
       setInterval: (callback) => {
         poll = callback;
       },
@@ -32,7 +34,7 @@ test("reading pages refresh after server restarts without reloading during tempo
         return {
           status,
           ok: status === 200,
-          json: async () => ({ build: { version } }),
+          json: async () => ({ build: { version }, includeDrafts: true }),
         };
       },
     });
@@ -52,6 +54,7 @@ test(
     for (const file of [
       "scripts/preview-site.mjs",
       "core/preview-cli.mjs",
+      "core/preview-browser.mjs",
       "core/deployment.mjs",
     ])
       await fs.copyFile(file, path.join(root, file));

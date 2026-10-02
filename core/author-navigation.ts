@@ -2,6 +2,50 @@ import { load } from "cheerio";
 import type { CompiledSite } from "./site-data";
 
 export type AuthorRoute = { url: string; file: string; context?: string };
+export function injectPreviewMode(
+  html: string,
+  state: {
+    token: string;
+    version: number;
+    includeDrafts: boolean;
+    building: boolean;
+  },
+) {
+  const $ = load(html);
+  const notice = $(".authoring-notice");
+  notice
+    .children("p")
+    .first()
+    .text(
+      state.includeDrafts
+        ? "Drafts are included in this local preview. Nothing has been published."
+        : "Published content only. Local edits are shown; nothing has been deployed.",
+    );
+  const select = $('<select id="preview-content">').append(
+    $('<option value="drafts">').text("Show drafts"),
+    $('<option value="published">').text("Published only"),
+  );
+  select
+    .find(`[value="${state.includeDrafts ? "drafts" : "published"}"]`)
+    .attr("selected", "selected");
+  if (state.building) select.attr("disabled", "disabled");
+  notice.append($("<label>").text("Preview content ").append(select));
+  notice.append(
+    $('<p id="preview-mode-status" role="status">').text(
+      state.building ? "Updating preview…" : "",
+    ),
+  );
+  $("body").append(
+    $("<script>").attr({
+      src: "/_author/preview.js",
+      "data-token": state.token,
+      "data-version": String(state.version),
+      "data-drafts": String(state.includeDrafts),
+    }),
+  );
+  return $.html();
+}
+
 export function authorRoutes(
   site: Pick<CompiledSite, "articles" | "collections">,
   catalog: { file: string; id?: string }[],

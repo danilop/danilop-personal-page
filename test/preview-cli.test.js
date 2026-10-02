@@ -72,3 +72,44 @@ test("preview help exits without starting servers and obsolete command aliases a
   assert.equal(bad.status, 1);
   assert.match(bad.stderr, /require --snapshot/);
 });
+
+test("browser opening is opt-in for npm, overridable for the wrapper and disabled for build-only", async () => {
+  const { previewOptions } = await import("../core/preview-cli.mjs");
+  assert.equal(previewOptions([]).open, false);
+  assert.equal(previewOptions(["--watch", "--open"]).open, true);
+  assert.equal(previewOptions(["--open", "--no-open"]).open, false);
+  assert.equal(
+    previewOptions(["--snapshot", "--build-only", "--open"]).open,
+    false,
+  );
+});
+
+test("browser opens only after a successful build and once across watch restarts", async () => {
+  const { PassThrough } = require("node:stream");
+  const { openWhenReady, openBrowser } =
+    await import("../core/preview-browser.mjs");
+  const stream = new PassThrough(),
+    calls = [],
+    url = "http://127.0.0.1:4330/";
+  openWhenReady(stream, url, (target) => calls.push(target));
+  stream.write(`Preview: ${url}\nEditor: ${url}_author/\n`);
+  assert.deepEqual(calls, []);
+  stream.write("Preview ready: http://127.0.");
+  stream.write("0.1:4330/\n");
+  stream.write(`Preview ready: ${url}\n`);
+  assert.deepEqual(calls, [url]);
+  stream.end();
+  const { EventEmitter } = require("node:events");
+  let invocation;
+  openBrowser(
+    url,
+    (...args) => {
+      invocation = args;
+      const child = new EventEmitter();
+      child.unref = () => {};
+      return child;
+    },
+    "darwin",
+  );
+  assert.deepEqual(invocation, ["open", [url], { stdio: "ignore" }]);
+});

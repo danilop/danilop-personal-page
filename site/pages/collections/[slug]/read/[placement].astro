@@ -21,7 +21,17 @@ const { parent, position, total } = readingContext(c, n.id);
 const original = site.articles.find((p) => p.id === n.pieceId);
 ---
 
-<Layout title={n.title} canonical={c.url} description={c.summary}>
+<Layout
+  title={n.title}
+  canonical={c.url}
+  description={n.summary ?? c.summary}
+  article={{
+    id: n.pieceId,
+    language: n.language,
+    publishedAt: n.publishedAt,
+    updatedAt: n.updatedAt,
+  }}
+>
   <article class="reading">
     <header class="article-heading">
       <p class="eyebrow">

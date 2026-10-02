@@ -96,10 +96,15 @@ through a Markdown extension. It is not a promise of compatibility with every
 Markdown viewer. Plain prose, headings, links, lists, and fences remain ordinary
 Markdown. Unsupported directives must produce a clear export error.
 
-Publishing a standalone piece requires an explicit `publishedAt` date. Optional
-`updatedAt` marks a substantive revision. Removing `draft: true` (or setting it to `false`) makes the
-piece eligible only on its declared surfaces. `shortCode` is optional for public
-pieces; drafts may reserve a code without activating it.
+Publishing a standalone piece requires a slug. The local editor's first published
+save (or `npm run article:publish -- <piece-id>`) assigns `publishedAt` automatically.
+This field is publication metadata, never a drafting date. Dates accept
+`YYYY-MM-DD` for historical content or ISO timestamps with seconds and an explicit
+timezone; new local publications use UTC timestamps. Optional `updatedAt` marks a
+substantive revision. Removing `draft: true` (or setting it to `false`) makes the
+piece eligible only on its declared surfaces. When editing files directly,
+assign `publishedAt` at publication too; a release build rejects a visible article
+without it. `shortCode` is optional; drafts may reserve a code without activating it.
 
 Bodies omit H1 because the title comes from metadata. During book assembly, a
 piece title becomes a section heading and body headings are shifted beneath it.
@@ -159,6 +164,23 @@ currently uses the built-in KaTeX pipeline. Third-party publication/export suppo
 must be checked separately for each destination.
 
 ## 3. Collections and placements
+
+Collections and books can have an explicit optional web cover:
+
+```yaml
+cover:
+  path: assets/cover-example.png
+  alt: Blue ink illustration of a mechanical calculator and handwritten notes
+```
+
+The path is relative to the collection YAML's directory and must be a PNG, JPEG
+or WebP beneath its `assets/` directory, without traversal or absolute paths.
+The nonempty description is limited to 1,000 characters. The Images panel's
+**Use as cover** writes a content-descriptive asset name with a checksum suffix and updates this field in unsaved
+editor text. Save commits the local source change; it does not deploy. Remove
+the entire `cover` field to clear it. Import carries the referenced asset.
+The cover is used on the collection overview and featured homepage entry,
+independently of chapter order. It does not configure print/ebook or social covers.
 
 ```yaml
 schemaVersion: 1
@@ -522,10 +544,9 @@ fonts are Newsreader/Georgia and Inter/system-ui. The HTTPS origin and deploymen
 base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.yaml` contains
 optional lead, recentCount, elsewhereCount, and selected collection IDs.
 `lead` accepts a piece or collection ID. An unavailable draft feature falls back to
-the newest visible piece; unknown IDs fail validation. Publication dates determine
-latest order; undated collection pieces follow dated pieces. Draft preview dates
-are provisional only. Set `publishedAt` on collection articles for meaningful
-chronological discovery.
+the newest visible piece; unknown IDs fail validation. Saved publication timestamps
+determine latest order, including collection-only articles. Draft preview dates
+are provisional only. See [publication timestamps](publication-time.md).
 
 ## Browser icons
 
@@ -575,8 +596,8 @@ published eligibility; each collection and piece controls its own visibility.
 The model normalizes this to its internal status. Existing `status: draft`,
 `status: published`, and `status: retired` remain supported for compatibility.
 Use only one convention per file: specifying both `status` and `draft` fails.
-Retired content continues to use `status: retired`. Standalone publication still
-requires a valid slug and publication date. Preview includes drafts but never
+Retired content continues to use `status: retired`. Standalone publication
+requires a valid slug; the local publishing save records its timestamp. Preview includes drafts but never
 changes source flags; release builds omit them.
 
 ## Book labels and new-material announcements
@@ -607,7 +628,6 @@ entry to show **Introducing [book title]**. Omitting `kind` retains **New in…*
 This is an explicit announcement choice, not inferred from reading order or
 article age, and works for books assembled from existing writing. The Chronicles
 Introduction introduces the book; Chapter 1 retains New in.
-
 
 ## Unpublish and removed short links
 

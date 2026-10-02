@@ -17,17 +17,17 @@ Store it in your password manager for manual local delivery. A future manually
 dispatched GitHub workflow could use the protected environment described below. Do not paste it into chat, commit
 it, put it in an issue, or add it to the Amplify website build.
 
-| Service | Credential for this project | Recommended location |
-| --- | --- | --- |
-| DEV | Dedicated user API key, exposed to the delivery process as `DEV_API_KEY` | Password manager; GitHub environment `dev-publication` when configured |
-| Medium | None | Use your normal signed-in browser for import and edits |
-| Leanpub | `LEANPUB_API_KEY`, only when a real book needs the API | Password manager; inject into a local publication process when needed |
-| Google Docs / Slides | None for published embeds | Store only the public published URL in article metadata |
-| iCloud Photos | None for public shared albums | Store only the public album URL |
-| Public PDF / audio / video | None for public reading | A deliberately public HTTPS resource URL |
-| AWS blog catalogue | None for existing public article discovery | Public source URLs and metadata; no corporate publishing credentials |
-| AWS site / short links | Temporary AWS credentials through GitHub OIDC | IAM role; no static AWS access key in GitHub |
-| In-browser models | None for the configured public model | Versioned model manifest; no hosted inference account |
+| Service                    | Credential for this project                                              | Recommended location                                                   |
+| -------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| DEV                        | Dedicated user API key, exposed to the delivery process as `DEV_API_KEY` | Password manager; GitHub environment `dev-publication` when configured |
+| Medium                     | None                                                                     | Use your normal signed-in browser for import and edits                 |
+| Leanpub                    | `LEANPUB_API_KEY`, only when a real book needs the API                   | Password manager; inject into a local publication process when needed  |
+| Google Docs / Slides       | None for published embeds                                                | Store only the public published URL in article metadata                |
+| iCloud Photos              | None for public shared albums                                            | Store only the public album URL                                        |
+| Public PDF / audio / video | None for public reading                                                  | A deliberately public HTTPS resource URL                               |
+| AWS blog catalogue         | None for existing public article discovery                               | Public source URLs and metadata; no corporate publishing credentials   |
+| AWS site / short links     | Temporary AWS credentials through GitHub OIDC                            | IAM role; no static AWS access key in GitHub                           |
+| In-browser models          | None for the configured public model                                     | Versioned model manifest; no hosted inference account                  |
 
 ## DEV: local delivery and future GitHub isolation
 
@@ -182,6 +182,7 @@ secret review/rotation. These are recommendations, not verified live settings.
   protect them.
 
 See [operations](operations.md) for commands and
-[deployment access review](deployment-access-review.md) for the separate pending
-short-link infrastructure authorization. This research did not create accounts,
+[access change scope](deployment-access-review.md) for the selected private-S3/OAC
+short-link design. Its resolver and Free plan are active; optional CI-role access
+remains unconfigured. This research did not create accounts,
 environments, roles, credentials, or external posts.

@@ -1,28 +1,55 @@
-import cf from "cloudfront";
-const store = cf.kvs();
-const missing = () => ({
-  statusCode: 404,
-  headers: { "content-type": { value: "text/plain; charset=utf-8" } },
-  body: "Short link not found.",
-});
-const redirect = (target) => ({
-  statusCode: 302,
-  headers: {
-    location: { value: target },
-    "cache-control": { value: "public, max-age=60" },
-  },
-});
-async function handler(event) {
-  const request = event.request;
-  if (request.method !== "GET" && request.method !== "HEAD") return missing();
-  if (request.uri === "/") return redirect("https://www.danilop.net/");
-  const key = request.uri.replace(/^\//, "").replace(/\/$/, "");
-  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(key)) return missing();
-  try {
-    const target = await store.get(key);
-    if (!target.startsWith("https://www.danilop.net/")) return missing();
-    return redirect(target);
-  } catch {
-    return missing();
+// Destinations remain on private S3 objects; this function only translates metadata.
+function handler(event) {
+  var request = event.request;
+  var response = event.response;
+  var uri = request.uri;
+  var header = response.headers["x-amz-website-redirect-location"];
+  var target = header && header.value;
+  var validPath =
+    uri === "/" ||
+    uri === "/index" ||
+    /^\/[a-z0-9][a-z0-9-]{0,63}\/?$/.test(uri);
+  var validTarget =
+    typeof target === "string" &&
+    target.indexOf("https://www.danilop.net/") === 0 &&
+    !target.split("").some(function (character) {
+      return (
+        character.charCodeAt(0) < 33 ||
+        character.charCodeAt(0) === 127 ||
+        character === "\\"
+      );
+    });
+  delete response.headers["x-amz-website-redirect-location"];
+  // CloudFront rejects removing these read-only headers, even when rebuilding a response.
+  function safeHeaders(headers) {
+    if (response.headers.via) headers.via = response.headers.via;
+    if (response.headers.warning) headers.warning = response.headers.warning;
+    return headers;
   }
+  if (
+    (request.method !== "GET" && request.method !== "HEAD") ||
+    response.statusCode !== 200 ||
+    !validPath ||
+    !validTarget
+  ) {
+    return {
+      statusCode: 404,
+      headers: safeHeaders({
+        "cache-control": { value: "no-store" },
+        "content-type": { value: "text/plain; charset=utf-8" },
+      }),
+      body: request.method === "HEAD" ? "" : "Short link not found.",
+    };
+  }
+  // Rebuild headers so S3's entity validators and internal metadata do not leak.
+  return {
+    statusCode: 302,
+    statusDescription: "Found",
+    headers: safeHeaders({
+      location: { value: target },
+      "cache-control": { value: "no-store" },
+      "content-length": { value: "0" },
+    }),
+    body: "",
+  };
 }

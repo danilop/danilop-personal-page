@@ -19,6 +19,15 @@ external source edits rebuild the site in the background. The editor also offers
 live prose preview, undo/redo, saved versions, writing checks, editorial review
 and image tools. NLP runs on demand, not at startup. See [local authoring](local-authoring.md).
 
+Use **Preview content** in the local site banner to switch between **Show drafts**
+(the startup default) and **Published only**. Switching rebuilds the isolated
+preview and returns to the homepage. Published-only mode uses the source draft
+flags unchanged, so homepage selection, ordering, listings and collections reflect
+published content. Edit links and automatic refresh remain available; this is still
+a local authoring preview, not a production deployment. All tabs on the same server
+share the selection until restart. A failed build retains the last successful view.
+This switch is available in live preview, not read-only snapshots or release mode.
+
 ### Watch application code
 
 For development, leave this running:
@@ -27,12 +36,23 @@ For development, leave this running:
 ./preview.sh
 ```
 
-The executable wrapper runs `npm run preview -- --watch` from the repository
+The executable wrapper runs `npm run preview -- --watch --open` from the repository
 directory and selects the Node version in `.nvmrc` through nvm when needed.
 Complete the [development setup](../README.md#develop) once first; the wrapper
 does not install Node or dependencies. You can launch it by its full path from
 any directory. Extra arguments are forwarded: `./preview.sh --port 4330` or
 `./preview.sh --help`.
+
+After the first successful site build it opens the homepage in your default
+browser, normally in a new tab according to browser preferences. It opens only
+once per invocation, even when watch mode restarts the server. Use
+`./preview.sh --no-open` to disable this. For the npm command, add `--open` to
+request the same behaviour. Help and build-only runs never open a browser.
+Opening failure leaves the preview running and prints the URL for manual use.
+
+Start at the homepage and follow **Edit** on a piece when needed. The
+`/_author/` URL remains a direct shortcut to the content list and settings;
+opening it separately is optional.
 
 The existing content/publishing/template/asset watcher still rebuilds the site.
 Node's native watch mode additionally restarts the editor server for changes to

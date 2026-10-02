@@ -28,7 +28,11 @@ test(
       path.join(fixture.dir, "publishing/infrastructure.json"),
       JSON.stringify({
         bucket: "fixture-bucket",
-        kvsArn: "fixture-kvs",
+        schemaVersion: 2,
+        resolver: "s3-oac",
+        distributionId: "fixture-distribution",
+        shortOrigin: "https://short.example.com",
+        canonicalOrigin: siteConfig.url,
         amplifyAppId: "fixture-app",
       }),
     );
@@ -41,6 +45,10 @@ test(
       CLI_FIXTURE_CONFIG: configFile,
       GITHUB_SHA: "1".repeat(40),
       DEV_API_KEY: "fixture",
+      NOTES_LINKS_CONFIG: path.join(
+        fixture.dir,
+        "publishing/infrastructure.json",
+      ),
     };
     delete env.GITHUB_ACTIONS;
     delete env.PUBLICATION_BUCKET;
@@ -81,13 +89,19 @@ test(
     ]);
     assert.match(published.output, /Published 1 alias changes and 1 removals/);
     const updates = published.calls.filter(
-      (c) => c.type === "UpdateKeysCommand",
+      (c) =>
+        c.type === "PutObjectCommand" &&
+        String(c.input?.Key).startsWith("redirects/"),
     );
     assert.equal(updates.length, 2);
     assert.equal(published.calls.at(-1)!.type, "DeleteObjectCommand");
     assert(
       published.calls.findIndex((c) => c.url?.includes("/build.json")) <
-        published.calls.findIndex((c) => c.type === "UpdateKeysCommand"),
+        published.calls.findIndex(
+          (c) =>
+            c.type === "PutObjectCommand" &&
+            String(c.input?.Key).startsWith("redirects/"),
+        ),
     );
     const mediaConfig = path.join(fixture.dir, "media-fixture.json");
     await fs.writeFile(

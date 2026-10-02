@@ -2,8 +2,9 @@ export type ArticleData = {
   id: string;
   title: string;
   summary: string;
+  language?: string;
   url: string;
-  publishedAt: string;
+  publishedAt?: string;
   updatedAt?: string;
   tags: string[];
   html: string;
@@ -11,6 +12,7 @@ export type ArticleData = {
   collections: { title: string; url: string }[];
 };
 export type CollectionData = {
+  cover?: { src: string; alt: string; width: number; height: number };
   id: string;
   title: string;
   summary: string;
@@ -28,6 +30,10 @@ export type CollectionData = {
     html: string;
     pieceId?: string;
     tags?: string[];
+    language?: string;
+    summary?: string;
+    publishedAt?: string;
+    updatedAt?: string;
     depth: number;
   }[];
 };
@@ -43,6 +49,10 @@ export type ArchiveRecord = {
   kind: string;
 };
 export type CompiledSite = {
+  social?: {
+    default: import("./social-preview").SocialImage;
+    pages: Record<string, import("./social-preview").SocialImage>;
+  };
   homeWriting?: import("./homepage").HomeEntry[];
   authoring?: { pieces: string[]; collections: string[]; date: string };
   icons: { svg: string; ico: string; apple: string };

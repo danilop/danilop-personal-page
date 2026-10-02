@@ -27,6 +27,16 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
     </h1>
     <p>{c.summary}</p>
   </header>
+  {c.cover && (
+    <div class="article-art">
+      <img
+        src={c.cover.src}
+        alt={c.cover.alt}
+        width={c.cover.width}
+        height={c.cover.height}
+      />
+    </div>
+  )}
   <div class="prose collection-intro" set:html={c.introduction} />
   {first && c.ordered && (
     <p class="collection-start">

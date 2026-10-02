@@ -367,7 +367,7 @@ export async function renderDocument(
       if (v.type === "image") {
         if (/^https?:/.test(v.url)) {
           safeUrl(v.url);
-        } else v.url = await assets.copy(piece.dir, v.url);
+        } else v.url = await assets.copy(piece.dir, v.url, true);
         if (!v.alt)
           throw Error(`Image requires alternative text in ${piece.id}`);
       }

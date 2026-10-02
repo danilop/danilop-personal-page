@@ -229,6 +229,13 @@ avoiding an undefined-variable failure during recovery.
 
 ## Upgrades and references
 
+The 2026-10-01 refresh moves the shared finding/range and repetition helpers into
+`lib/`; browser URLs are still allowlisted under `/_author/`. Core imports no longer
+cross into the authoring entrypoints. Knip explicitly lists the two shared helpers
+as classic-script roots because the server loads them through script tags. No
+architecture rule or unused-code threshold has been relaxed.
+See [dependency versions and compatibility exceptions](dependencies-and-hosting.md).
+
 Upgrade deliberately: query current stable releases, check Node/TypeScript/plugin
 compatibility, update exact npm versions/lockfile, re-resolve Python requirements
 with `uv pip compile --generate-hashes`, review native pins, then rerun the complete

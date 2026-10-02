@@ -91,7 +91,8 @@ captions, references, renderer choices, and publication-specific alternatives.
 - Provide static/linked alternatives for interactive content on other platforms.
 - Check public embed permissions while signed out.
 - Save generated illustrations with their briefs and review locally. The
-  [Codex image workflow](image-authoring-workflow.md) remains proposed.
+  [Codex image workflow](image-authoring-workflow.md) is implemented locally;
+  insertion and Save do not upload to S3.
 
 For externally stored images and PDFs, use the [media upload workflow](media-storage.md):
 preview locally, upload with `npm run media`, verify the public URL, then use the
@@ -100,6 +101,11 @@ the public base URL is configured once. The local workflow below remains support
 
 Commit selected source assets. Build output and rejected image candidates do not
 belong in the publication commit.
+
+This is the current workflow. Moving managed editorial binaries out of Git,
+recording their checksums in a manifest and coordinating upload with push is
+[proposed](asset-release-design.md). Do not Git-ignore existing source images yet:
+current deployment builds still need their bytes in the checkout.
 
 ## 3. Preview and approve locally
 
@@ -149,26 +155,50 @@ never authorize a send on commit, push, or tag.
 
 After editorial and visual approval:
 
-1. Remove `draft: true` (or set `draft: false`) from the pieces and collection
-   being released. Supply a final `publishedAt` date for standalone articles.
+1. Clear Draft and Save for each article in the local editor, or run
+   `npm run article:publish -- <piece-id>`. This sets the first `publishedAt`
+   timestamp automatically. Enable the collection separately if needed.
+   Standalone articles require a slug.
    For legacy files, replace `status: draft` with `draft: true` during authoring;
    do not combine the two fields.
 2. Optionally select the article or collection in `publishing/home.yaml` and
    reserve a `shortCode` or alias. Short links are not required to publish.
 3. Rebuild and review any changes made since the preview.
+   The build checks [social preview metadata and image bytes](social-previews.md).
 4. Review the Git diff; commit the article, source assets, relevant configuration,
    and affected documentation. Push and merge the reviewed change into `main`.
 5. Wait for Amplify and GitHub’s live-deployment verification to pass. Use
    `npm run verify:deployment -- --wait` for the same check locally, then review
    the published article and its media in the browser.
 
+After deployment, use `npm run verify:social -- <full-url> <active-short-url>` to
+check crawler-visible metadata, image delivery and redirect parity. An active short
+URL requires the separate reviewed resolver setup; metadata alone does not activate it.
+
 A push to `main` triggers Amplify; a local commit does not. The original snapshot
 ships with the new website. The separate Amplify branch preview requires a manual release.
+
+The current push/build flow has no managed remote-asset manifest or availability
+gate. The proposed asset release operation checks clean source state, uploads
+and verifies the committed dependency set, rechecks HEAD and then pushes; Amplify
+must independently verify its checked-out commit. See
+[release gates](asset-release-design.md#release-gate). These steps are not commands
+available today.
 
 Draft flags control website publication, not repository access. This repository
 is public: pushing a draft makes its source readable on GitHub even while
 `draft: true` excludes it from the website. Keep confidential writing in an
 external local library until it can be shared.
+
+### Publication timestamp — implemented locally, not deployed
+
+Local publication saves a UTC `publishedAt` timestamp in the article's frontmatter.
+Commit this together with the draft-state change and push to `main`. Amplify builds
+and delivers the dated article in one deployment; CI verifies delivery without
+creating another commit. Public listings and RSS use the saved timestamp. Edits,
+unpublishing and republishing retain it. Local draft saves and previews do not
+assign publication times. Actual delivery may occur later than the local publish
+action. See [publication timestamps](publication-time.md).
 
 ## 5. Manually publish an external copy, when wanted
 
@@ -209,9 +239,14 @@ Preserve `.publication-state/` and its backups: this private local ledger record
 remote IDs and prevents duplicates. Exports link directly to the root website.
 Unsupported embeds use alternatives or block required delivery.
 
-Short links are separate: `npm run publish:links` previews aliases. After cloud
-setup, verified website deployment can activate them automatically. No DEV key
-is involved and no external article is sent.
+Short links are separate: private S3/OAC infrastructure and CloudFront Free pricing
+are active. In the editor, use **Short links** to reserve a code; commit/push saved
+content and reservations, wait for Amplify, then use **Publish saved redirects**
+and **Check live links**. `npm run publish:links` previews mappings and
+`--apply --wait` publishes them after exact deployment verification. Draft aliases
+remain inactive. Automatic CI reconciliation requires both private configuration
+and a scoped role and is not enabled by this task. No DEV key is involved and no
+external article is sent. See [short-link design](short-link-design.md).
 
 ## 6. Release a book edition, when needed
 
@@ -245,8 +280,8 @@ and synchronized with workflow changes.
 ## Homepage placement
 
 New visible articles enter homepage/ Writing discovery automatically, including
-collection-only pieces. Use `publishedAt` for latest ordering; undated collection
-pieces follow dated ones. Set `lead` in `publishing/home.yaml` to a piece or
+collection-only pieces. Saved `publishedAt` timestamps determine latest ordering;
+release builds reject visible articles without dates. Set `lead` in `publishing/home.yaml` to a piece or
 collection ID only when an editorial feature is desired. A featured book starts
 at its first readable piece and keeps its articles in recent writing. A draft
 feature is ignored in release output until visible, with latest content as fallback.

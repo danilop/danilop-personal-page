@@ -2,11 +2,30 @@
 (() => {
   const defaults =
     "Address this finding only if a change improves the passage. Prefer the smallest edit that preserves meaning, factual claims, uncertainty, voice and language variant. Keep technical terms, citations, quotations, links and code intact. Avoid awkward synonyms, stock phrasing, rhetorical flourishes and unsupported claims. Explain briefly why the change helps. If the original is better, recommend keeping it.";
+  const batchDefaults =
+    "Complete a full pass over every repetition group and affected paragraph. Return all worthwhile edits together, not just the first or strongest suggestion. Follow the selected approach for the extent of each edit; it never limits the number of worthwhile fixes. Consider distance, paragraph and section context, repeated explanations, technical terms, ordinary grammar and deliberate callbacks. Keep useful repetition and group overlapping flags. Assess every target and give a specific keep/change reason. Check the combined proposed article for remaining relevant fixes before returning it. Preserve meaning, original language variant, humour, citations and uncertainty. Do not invent edits to reach a quota; no changes is a valid result.";
+  const instructionKey = () =>
+    finding?.repetitions
+      ? "author-repetition-instructions"
+      : "author-fix-instructions";
+  const instructionDefaults = () =>
+    finding?.repetitions ? batchDefaults : defaults;
   const panel = document.createElement("section");
   panel.id = "fix-panel";
   panel.hidden = true;
   panel.innerHTML = `<button id="fix-back" class="quiet">← Back to findings</button><h2>Suggest a fix</h2><p id="fix-issue"></p><label>Passage<select id="fix-occurrence"></select></label><blockquote id="fix-quote"></blockquote><div class="review-controls"><div id="fix-agents" role="group" aria-label="Compare agents"><strong>Compare agents</strong></div><label>Approach<select id="fix-approach"><option>Minimal edit</option><option>Rephrase</option><option>Assess first</option></select></label></div><details><summary>Customize instructions</summary><label>Instructions<textarea id="fix-instructions"></textarea></label><button id="fix-reset">Reset to default</button><label><input id="fix-remember" type="checkbox"> Remember my instructions</label><label>Context<select id="fix-context"><option value="paragraphs">Surrounding paragraphs</option><option value="article">Whole article</option></select></label><label>Model (optional)<input id="fix-model" placeholder="Agent default"></label><button id="fix-exact">View exact request</button><pre id="fix-prompt" hidden></pre></details><p><small id="fix-disclosure"></small></p><button id="fix-run">Find a fix</button> <button id="fix-cancel" hidden>Cancel</button><p id="fix-notice" role="status" aria-live="polite"></p><section id="fix-result" hidden><h3>Proposed change</h3><label hidden>Compare proposals<select id="fix-attempt"></select></label><div id="fix-proposal-tabs" class="review-controls" role="group" aria-label="Agent proposals"></div><p id="fix-summary"></p><div id="fix-changes"></div><label>Direction for another attempt (optional)<input id="fix-direction" maxlength="3000" placeholder="For example: keep the original rhythm"></label><div class="review-controls"><button id="fix-apply">Apply to editor</button><button id="fix-again">Try again</button><button id="fix-keep">Keep original</button></div><small>Suggestions are checked locally before applying. Changes remain unsaved.</small><button id="fix-recheck">Recheck writing</button></section>`;
   $("review-panel").append(panel);
+  const approachHelp = document.createElement("small");
+  approachHelp.id = "fix-approach-help";
+  approachHelp.textContent =
+    "Keep each edit small. Return all worthwhile fixes together.";
+  approachHelp.hidden = true;
+  $("fix-approach").closest("label").append(approachHelp);
+  $("fix-approach").setAttribute("aria-describedby", approachHelp.id);
+  const coverage = document.createElement("details");
+  coverage.id = "fix-coverage";
+  coverage.hidden = true;
+  $("fix-summary").after(coverage);
   const manualActions = document.createElement("div");
   manualActions.className = "review-controls";
   const editMyself = el("button", "Edit myself");
@@ -44,6 +63,7 @@
   supplied.innerHTML = `<p id="fix-supplied-hint"></p><blockquote id="fix-supplied-text"></blockquote><p id="fix-question"></p><label hidden>Your answer<textarea id="fix-answer" maxlength="6000"></textarea></label><label>Passage to revise<select id="fix-replacement-scope"></select></label>`;
   $("fix-issue").after(supplied);
   let suppliedProposal = null;
+  let repetitionRows = [];
   const isEditorialFinding = (f) =>
     !!(f.suggestion || f.replacement || f.question);
   const agentLabel = (a) =>
@@ -246,7 +266,7 @@
                 details.append(
                   el(
                     "p",
-                    `${f.rule}: ${f.message}${f.excerpt ? " — “" + f.excerpt + "”" : ""}`,
+                    `${f.rule}: ${f.message}${f.excerpt ? " — “" + window.displayFindingExcerpt(f.excerpt) + "”" : ""}`,
                   ),
                 );
             }
@@ -354,7 +374,9 @@
     requestState(busy, applied);
     applyState(busy, applied);
     $("fix-disclosure").textContent =
-      "Sends the selected passage and " +
+      (finding?.repetitions
+        ? "Sends the repetition list and "
+        : "Sends the selected passage and ") +
       ($("fix-context").value === "article"
         ? "whole article"
         : "surrounding paragraphs") +
@@ -362,7 +384,7 @@
       (selectedAgents()
         .map((a) => ({ claude: "Claude Code", codex: "Codex", pi: "Pi" })[a])
         .join(" and ") || "the selected agents") +
-      ". Each selected agent makes a separate request and uses its account allowance.";
+      ". Each selected agent uses its account allowance. Invalid output is retried once before showing a proposal.";
     if (applied && !panel.hidden)
       note(
         editor.value === appliedValue && file === capturedFile
@@ -393,11 +415,28 @@
       approach: $("fix-approach").value,
       context: $("fix-context").value,
       targets,
+      repetitions: repetitionRows,
       direction: $("fix-direction").value,
       previous: attempts.length
         ? JSON.stringify(attempts[Number($("fix-attempt").value) || 0].result)
         : "",
     };
+  }
+  function occurrenceTargets(chosen) {
+    const selected = [];
+    for (const l of chosen) {
+      if (!l || finding.verified === false) continue;
+      const r = window.findingRange(captured, l);
+      if (
+        r.end > r.start &&
+        !selected.some((t) => t.start === r.start && t.end === r.end)
+      )
+        selected.push({ ...r, before: captured.slice(r.start, r.end) });
+    }
+    selected.sort((a, b) => a.start - b.start);
+    if (selected.some((t, i) => i && selected[i - 1].end > t.start))
+      throw Error("These matches overlap. Choose one occurrence.");
+    return selected;
   }
   async function choose() {
     ++checkGeneration;
@@ -428,21 +467,23 @@
     if (sources[file] && (await digest(captured)) !== sources[file])
       throw Error("This finding is out of date. Rerun the review.");
     targets = [];
-    for (const l of chosen) {
-      if (!l || finding.verified === false) continue;
-      const r = window.findingRange(captured, l);
-      if (
-        r.end > r.start &&
-        !targets.some((t) => t.start === r.start && t.end === r.end)
-      )
-        targets.push({ ...r, before: captured.slice(r.start, r.end) });
-    }
-    targets.sort((a, b) => a.start - b.start);
-    if (targets.some((t, i) => i && targets[i - 1].end > t.start))
-      throw Error("These matches overlap. Choose one occurrence.");
+    repetitionRows = [];
+    if (finding.repetitions) {
+      repetitionRows = finding.repetitions.map((row) => ({
+        example: row.example,
+        n: row.n,
+        locations: row.locations.map((l) => {
+          const range = window.findingRange(captured, l);
+          return { ...range, text: captured.slice(range.start, range.end) };
+        }),
+      }));
+      targets = window.repetitionBatch(captured, repetitionRows).targets;
+    } else targets = occurrenceTargets(chosen);
     $("fix-quote").textContent =
-      targets.map((t) => t.before).join(" … ") ||
-      finding.excerpt ||
+      (finding.repetitions
+        ? `${repetitionRows.length} groups across ${targets.length} ${targets.length === 1 ? "paragraph" : "paragraphs"}. The full article provides context; only worthwhile edits should be proposed.`
+        : targets.map((t) => t.before).join(" … ")) ||
+      window.displayFindingExcerpt(finding.excerpt) ||
       "No verified prose target. The agent can suggest next steps.";
     attempts = [];
     $("fix-changes").replaceChildren();
@@ -452,7 +493,11 @@
     else {
       suppliedProposal = null;
       supplied.hidden = true;
-      note("Adjust the instructions if needed, then find a fix.");
+      note(
+        finding.repetitions
+          ? "Choose an agent, then review all repetitions together. Keeping the original wording is a valid result."
+          : "Adjust the instructions if needed, then find a fix.",
+      );
     }
     state();
   }
@@ -487,6 +532,7 @@
       ...suppliedProposal.options.map((o, i) => new Option(o.label, String(i))),
     );
     targets = [];
+    repetitionRows = [];
     if (ready) useSupplied(0);
     else {
       const index = Math.max(
@@ -545,7 +591,9 @@
       suppliedProposal?.options[Number($("fix-replacement-scope").value)];
     targets = target ? [target] : [];
     $("fix-quote").textContent =
-      target?.before || finding.excerpt || "No verified passage.";
+      target?.before ||
+      window.displayFindingExcerpt(finding.excerpt) ||
+      "No verified passage.";
     note(
       finding.question
         ? "Your answer is needed before drafting an edit."
@@ -558,6 +606,44 @@
     clearDraft();
     state();
   };
+  function updateApproachHelp() {
+    approachHelp.hidden = !finding?.repetitions;
+    approachHelp.textContent =
+      $("fix-approach").value === "Rephrase"
+        ? "Reshape sentences where useful, preserving meaning and voice. Return all worthwhile fixes together."
+        : "Keep each edit small. Return all worthwhile fixes together.";
+  }
+  $("fix-approach").onchange = updateApproachHelp;
+  function configureBatch(f) {
+    const batch = !!f.repetitions;
+    const previous = $("fix-approach").value;
+    const choices = batch
+      ? [
+          ["Minimal edit", "Small changes per passage"],
+          ["Rephrase", "Rephrase where useful"],
+        ]
+      : [
+          ["Minimal edit", "Minimal edit"],
+          ["Rephrase", "Rephrase"],
+          ["Assess first", "Assess first"],
+        ];
+    $("fix-approach").replaceChildren(
+      ...choices.map(([value, label]) => new Option(label, value)),
+    );
+    $("fix-approach").value = choices.some(([value]) => value === previous)
+      ? previous
+      : "Minimal edit";
+    updateApproachHelp();
+    if (batch) {
+      panel.querySelector("h2").textContent = "Review all repetitions";
+      $("fix-run").textContent = "Review repetitions";
+      $("fix-context").value = "article";
+    }
+    $("fix-occurrence").closest("label").hidden = batch;
+    $("fix-context").disabled = batch;
+    $("fix-instructions").value =
+      localStorage.getItem(instructionKey()) || instructionDefaults();
+  }
   window.openFindingFix = async (f, mapping, button, hashes, actions = {}) => {
     if (running) {
       note("A request is running. Cancel it before opening another finding.");
@@ -576,6 +662,7 @@
     appliedValue = null;
     suppliedProposal = null;
     targets = [];
+    repetitionRows = [];
     clearDraft();
     state();
     findingActions = actions;
@@ -589,6 +676,7 @@
     $("fix-run").textContent = existing
       ? "Generate alternatives"
       : "Find a fix";
+    configureBatch(f);
     $("fix-again").textContent = existing
       ? "Generate alternatives"
       : "Try again";
@@ -603,11 +691,7 @@
     $("review-panel").scrollTop = 0;
     $("fix-issue").textContent =
       (f.rule || "Finding").replaceAll("-", " ") + " — " + (f.message || "");
-    $("fix-instructions").value =
-      localStorage.getItem("author-fix-instructions") || defaults;
-    $("fix-remember").checked = !!localStorage.getItem(
-      "author-fix-instructions",
-    );
+    $("fix-remember").checked = !!localStorage.getItem(instructionKey());
     $("fix-direction").value = "";
     $("fix-answer").value = "";
     $("fix-prompt").hidden = true;
@@ -617,7 +701,9 @@
           new Option(
             (l.piece || "Current article") +
               " · " +
-              (l.text || l.excerpt || "line " + l.line).slice(0, 80) +
+              window
+                .displayFindingExcerpt(l.text || l.excerpt || "line " + l.line)
+                .slice(0, 80) +
               " · " +
               (i + 1),
             String(i),
@@ -681,17 +767,14 @@
     });
   $("fix-context").onchange = state;
   $("fix-reset").onclick = () => {
-    $("fix-instructions").value = defaults;
+    $("fix-instructions").value = instructionDefaults();
     if ($("fix-remember").checked)
-      localStorage.setItem("author-fix-instructions", defaults);
+      localStorage.setItem(instructionKey(), instructionDefaults());
   };
   const remember = () => {
     if ($("fix-remember").checked)
-      localStorage.setItem(
-        "author-fix-instructions",
-        $("fix-instructions").value,
-      );
-    else localStorage.removeItem("author-fix-instructions");
+      localStorage.setItem(instructionKey(), $("fix-instructions").value);
+    else localStorage.removeItem(instructionKey());
   };
   $("fix-remember").onchange = remember;
   $("fix-instructions").oninput = remember;
@@ -740,6 +823,34 @@
         (a.checkLabel || "Not checked");
     });
   }
+  function renderCoverage(assessments) {
+    coverage.replaceChildren();
+    coverage.hidden = !assessments?.length;
+    if (!coverage.hidden) {
+      coverage.append(
+        el(
+          "summary",
+          `${assessments.length} passages assessed — see keep/change reasons`,
+        ),
+      );
+      for (const assessment of assessments) {
+        const item = el("p", "");
+        const passage = targets[assessment.target]?.before || "";
+        item.append(
+          el(
+            "strong",
+            assessment.decision === "change" ? "Propose a change: " : "Keep: ",
+          ),
+          document.createTextNode(
+            window.displayFindingExcerpt(passage).slice(0, 100) +
+              " — " +
+              assessment.reason,
+          ),
+        );
+        coverage.append(item);
+      }
+    }
+  }
   function renderAttempt() {
     const a = attempts[Number($("fix-attempt").value)];
     if (!a) return;
@@ -752,6 +863,7 @@
     $("fix-result").hidden = false;
     $("fix-settings").open = false;
     $("fix-summary").textContent = a.result.summary;
+    renderCoverage(a.result.assessments);
     $("fix-changes").replaceChildren();
     for (const c of a.result.changes) {
       const box = el("section", "");
@@ -861,28 +973,26 @@
     );
     running = null;
     const errors = [];
+    const completed = results.filter((r) => r.status === "fulfilled").length;
     for (let i = 0; i < results.length; i++) {
       const r = results[i];
       if (r.status === "fulfilled") attempts.push(r.value);
       else errors.push(r.reason.message);
     }
-    proposalChoices(
-      Math.max(
-        0,
-        attempts.length -
-          results.filter((r) => r.status === "fulfilled").length,
-      ),
-    );
+    proposalChoices(Math.max(0, attempts.length - completed));
     renderAttempt();
     updateTabs();
     $("fix-result").scrollIntoView({ block: "start" });
     state();
-    note(
-      (stale()
-        ? "Text changed; suggestions cannot be applied. "
-        : "Compare the named proposals, then select one to apply. ") +
-        errors.join(" · "),
-    );
+    let message = "Review the proposal before applying it. ";
+    if (!completed)
+      message =
+        "No new proposal was returned. " +
+        (attempts.length ? "Earlier proposals are still available. " : "");
+    else if (completed > 1)
+      message = "Compare the named proposals, then select one to apply. ";
+    if (stale()) message = "Text changed; suggestions cannot be applied. ";
+    note(message + errors.join(" · "));
   }
   $("fix-run").onclick = run;
   $("fix-again").onclick = () => {

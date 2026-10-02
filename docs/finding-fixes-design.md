@@ -1,6 +1,6 @@
 # Suggest a fix — interaction design
 
-Status: implemented locally, updated 2026-09-25, with the limitations below. Explicit
+Status: implemented locally, updated 2026-10-01, with the limitations below. Explicit
 saving and publication remain separate.
 
 ## Entry and visual treatment
@@ -58,7 +58,7 @@ new editorial review implicitly.
 ## Prepare
 
 Use **Compare agents** checkboxes (installed Claude Code, Codex or Pi), selecting
-one or more, and **Approach**:
+one or more, and **Approach**. For individual findings:
 
 - **Minimal edit** (default): smallest defensible change.
 - **Rephrase**: allow a new sentence structure while preserving meaning.
@@ -95,6 +95,16 @@ context and approach. For repetition it asks which occurrences should remain.
 The model returns exact before/replacement pairs and a short rationale, or a
 no-change recommendation. It cannot edit files or run tools.
 
+For **Review all repetitions**, label the default approach **Small changes per
+passage** and explain: **Keep each edit small. Return all worthwhile fixes together.**
+Require a full pass over all reported cases and a keep/change assessment for every
+paragraph target. Validate complete coverage and consistency with replacements.
+Small edits must not be interpreted as a cap on their number. Keep batch preferences
+separate from single-finding preferences, including the Reset action; no edit quota.
+Offer **Rephrase where useful** as the only alternative for batch review, with
+matching helper text and prompt instructions allowing broader sentence changes.
+Omit **Assess first** here: assessment is required in both batch approaches.
+
 ## Compare and apply
 
 While running, show **Finding a fix…** with **Cancel**, leaving the source usable.
@@ -103,6 +113,14 @@ independently. Every agent receives the same snapshot and preferences. Each uses
 its own allowance. Failed requests do not discard successful proposals. Named
 proposal buttons let the author compare results; only the chosen proposal applies.
 Capture the input source and its revision.
+
+Validate generated fixes before displaying them: response schema, target indexes,
+verbatim originals and unique targets must all pass. Retry invalid output once
+with validation feedback and the unchanged request, agent and model. Keep rejected
+output out of the proposal panel. A second invalid response fails visibly without
+applying anything. Accept valid no-change responses immediately; do not retry CLI
+execution failures or cancelled jobs. Disclose that a validation retry uses the
+agent's allowance. Source validation cannot certify factual or editorial correctness.
 
 Show **Original** and **Suggested** with word-level changes, a short rationale,
 and an editable replacement field. Offer **Apply to editor**, **Try again** and

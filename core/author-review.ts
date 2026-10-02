@@ -1,3 +1,8 @@
+import {
+  structuredArgs,
+  structuredAnswer,
+  parseStructuredJSON,
+} from "./author-structured";
 import type { WorkerAnalysis } from "./quality-types";
 import { asError } from "./errors";
 import fs from "node:fs/promises";
@@ -320,14 +325,7 @@ const aiSchema = z.object({
     .max(100),
 });
 export function parseAI(text: string, s: Snapshot) {
-  const parsed = aiSchema.parse(
-    JSON.parse(
-      text
-        .trim()
-        .replace(/^```(?:json)?\s*/i, "")
-        .replace(/\s*```$/, ""),
-    ),
-  );
+  const parsed = aiSchema.parse(parseStructuredJSON(text));
   return {
     ...parsed,
     findings: parsed.findings.map((f) => {
@@ -559,13 +557,19 @@ export class Reviews {
           const prompt = await reviewPrompt(this.root, s);
           const response = await runProcess(
             command!,
-            agentArgs(r.agent!, output, r.model),
+            await structuredArgs(
+              r.agent!,
+              agentArgs(r.agent!, output, r.model),
+              aiSchema,
+              output,
+            ),
             { cwd: temp, input: prompt, signal: controller.signal },
           );
-          const answer =
-            r.agent === "codex"
-              ? await fs.readFile(output, "utf8")
-              : response.stdout;
+          const answer = await structuredAnswer(
+            r.agent!,
+            response.stdout,
+            output,
+          );
           if (!answer.trim())
             throw Error(
               "The CLI returned no review. Check authentication and model availability.",

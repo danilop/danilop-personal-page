@@ -17,6 +17,12 @@ tags:
     aliases: [python3, python-3]
 ```
 
+The registered topics are History, Computing, AI, Programming, Python, Data
+representation, Website and Notes. AI covers artificial intelligence, how it
+learns, its capabilities, applications and limitations; `artificial-intelligence`
+is an alias for `ai`. The draft *Clever Enough to Find the Loophole* uses both
+Computing and AI.
+
 IDs are lowercase words separated by hyphens. Labels are reader-facing names;
 descriptions define when a tag is appropriate. Aliases identify alternate names
 for the same concept. Duplicate IDs and names/aliases that resolve to different

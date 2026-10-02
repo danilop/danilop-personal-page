@@ -2,33 +2,35 @@
 
 Status: the root website is deployed and verified. Local tagging, book-preview,
 content-review and import additions are implemented and tested but not deployed.
-Short-link setup and real provider delivery remain pending.
-Updated: 2026-09-20.
+Short-link infrastructure is active and live-tested; article alias activation,
+deployment of the newer local changes, and real provider delivery remain pending.
+Off-repository editorial asset storage remains a proposed design.
+Updated: 2026-10-02.
 
 Danilo selected **all planned publishing capabilities before deployment**.
 The former release 1 / later releases split is superseded. Search, a site-wide
 assistant, browser editing, and subscriptions remain separate future decisions.
 
-| Capability | Implementation | Verification / remaining gate |
-| --- | --- | --- |
-| Markdown, collections, contextual sections | `core/model.ts`, `core/render.ts` | Fixture assembly, reuse, visibility and reference tests |
-| Book-only openings/closings and front/back matter | Collection placements and surface permissions | Private fixture; public-output exclusion checks |
-| Code, charts, tables, diagrams, math | Renderer registry; Shiki, Vega-Lite, Mermaid, D2, KaTeX | Real local renders and source/cache tests |
-| PDF, Google Docs/Slides, iCloud albums | Activation viewers and album-link adapter | URL/fallback tests; author-owned public URLs not supplied |
-| Configurable Ink & Paper | Theme registry, Shell/Home/Article templates, tokens and assets | Desktop/mobile browser review; second theme contract |
-| Earlier Work + The Original Site | Integrated catalogue and preserved dated snapshot | 307 historical records; route/link parity checks |
-| JS/WASM simulations | Experiment registry, Worker, controls, scenarios and result capture | JS/WASM parity; real browser runs/reset |
-| Local browser models | Replaceable runtime, WebLLM worker, pinned model manifest | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified |
-| Frozen editions | Markua exporter, hashed manifest, immutable output directory, public edition routes | Real fixture export and tamper detection; no public edition created |
-| Leanpub | Preview/status/publication adapter for an existing book | API contract tests; live account/source/preview not configured |
-| DEV / Medium | Manual-only API and assisted adapters, durable state, mapping/review/recovery commands | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
-| `danilop.link` | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback | Compiler tests; specific infrastructure access approval pending |
-| Main deployment | Existing Amplify integration; build/check/test configuration and console fallback updated | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md) |
-| Tag vocabulary and private inventory | Registry, aliases, unique-piece usage counts, review guidance, public topic labels | Locally tested, including desktop/mobile reports; not deployed; public topic pages remain unimplemented |
-| Chronicles book pilot | Separate Introduction and Chapter 1 pages, next/previous navigation, contents and continuous view | Imported as drafts; full-site preview tested; publication pending |
-| Pre-publication content review | Local spaCy analysis, Snowball sequence counts, references, optional source baselines and declared Python examples | Current three-article corpus tested; private report and full validation evidence in [verification](verification.md); NLP is not a CI gate |
-| Content import | Canonical source selection, dependency expansion, dry-run/apply, draft defaults and controlled updates | Twelve focused tests, full validation and a real Chronicles rehearsal passed; opening imported as drafts; see [usage](content-import.md) |
-| Full-site authoring preview | Single preview command for live site/editor with all local drafts; explicit snapshot and release modes; private output isolated | Local build and selection/isolation tests; release output remains separate; see [usage](authoring-preview.md) and [verification](verification.md) |
+| Capability                                        | Implementation                                                                                                                  | Verification / remaining gate                                                                                                                                    |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Markdown, collections, contextual sections        | `core/model.ts`, `core/render.ts`                                                                                               | Fixture assembly, reuse, visibility and reference tests                                                                                                          |
+| Book-only openings/closings and front/back matter | Collection placements and surface permissions                                                                                   | Private fixture; public-output exclusion checks                                                                                                                  |
+| Code, charts, tables, diagrams, math              | Renderer registry; Shiki, Vega-Lite, Mermaid, D2, KaTeX                                                                         | Real local renders and source/cache tests                                                                                                                        |
+| PDF, Google Docs/Slides, iCloud albums            | Activation viewers and album-link adapter                                                                                       | URL/fallback tests; author-owned public URLs not supplied                                                                                                        |
+| Configurable Ink & Paper                          | Theme registry, Shell/Home/Article templates, tokens and assets                                                                 | Desktop/mobile browser review; second theme contract                                                                                                             |
+| Earlier Work + The Original Site                  | Integrated catalogue and preserved dated snapshot                                                                               | 307 historical records; route/link parity checks                                                                                                                 |
+| JS/WASM simulations                               | Experiment registry, Worker, controls, scenarios and result capture                                                             | JS/WASM parity; real browser runs/reset                                                                                                                          |
+| Local browser models                              | Replaceable runtime, WebLLM worker, pinned model manifest                                                                       | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified                                                                 |
+| Frozen editions                                   | Markua exporter, hashed manifest, immutable output directory, public edition routes                                             | Real fixture export and tamper detection; no public edition created                                                                                              |
+| Leanpub                                           | Preview/status/publication adapter for an existing book                                                                         | API contract tests; live account/source/preview not configured                                                                                                   |
+| DEV / Medium                                      | Manual-only API and assisted adapters, durable state, mapping/review/recovery commands                                          | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
+| `danilop.link`                                    | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback                                                       | S3/OAC and Free active; live resolver test passed; CI access unconfigured                                                                                        |
+| Main deployment                                   | Existing Amplify integration; build/check/test configuration and console fallback updated                                       | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md)                                    |
+| Tag vocabulary and private inventory              | Registry, aliases, unique-piece usage counts, review guidance, public topic labels                                              | Locally tested, including desktop/mobile reports; not deployed; public topic pages remain unimplemented                                                          |
+| Chronicles book pilot                             | Separate Introduction and Chapter 1 pages, next/previous navigation, contents and continuous view                               | Imported as drafts; full-site preview tested; publication pending                                                                                                |
+| Pre-publication content review                    | Local spaCy analysis, Snowball sequence counts, references, optional source baselines and declared Python examples              | Current three-article corpus tested; private report and full validation evidence in [verification](verification.md); NLP is not a CI gate                        |
+| Content import                                    | Canonical source selection, dependency expansion, dry-run/apply, draft defaults and controlled updates                          | Twelve focused tests, full validation and a real Chronicles rehearsal passed; opening imported as drafts; see [usage](content-import.md)                         |
+| Full-site authoring preview                       | Single preview command for live site/editor with all local drafts; explicit snapshot and release modes; private output isolated | Local build and selection/isolation tests; release output remains separate; see [usage](authoring-preview.md) and [verification](verification.md)                |
 
 ## Remaining release work
 
@@ -38,13 +40,15 @@ acceptance checks. See [cross-posting](cross-posting.md#media-portability-clarif
 
 1. Local regression/browser checks are recorded in [verification](verification.md).
    Repeat affected checks only when further release changes require them.
-2. Resolve the pending [specific access approval](deployment-access-review.md).
-   Automatic approval review blocked the initial setup; no short-link or access mutation occurred.
-3. Apply approved setup, test resolver behavior and alias ownership/recovery.
+2. The [private-S3/OAC design](short-link-design.md), local editor controls and
+   Free-plan enrolment are implemented; the resolver, DNS and plan are active.
+   Live TTL, privacy, updates, redirect parity and disposable cleanup passed.
+3. Commit/deploy eligible source and saved reservations before activating article
+   aliases. Optional automatic reconciliation still requires scoped CI access.
    Before adding live external-publishing credentials, implement the isolation
    and authentication checks in [credentials and access](credentials-and-access.md).
    This includes a separate protected DEV environment and matching delivery role;
-   the original short-link role proposal remains unchanged.
+   the earlier KVS/GitHub-role proposal is superseded by the new access scope.
 4. The root release is already live. For the newer local changes, obtain release
    approval before committing/pushing to `main`; local verification is not deployment.
 5. After any further deployment, verify the exact revision, homepage, article, old
@@ -84,7 +88,6 @@ cover metadata, automatic CDN upload and persistent job-progress recovery remain
 future work. See [image workflow](image-authoring-workflow.md) and
 [verification](verification.md).
 
-
 ### Local article lifecycle (2026-09-24)
 
 Implemented locally: Unpublish to draft, confirmed draft-only deletion with
@@ -107,7 +110,7 @@ sharing; private social composition; and live handoff/resolver verification.
 
 Public sharing never invokes AI. Private generation preserves the article's tone
 and language. The planning change itself implemented no new functionality;
-the analysis milestone below has since started. Platform text/thread handoff limitations and unresolved live short-link
+the analysis milestone below has since started. Platform text/thread handoff limitations and article-specific short-link
 readiness are explicit release gates, not assumed capabilities.
 
 ### Code-analysis gate — implemented locally, 2026-09-25

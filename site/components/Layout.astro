@@ -1,5 +1,5 @@
 ---
-import { siteUrl } from "../../core/deployment.mjs";
+import { localPath, siteUrl } from "../../core/deployment.mjs";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/newsreader/400.css";
@@ -21,9 +21,14 @@ const {
   description = config.description,
   canonical = Astro.url.pathname,
   article,
+  language = article?.language ?? "en",
 } = Astro.props;
 const Shell = themes[config.theme].Shell;
 const url = siteUrl(canonical, config.url);
+const socialImage =
+  site.social?.pages[localPath(Astro.url.pathname)] ?? site.social?.default;
+const imageUrl = socialImage ? siteUrl(socialImage.src, config.url) : undefined;
+const locale = language.match(/^([a-z]{2,3})-([a-z]{2})(?:-|$)/i);
 const previewLinks = site.authoring
   ? [
       ...site.collections
@@ -54,6 +59,8 @@ const jsonLd = {
   headline: title,
   description,
   url,
+  inLanguage: language,
+  ...(imageUrl ? { image: imageUrl } : {}),
   author: { "@type": "Person", name: config.name },
   ...(article
     ? {
@@ -65,7 +72,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={language} prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -90,11 +97,40 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={url} />
     <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:site_name" content={config.title} />
+    {locale && (
+      <meta
+        property="og:locale"
+        content={`${locale[1].toLowerCase()}_${locale[2].toUpperCase()}`}
+      />
+    )}
+    {socialImage && (
+      <>
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image:type" content={socialImage.type} />
+        <meta property="og:image:width" content={String(socialImage.width)} />
+        <meta property="og:image:height" content={String(socialImage.height)} />
+        <meta property="og:image:alt" content={socialImage.alt} />
+      </>
+    )}
+    {article?.publishedAt && (
+      <meta property="article:published_time" content={article.publishedAt} />
+    )}
+    {article?.updatedAt && (
+      <meta property="article:modified_time" content={article.updatedAt} />
+    )}
     <meta
-      property="og:image"
-      content={siteUrl("/brand/portrait.webp", config.url)}
+      name="twitter:card"
+      content={socialImage ? "summary_large_image" : "summary"}
     />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && (
+      <>
+        <meta name="twitter:image" content={imageUrl} />
+        <meta name="twitter:image:alt" content={socialImage.alt} />
+      </>
+    )}
     <script
       is:inline
       type="application/ld+json"

@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
   publish-links:
     needs: [publication-mode, verify-deployment]
-    if: needs.publication-mode.outputs.enabled == 'true' && needs.verify-deployment.outputs.verified == 'true' && github.ref == 'refs/heads/main' && vars.PUBLICATION_ROLE_ARN != ''
+    if: needs.publication-mode.outputs.enabled == 'true' && needs.verify-deployment.outputs.verified == 'true' && github.ref == 'refs/heads/main' && vars.PUBLICATION_ROLE_ARN != '' && vars.SHORTLINK_CONFIG != ''
     permissions:
       contents: read
       id-token: write
@@ -61,4 +61,11 @@ jobs:
         with:
           role-to-assume: ${{ vars.PUBLICATION_ROLE_ARN }}
           aws-region: eu-west-1
+      - name: Prepare private short-link configuration
+        env:
+          SHORTLINK_CONFIG: ${{ vars.SHORTLINK_CONFIG }}
+        run: |
+          node -e 'const fs=require("node:fs");const path=require("node:path");const c=JSON.parse(process.env.SHORTLINK_CONFIG);if(c.resolver!=="s3-oac"||c.schemaVersion!==2)throw Error("Expected S3/OAC configuration");fs.writeFileSync(path.join(process.env.RUNNER_TEMP,"links.json"),JSON.stringify(c),{mode:0o600})'
       - run: npm run publish:links -- --apply --wait
+        env:
+          NOTES_LINKS_CONFIG: ${{ runner.temp }}/links.json

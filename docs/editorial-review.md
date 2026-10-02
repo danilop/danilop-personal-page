@@ -30,6 +30,21 @@ when the corresponding executable is found on the author server's PATH. Refresh
 rechecks installation. Installed does not mean authenticated, compatible or funded;
 CLI errors appear in the panel. Sign in through the CLI outside the editor.
 
+If Claude reports an expired OAuth session while a terminal session still works,
+check a freshly launched `claude auth status --text` in that terminal. An already
+running session does not establish that a new noninteractive process can sign in.
+Stop preview and start `./preview.sh` from the working terminal to inherit its
+current environment. Compare the executable with `type -a claude` and check
+whether the terminal uses `CLAUDE_CONFIG_DIR` or a shell alias/function; the editor
+launches the executable on its PATH directly, without an interactive shell.
+Do not paste credentials into the editor or repository. If the fresh CLI also
+reports an expired login, re-authenticate through Claude's terminal login flow.
+See [Claude authentication](https://code.claude.com/docs/en/authentication).
+
+When all fix providers fail, the panel reports that no new proposal was returned
+and retains each provider's error. It does not tell the author to compare missing
+proposals; any earlier successful proposals remain available.
+
 Running Editorial review sends the chosen source snapshot and shared review prompt
 to the selected CLI's model provider, using its account allowance. No request is
 made automatically while typing, viewing the prompt or running Writing checks.
@@ -49,6 +64,14 @@ against the snapshot, not trusted solely because the model supplied a line numbe
 Unstructured model responses remain readable as plain text, explicitly labelled
 as lacking verified locations. No-finding results are not a quality guarantee.
 
+After either kind of review, **Run writing checks again** or **Run editorial review
+again** remains beside the results. Reloading the source with **Reload file**
+refreshes review freshness and opens settings; it does not automatically run local
+checks or send a model request. An active job still disables new requests. If its
+status cannot be retrieved (for example, after a server restart), the editor marks
+the run failed, explains the error and re-enables both review tabs and retry
+controls. Late replies from a previous run cannot replace a newer run's status.
+
 **Cancel review** stops the subprocess; language checks time out after three
 minutes and CLI reviews after ten. One job per review type can run on the server;
 the UI runs one at a time. Download the current JSON report or find retained reports
@@ -64,13 +87,37 @@ Agent commands use fixed argument arrays and stdin, never shell interpolation or
 an author-supplied executable. Jobs use temporary working directories outside the
 repository, bounded output, cancellation and process timeouts.
 
-- Claude Code: print/text mode, no built-in tools or inherited MCP servers, hooks
-  disabled, no session persistence, no skills, no user/project settings sources.
-- Codex: noninteractive, read-only sandbox, no approval escalation, shell tools and
-  web search disabled, ephemeral session, user configuration/rules ignored and
-  project-document discovery disabled. Authentication is retained.
-- Pi: print/text mode, no tools, extensions, skills, prompt templates, context files
-  or persisted session.
+- Claude Code: reviews and fixes use JSON mode with schema-constrained
+  `structured_output`; illustration briefs use text mode. No built-in tools or
+  inherited MCP servers, hooks disabled, no session persistence, no skills,
+  no user/project settings sources.
+- Codex: reviews, fixes and image-generation results use `--output-schema` and
+  the final-message file; illustration briefs use plain text. Noninteractive,
+  read-only sandbox, no approval escalation, shell tools and web search disabled,
+  ephemeral session, user configuration/rules ignored and project-document
+  discovery disabled. Authentication is retained.
+- Pi: reviews and fixes use JSON event mode; illustration briefs use text mode.
+  No tools, extensions, skills, prompt templates, context files or persisted
+  session.
+
+`core/author-structured.ts` handles these data responses consistently. Claude must
+return a successful envelope with a structured result. Codex schemas are private
+files in the job's temporary directory and are removed with it; optional properties
+become required nullable fields to meet its schema requirements. Pi has no equivalent
+schema flag: the app reads the final completed assistant message only after the run
+settles, ignoring progress, thinking and superseded retry output. Its JSON event
+format does not guarantee that the answer itself conforms to the requested schema.
+Older Pi versions without the completion event need updating.
+
+All decoded answers still pass local schema validation. Exact source matches,
+duplicate-target checks and image-file validation remain necessary: valid JSON does
+not make an edit or a path trustworthy. Malformed or multiple JSON objects are never
+silently combined or selected. Failed/incomplete provider results fail the request;
+a completed editorial answer that fails content validation remains readable as an
+unstructured review with no verified findings. Fixes and image results fail without
+applying changes. Plain-text illustration briefs and browser text generation do not
+need output schemas. See
+[Claude structured output](https://code.claude.com/docs/en/headless#get-structured-output).
 
 Authentication remains the installed CLI's responsibility. Claude/Codex review
 invocations intentionally omit normal user/project customisation; specify a model
@@ -117,6 +164,84 @@ the relevant word or phrase. If an exact range or quotation cannot be matched,
 the editor places a caret at the reported line and explains the limitation; it
 does not highlight an unrelated full line. Stale findings remain non-navigable.
 
+## Review all repetitions
+
+After **Writing checks**, expand **All repeated stem sequences** and choose
+**Review all repetitions in this article**. Choose one or more installed agents
+(Claude Code, Codex or Pi), then **Review repetitions**. Opening the panel makes
+no model request. The button uses every group with at least two occurrences in
+the current article, including nested matches; it does not silently cap the list
+at the first displayed rows. Collection-wide reports are filtered to that article
+and do not send or edit its peers.
+
+Each selected agent receives the full article, the repetition groups and verified
+source positions. The prepared prompt asks it to consider approximate word and
+line distance, paragraph/section proximity, repeated explanations, technical
+terminology, experimental conditions, ordinary grammar, deliberate emphasis and
+callbacks. Raw counts are candidates, not errors. The goal is better reading,
+not fewer matches. It may keep every occurrence, and should explain important
+keep decisions as well as the changes it proposes. **View exact request** shows
+the complete prompt before sending.
+
+This is a complete pass, not a request for one representative fix. The default
+approach is labelled **Small changes per passage**, with the explanation
+**Keep each edit small. Return all worthwhile fixes together.** Minimality concerns
+the size of each change, not how many relevant cases are addressed. The prompt
+asks the agent to assess every affected paragraph, include all worthwhile edits
+at once and check the combined proposal for remaining relevant fixes. It must
+not invent changes to meet a quota; zero or one can still be a valid result.
+
+The other batch option, **Rephrase where useful**, permits restructuring sentences
+or supplied paragraphs while preserving meaning and voice. Its helper text and
+server prompt reflect that broader editing scope. **Assess first** is omitted
+from batch review because both options already assess every passage before
+proposing changes. Individual findings retain their existing three approaches.
+
+Batch instructions are remembered separately from single-finding instructions,
+so a saved instruction to fix only one finding does not carry over. **Reset to
+default** restores the complete-pass prompt when reviewing all repetitions.
+
+Overlapping phrases share one paragraph target, preventing conflicting edits to
+the same passage. Only paragraphs containing reported repetitions are editable;
+other article text provides context. Returned replacements must match those
+paragraphs exactly. Proposals remain editable and individually selectable, and
+local writing checks still precede **Apply to editor**. Apply leaves changes
+unsaved; **Save** is separate. Existing Undo and stale-source protections apply.
+
+Generated fix responses are checked before display for valid structured output,
+supplied target indexes, verbatim original passages and duplicate targets. Invalid
+output gets one automatic retry with the validation error, using the same agent,
+model, article snapshot and instructions. No rejected or partial proposal is shown.
+If the retry also fails, the UI reports the failure and applies nothing. A valid
+no-change result is accepted without retry. Cancellation and CLI execution failures
+(including authentication failures) do not trigger this retry. The extra request
+uses the selected agent's allowance. These checks establish format and source
+anchoring, not factual accuracy or editorial quality.
+
+Batch responses additionally contain a keep/change assessment and a specific
+reason for every supplied paragraph target. Coverage must be complete and unique,
+and change decisions must agree with the returned replacements. Missing assessments
+or missing promised edits fail validation and use the same bounded retry. This
+enforces explicit coverage, not the correctness of the model's editorial judgement.
+Expand **passages assessed — see keep/change reasons** in the result to inspect
+the decision for each passage. These assessments are separate from the selectable
+edits; keeping a passage does not create an edit to approve.
+
+The operation accepts up to 1,000 groups and 100 distinct paragraph targets;
+larger reports fail explicitly rather than being truncated. Rerun checks after
+editing before requesting another batch. The actual editorial choices depend on
+the selected model; a clean repetition report is not the objective.
+
+Local validation on 1 October 2026 passed all 188 tests and the production build.
+The desktop browser flow was exercised with mocked providers: open the batch,
+send the article/list, review a selective proposal, apply without saving, undo,
+and reject stale requests. Source/prompt tests cover nested matches, Unicode,
+distance, exact paragraph anchoring and valid no-change results. Live provider
+output quality was not evaluated by those tests. A subsequent live check using
+the current article and Claude Opus 5.5 verified multiple independently selectable
+edits; see [the live repetition test](verification.md#live-repetition-review--2026-10-01)
+for the result and its limitations.
+
 ## Finding-specific assistance
 
 **Review edit** opens a verified replacement already supplied in the initial review.
@@ -125,7 +250,9 @@ does not highlight an unrelated full line. Stale findings remain non-navigable.
 **Suggest a fix**. For new drafting requests, select one or more installed
 agents, customize the prepared instructions and context, then **Find a fix**.
 Each agent receives the same input and uses its account allowance. Compare named
-proposals and edit a replacement. Local writing checks automatically compare the
+proposals and edit a replacement. The same pre-display validation and one-retry
+policy described above applies to individual fix and drafting requests for all
+three providers; it does not rerun the initial Editorial review. Local writing checks automatically compare the
 selected suggestion with the original before **Apply to editor** is enabled.
 A compact summary exposes new and removed findings, with coverage/details on
 demand; warnings are advisory, failed checks can be retried. No AI request is

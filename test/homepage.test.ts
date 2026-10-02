@@ -172,3 +172,48 @@ test("introducing is explicitly assigned and does not follow reading order", () 
     ),
   );
 });
+
+test("featured article artwork follows its first rendered image and clears for imageless articles", () => {
+  const { lib, site } = fixture();
+  site.articles[0].html =
+    '<p><img src="/media/published.png" alt="Published &amp; illustrated"></p><img src="/media/second.png" alt="Second">';
+  site.collections[0].nodes[1].html =
+    '<img src="/media/chapter.png" alt="Chapter artwork">';
+  site.homeWriting = homepageWriting(site, lib);
+  assert.deepEqual(homepageSelection(site).lead?.image, {
+    src: "/media/chapter.png",
+    alt: "Chapter artwork",
+  });
+  site.collections = [];
+  site.homeWriting = homepageWriting(site, lib);
+  assert.deepEqual(homepageSelection(site).lead?.image, {
+    src: "/media/published.png",
+    alt: "Published & illustrated",
+  });
+  site.homeWriting = undefined;
+  assert.deepEqual(homepageSelection(site).lead?.image, {
+    src: "/media/published.png",
+    alt: "Published & illustrated",
+  });
+  site.articles[0].html = "<p>No illustration.</p>";
+  site.homeWriting = homepageWriting(site, lib);
+  assert.equal(homepageSelection(site).lead?.image, undefined);
+});
+
+test("featured books use only their assigned cover, independent of first article or reading order", () => {
+  const { site } = fixture();
+  site.home.lead = "book";
+  site.collections[0].nodes[1].html =
+    '<img src="/media/chapter.png" alt="Chapter">';
+  assert.equal(homepageSelection(site).lead?.image, undefined);
+  const cover = {
+    src: "/media/book.webp",
+    alt: "Book cover",
+    width: 100,
+    height: 150,
+  };
+  site.collections[0].cover = cover;
+  assert.deepEqual(homepageSelection(site).lead?.image, cover);
+  site.collections[0].nodes.reverse();
+  assert.deepEqual(homepageSelection(site).lead?.image, cover);
+});

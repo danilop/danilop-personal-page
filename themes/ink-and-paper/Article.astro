@@ -26,10 +26,15 @@ const { article } = Astro.props;
       </h1>
       <p class="dek">{article.summary}</p>
       <p class="meta">
-        <time datetime={article.publishedAt}>
-          {dateLabel(article.publishedAt)}
-        </time>{" "}
-        · {article.minutes} min read
+        {article.publishedAt && (
+          <>
+            <time datetime={article.publishedAt}>
+              {dateLabel(article.publishedAt)}
+            </time>
+            {" · "}
+          </>
+        )}
+        {article.minutes} min read
         {article.updatedAt && (
           <>
             {" "}

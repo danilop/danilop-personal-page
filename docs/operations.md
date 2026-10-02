@@ -1,14 +1,15 @@
 # Development and publishing operations
 
 Updated: 2026-09-16. Root deployment: new site at `/`, original snapshot at `/original-site/`.
-Third-party delivery is manual; short-link infrastructure remains pending.
+Third-party delivery is manual; S3/OAC short-link infrastructure and the Free plan
+are active. Article alias publication still requires a verified site deployment.
 
 For routine authoring and release, follow the [publishing workflow](publishing-workflow.md).
 This reference covers configuration, delivery commands, and recovery.
 
 ## Build and preview
 
-Use pinned Node 24.21.0 LTS and npm 12.0.2, then `npm ci` and
+Use pinned Node 24.21.0 LTS and npm 12.2.0, then `npm ci` and
 `npm --prefix prototypes/ink-and-paper ci` (required by the unified test suite). The project enforces
 Node 24 and npm 12 and version-specific dependency install-script approvals.
 See [dependencies and hosting](dependencies-and-hosting.md) for upgrades. Run `npm run dev` for the website, or
@@ -27,6 +28,17 @@ Private browser fixtures can be created with
 `NOTES_QA=1 node --import tsx scripts/fixture-preview.ts`. They create `/_qa/`
 inside local output. **Always run a clean `npm run build` afterward.** The build
 verifier rejects QA routes and private fixture sentinels.
+
+## Local image maintenance
+
+Local preview automatically cleans up unused image candidates and workflow-owned
+source assets after a seven-day grace period, with 30 days in ignored recoverable
+trash before deletion. It runs at startup, after saves/builds and daily while
+preview stays running; public builds do not run cleanup. See
+[image retention and recovery](image-authoring-workflow.md#automatic-cleanup).
+Saved versions and unsaved recovery may legitimately keep older images in use.
+Do not purge authoring state wholesale to free space: it also contains recoverable
+source revisions, deletion manifests and image protections.
 
 ## Deployment location
 
@@ -71,6 +83,12 @@ optional local `overrideCss` file. Token fields have defaults. `publishing/home.
 selects a lead article or collection, counts and collection IDs. If the selected
 lead is still a draft, the homepage falls back to the latest public writing.
 Empty homepage sections and empty navigation sections are hidden.
+The lead article's illustration comes from its first rendered body image, not
+`assets.hero`. Articles without images show no homepage illustration. The optional
+legacy hero asset remains accepted by configuration but is not an article fallback.
+For a featured book or collection, use its Images panel to assign an explicit cover
+and Save. Its optional YAML `cover` points to a local collection asset; the homepage
+and overview use it without inheriting an illustration from a chapter.
 
 New page templates belong in the theme registry. Publishing rules remain in
 `core/`. Home, Article and Shell are theme components; collection/archive routes
@@ -179,29 +197,38 @@ returns a true 404 (without the custom error-page body).
 The final root-cutover rules are in `infrastructure/amplify-rules.json`. Apply
 them only when the new site takes over the root: rules apply to every branch of this Amplify app.
 
-Short-link setup is **pending specific access approval**. The exact proposal is
-[here](deployment-access-review.md); `scripts/provision-links.mjs` defaults to a
-plan and requires `--apply` to change resources. It saves the original distribution
-configuration without overwriting that backup on reruns. It checks existing role
-trust before applying the reviewed permission policy.
+The active [short-link design](short-link-design.md) uses private S3 with OAC
+and one viewer-response function. CloudFront Free pricing and the attached
+Route 53 zone are active. The managed caching policy honours each object's
+60-second shared-cache header; responses tell browsers not to cache redirects.
+Missing keys return 404 with a five-second error TTL. Access logging is disabled
+under the Free plan; previous settings and operator inventories are preserved
+privately. The disposable live test passed and was removed.
 
-After setup, `.github/workflows/publish.yml` uses a main-only OIDC role. It waits
-for the exact successful Amplify revision, checks public destinations, and updates
-KVS aliases with ETags. The resolver redirects `/` to the website and returns
-404 for unknown paths; it never exposes the S3 publication ledger through the
-origin. No aliases are generated for historical work.
+The editor's **Short links** panel reserves codes locally, disables aliases through
+ownership tombstones, publishes the complete saved registry after deployment
+verification, and checks GET/HEAD activation. Restart preview after updating its
+server code. Draft reservations do not activate redirects. Commit and deploy saved
+content and link reservations before using **Publish saved redirects**.
 
-`npm run publish:links` previews aliases. `--apply --wait` publishes after deployment.
-Each run retains a uniquely named snapshot under `publication/shortlinks/snapshots/`.
-An interrupted run may leave some validated aliases updated; rerunning converges
-the registry. Unrelated aliases and all ownership history are retained. Aliases
-still assigned to unpublished targets are deactivated; `removed` tombstones
-withdraw deleted articles' aliases even when unpublish and deletion ship together.
-The dry run lists active targets, deactivations and removal tombstones. Cloud
-reconciliation rejects ownership mismatches and existing keys without recorded
-owners, uses ETags for deletion batches, and records ownership before changing
-keys so interrupted first publications can be retried. Republish the same article
-to reactivate its reserved aliases; deleted codes cannot be reassigned.
+`npm run publish:links` previews desired mappings; `--apply --wait` reconciles S3
+objects after the exact successful Amplify revision and public destinations are
+verified. Conditional writes, ownership metadata/ledger, snapshots and a create-only
+lock prevent blind overwrites. Both `/code` and `/code/` are written and invalidated.
+Unrelated objects remain untouched. Deleted codes retain ownership permanently.
+A rollback snapshot cannot activate currently ineligible content or change fixed
+edition aliases. The private `NOTES_LINKS_CONFIG` file supplies resource IDs.
+
+Optional automatic reconciliation requires both `PUBLICATION_ROLE_ARN` and
+`SHORTLINK_CONFIG` repository variables. No new CI role was created in this task;
+that job remains gated. Operator editor/CLI publication uses the existing AWS
+session. See [access scope](deployment-access-review.md) and the private operations
+note for recovery and backups.
+
+Open Graph/X preview cards are implemented locally, not deployed. After deployment,
+`npm run verify:social -- <full-url> <active-short-url>` checks static metadata,
+public images and GET/HEAD redirect parity. Full URLs do not depend on short-link
+infrastructure. See [social preview verification](social-previews.md#verification).
 
 The [next implementation plan](social-publishing-plan.md) adds configurable
 short-domain inputs, automatic alias reservation, a private link manager and a

@@ -3,11 +3,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
+import crypto from "node:crypto";
 import net from "node:net";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { load } from "cheerio";
 import sharp from "sharp";
+import { chromium } from "playwright";
+import { executablePath } from "puppeteer";
 import { isolatedGitEnvironment } from "../tools/code-analysis/snapshot.mjs";
 const root = process.cwd();
 async function unusedPort() {
@@ -21,17 +24,56 @@ async function unusedPort() {
 
 test(
   "author server authenticates local writes and keeps preview, revision history, and draft deletion recoverable",
-  { timeout: 120000 },
+  { timeout: 240000 },
   async (t) => {
     const snapshot = await repositoryFixture(root);
 
     const file = "content/pieces/server-fixture/index.md";
     const original =
-      "---\nschemaVersion: 1\nid: server-fixture\ntitle: Server fixture\nsummary: Local integration fixture\ndraft: true\nslug: server-fixture\npublication: {surfaces: [standalone]}\n---\n\n## A heading\n\nOriginal local text.\n";
+      "---\nschemaVersion: 1\nid: server-fixture\ntitle: Server fixture\nsummary: Local integration fixture\ndraft: true\nslug: server-fixture\npublication: {surfaces: [standalone, collection, book]}\n---\n\n![Draft fixture artwork](illustration.png)\n\n## A heading\n\nOriginal local text.\n";
     await fs.mkdir(path.dirname(path.join(snapshot.dir, file)), {
       recursive: true,
     });
     await fs.writeFile(path.join(snapshot.dir, file), original);
+    await sharp({
+      create: { width: 20, height: 10, channels: 3, background: "#123456" },
+    })
+      .png()
+      .toFile(path.join(snapshot.dir, path.dirname(file), "illustration.png"));
+    await fs.writeFile(
+      path.join(snapshot.dir, "publishing/home.yaml"),
+      "schemaVersion: 1\nlead: server-fixture\nrecentCount: 3\nelsewhereCount: 4\ncollections: []\n",
+    );
+    const bookFile = "content/collections/cover-fixture.yaml";
+    const bookText =
+      "# Cover fixture\nschemaVersion: 1\nid: cover-fixture\nslug: cover-fixture\ntitle: Cover fixture\nsummary: A whole book\nbook: true\nordered: true\ndraft: true\nbody:\n  - {id: opening, kind: piece, ref: server-fixture}\n";
+    await fs.writeFile(path.join(snapshot.dir, bookFile), bookText);
+    const imageState = path.join(snapshot.dir, ".authoring-state/images");
+    async function expiredCandidate(color: string) {
+      const bytes = await sharp({
+        create: { width: 3, height: 2, channels: 3, background: color },
+      })
+        .png()
+        .toBuffer();
+      const id = crypto.randomUUID();
+      await fs.mkdir(imageState, { recursive: true });
+      await fs.writeFile(path.join(imageState, id + ".png"), bytes);
+      await fs.writeFile(
+        path.join(imageState, id + ".json"),
+        JSON.stringify({
+          id,
+          file,
+          sha256: crypto.createHash("sha256").update(bytes).digest("hex"),
+          created: new Date(Date.now() - 10 * 86400000).toISOString(),
+          width: 3,
+          height: 2,
+          model: "Cleanup fixture",
+          brief: "",
+        }),
+      );
+      return id;
+    }
+    const startupCandidate = await expiredCandidate("#5a23ab");
     const port = await unusedPort(),
       origin = `http://127.0.0.1:${port}`;
     const env = isolatedGitEnvironment(root);
@@ -130,6 +172,208 @@ test(
     const disk = await api("read?file=" + encodeURIComponent(file));
     assert.equal(disk.publication, "draft");
     assert.equal(disk.text, original);
+    // Switch the actual rendered preview, not just visibility of existing cards.
+    for (let i = 0; i < 600; i++) {
+      const state = (await api("files")).build;
+      assert.notEqual(state.state, "error", state.error);
+      if (state.state === "ready") break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.equal((await api("files")).build.state, "ready", log);
+    async function waitForCleanup(id: string) {
+      for (let i = 0; i < 600; i++) {
+        if (
+          !(await api("image-list?file=" + encodeURIComponent(file))).some(
+            (candidate: { id: string }) => candidate.id === id,
+          )
+        )
+          break;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      await assert.rejects(fs.access(path.join(imageState, id + ".png")));
+      await assert.rejects(fs.access(path.join(imageState, id + ".json")));
+      assert((await api("files")).imageCleanupVersion > 0, log);
+    }
+    await waitForCleanup(startupCandidate);
+    const browser = await chromium.launch({
+      executablePath: await executablePath({ headless: "shell" }),
+    });
+    t.after(() => browser.close());
+    const page = await browser.newPage();
+    await page.goto(origin);
+    const draftImage = await page
+      .locator(".lead .article-art img")
+      .getAttribute("src");
+    assert.equal(
+      await page.locator(".lead .article-art img").getAttribute("alt"),
+      "Draft fixture artwork",
+    );
+    assert.equal(await page.locator("#preview-content").inputValue(), "drafts");
+    assert(
+      (await page.locator('a[href="/writing/server-fixture/"]').count()) > 0,
+    );
+    await page.locator("#preview-content").selectOption("published");
+    await page.waitForFunction(
+      () => {
+        const select =
+          document.querySelector<HTMLSelectElement>("#preview-content");
+        return select?.value === "published" && !select.disabled;
+      },
+      null,
+      { timeout: 60000 },
+    );
+    assert.equal((await api("files")).includeDrafts, false);
+    assert.equal(await page.locator(".draft-badge").count(), 0);
+    const publishedImage = await page.evaluate(async () => {
+      const url = document.querySelector<HTMLAnchorElement>(".lead h1 a")!.href;
+      const article = new DOMParser().parseFromString(
+        await (await fetch(url)).text(),
+        "text/html",
+      );
+      return article.querySelector(".prose img")?.getAttribute("src") ?? null;
+    });
+    const leadImage = page.locator(".lead .article-art img");
+    assert.equal(
+      (await leadImage.count()) ? await leadImage.getAttribute("src") : null,
+      publishedImage,
+    );
+    assert.notEqual(publishedImage, draftImage);
+    assert.equal(
+      await page.locator('a[href="/writing/server-fixture/"]').count(),
+      0,
+    );
+    assert.equal(
+      await fs.readFile(path.join(snapshot.dir, file), "utf8"),
+      original,
+    );
+    await page.locator("#preview-content").selectOption("drafts");
+    await page.waitForFunction(
+      () => {
+        const select =
+          document.querySelector<HTMLSelectElement>("#preview-content");
+        return select?.value === "drafts" && !select.disabled;
+      },
+      null,
+      { timeout: 60000 },
+    );
+    assert.equal((await api("files")).includeDrafts, true);
+    assert.equal(
+      await page.locator(".lead .article-art img").getAttribute("src"),
+      draftImage,
+    );
+    assert(
+      (await page.locator('a[href="/writing/server-fixture/"]').count()) > 0,
+    );
+    await page.route("**/_author/api/preview-mode", (route) =>
+      route.fulfill({
+        status: 400,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Preview fixture failure" }),
+      }),
+    );
+    await page.locator("#preview-content").selectOption("published");
+    await page.waitForFunction(
+      () =>
+        document.querySelector("#preview-mode-status")?.textContent ===
+        "Preview fixture failure",
+    );
+    assert.equal(await page.locator("#preview-content").inputValue(), "drafts");
+    assert.equal(await page.locator("#preview-content").isDisabled(), false);
+    await api("preview-mode", { includeDrafts: "invalid" }, 400);
+    // The collection uses the same local image panel, with explicit unsaved assignment.
+    await page.goto(origin + "/_author/?file=" + encodeURIComponent(bookFile));
+    await page.waitForFunction(() =>
+      document
+        .querySelector<HTMLTextAreaElement>("#source")
+        ?.value.includes("id: cover-fixture"),
+    );
+    await page.locator("#show-images").click();
+    assert.equal(
+      await page.locator("#images-heading").textContent(),
+      "Create a book or collection cover",
+    );
+    assert.equal(await page.locator("#image-size").inputValue(), "1024x1536");
+    await page
+      .getByRole("button", { name: "Continue to generate", exact: true })
+      .click();
+    await page
+      .locator("#image-upload")
+      .setInputFiles(
+        path.join(snapshot.dir, path.dirname(file), "illustration.png"),
+      );
+    await page.waitForFunction(() =>
+      document
+        .querySelector("#image-notice")
+        ?.textContent?.includes("Image imported locally"),
+    );
+    await page.locator("#image-alt").fill("A blue book cover");
+    assert.equal(await page.locator("#image-position").isVisible(), false);
+    assert.equal(
+      await page.locator("#insert-image").textContent(),
+      "Use as cover",
+    );
+    await page.locator("#insert-image").click();
+    await page.waitForFunction(() =>
+      document
+        .querySelector<HTMLTextAreaElement>("#source")
+        ?.value.includes("cover:"),
+    );
+    assert.equal(
+      await fs.readFile(path.join(snapshot.dir, bookFile), "utf8"),
+      bookText,
+    );
+    await page.locator("#undo").click();
+    assert.equal(await page.locator("#source").inputValue(), bookText);
+    await page.locator("#insert-image").click();
+    await page.waitForFunction(() =>
+      document
+        .querySelector<HTMLTextAreaElement>("#source")
+        ?.value.includes("cover:"),
+    );
+    await page.locator("#remove-cover").click();
+    await page.waitForFunction(
+      () =>
+        !document
+          .querySelector<HTMLTextAreaElement>("#source")
+          ?.value.includes("cover:"),
+    );
+    await page.locator("#undo").click();
+    assert.match(await page.locator("#source").inputValue(), /cover:/);
+    await page.locator("#save").click();
+    await page.waitForFunction(() =>
+      document.querySelector("#status")?.textContent?.includes("Saved"),
+    );
+    assert.match(
+      await fs.readFile(path.join(snapshot.dir, bookFile), "utf8"),
+      /alt: A blue book cover/,
+    );
+    const oldVersion = (await api("files")).build.version;
+    await fs.writeFile(
+      path.join(snapshot.dir, "publishing/home.yaml"),
+      "schemaVersion: 1\nlead: cover-fixture\nrecentCount: 3\nelsewhereCount: 4\ncollections: []\n",
+    );
+    for (let i = 0; i < 600; i++) {
+      const state = (await api("files")).build;
+      assert.notEqual(state.state, "error", state.error);
+      if (state.state === "ready" && state.version > oldVersion) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    await page.goto(origin);
+    assert.equal(
+      await page.locator(".lead .article-art img").getAttribute("alt"),
+      "A blue book cover",
+    );
+    const coverSrc = await page
+      .locator(".lead .article-art img")
+      .getAttribute("src");
+    assert.match(coverSrc!, /^\/media\/.+\.webp$/);
+    assert.equal((await fetch(origin + coverSrc)).status, 200);
+    await page.goto(origin + "/collections/cover-fixture/");
+    assert.equal(
+      await page.locator(".article-art img").getAttribute("src"),
+      coverSrc,
+    );
+    await browser.close();
     const metadata = await api("metadata", {
       file,
       text: disk.text,
@@ -148,7 +392,7 @@ test(
     });
     assert.match(preview.html, /Edited fixture/);
     assert.equal(preview.context, "");
-    const saved = await api("save", {
+    let saved = await api("save", {
       file,
       text: metadata.text,
       revision: disk.revision,
@@ -213,12 +457,45 @@ test(
       "review.js",
       "review-decisions.js",
       "images.js",
+      "image-recovery.js",
       "finding-range.js",
+      "repetition-batch.js",
       "fixes.js",
       "fix-checks.js",
       "ux.js",
+      "preview.js",
     ])
       assert.equal((await fetch(origin + "/_author/" + asset)).status, 200);
+    const publishMetadata = await api("metadata", {
+      file,
+      text: saved.text,
+      fields: { draft: false },
+    });
+    assert(!publishMetadata.text.includes("publishedAt:"));
+    saved = await api("save", {
+      file,
+      text: publishMetadata.text,
+      revision: saved.revision,
+      context: "",
+    });
+    assert.match(saved.text, /publishedAt: .*T.*Z/);
+    assert.equal(
+      await fs.readFile(path.join(snapshot.dir, file), "utf8"),
+      saved.text,
+    );
+    const publishedDate = saved.text.match(/publishedAt: (.+)/)[1];
+    const savedCandidate = await expiredCandidate("#fb732a");
+    const beforeCleanup = (await api("files")).imageCleanupVersion;
+    await api("save", {
+      file,
+      text: saved.text,
+      revision: saved.revision,
+      context: "",
+    });
+    await waitForCleanup(savedCandidate);
+    assert((await api("files")).imageCleanupVersion > beforeCleanup);
+    saved = await api("unpublish", { file, revision: saved.revision });
+    assert(saved.text.includes(`publishedAt: ${publishedDate}`));
     const plan = await api("delete-plan", { file, revision: saved.revision });
     assert.equal(plan.id, "server-fixture");
     const deleted = await api("delete-draft", {

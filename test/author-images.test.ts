@@ -4,6 +4,10 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
+import YAML from "yaml";
+import { Assets } from "../core/assets";
+import { collectionCover } from "../core/collection-cover";
+import { collectionSchema } from "../core/model";
 import {
   AuthorImages,
   codexImageArgs,
@@ -88,6 +92,7 @@ test("candidates persist, stay scoped, and insert safely without editing manuscr
     "Caption",
   );
   assert(inserted.markdown.includes("Notebook \\[blue\\]"));
+  assert.match(inserted.asset, /^assets\/notebook-blue-[a-f0-9]{20}\.png$/);
   assert.equal(await fs.readFile(path.join(root, file), "utf8"), text);
   assert.equal(
     (await fs.readFile(path.join(root, path.dirname(file), inserted.asset)))
@@ -121,9 +126,27 @@ test("all brief agents receive unsaved snapshot and generation imports only fres
       ? args[args.indexOf("--output-last-message") + 1]
       : "";
     if (args.includes("image_generation")) {
+      assert(args.includes("--output-schema"));
+      const schema = JSON.parse(
+        await fs.readFile(args[args.indexOf("--output-schema") + 1], "utf8"),
+      );
+      assert.deepEqual(schema.required, [
+        "imagePath",
+        "altText",
+        "filenameStem",
+        "error",
+      ]);
       const img = path.join(root, "generated_images/test.png");
       await fs.writeFile(img, bytes);
-      await fs.writeFile(output, JSON.stringify({ imagePath: img }));
+      await fs.writeFile(
+        output,
+        JSON.stringify({
+          imagePath: img,
+          altText: "A blue notebook on ivory paper.",
+          filenameStem: "notebook-blue-paper",
+          error: null,
+        }),
+      );
     } else if (output) await fs.writeFile(output, "A notebook in blue ink.");
     return { stdout: "A notebook in blue ink.", stderr: "" };
   };
@@ -138,6 +161,9 @@ test("all brief agents receive unsaved snapshot and generation imports only fres
     const result = await done(service, j.id);
     assert.equal(result.state, "complete");
     assert(seen.includes("Unsaved sentence."));
+    assert.match(seen, /Canvas: landscape \(3:2\), 1536x1024 pixels/);
+    assert.match(seen, /ample breathing room/);
+    assert.doesNotMatch(seen, /cover layout requirements/);
     assert.equal(result.brief, "A notebook in blue ink.");
   }
   const j = await service.start({
@@ -149,6 +175,13 @@ test("all brief agents receive unsaved snapshot and generation imports only fres
   assert.equal(r.state, "complete");
   assert(r.candidate);
   assert(seen.includes("Blue ink on ivory."));
+  assert(seen.includes("actual generated image"));
+  assert.match(seen, /Requested shape: 1536x1024/);
+  assert.doesNotMatch(seen, /Do not reserve a blank area for a title/);
+  assert.equal(
+    (await new AuthorImages(root).record(r.candidate)).altText,
+    "A blue notebook on ivory paper.",
+  );
   await assert.rejects(
     generatedBytes(path.join(root, file), Date.now()),
     /outside/,
@@ -202,4 +235,207 @@ test("cancelling generation stops the task without adding a candidate", async (t
   service.cancel(job.id);
   assert.equal((await done(service, job.id)).state, "cancelled");
   assert.equal((await service.list(file)).length, 0);
+});
+
+test("structured generation failures never create an image candidate", async (t) => {
+  const { root } = await fixture(t);
+  let result: unknown = {
+    imagePath: null,
+    altText: null,
+    filenameStem: null,
+    error: "Image tool unavailable",
+  };
+  const service = new AuthorImages(root, async (_cmd, args) => {
+    if (args[0] === "login")
+      return { stdout: "Logged in using ChatGPT", stderr: "" };
+    const output = args[args.indexOf("--output-last-message") + 1];
+    await fs.writeFile(output, JSON.stringify(result));
+    return { stdout: "", stderr: "" };
+  });
+  for (const response of [
+    {
+      imagePath: null,
+      altText: null,
+      filenameStem: null,
+      error: "Image tool unavailable",
+    },
+    { imagePath: null, altText: null, filenameStem: null, error: null },
+    {
+      imagePath: "/not/a/generated/image.png",
+      altText: "A notebook.",
+      filenameStem: "notebook-paper",
+      error: null,
+    },
+    {
+      imagePath: "/not/a/generated/image.png",
+      altText: "A notebook.",
+      filenameStem: "notebook-paper",
+      error: "Generation failed",
+    },
+    { imagePath: "/not/a/generated/image.png", error: null },
+    {
+      imagePath: "/not/a/generated/image.png",
+      altText: null,
+      filenameStem: null,
+      error: null,
+    },
+    {
+      imagePath: "/not/a/generated/image.png",
+      altText: "   ",
+      filenameStem: "notebook-paper",
+      error: null,
+    },
+    {
+      imagePath: "/not/a/generated/image.png",
+      altText: "A notebook.",
+      filenameStem: "../../escape",
+      error: null,
+    },
+    {
+      imagePath: "/not/a/generated/image.png",
+      altText: "A notebook.",
+      filenameStem: null,
+      error: null,
+    },
+    { unrelated: true },
+  ]) {
+    result = response;
+    const job = await service.start({
+      file,
+      kind: "generate",
+      brief: "A notebook.",
+    });
+    const final = await done(service, job.id);
+    assert.equal(final.state, "failed");
+    assert.equal(final.candidate, undefined);
+    assert.equal((await service.list(file)).length, 0);
+  }
+});
+
+test("collection covers reuse image candidates, preserve unsaved YAML, and keep assignment explicit", async (t) => {
+  const { root, bytes } = await fixture(t);
+  const book = "content/collections/book.yaml";
+  const original =
+    "# Keep this comment\nschemaVersion: 1\nid: book\nslug: book\ntitle: Whole book\nsummary: A history of ideas\nbook: true\ndraft: true\nbody: []\n";
+  await fs.writeFile(path.join(root, book), original);
+  let prompt = "";
+  const service = new AuthorImages(root, async (_cmd, args, opts) => {
+    if (args[0] === "login")
+      return { stdout: "Logged in using ChatGPT", stderr: "" };
+    if (args.includes("image_generation")) {
+      const imagePath = path.join(root, "generated_images/cover.png");
+      await fs.writeFile(imagePath, bytes);
+      await fs.writeFile(
+        args[args.indexOf("--output-last-message") + 1],
+        JSON.stringify({
+          imagePath,
+          altText: "Generated book cover",
+          filenameStem: "mechanical-calculator-book-pages",
+          error: null,
+        }),
+      );
+    }
+    prompt = opts.input;
+    return { stdout: "A cover spanning the whole work.", stderr: "" };
+  });
+  const unsaved = original.replace("Whole book", "Unsaved book title");
+  const job = await service.start({
+    file: book,
+    text: unsaved,
+    kind: "brief",
+    agent: "claude",
+  });
+  assert.equal((await done(service, job.id)).state, "complete");
+  assert.match(prompt, /as a whole/);
+  assert.match(prompt, /Unsaved book title/);
+  assert.match(prompt, /Canvas: portrait \(2:3\), 1024x1536 pixels/);
+  assert.match(prompt, /occupy most of the canvas in both dimensions/);
+  assert.match(prompt, /Do not reserve a blank area for a title/);
+  const generated = await service.start({
+    file: book,
+    kind: "generate",
+    brief: "A long horizontal arrangement of objects on a shared ground line.",
+  });
+  const finished = await done(service, generated.id);
+  assert.equal(finished.state, "complete");
+  assert.match(prompt, /Requested shape: 1024x1536/);
+  assert.match(prompt, /Build a vertical composition/);
+  assert.match(prompt, /conflicting horizontal arrangement in the brief/);
+  assert.match(prompt, /A long horizontal arrangement of objects/);
+  const candidate = await service.record(finished.candidate!);
+  assert.equal(candidate.altText, "Generated book cover");
+  assert.equal((await service.list(book))[0].id, candidate.id);
+  assert.equal((await service.list(file)).length, 0);
+  for (const size of ["1024x1024", "1536x1024"]) {
+    const shaped = await service.start({
+      file: book,
+      kind: "brief",
+      agent: "claude",
+      text: unsaved,
+      size,
+    });
+    assert.equal((await done(service, shaped.id)).state, "complete");
+    assert.match(prompt, /occupy most of the canvas in both dimensions/);
+    assert.match(
+      prompt,
+      size === "1024x1024"
+        ? /Canvas: square \(1:1\)/
+        : /Canvas: landscape \(3:2\)/,
+    );
+    assert.doesNotMatch(prompt, /Build a vertical composition/);
+  }
+  const assigned = await service.cover(
+    book,
+    candidate.id,
+    "Blue book illustration",
+    unsaved,
+  );
+  assert.match(assigned.text, /# Keep this comment/);
+  assert.match(assigned.text, /title: Unsaved book title/);
+  assert.match(
+    assigned.text,
+    /path: assets\/mechanical-calculator-book-pages-/,
+  );
+  assert.match(assigned.text, /alt: Blue book illustration/);
+  const parsed = collectionSchema.parse(YAML.parse(assigned.text));
+  const compiled = await collectionCover(
+    parsed.cover,
+    path.join(root, "content/collections"),
+    new Assets(path.join(root, "rendered")),
+  );
+  assert.equal(compiled?.alt, "Blue book illustration");
+  assert.equal(compiled?.width, 20);
+  assert.match(compiled.src, /^\/media\/.+\.webp$/);
+  assert.throws(() =>
+    collectionSchema.parse({
+      ...YAML.parse(assigned.text),
+      cover: { path: "assets/../../secret.png", alt: "Unsafe" },
+    }),
+  );
+  assert.equal(await fs.readFile(path.join(root, book), "utf8"), original);
+  const removed = await service.cover(book, null, "", assigned.text);
+  assert.doesNotMatch(removed.text, /cover:/);
+  assert.match(removed.text, /title: Unsaved book title/);
+  await assert.rejects(
+    service.cover(book, candidate.id, "", unsaved),
+    /description/,
+  );
+  await assert.rejects(
+    service.cover(
+      book,
+      candidate.id,
+      "Description",
+      unsaved.replace("id: book", "id: other"),
+    ),
+    /ID cannot change/,
+  );
+  await assert.rejects(
+    service.insert(book, candidate.id, "Description", ""),
+    /cover assignment/,
+  );
+  const articleCandidate = await service.saveCandidate(file, bytes);
+  await assert.rejects(
+    service.cover(book, articleCandidate.id, "Description", unsaved),
+    /different article or collection/,
+  );
 });

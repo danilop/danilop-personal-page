@@ -7,6 +7,8 @@ export function previewOptions(args) {
     "--all",
     "--help",
     "--watch",
+    "--open",
+    "--no-open",
   ]);
   const values = new Set([
     "--port",
@@ -45,8 +47,15 @@ export function previewOptions(args) {
     port,
     help: seen.has("--help"),
     watch: seen.has("--watch"),
+    open: browserRequested(seen),
     snapshotArgs: [...snapshotArgs, "--port", String(port)],
   };
+}
+function browserRequested(seen) {
+  return (
+    seen.has("--open") &&
+    !["--no-open", "--build-only", "--help"].some((flag) => seen.has(flag))
+  );
 }
 function previewMode(seen) {
   if (seen.has("--release")) return "release";
@@ -99,4 +108,7 @@ npm run preview -- --snapshot [--from LIBRARY] [--piece ID | --collection ID | -
   Read-only snapshot, with content checks before building. Repeat selections as needed.
 npm run preview -- --snapshot --serve-only [--port 4322]
   Serve the existing snapshot without rebuilding.
-All modes bind to 127.0.0.1. Stop with Ctrl+C before switching modes.`;
+Add --open to open the default browser once the site is ready; --no-open disables it.
+./preview.sh enables --watch and --open. Watch restarts do not open extra tabs.
+Build-only and help never open a browser. All modes bind to 127.0.0.1.
+Stop with Ctrl+C before switching modes.`;

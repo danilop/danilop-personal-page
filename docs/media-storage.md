@@ -5,6 +5,12 @@ it over HTTPS using a custom subdomain, an existing wildcard certificate and
 Route 53 A/AAAA aliases. Account-specific identifiers are in the private
 operations note and `~/.config/notes-along-the-way/media.json`, outside Git.
 
+This is the explicit `media:` upload/delivery path. Inserted local article images
+and collection covers currently ship in Amplify's artifact instead; Save does not
+upload them here. A manifest-based integration with authoring, exact-commit release
+checks and remote cleanup is [proposed separately](asset-release-design.md), not
+implemented by the current upload command.
+
 ## Configuration
 
 - **Public URL and cache duration:** `publishing/media.json`. `MEDIA_BASE_URL`
@@ -98,6 +104,10 @@ Lifecycle cleanup only aborts incomplete uploads after seven days. Published
 assets and old versions do not expire automatically. Keep files referenced by
 posts, syndicated copies or frozen editions. Versioning is not an independent
 backup. No AWS credentials or private inventory belong in Git.
+
+Automatic local image cleanup does not delete S3 objects. The proposed remote
+collector must use verified deployment, rollback, edition and external-reference
+inventories; a local folder sync with deletion cannot supply those protections.
 
 ## Limits and verification
 

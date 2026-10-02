@@ -9,6 +9,7 @@ import { z } from "zod";
 import { parser } from "./model";
 import type { TagPiece } from "./tags";
 import { escape } from "./assets";
+import { displayFindingExcerpt } from "../lib/finding-range.js";
 
 export const hash = (text: string | Uint8Array) =>
   createHash("sha256").update(text).digest("hex");
@@ -385,12 +386,12 @@ ${
           .map(([id, n]) => `${e(id)}: ${e(n)}`)
           .join(
             "; ",
-          )}</p><ul>${r.locations.map((l) => `<li>${location(l)}<blockquote>${e(l.excerpt)}</blockquote></li>`).join("")}</ul></details>`,
+          )}</p><ul>${r.locations.map((l) => `<li>${location(l)}<blockquote>${e(displayFindingExcerpt(l.excerpt))}</blockquote></li>`).join("")}</ul></details>`,
     )
     .join("") || "<p>No repeated sequences met the configured count.</p>"
 }
 <h2 id="findings">Findings</h2><p>Accepted exceptions remain visible. Missing tools and technical errors cannot be waived as style preferences.</p>
-${findings.map((f) => `<details><summary class="${f.severity}">${e(f.accepted ? "Accepted review" : f.severity)} · ${e(f.rule)} · ${location(f)}</summary><p>${e(f.message)}</p><blockquote>${e(f.excerpt)}</blockquote>${(f.locations ?? []).map((l) => `<p>${location(l)}</p><blockquote>${e(l.excerpt)}</blockquote>`).join("")}${f.accepted ? `<p>Accepted: ${e(f.accepted)}</p>` : ""}<p><code>Finding: ${e(f.id)}<br>Fingerprint: ${e(f.fingerprint)}</code></p></details>`).join("") || "<p>No findings from the checks that completed.</p>"}
+${findings.map((f) => `<details><summary class="${f.severity}">${e(f.accepted ? "Accepted review" : f.severity)} · ${e(f.rule)} · ${location(f)}</summary><p>${e(f.message)}</p><blockquote>${e(displayFindingExcerpt(f.excerpt))}</blockquote>${(f.locations ?? []).map((l) => `<p>${location(l)}</p><blockquote>${e(displayFindingExcerpt(l.excerpt))}</blockquote>`).join("")}${f.accepted ? `<p>Accepted: ${e(f.accepted)}</p>` : ""}<p><code>Finding: ${e(f.id)}<br>Fingerprint: ${e(f.fingerprint)}</code></p></details>`).join("") || "<p>No findings from the checks that completed.</p>"}
 ${report.stale.length ? `<h2>Stale exceptions</h2><p>${report.stale.length} recorded decisions no longer match this review and were not applied.</p>` : ""}
 <h2>Sources and limits</h2><ul>${report.pieces.map((p) => `<li>${e(p.id)}: ${e(p.sources.join(", "))}</li>`).join("")}</ul><p>Model and library versions, scope, metrics, findings, and fingerprints are recorded in the JSON. External-link availability, historical fact checking, and visual proofing remain separate tasks. Regenerate after editing content.</p></main></body></html>`;
 }

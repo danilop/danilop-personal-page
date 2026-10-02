@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { editorialProposal } = require("../authoring/finding-range");
+const { editorialProposal } = require("../lib/finding-range");
 const sentence =
   "The subject index helps you follow a particular topic across those periods without repeating its full explanation each time.";
 const source = "Opening sentence. " + sentence + " Another sentence.";

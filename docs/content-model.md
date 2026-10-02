@@ -103,14 +103,47 @@ permanent-delete operation are not implemented yet; see the
 A preface may allow only `book`. An article can allow all three. A contextual
 opening can allow `collection` and `book`. Private preview is a separate mode.
 
-First-publication and substantive-update dates are explicit editorial metadata;
-file modification times do not determine their meaning.
+First-publication timestamps record the author's local publishing action;
+substantive update dates remain explicit editorial metadata. File modification
+times do not determine either.
+
+### Public publication time — accepted requirement, 1 October 2026
+
+The author publishes locally, then commits and pushes to `main` for Amplify
+delivery. The first local publishing action establishes `publishedAt`, with a UTC
+time as well as a date. Public latest-content lists sort by that timestamp,
+newest first, irrespective of when the article was drafted. Draft creation and
+editing dates stay internal. Book reading order and explicit featured placement
+remain separate from chronological discovery.
+
+Homepage artwork follows the selected article: its first rendered body image is
+reused with its alt text, including for collection-only articles. An article with
+no image has no homepage artwork. This is derived presentation data, not a separate
+cover field in article metadata. Books and collections have an explicit optional
+cover independent of their members and reading order; a featured collection never
+inherits a member's illustration. Social previews now derive article artwork or
+the explicit collection cover, with title-card fallback. An explicit social-image
+override remains future work; see [social previews](social-previews.md).
+
+Status: implemented locally, not deployed. The editor saves publication metadata
+with the article; Amplify delivers it without changing that time. Actual public
+availability can be later if committing, pushing or deployment is delayed. This
+supersedes the earlier post-deployment observation/confirmation design. Historical
+date-only records retain their precision; preview dates remain provisional.
+See [publication timestamps](publication-time.md).
 
 ## 4. Collections and book structure
 
 A collection has ID, title, summary, optional introduction, subjects, state, and
 an explicit tree of contents. A flat collection can contain piece placements
 directly. Ordering is owned by the collection.
+
+A book or collection may own one cover with an image asset and accessible
+description. It represents the whole work and appears when featured on the homepage
+and on its collection overview. No cover means no illustration in those positions.
+Assigning, replacing or removing a cover does not modify any member article or
+publication flag. This web-cover capability is implemented; automatic print/ebook
+cover layout and social sharing images are separate, unimplemented concerns.
 
 ```text
 Collection

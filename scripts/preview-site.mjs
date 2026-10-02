@@ -8,6 +8,7 @@ import {
   previewLaunchArgs,
 } from "../core/preview-cli.mjs";
 import { siteOutput, sitePath } from "../core/deployment.mjs";
+import { openBrowser, openWhenReady } from "../core/preview-browser.mjs";
 
 let options;
 try {
@@ -22,8 +23,12 @@ if (options.help) {
 }
 if (options.mode === "live" || options.mode === "snapshot") {
   const child = spawn(process.execPath, previewLaunchArgs(options), {
-    stdio: "inherit",
+    stdio: ["inherit", options.open ? "pipe" : "inherit", "inherit"],
   });
+  if (options.open) {
+    child.stdout.pipe(process.stdout);
+    openWhenReady(child.stdout, `http://127.0.0.1:${options.port}/`);
+  }
   process.on("SIGINT", () => child.kill("SIGINT"));
   process.on("SIGTERM", () => child.kill("SIGTERM"));
   const code = await new Promise((resolve) => {
@@ -104,8 +109,10 @@ server.on("error", (error) => {
   console.error(error.message);
   process.exitCode = 1;
 });
-server.listen(port, "127.0.0.1", () =>
+server.listen(port, "127.0.0.1", () => {
+  const url = `http://127.0.0.1:${port}${authoring ? "/" : sitePath("/")}`;
   console.log(
-    `${authoring ? "Read-only snapshot" : "Release preview"}: http://127.0.0.1:${port}${authoring ? "/" : sitePath("/")}`,
-  ),
-);
+    `${authoring ? "Read-only snapshot" : "Release preview"}: ${url}`,
+  );
+  if (options.open) openBrowser(url);
+});

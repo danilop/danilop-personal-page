@@ -170,7 +170,24 @@ test("review jobs retain an advisory response from each fake CLI, with no source
   );
   const bin = path.join(root, "bin");
   await fs.mkdir(bin);
-  const script = `#!${process.execPath}\nlet text='';process.stdin.on('data',d=>text+=d);process.stdin.on('end',()=>{const out=JSON.stringify({summary:'Fixture review',findings:[]});const at=process.argv.indexOf('--output-last-message');if(at>=0)require('node:fs').writeFileSync(process.argv[at+1],out);else process.stdout.write(out);});\n`;
+  const script = `#!${process.execPath}
+let text='';process.stdin.on('data',d=>text+=d);process.stdin.on('end',()=>{
+  const result={summary:'Fixture review',findings:[]};
+  const out=JSON.stringify(result);
+  const at=process.argv.indexOf('--output-last-message');
+  if(at>=0) {
+    const schemaAt=process.argv.indexOf('--output-schema');
+    if(schemaAt<0) process.exit(2);
+    JSON.parse(require('node:fs').readFileSync(process.argv[schemaAt+1],'utf8'));
+    require('node:fs').writeFileSync(process.argv[at+1],out);
+  } else if(process.argv.includes('--json-schema')) {
+    process.stdout.write(JSON.stringify({type:'result',subtype:'success',is_error:false,structured_output:result,result:'Ignore this commentary.'}));
+  } else {
+    if(process.argv[process.argv.indexOf('--mode')+1]!=='json') process.exit(3);
+    process.stdout.write([JSON.stringify({type:'message_end',message:{role:'assistant',stopReason:'stop',content:[{type:'text',text:out}]}}),JSON.stringify({type:'agent_settled'})].join('\\n'));
+  }
+});\n`;
+
   for (const name of ["claude", "codex", "pi"]) {
     await fs.writeFile(path.join(bin, name), script, { mode: 0o700 });
   }

@@ -184,4 +184,31 @@ test("missing NLP runtime writes an explicitly incomplete private report and ret
   const html = renderQualityReport(report);
   assert(!html.includes("<script>alert"));
   assert(html.includes("&lt;script&gt;"));
+  const padded =
+    "This can  improve reasoning                                   , but tests can miss defects.";
+  report.findings[0].excerpt = padded;
+  report.findings[0].locations = [
+    { piece: "example", line: 1, excerpt: padded },
+  ];
+  report.repetitions = [
+    {
+      example: "improve reasoning",
+      stems: ["improv", "reason"],
+      pieceCount: 1,
+      perPiece: { example: 2 },
+      n: 2,
+      count: 2,
+      locations: report.findings[0].locations,
+    },
+  ];
+  const snapshot = JSON.stringify(report);
+  const clean = renderQualityReport(report);
+  assert(!clean.includes(padded));
+  assert.equal(
+    clean.split(
+      "<blockquote>This can improve reasoning, but tests can miss defects.</blockquote>",
+    ).length - 1,
+    3,
+  );
+  assert.equal(JSON.stringify(report), snapshot);
 });

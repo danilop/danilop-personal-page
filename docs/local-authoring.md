@@ -9,12 +9,25 @@ existing source files; saving never commits, pushes, deploys or activates links.
 npm run preview
 ```
 
-Open `http://127.0.0.1:4322/_author/`. The complete draft-inclusive site is at
-`http://127.0.0.1:4322/`. Use `-- --port 4325` if needed. Stop with Ctrl+C.
+Browse `http://127.0.0.1:4322/` and follow **Edit** on an article or book.
+The direct editor URL `http://127.0.0.1:4322/_author/` is an optional shortcut
+to the content list and settings; no separate author link or launch is needed.
+`./preview.sh` opens the homepage automatically after its first successful build
+and watches application code. Use `./preview.sh --no-open` to suppress opening,
+or `npm run preview -- --open` to open without code watching. Use `--port 4325`
+with the wrapper (or after `--` with npm) if needed. Stop with Ctrl+C.
 This is the single everyday command for browsing and editing. The separate
 `author` and `preview:authoring` npm commands have been removed. `--release` serves
 the existing production build; `--snapshot` creates an advanced read-only snapshot.
 All modes default to port 4322; stop the current mode before starting another.
+
+The local site banner offers **Preview content: Show drafts / Published only**.
+Switching rebuilds the site, then returns to the homepage with the appropriate
+featured article, listings and publication order. Drafts are excluded during the
+build, not merely hidden on screen. The editor remains available. The choice is
+shared by tabs connected to this server, applies to subsequent saved changes, and
+resets to **Show drafts** when the server restarts. Source publication flags and
+the release `dist/` are unchanged. A failed rebuild keeps the last successful view.
 
 Browse the full site and use the quiet **Edit** link beneath an article or book
 heading. Draft and published pages use the identical link; Draft badges remain
@@ -36,12 +49,25 @@ The full metadata header is available for dates, publication surfaces and other
 fields. Unknown metadata is retained. IDs cannot be changed through the editor.
 
 The file list includes existing piece manuscripts, collection outlines, the tag
-registry, `publishing/home.yaml` and `publishing/links.yaml`. Collection order,
-homepage selection and aliases currently use YAML editing, not dedicated forms.
+registry, `publishing/home.yaml` and `publishing/links.yaml`. Collection order
+and homepage selection use YAML editing. The **Short links** panel provides
+local alias reservations, deactivation, verified S3 publication and live checks.
 Creating/importing pieces and automatic alias allocation still use the existing
 file/command workflows. The Images panel can import local images; tag reuse
-suggestions are available in Post details. Short-link cloud
-activation remains separate and pending; this editor does not provision it.
+suggestions are available in Post details. Short-link infrastructure is active;
+this editor does not provision it. Reserve a code, commit/push saved content and
+reservations, wait for Amplify, then use **Publish saved redirects** and **Check live
+links**. Publishing reconciles the full saved registry; drafts stay inactive. See
+[short-link operations](short-link-design.md#local-configuration-and-commands).
+
+## Review repetitions together
+
+Run **Writing checks**, expand **All repeated stem sequences**, and select
+**Review all repetitions in this article**. Pick Claude Code, Codex or Pi (or
+compare several), then **Review repetitions**. The agent receives the full current
+article and repetition list, with distance and context, and is asked to preserve
+useful terminology and deliberate echoes. Review and select proposed edits before
+**Apply to editor**; Save remains separate. See [editorial review](editorial-review.md#review-all-repetitions).
 
 ## Unpublish and delete
 
@@ -49,7 +75,10 @@ In **Post details**, **Unpublish to draft** preserves the article's source, ID,
 slug, publication dates, media, collection placements, and reserved short links.
 Save unsaved edits first. Confirming writes `draft: true` locally and records a
 saved version. Republishing uses the existing Draft control and Save; retain the
-original publication date unless an editorial decision changes it.
+original `publishedAt`. For a new article, clearing Draft and saving assigns the
+current UTC publication time atomically with the source. Toggling without saving
+or previewing does not assign one. Commit and push to `main` for Amplify delivery.
+See [publication timestamps](publication-time.md).
 
 **Delete draft…** is available only for a saved draft. Published and retired
 pieces are rejected by the server as well as the UI; return them to draft first
@@ -82,7 +111,7 @@ private Trash view, restore as draft with dependency conflict review, and a
 separate **Delete permanently** action. There will be no automatic expiration.
 These controls are planned; current recovery is manual. The
 [technical plan](social-publishing-plan.md) also covers the shared assistant
-configuration, private social composer and Short links management. Reader-facing
+configuration, private social composer and extensions to Short links management. Reader-facing
 sharing uses ordinary platform links/copy actions and never calls an assistant.
 
 ## Preview and checks
@@ -136,6 +165,13 @@ Every changed save preserves the prior and new text under ignored
 load it into the editor. Press Save to restore it as a new revision. Later versions
 remain available. Disk history survives server restarts and is separate from Git;
 it is not an off-device backup. Revisions have no automatic retention limit yet.
+[Automatic image cleanup](image-authoring-workflow.md#automatic-cleanup) preserves
+assets needed by these versions and recoverable unsaved edits. Browser recovery
+image names are mirrored in ignored local state, separately from the prose kept
+in browser storage. Undo-only protections are refreshed while a tab is open and
+expire after a day without contact; closed tabs cannot restore their old Undo stack.
+Saving waits for image protection to be backed up. Unused managed images receive
+a seven-day grace period and 30 days in recoverable image trash before deletion.
 
 If a file changes externally, saves based on the old revision are rejected.
 **Reload file** loads disk content into the undo history so you can compare and
@@ -168,6 +204,10 @@ The **Review** view integrates [Writing checks and Editorial review](editorial-r
 Run local NLP/stem checks or explicitly send a snapshot to an installed Claude Code,
 Codex or Pi CLI. Results have source locations and stale-state indicators; they never
 apply edits. Reviews include unsaved text and can cover the current collection.
+Both review types have a visible **Run … again** button beside the results. Reloading
+the file keeps rerunning available; a lost status request releases the controls
+with an error instead of leaving the editor stuck in a running state. Editorial
+reruns require an explicit click and use the selected agent's allowance.
 
 If the local server restarts, the open editor refreshes its session automatically
 and retries the interrupted request once, preserving the editor text. Unreadable
@@ -186,13 +226,25 @@ companion panes. Review tools use separate sections, with advanced model/prompt
 settings collapsed. Existing source editing, explicit saving and recovery remain
 unchanged; this is not a rich-text editor.
 
-## Article illustrations
+## Article illustrations and collection covers
 
 The **Images** view provides **Suggest brief** (installed Claude Code, Codex or Pi),
 **Generate image** (Codex signed in with ChatGPT), and explicit candidate insertion.
 It uses the blog's shared ink illustration style. API keys are not used. Candidates
-survive restarts, and insertion participates in editor undo/redo. See
+survive restarts with their generated descriptions. Selecting a generated candidate
+fills **Image description (alt text)** automatically; review or edit it before
+inserting. Manual edits are retained per candidate during the editor session.
+Imported images require a description entered manually. Choose **Beginning of
+article** (after the title and summary, before the body) or **End of article**.
+Insertion participates in editor undo/redo. See
 [image authoring](image-authoring-workflow.md) for setup, storage and limits.
+
+For a book or collection, open its YAML file and use **Images**. The same helper
+suggests a brief for the whole work, defaults to portrait, and generates or imports
+candidates. **Use as cover** assigns the selected image and description to the
+unsaved collection. **Remove cover** clears the assignment. Save applies either
+change; Undo restores the previous text. The cover appears on its overview and
+when featured on the homepage, independently of chapter images and reading order.
 
 Finding links select the exact source phrase or word when the checker supplies a
 range, including each repeated stem occurrence on the same line. Sentence-level
@@ -212,6 +264,16 @@ the selected proposal to unsaved text, with one undo step. Before Apply, a compa
 **Writing check** compares the suggestion with the original. Changes to a proposal
 refresh the check; expand details to review new findings or unavailable coverage.
 **Recheck writing** also explicitly reruns local checks. Each selected provider uses its own allowance.
+Generated fixes are validated before display. Invalid response structure or source
+anchors trigger one automatic retry with the same provider/model and validation
+feedback; that retry also uses its allowance. A second invalid response fails
+without displaying or applying a proposal. This checks format and source matching,
+not factual accuracy. Valid no-change responses are not retried.
+For batch repetitions, **Small changes per passage** requests all worthwhile fixes
+together, each kept small. The response must assess every affected paragraph.
+Batch instructions and their Reset default are separate from single-finding settings.
+The only other batch approach is **Rephrase where useful**, for broader sentence
+changes. Both assess the complete list; **Assess first** remains a single-finding option.
 See [finding fixes](finding-fixes-design.md) for scope and session limits.
 
 Writing checks and Editorial review retain separate session results per file.

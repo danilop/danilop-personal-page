@@ -6,8 +6,9 @@ const pieces = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
+    language: z.string().default("en"),
     url: z.string(),
-    publishedAt: z.string(),
+    publishedAt: z.string().optional(),
     html: z.string(),
     minutes: z.number(),
     tags: z.array(z.string()),

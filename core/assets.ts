@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
+import { imageAssetStem } from "./image-filenames";
 export const hash = (data: string | Uint8Array) =>
   createHash("sha256").update(data).digest("hex");
 export const escape = (s: unknown) =>
@@ -34,16 +35,22 @@ export class Assets {
     this.dependencies.set(file, hash(data));
     return data;
   }
-  async emit(data: Uint8Array | string, extension: string) {
+  async emit(data: Uint8Array | string, extension: string, stem?: string) {
     if (!/^\.[a-z0-9]+$/.test(extension))
       throw Error("Invalid asset extension");
-    const name = hash(typeof data === "string" ? data : data) + extension;
+    if (stem && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(stem))
+      throw Error("Invalid asset filename");
+    const name = (stem ? stem + "-" : "") + hash(data) + extension;
     await fs.mkdir(this.out, { recursive: true });
     await fs.writeFile(path.join(this.out, name), data);
     return "/media/" + name;
   }
-  async copy(owner: string, relative: string) {
+  async copy(owner: string, relative: string, descriptive = false) {
     const data = await this.read(owner, relative);
-    return this.emit(data, path.extname(relative).toLowerCase());
+    return this.emit(
+      data,
+      path.extname(relative).toLowerCase(),
+      descriptive ? imageAssetStem(relative) : undefined,
+    );
   }
 }

@@ -39,7 +39,11 @@ export function compileLinks(
     alias: string,
     t: z.infer<typeof linksSchema>["links"][string],
   ) {
-    if (["api", "assets", "media", "www", "admin"].includes(alias))
+    if (
+      ["api", "assets", "media", "www", "admin", "index", "not-found"].includes(
+        alias,
+      )
+    )
       throw Error(`Reserved alias ${alias}`);
     if (config.removed[alias])
       throw Error(`Removed alias ${alias} cannot be reused`);

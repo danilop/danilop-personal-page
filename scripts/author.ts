@@ -17,13 +17,17 @@ import {
 } from "../core/author-review";
 import { AuthorFixes, fixPrompt } from "../core/author-fixes";
 import { AuthorImages } from "../core/author-images";
+import { imageCleanupPolicy } from "../core/author-image-cleanup";
+import { collectionCover } from "../core/collection-cover";
 import {
   authorRoutes,
   injectAuthorEdit,
+  injectPreviewMode,
   type AuthorRoute,
 } from "../core/author-navigation";
 import { authorCatalog, authorTags } from "../core/author-catalog";
 import { AuthorLifecycle } from "../core/author-lifecycle";
+import { AuthorLinks } from "../core/author-links";
 import { AuthorStore } from "../core/author-store";
 import {
   loadLibrary,
@@ -62,6 +66,7 @@ async function main() {
     token = crypto.randomBytes(32).toString("hex"),
     store = new AuthorStore(root);
   const lifecycle = new AuthorLifecycle(root);
+  const links = new AuthorLinks(root);
   const reviews = new Reviews(root);
   const images = new AuthorImages(root);
   const fixes = new AuthorFixes(root);
@@ -69,6 +74,8 @@ async function main() {
     media = path.join(output, "media");
   await fs.mkdir(output, { recursive: true });
   let navigation: AuthorRoute[] = [];
+  let includeDrafts = true,
+    renderedDrafts = true;
   let siteDir = path.join(output, "site");
   let activeChild: ReturnType<typeof spawn> | undefined;
   let stopping = false;
@@ -107,7 +114,7 @@ async function main() {
         const staged = await stageAuthoring(
           root,
           { from: "content", all: true },
-          true,
+          includeDrafts,
         );
         workspace = staged.workspace;
         const env = {
@@ -149,20 +156,24 @@ async function main() {
         const previous = siteDir;
         siteDir = next;
         navigation = nextNavigation;
+        renderedDrafts = includeDrafts;
         setTimeout(() => {
           void fs.rm(previous, { recursive: true, force: true });
         }, 30000).unref();
         build = { state: "ready", error: "", version: build.version + 1 };
+        if (build.version === 1) console.log(`Preview ready: ${origin}/`);
       } catch (caught) {
         const e = asError(caught);
         build.state = "error";
         build.error = e.message;
+        includeDrafts = renderedDrafts;
         console.error("Site preview:", e.message);
       } finally {
         if (workspace) await fs.rm(workspace, { recursive: true, force: true });
       }
     }
     building = false;
+    queueImageCleanup();
   }
   async function library(file: string, text: string) {
     const lib = await loadLibrary();
@@ -188,6 +199,11 @@ async function main() {
         next = collectionSchema.parse(YAML.parse(text, { maxAliasCount: 0 }));
       if (old.id !== next.id)
         throw Error("Collection ID cannot change in the editor");
+      await collectionCover(
+        next.cover,
+        path.dirname(path.join(root, file)),
+        new Assets(media),
+      );
       lib.collections = lib.collections.map((c) =>
         c.id === old.id ? next : c,
       );
@@ -284,6 +300,41 @@ async function main() {
     );
     return p;
   }
+  let imageCleanupTimer: ReturnType<typeof setTimeout> | undefined;
+  let imageCleanupVersion = 0;
+  let imageCleanupError = "";
+  function queueImageCleanup(delay = 750) {
+    if (stopping) return;
+    clearTimeout(imageCleanupTimer);
+    imageCleanupTimer = setTimeout(() => {
+      void exclusive(async () => {
+        if (stopping) return;
+        if (
+          building ||
+          [...images.jobs.values()].some((job) => job.state === "running")
+        ) {
+          queueImageCleanup(30000);
+          return;
+        }
+        // A malformed/partially written source is not evidence that references
+        // disappeared. Defer collection until the library validates again.
+        await loadLibrary(path.join(root, "content"));
+        const result = await images.cleanup.sweep(Date.now(), async () => {
+          await loadLibrary(path.join(root, "content"));
+        });
+        imageCleanupError = "";
+        if (result.deferred) queueImageCleanup(30000);
+        if (result.candidates || result.assets || result.purged)
+          imageCleanupVersion++;
+      }).catch((error) => {
+        imageCleanupError = asError(error).message;
+        console.error("Image cleanup deferred:", imageCleanupError);
+      });
+    }, delay);
+    imageCleanupTimer.unref();
+  }
+  const dailyImageCleanup = setInterval(() => queueImageCleanup(), 86400000);
+  dailyImageCleanup.unref();
   const server = http.createServer((req, res) => {
     void handleRequest(req, res).catch((error: unknown) =>
       res.destroy(asError(error)),
@@ -305,16 +356,27 @@ async function main() {
           "/_author/review.js",
           "/_author/review-decisions.js",
           "/_author/images.js",
+          "/_author/image-recovery.js",
           "/_author/finding-range.js",
+          "/_author/repetition-batch.js",
           "/_author/fixes.js",
           "/_author/fix-checks.js",
           "/_author/ux.js",
+          "/_author/preview.js",
+          "/_author/links.js",
         ].includes(u.pathname) &&
         req.method === "GET"
       ) {
         res.setHeader("Content-Type", "text/javascript");
         res.end(
-          await fs.readFile("authoring/" + path.basename(u.pathname), "utf8"),
+          await fs.readFile(
+            (["finding-range.js", "repetition-batch.js"].includes(
+              path.basename(u.pathname),
+            )
+              ? "lib/"
+              : "authoring/") + path.basename(u.pathname),
+            "utf8",
+          ),
         );
         return;
       }
@@ -348,6 +410,12 @@ async function main() {
           action = u.pathname.split("/").pop();
         const result = await exclusive(async () => {
           const routes: Record<string, () => Promise<unknown>> = {
+            "GET short-links": async () =>
+              links.list(u.searchParams.get("file")!),
+            "POST short-link-reserve": async () => links.reserve(data),
+            "POST short-link-deactivate": async () => links.deactivate(data),
+            "POST short-link-publish": async () => links.publish(data),
+            "POST short-link-check": async () => links.check(data.file),
             "GET navigation": async () => {
               const matches = navigation.filter(
                 (r) => r.file === u.searchParams.get("file"),
@@ -381,6 +449,8 @@ async function main() {
             "GET image-list": async () => {
               return images.list(u.searchParams.get("file")!);
             },
+            "POST image-touch": async () => images.cleanup.touch(data.id),
+            "POST image-recovery": async () => images.cleanup.recovery(data),
             "GET image-job": async () => {
               return images.get(u.searchParams.get("id")!);
             },
@@ -400,6 +470,14 @@ async function main() {
                 data.id,
                 data.alt,
                 data.caption || "",
+              );
+            },
+            "POST image-cover": async () => {
+              return images.cover(
+                data.file,
+                data.id,
+                data.alt || "",
+                data.text,
               );
             },
             "POST image-import": async () => {
@@ -430,7 +508,25 @@ async function main() {
               return authorTags(root);
             },
             "GET files": async () => {
-              return { files: await store.files(), build };
+              return {
+                files: await store.files(),
+                build,
+                includeDrafts: renderedDrafts,
+                imageCleanupVersion,
+                imageCleanupError,
+                imageCleanupPolicy,
+              };
+            },
+            "POST preview-mode": async () => {
+              if (typeof data.includeDrafts !== "boolean")
+                throw Error("Choose whether to show drafts.");
+              if (building)
+                throw Error("Wait for the current preview build to finish.");
+              if (data.includeDrafts !== renderedDrafts) {
+                includeDrafts = data.includeDrafts;
+                void rebuild();
+              }
+              return { ok: true };
             },
             "GET read": async () => {
               const file = u.searchParams.get("file")!;
@@ -514,6 +610,7 @@ async function main() {
                   await preview(data.file, text, data.context);
                 },
               );
+              queueImageCleanup();
               return result;
             },
           };
@@ -596,12 +693,17 @@ async function main() {
       );
       if (path.extname(file) === ".html")
         data = Buffer.from(
-          injectAuthorEdit(
-            data.toString(),
-            navigation.find((r) => r.url === u.pathname),
-          ).replace(
-            "</body>",
-            `<script>setInterval(async()=>{try{const r=await fetch('/_author/api/files',{headers:{'X-Author-Token':'${token}'}});if(r.status===403){location.reload();return}if(!r.ok)return;const d=await r.json();if(d.build.version!==${build.version})location.reload()}catch{}},2000)</script></body>`,
+          injectPreviewMode(
+            injectAuthorEdit(
+              data.toString(),
+              navigation.find((r) => r.url === u.pathname),
+            ),
+            {
+              token,
+              version: build.version,
+              includeDrafts: renderedDrafts,
+              building,
+            },
           ),
         );
       res.end(req.method === "HEAD" ? undefined : data);
@@ -610,6 +712,7 @@ async function main() {
   server.listen(port, "127.0.0.1", () => {
     console.log(`Preview: ${origin}/\nEditor: ${origin}/_author/`);
     void rebuild();
+    queueImageCleanup();
   });
   let refreshTimer: ReturnType<typeof setTimeout>;
   const watchers = [
@@ -624,6 +727,7 @@ async function main() {
       clearTimeout(refreshTimer);
       refreshTimer = setTimeout(() => {
         void rebuild();
+        queueImageCleanup();
       }, 750);
     }),
   );
@@ -635,6 +739,8 @@ async function main() {
       stopping = true;
       queued = false;
       clearTimeout(refreshTimer);
+      clearTimeout(imageCleanupTimer);
+      clearInterval(dailyImageCleanup);
       watchers.forEach((w) => w.close());
       server.close();
       activeChild?.kill("SIGTERM");

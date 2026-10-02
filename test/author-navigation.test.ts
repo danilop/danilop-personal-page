@@ -1,8 +1,41 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { load } from "cheerio";
-import { authorRoutes, injectAuthorEdit } from "../core/author-navigation";
+import {
+  authorRoutes,
+  injectAuthorEdit,
+  injectPreviewMode,
+} from "../core/author-navigation";
 import type { CompiledSite } from "../core/site-data";
+
+test("local preview selector reflects the rendered view and disables during rebuilding", () => {
+  for (const includeDrafts of [true, false]) {
+    for (const building of [true, false]) {
+      const $ = load(
+        injectPreviewMode(
+          '<html><body><aside class="authoring-notice"><p>Preview</p></aside></body></html>',
+          {
+            token: "fixture",
+            version: 3,
+            includeDrafts,
+            building,
+          },
+        ),
+      );
+      assert.equal(
+        $("#preview-content").val(),
+        includeDrafts ? "drafts" : "published",
+      );
+      assert.equal($("#preview-content").is(":disabled"), building);
+      assert.equal($("script").attr("data-drafts"), String(includeDrafts));
+      assert.equal($("script").attr("data-version"), "3");
+      assert.match(
+        $(".authoring-notice p").first().text(),
+        includeDrafts ? /Drafts are included/ : /Published content only/,
+      );
+    }
+  }
+});
 
 test("author navigation maps rendered URLs to source files, including collection-only drafts", () => {
   const routes = authorRoutes(

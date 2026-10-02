@@ -596,42 +596,59 @@ test("fixed edition aliases resolve separately from living collections and draft
   );
 });
 
-test("short-link resolver redirects only managed site targets and never falls through to S3", async () => {
+test("S3 response resolver redirects only canonical metadata and strips S3 headers", async () => {
   const { runInNewContext } = await import("node:vm");
-  const source = (
-    await fs.readFile("infrastructure/shortlinks.js", "utf8")
-  ).replace(/import cf from ["']cloudfront["'];/, "");
-  const handler = runInNewContext(source + "\nhandler;", {
-    cf: {
-      kvs: () => ({
-        async get(key: string) {
-          if (key === "hello")
-            return "https://www.danilop.net/writing/hello-brave-new-world/";
-          if (key === "bad") return "https://example.com/";
-          throw Error("missing");
-        },
-      }),
-    },
-  });
-  const call = (uri: string, method = "GET") =>
+  const source = await fs.readFile("infrastructure/shortlinks.js", "utf8");
+  const handler = runInNewContext(source + "\nhandler;");
+  const target = "https://www.danilop.net/writing/hello-brave-new-world/";
+  const call = (
+    uri: string,
+    method = "GET",
+    destination: string | undefined = target,
+  ) =>
     handler({
       request: {
         uri,
         method,
         querystring: { next: { value: "https://example.com/" } },
       },
+      response: {
+        statusCode: 200,
+        headers: {
+          ...(destination
+            ? { "x-amz-website-redirect-location": { value: destination } }
+            : {}),
+          etag: { value: "s3-etag" },
+          via: { value: "1.1 cloudfront" },
+          warning: { value: "cached warning" },
+          "content-type": { value: "application/octet-stream" },
+        },
+      },
     });
-  assert.equal(
-    (await call("/hello/")).headers.location.value,
-    "https://www.danilop.net/writing/hello-brave-new-world/",
-  );
-  assert.equal((await call("/hello", "HEAD")).statusCode, 302);
+  for (const uri of ["/", "/index", "/hello", "/hello/"]) {
+    assert.equal(call(uri).statusCode, 302);
+    assert.equal(call(uri, "HEAD").headers.location.value, target);
+    assert.equal(call(uri).headers["cache-control"].value, "no-store");
+    assert.equal(call(uri).headers.etag, undefined);
+    assert.equal(call(uri).body, "");
+    assert.equal(call(uri).headers.via.value, "1.1 cloudfront");
+    assert.equal(call(uri).headers.warning.value, "cached warning");
+  }
   for (const uri of [
-    "/missing",
-    "/bad",
-    "/publication/distribution/ledger.json",
+    "/publication/owners.json",
     "/../hello",
+    "/HELLO",
+    "/hello//",
   ])
-    assert.equal((await call(uri)).statusCode, 404);
-  assert.equal((await call("/hello", "POST")).statusCode, 404);
+    assert.equal(call(uri).statusCode, 404);
+  for (const destination of [
+    "https://example.com/",
+    "https://www.danilop.net.evil/",
+    "https://user@www.danilop.net/",
+    target + "\r\nX-Test: bad",
+    target + "\\evil",
+    "",
+  ])
+    assert.equal(call("/hello", "GET", destination).statusCode, 404);
+  assert.equal(call("/hello", "POST").statusCode, 404);
 });

@@ -1,38 +1,37 @@
-# Publication access change for approval
+# Short-link access change scope
 
-The website deployment through existing Amplify access is already authorized.
-Automatic review additionally requires explicit approval for these new persistent
-access changes. The setup is in `scripts/provision-links.mjs`; the resolver source is
-`infrastructure/shortlinks.js` and has local request/redirect tests.
+Status: the user selected private S3 REST with OAC on 2 October 2026. This replaces
+the earlier KVS/new-GitHub-role proposal. The replacement setup and Free-plan subscription are active; the disposable
+live test passed and its objects were removed. No CI role was created. See the
+[selected design](short-link-design.md) for the complete behaviour and validation.
 
-## Exact resources and access
+## Resource and permission boundaries
 
-- AWS account: the existing site account; resolve the exact ID from the private
-  operations note and verify it against the signed-in AWS identity.
-- Existing CloudFront distribution serving `danilop.link`; its exact ID is in
-  the private operations note and the current provisioning script.
-- Add one KeyValueStore and one viewer-request function named
-  `danilop-notes-links`; retain the S3 origin and existing distribution settings.
-- The function redirects managed aliases only to `https://www.danilop.net/` URLs.
-  Unknown paths return 404 without exposing S3 publication records. No article alias is
-  activated until its exact site deployment and destination return successfully.
-- Create IAM role `danilop-notes-publication`, trusted only by GitHub Actions in
-  `danilop/danilop-personal-page`, branch `main`, using the existing GitHub OIDC
-  identity provider with audience `sts.amazonaws.com`.
-- Grant that role `amplify:ListJobs` for the existing production Amplify app, branch `main`;
-  KVS describe/list/update only for the new store's exact ARN; and S3 get/put/delete
-  only in `danilop-link/publication/shortlinks/*` and
-  `danilop-link/publication/distribution/*`.
-- Add GitHub repository variable `PUBLICATION_ROLE_ARN` containing the role ARN.
-  This is an identifier, not a secret. No static AWS key is created.
+- Use the existing short-link distribution and bucket. Recover operator IDs from
+  the private operations note and confirm the signed-in AWS identity.
+- Create/attach an OAC and a dedicated viewer-response CloudFront Function.
+  Store destinations on S3 objects, without KeyValueStore or Lambda@Edge.
+- Keep the bucket private. Grant the CloudFront service principal GetObject only
+  under `redirects/*`, conditioned on the designated distribution ARN. Keep
+  publication records and recovery data outside the CloudFront-readable prefix.
+- Local editor actions use the operator's existing AWS session. Scope publishing
+  access to the required redirect/ledger prefixes and targeted invalidations.
+  Do not introduce static keys or a new GitHub role for local editor operations.
+- Future automated reconciliation requires separately scoped CI access and the
+  existing exact-deployment gate; the old KVS role/provisioning script is obsolete.
+- Free flat-rate pricing is active with an associated WAF web ACL and migrated
+  managed-cache settings. Access logging is disabled; original settings are backed
+  up privately. Do not describe the plan as an AWS-account-wide bill cap.
 
-## Effect and rollback
+## Recovery and test
 
-The main-branch publication workflow can change this site's short-link mappings
-and delivery ledger. A compromised authorized workflow would gain those limited
-abilities. It cannot change unrelated buckets, distributions, or IAM permissions.
+Back up the current distribution and bucket configuration before changes. Check
+object ownership/ACL dependencies and preserve unrelated objects. Rollback must
+use fresh configuration revisions and restore the saved settings; retain owned
+aliases and their recovery history. The live test must create a uniquely owned
+fake alias, check redirect/update/cache behaviour and direct-origin privacy,
+then remove its object and temporary records and verify cache invalidation.
 
-Save the previous distribution configuration before attachment. Rollback removes
-only the new function association using a fresh distribution ETag. Disable the
-workflow/remove its role trust to revoke automatic access. Existing aliases and
-snapshots are retained for recovery; do not delete them during rollback.
+The previous automatic approval rejection concerned the earlier KVS/IAM proposal.
+It does not establish a rejection of this replacement design. Report any new
+approval result against the actual proposed action.

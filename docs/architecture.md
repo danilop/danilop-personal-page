@@ -1,6 +1,8 @@
 # Technical architecture and implementation decisions
 
-Status: implemented and deployed at the root; short-link cloud setup remains pending.
+Status: website deployed at the root; private-S3/OAC short-link infrastructure and
+Free plan active. New editor controls are local; article alias activation remains
+gated by committed content and verified site deployment.
 Date: 2026-09-15. These choices implement the [product design](product-design.md)
 and [content model](content-model.md); they do not redefine those requirements.
 Changing a tool requires updating its adapter/decision, not the editorial model.
@@ -11,7 +13,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | ----------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
 | Website                 | Astro, static output                                                                 | Content-oriented rendering with optional interactive islands             |
 | Implementation          | TypeScript in strict mode                                                            | Explicit schemas and plugin contracts                                    |
-| Runtime/package manager | Node.js 24.21.0 LTS; npm 12.0.2                                                      | Pinned across local, Amplify and GitHub builds                           |
+| Runtime/package manager | Node.js 24.21.0 LTS; npm 12.2.0                                                      | Pinned across local, Amplify and GitHub builds                           |
 | Authoring               | Markdown + YAML metadata/manifests                                                   | Portable prose and inspectable structure                                 |
 | Parsing                 | unified / remark / rehype, with remark-directive                                     | Parse semantic blocks before HTML generation                             |
 | Validation              | Zod schemas; exportable JSON Schema where practical                                  | Build validation plus future editor assistance                           |
@@ -26,7 +28,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | Interactivity           | Registered JS modules; Web Workers for computation; WASM where useful                | Load only the requested experiment                                       |
 | Browser model runtime   | Replaceable runtime; WebLLM worker adapter                                           | Never a content-model dependency; validate model compatibility           |
 | Hosting                 | Existing AWS Amplify app, Amazon Linux 2023                                          | Preserve automatic deployment from main                                  |
-| Short links             | CloudFront Function + KeyValueStore; S3 registry snapshots                           | HTTP redirects compatible with the actual existing origin setup          |
+| Short links             | Private S3 + OAC; viewer-response CloudFront Function (active)                       | HTTP redirects compatible with the actual existing origin setup          |
 | Book output             | Markua export and separate Leanpub adapter                                           | Preserve an independent route to other formats/publishers                |
 | Tests                   | node:test for the core; browser testing for the implemented UI                       | Exercise semantics and user behavior at the appropriate layer            |
 
@@ -37,7 +39,7 @@ Resolved versions are installed and recorded in package-lock.json. See
 [implementation status](implementation-plan.md) and [operations](operations.md)
 for actual module locations, commands and account-dependent limits.
 
-The rebuild pins Node 24.21.0 LTS and npm 12.0.2 and uses Astro 7.3.2.
+The rebuild pins Node 24.21.0 LTS and npm 12.2.0 and uses Astro 7.3.5.
 TypeScript remains at 6.0.3 because Astro's checker does not support TypeScript 7's
 compiler API. See [dependencies and hosting](dependencies-and-hosting.md) for
 version exceptions, install-script policy, and hosted verification.
@@ -71,10 +73,27 @@ Only assets reachable from eligible pieces are copied into public outputs.
 A standalone piece has no collection context; a collection view uses its own
 placements, contextual titles, and settings.
 
-Current Open Graph code remains a legacy-source adapter. Preserve the existing
+Local editorial media currently becomes hashed files in Amplify's build artifact;
+explicit `media:` references use the separate S3/CloudFront path. The proposed
+[asset release design](asset-release-design.md) introduces a tracked checksum
+manifest and shared cache/resolver, first hydrating builds and then optionally
+serving web renditions directly from the media CDN. Commit-specific deployment
+checks and remote retention are part of that proposal, not implemented features.
+
+Imported external Open Graph data remains a legacy-source adapter. Preserve the existing
 precedence of raw cache, imported metadata, and per-field editorial overrides.
 Discovery remains an explicit authoring command; production builds consume
 reviewed source data and do not silently discover new publications.
+
+Public page metadata is separate from imported external metadata.
+`core/social-preview.ts` prepares target-specific JPEG cards from local article
+images/collection covers, or branded title cards, through `Assets`. The shared
+Layout emits Open Graph, X and JSON-LD metadata. `core/social-metadata.ts` validates
+static metadata, `verify-build.ts` checks image bytes, and
+`core/social-link-check.ts`/`scripts/verify-social.ts` check public full/short URLs
+as crawlers. See [social previews](social-previews.md). This is implemented locally,
+not deployed; private social-card preview controls remain pending. Short-link
+infrastructure is active, with article alias activation gated by verified deployment.
 
 ### Theme and template boundary — required for the rebuild
 
@@ -399,80 +418,34 @@ Sources: [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API),
 
 ## 7. Short-link integration
 
-### Verified current state
+### Activation status
 
-Read-only AWS inspection on 2026-09-15 found:
+The private-S3/OAC short-link resolver and Free plan are active. Live checks passed
+for GET/HEAD, cache expiry, updates, direct-origin denial and test cleanup.
+Resource inventories and operator identifiers belong in the private operations
+note; see [private operations](private-operations.md). DNS, access control and
+redirect behaviour must be verified during activation.
 
-| Resource                                     | Observed state                                                    |
-| -------------------------------------------- | ----------------------------------------------------------------- |
-| Public hostname                              | `danilop.link`                                                    |
-| CloudFront distribution                      | Recorded in the private operations note; discover by domain alias |
-| Origin bucket                                | `danilop-link` in `eu-west-1`                                     |
-| Origin endpoint                              | `danilop-link.s3.amazonaws.com` (S3 REST origin)                  |
-| Bucket contents                              | Empty at inspection                                               |
-| Website configuration                        | None                                                              |
-| Edge functions / Lambda@Edge                 | None attached                                                     |
-| Additional cache behaviors / error responses | None                                                              |
-| Viewer protocol policy                       | Redirect HTTP to HTTPS                                            |
+### Selected implementation
 
-The bucket is named `danilop-link`, not `danilop.link`. Existing resources provide
-hosting infrastructure but no observed short-link resolution. Initial resolver/IAM setup remains pending the specific access approval in
-[deployment access review](deployment-access-review.md).
+Use private S3 REST objects with OAC and one viewer-response CloudFront Function.
+Each alias stores its destination in S3 redirect metadata; the function converts
+that metadata into a real 302. Keep the publication ledger outside the readable
+redirect prefix. This supersedes the viewer-request KeyValueStore design.
+See [short-link design](short-link-design.md) for freshness, access, pricing,
+publication gates and the disposable live test.
 
-### Chosen implementation
+The content registry still maps owned codes to content IDs and optional editions
+or scenarios. Exact site deployment and public destination checks precede cloud
+activation. Snapshot/ownership history and conditional writes support recovery;
+site deployment and alias changes are not one atomic transaction.
 
-Use a viewer-request CloudFront Function with a KeyValueStore registry for HTTP
-redirects. Keep the S3 bucket as the origin and as storage for versioned registry
-snapshots/manifests. Do not rely on S3 website-redirect metadata through this REST
-origin; that mechanism requires different origin behavior.
-
-The version-controlled `publishing/links.yaml` maps a code to a content ID and,
-optionally, an edition/scenario. A compiler resolves it to a verified HTTPS
-canonical destination. Initial codes use lowercase ASCII letters, digits, and
-hyphens, start with a letter or digit, and contain 1–64 characters. Reserve
-infrastructure paths separately and validate collisions in the schema.
-Use human-selected codes, reserving drafts without activating them.
-
-The function handles GET/HEAD and returns a 302 with a short cache lifetime
-(initially 60 seconds) for managed aliases. Even an identity-stable alias may
-need a new physical destination later. Unknown paths return a static 404; the root redirects to the website. The
-resolver does not pass arbitrary paths to the origin/publication ledger. Incoming query parameters never become
-an arbitrary redirect destination; configured target queries encode approved scenarios.
-
-Only native new publications enter this registry automatically. Never repurpose
-codes or delete edition aliases as a consequence of a content-list refresh.
-
-### Publication sequence
-
-1. Validate code ownership, collisions, target visibility, and destination mapping.
-2. Build and deploy the canonical site through the existing Amplify pipeline.
-3. Verify the exact commit's deployment and public destinations.
-4. Upload a versioned registry snapshot to a dedicated S3 prefix.
-5. Apply idempotent KeyValueStore updates using ETags; verify representative aliases.
-6. Record the deployment/registry revision and retain rollback data.
-
-Choose a small GitHub Actions coordinator triggered on pushes to `main`. It uses
-AWS OIDC credentials, waits for the matching Amplify commit/job, and reads a
-public build.json marker to confirm the deployed commit. It does not duplicate
-the website build. Serialize link publication and reject stale runs when a newer
-commit is already live. Bound waits and surface failures.
-
-Give this job only the AWS permissions needed to inspect deployment, write the
-managed snapshot prefix, and update its registry. Initial edge-function/IAM setup
-is a separate infrastructure change. Reconciliation deactivates explicitly managed
-aliases whose targets are no longer public, and applies `removed` tombstones for
-deleted articles. Unrelated aliases and ownership history remain. Puts/deletes
-use ETag-guarded batches; snapshots record the intended resulting registry. A
-failure may leave a partially applied registry; rerunning converges. Site and
-link updates are not assumed to be one atomic transaction.
-
-For ongoing updates use the KeyValueStore API with ETag checks; S3 import is an
-initialization feature, not a live synchronization mechanism. Rollback verifies
-that earlier destinations still exist before restoring mappings.
-
-Sources: [CloudFront redirects](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/functions-tutorial.html),
-[KeyValueStore updates](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/kvs-with-functions-kvp.html),
-[initial S3 import](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/kvs-with-functions-create.html).
+The provisioner, publisher and editor controls implement the S3/OAC design. The
+Free plan is active with a dedicated WAF ACL and attached DNS zone. Local source
+changes are not a site deployment: article aliases activate only after committing
+the saved registry and verifying its deployed revision and public destinations.
+Optional CI access remains unconfigured; operator publication uses the existing
+AWS session.
 
 ### Cross-posting delivery
 
@@ -532,7 +505,7 @@ TypeScript contracts are in `core/model.ts`, `renderers/registry.ts`,
 an illustrative interface into content configuration. Authoring syntax is in
 [the authoring guide](authoring-format.md).
 
-- Astro 7.3.2 generates static routes; the CommonJS legacy generator remains usable.
+- Astro 7.3.5 generates static routes; the CommonJS legacy generator remains usable.
 - Theme Shell/Home/Article components are registered explicitly. Collection/archive
   views use shared semantic layouts and selected-theme CSS. Arbitrary remote theme
   scripts are not loaded from content.
@@ -678,6 +651,33 @@ for artwork, requiring ChatGPT login. `authoring/images.js` owns the Images view
 Generation records and images stay in ignored authoring state until explicit
 asset preparation/insertion. Shared style is `publishing/image-style.md`; candidate
 bytes are format-validated and checksum-verified before article-local insertion.
+Generated candidates carry a schema-constrained content-based filename stem from
+the same image request. Imports and legacy candidates derive one from their alt
+description. Asset names append a checksum suffix; the renderer preserves the
+descriptive stem in local image URLs, with a full content hash for cache identity.
+For collection files the same service captures current metadata and a resolved
+outline for briefs, then assigns an explicit `cover` through a YAML document update
+returned to the editor. The server validates collection identity and candidate
+ownership; assignment never writes the source file itself.
+Brief and generation prompts both include purpose-specific composition instructions
+and the selected aspect ratio. The service defaults missing shapes to portrait for
+covers and landscape for articles. Cover composition requirements override generic
+negative-space guidance and adapt conflicting old briefs to the selected format;
+they are prompt guidance, not image-layout validation. Collection assets live
+under `content/collections/assets/` and participate in content import. The build's
+`core/collection-cover.ts` validates and normalises the image into a hashed WebP,
+and compiled collection data carries its URL, alt text and dimensions. Homepage
+selection uses that explicit cover; it never derives one from a member article.
+
+`core/author-image-cleanup.ts` owns the private image lifecycle: ownership records,
+browser recovery names, expiring per-tab Undo protections, reference scans,
+checksum-verified quarantine and eventual trash deletion. The author server queues
+sweeps after saves/builds, at startup and daily, using its request queue and the
+same on-disk write lock as saves. It defers during builds/image jobs and validates
+content before removing files. `authoring/image-recovery.js` mirrors only image
+names from browser recovery and active Undo history; saves wait for its request.
+`authoring/images.js` refreshes candidates when the cleanup inventory version
+changes. See [retention and recovery](image-authoring-workflow.md#automatic-cleanup).
 
 ### Finding fixes
 
@@ -723,16 +723,29 @@ against this map, preserving collection placement and rejecting arbitrary return
 destinations. Editor deep links validate the requested file against the editable
 file list. View on site opens the saved page in a separate tab.
 
+The live preview banner also selects draft-inclusive or published-only content.
+An authenticated, same-origin `POST preview-mode` changes server-session state and
+rebuilds the isolated workspace. Published-only mode skips draft promotion in
+`stageAuthoring`; it uses normal content eligibility and homepage selection.
+The last successful output and its visibility mode remain active until the new
+build succeeds. `authoring/preview.js` polls build state, redirects tabs to the
+homepage when the mode changes, and preserves the previous view on failure.
+The selector and script are injected only when serving local pages, not packaged
+into static output. Restarting the server restores draft-inclusive mode.
+
 ### Review decisions and moving source locations
 
 `authoring/review-decisions.js` keeps author decisions in memory per report ID,
 kind and finding identity. They are separate from checker output and exported as
-`authorDecisions`; a new report never inherits suppression. `finding-range.js`
+`authorDecisions`; a new report never inherits suppression. `lib/finding-range.js`
 relocates passage links against the reviewed snapshot using unchanged ranges,
 unique exact quotes or unchanged surrounding text. Missing/ambiguous matches
 return no range. This navigation is independent of whole-report freshness, which
 still guards generated suggestions. Only the local author server serves these
-helpers.
+helpers at the existing `/_author/` URLs. Both the range/excerpt helper and
+`lib/repetition-batch.js` are shared, dependency-free modules: server code imports
+from `lib/`, never from the browser entrypoint directory. Architecture checks
+continue to forbid core-to-authoring dependencies.
 
 ### Article lifecycle in local authoring
 

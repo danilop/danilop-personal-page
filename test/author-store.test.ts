@@ -63,3 +63,27 @@ test("external modification during validation is detected", async (t) => {
   );
   assert.equal((await s.read(file)).text, "external");
 });
+
+test("publishing saves a timestamp atomically and preserves it through unpublish and restore", async (t) => {
+  const s = await fixture(t);
+  const draft = "---\nid: a\ndraft: true\n---\nA draft.\n";
+  await fs.writeFile(path.join(s.root, file), draft);
+  const original = await s.read(file);
+  const candidate = draft.replace("draft: true", "draft: false");
+  await assert.rejects(
+    s.save(file, candidate, original.revision, async (text) => {
+      assert.match(text, /publishedAt: .*T.*Z/);
+      throw Error("Invalid article");
+    }),
+    /Invalid article/,
+  );
+  assert.equal((await s.read(file)).text, draft);
+  const saved = await s.save(file, candidate, original.revision, valid);
+  const date = saved.text.match(/publishedAt: (.+)/)![1];
+  assert(Number.isFinite(Date.parse(date.replaceAll('"', ""))));
+  const restored = await s.save(file, draft, saved.revision, valid);
+  assert(restored.text.includes(`publishedAt: ${date}`));
+  const republished = await s.save(file, candidate, restored.revision, valid);
+  assert(republished.text.includes(`publishedAt: ${date}`));
+  assert.equal((await s.read(file)).text, republished.text);
+});

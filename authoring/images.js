@@ -6,8 +6,10 @@
     selected = null,
     active = null,
     busy = false;
-  let stage = "brief",
-    insertion = null;
+  let stage = "brief";
+  const altDrafts = new Map();
+  const isCollection = () => /^content\/collections\/[^/]+\.yaml$/.test(file);
+  const isContent = () => file.endsWith("/index.md") || isCollection();
   const briefStep = $("image-brief-step"),
     generateStep = $("image-generate-step");
   function step(value) {
@@ -26,15 +28,33 @@
   next.textContent = "Continue to generate";
   next.onclick = () => step("generate");
   briefStep.append(next);
-  editor.addEventListener("blur", () => {
-    insertion = { file, text: editor.value, start: editor.selectionStart };
-  });
   const note = (s) => {
     $("image-notice").textContent = s;
   };
   const key = () => "author-image-brief:" + location.origin + ":" + currentFile;
   function controls() {
-    const piece = file.endsWith("/index.md");
+    const piece = isContent();
+    const cover = isCollection();
+    $("images-heading").textContent = cover
+      ? "Create a book or collection cover"
+      : "Illustrate your article";
+    $("images-panel").setAttribute(
+      "aria-label",
+      cover ? "Book and collection cover" : "Article images",
+    );
+    $("image-context-note").textContent = cover
+      ? "Suggest brief sends the current title, summary, introduction and outline, with saved article summaries, to the selected agent’s provider. Cover artwork fills the chosen shape, with modest margins and no space reserved for title text."
+      : "Suggest brief sends this article, including unsaved edits, to the selected agent’s provider.";
+    $("image-caption").closest("label").hidden = cover;
+    $("image-position").closest("label").hidden = cover;
+    $("insert-image").textContent = cover
+      ? "Use as cover"
+      : "Insert into article";
+    $("remove-cover").hidden = !cover;
+    $("remove-cover").disabled = busy;
+    $("image-insertion-note").textContent = cover
+      ? "Updates the cover in the unsaved collection. Save to refresh the site. Undo restores the previous cover."
+      : "Beginning places the image after the title and summary, before the article text. Preview it, then Save. Undo removes the insertion; the candidate stays available.";
     $("suggest-brief").disabled =
       busy ||
       !piece ||
@@ -50,7 +70,9 @@
     $("image-agent").disabled = busy;
     $("image-insert-hint").textContent = !$("image-alt").value.trim()
       ? "Add an image description to insert."
-      : "Ready to insert · Undo is available.";
+      : cover
+        ? "Ready to use as cover · Undo is available."
+        : "Ready to insert · Undo is available.";
   }
   async function setup() {
     config = await api("image-settings");
@@ -70,12 +92,14 @@
     $("image-provider").textContent = config.reason;
     controls();
   }
-  async function select(id) {
+  async function select(id, touch = true) {
     const f = currentFile,
       r = candidates.find((c) => c.id === id);
     if (!r) return;
     selected = r;
+    $("image-alt").value = altDrafts.get(id) ?? r.altText ?? "";
     controls();
+    if (touch) await api("image-touch", { id });
     const data = await api("image-data?id=" + encodeURIComponent(id));
     if (currentFile !== f || selected?.id !== id) return;
     $("image-preview").src = data.image;
@@ -93,10 +117,16 @@
   }
   async function refresh() {
     const f = currentFile;
-    if (!f.endsWith("/index.md")) return;
+    if (!isContent()) return;
     const list = await api("image-list?file=" + encodeURIComponent(f));
     if (f !== currentFile) return;
     candidates = list;
+    if (!list.length) {
+      selected = null;
+      $("image-preview").removeAttribute("src");
+      $("image-alt").value = "";
+      controls();
+    }
     $("image-selection").hidden = stage !== "choose" || !list.length;
     $("image-candidates").replaceChildren(
       ...list.map((r, i) => {
@@ -119,8 +149,25 @@
     if (list.length)
       await select(
         list.some((r) => r.id === selected?.id) ? selected.id : list[0].id,
+        false,
       );
   }
+  let cleanupVersion = -1;
+  document.addEventListener("author-image-cleanup", (event) => {
+    const version = event.detail?.version ?? event.detail;
+    $("image-cleanup-status").textContent = event.detail?.error
+      ? "Automatic image cleanup is paused: " + event.detail.error
+      : "Unused alternatives expire after seven days. Recovery trash is kept for 30 days.";
+    if (
+      version === undefined ||
+      typeof version !== "number" ||
+      version === cleanupVersion ||
+      busy
+    )
+      return;
+    cleanupVersion = version;
+    if (isContent()) refresh().catch((e) => note(e.message));
+  });
   async function sync() {
     if (currentFile === file) return;
     currentFile = file;
@@ -131,10 +178,11 @@
     $("image-direction").value = "";
     $("image-alt").value = "";
     $("image-caption").value = "";
+    $("image-size").value = isCollection() ? "1024x1536" : "1536x1024";
     note(
-      file.endsWith("/index.md")
+      isContent()
         ? "Your candidates will appear here. Nothing is inserted automatically."
-        : "Choose an article to create an illustration.",
+        : "Choose an article, book or collection to create an illustration.",
     );
     controls();
     await refresh();
@@ -153,15 +201,8 @@
     try {
       await sync();
       if (!config) await setup();
+      if (selected) await api("image-touch", { id: selected.id });
       step(candidates.length ? "choose" : "brief");
-      const header = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n)?/.exec(editor.value);
-      if (
-        !insertion ||
-        insertion.file !== file ||
-        insertion.text !== editor.value ||
-        insertion.start < (header?.[0].length || 0)
-      )
-        $("image-position").value = "end";
     } catch (e) {
       note(e.message);
     }
@@ -171,7 +212,10 @@
     controls();
   };
   $("image-brief").addEventListener("input", remember);
-  $("image-alt").addEventListener("input", controls);
+  $("image-alt").addEventListener("input", () => {
+    if (selected) altDrafts.set(selected.id, $("image-alt").value);
+    controls();
+  });
   $("image-agent").onchange = controls;
   async function start(kind) {
     try {
@@ -246,7 +290,7 @@
           step("choose");
         }
         note(
-          "Candidate saved. Review it and add an image description before inserting.",
+          "Candidate saved. Review the image and its suggested description before inserting.",
         );
       }
     } catch (e) {
@@ -301,7 +345,7 @@
       controls();
     }
   };
-  $("insert-image").onclick = async () => {
+  async function applyImage(remove = false) {
     try {
       await flushMetadata();
     } catch (e) {
@@ -310,44 +354,54 @@
     }
     const f = file,
       text = editor.value,
-      id = selected?.id;
+      id = remove ? null : selected?.id;
+    const cover = isCollection();
+    const header = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/.exec(text);
     const at =
-      $("image-position").value === "cursor"
-        ? insertion
-        : { file: f, text, start: text.length };
-    if (!at || at.file !== f || at.text !== text)
-      return note(
-        "The insertion position changed. Place the cursor in the article again, or choose End of article.",
-      );
+      $("image-position").value === "beginning"
+        ? (header?.[0].length ?? 0)
+        : text.length;
     busy = true;
     controls();
     try {
-      const result = await api("image-insert", {
+      const result = await api(cover ? "image-cover" : "image-insert", {
         file: f,
         id,
         alt: $("image-alt").value,
         caption: $("image-caption").value,
+        ...(cover ? { text } : {}),
       });
       if (file !== f || editor.value !== text) {
-        note("Asset prepared. Return to its article to insert it.");
+        note(
+          "The content changed. Your newer edits were preserved; apply the image again.",
+        );
         return;
       }
-      editor.value =
-        text.slice(0, at.start) +
-        "\n\n" +
-        result.markdown +
-        "\n\n" +
-        text.slice(at.start);
+      editor.value = cover
+        ? result.text
+        : text.slice(0, at) +
+          "\n\n" +
+          result.markdown +
+          "\n\n" +
+          text.slice(at);
       changed();
       editor.dispatchEvent(new Event("input"));
-      note("Image inserted at the chosen position. Preview it, then Save.");
+      note(
+        cover
+          ? remove
+            ? "Cover removed from the unsaved collection. Save when ready."
+            : "Cover assigned. Save to refresh the site; Undo is available."
+          : "Image inserted at the chosen position. Preview it, then Save.",
+      );
     } catch (e) {
       note(e.message);
     } finally {
       busy = false;
       controls();
     }
-  };
+  }
+  $("insert-image").onclick = () => applyImage();
+  $("remove-cover").onclick = () => applyImage(true);
   setInterval(() => {
     if (!$("images-panel").hidden) sync().catch((e) => note(e.message));
   }, 500);

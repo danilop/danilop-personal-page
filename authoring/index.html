@@ -404,10 +404,22 @@
         font-size: 13px;
       }
 
-      #metadata {
+      #metadata,
+      #short-links-panel {
         margin: 0 32px 14px;
         border: 1px solid var(--line);
         border-radius: 5px;
+      }
+
+      #short-links-panel > p,
+      #short-link-list {
+        margin: 10px 16px;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+
+      #short-link-list button {
+        margin-left: 8px;
       }
 
       #context {
@@ -837,7 +849,8 @@
         border-color: var(--green);
       }
 
-      #metadata .bar {
+      #metadata .bar,
+      #short-links-panel .bar {
         padding: 6px 16px 16px;
         align-items: end;
         flex-wrap: wrap;
@@ -855,6 +868,13 @@
 
       #version-diff:empty {
         display: none;
+      }
+
+      #short-links-panel label {
+        display: grid;
+        gap: 5px;
+        flex: 1;
+        min-width: 180px;
       }
 
       #images-panel .image-row label {
@@ -958,7 +978,8 @@
           padding: 16px;
         }
 
-        #metadata {
+        #metadata,
+        #short-links-panel {
           margin: 0 20px 12px;
         }
       }
@@ -1043,7 +1064,8 @@
           margin-left: auto;
         }
 
-        #metadata {
+        #metadata,
+        #short-links-panel {
           margin: 0 16px 12px;
         }
 
@@ -1128,7 +1150,8 @@
           flex: 1;
         }
 
-        #metadata {
+        #metadata,
+        #short-links-panel {
           max-height: 35dvh;
           overflow: auto;
         }
@@ -1214,6 +1237,36 @@
         <div id="tag-suggestions" role="group" aria-label="Existing tags"></div>
       </div>
     </details>
+    <details id="short-links-panel">
+      <summary>Short links</summary>
+      <div class="bar">
+        <label
+          >New code
+          <input
+            id="short-link-code"
+            type="text"
+            placeholder="e.g. clever-loophole"
+            maxlength="64"
+        /></label>
+        <button id="short-link-reserve" type="button">
+          Reserve code locally
+        </button>
+        <button id="short-link-refresh" type="button">Refresh links</button>
+        <button id="short-link-publish" type="button">
+          Publish saved redirects
+        </button>
+        <button id="short-link-check" type="button">Check live links</button>
+      </div>
+      <p>
+        <small
+          >Reserve a code, save and commit your content, then deploy it. Publish
+          saved redirects activates the saved registry on S3 after checking that
+          deployment. Draft reservations remain inactive.</small
+        >
+      </p>
+      <div id="short-link-list"></div>
+      <p id="short-link-status" role="status"></p>
+    </details>
     <div id="error" role="alert"></div>
     <main>
       <section class="pane" id="write-pane">
@@ -1257,7 +1310,8 @@
           sandbox="allow-same-origin"
         ></iframe>
         <section id="images-panel" hidden aria-label="Article images">
-          <h2>Illustrate your article</h2>
+          <h2 id="images-heading">Illustrate your article</h2>
+          <button type="button" id="remove-cover" hidden>Remove cover</button>
           <p class="review-intro">An idea, a brief, an image that belongs.</p>
           <p>
             <small>Blue ink on ivory · the Notes Along the Way style</small>
@@ -1288,7 +1342,7 @@
                 </select></label
               ><button type="button" id="suggest-brief">Suggest brief</button>
             </div>
-            <small
+            <small id="image-context-note"
               >Suggest brief sends this article, including unsaved edits, to the
               selected agent’s provider.</small
             >
@@ -1341,6 +1395,12 @@
           <div id="image-notice" role="status" aria-live="polite">
             Your candidates will appear here. Nothing is inserted automatically.
           </div>
+          <p>
+            <small id="image-cleanup-status"
+              >Unused alternatives expire after seven days. Recovery trash is
+              kept for 30 days.</small
+            >
+          </p>
           <section id="image-selection" hidden>
             <h3>Choose and describe</h3>
             <div
@@ -1370,17 +1430,17 @@
             /></label>
             <label
               >Insert at<select id="image-position">
-                <option value="cursor">Remembered cursor</option>
+                <option value="beginning">Beginning of article</option>
                 <option value="end">End of article</option>
               </select></label
             >
             <p id="image-insert-hint"></p>
             <button type="button" id="insert-image">Insert into article</button>
             <p>
-              <small
-                >Adds the image at your chosen position. Preview it, then Save.
-                Undo removes the insertion; the candidate stays
-                available.</small
+              <small id="image-insertion-note"
+                >Beginning places the image after the title and summary, before
+                the article text. Preview it, then Save. Undo removes the
+                insertion; the candidate stays available.</small
               >
             </p>
           </section>
@@ -1487,6 +1547,8 @@
                 <option value="technical">Technical / incomplete</option>
                 <option value="metadata">Tags and metadata</option>
               </select></label
+            ><button type="button" id="rerun-review" hidden>
+              Run writing checks again</button
             ><button type="button" id="download-review" hidden>
               Download report
             </button>
@@ -1651,6 +1713,7 @@
               : null,
           }),
         );
+        document.dispatchEvent(new Event("author-image-recovery"));
       }
       function changed(record = true) {
         if (record && stack[cursor] !== editor.value) {
@@ -1893,6 +1956,7 @@
           text = editor.value;
         try {
           $("status").textContent = "Saving…";
+          if (window.protectAuthorImages) await window.protectAuthorImages();
           const d = await api("save", {
             file: selected,
             text,
@@ -1901,7 +1965,9 @@
           });
           if (file !== selected) return;
           base = d.revision;
-          saved = text;
+          saved = d.text;
+          // Publication can add metadata during save. Keep later typing intact.
+          if (editor.value === text) editor.value = d.text;
           const disk = await api("read?file=" + encodeURIComponent(selected));
           if (file !== selected) return;
           savedPublication = disk.publication;
@@ -2024,6 +2090,7 @@
           savedPublication = d.publication;
           editor.value = d.text;
           changed();
+          editor.dispatchEvent(new Event("author-reload"));
         } catch (e) {
           error(e);
         }
@@ -2120,6 +2187,14 @@
         try {
           const d = await api("files");
           if (lifecycleBusy) return;
+          document.dispatchEvent(
+            new CustomEvent("author-image-cleanup", {
+              detail: {
+                version: d.imageCleanupVersion,
+                error: d.imageCleanupError,
+              },
+            }),
+          );
           $("site-status").textContent =
             "Full site: " +
             d.build.state +
@@ -2177,8 +2252,11 @@
         poll();
       })().catch(error);
     </script>
+    <script src="/_author/image-recovery.js"></script>
     <script src="/_author/ux.js"></script>
+    <script src="/_author/links.js"></script>
     <script src="/_author/finding-range.js"></script>
+    <script src="/_author/repetition-batch.js"></script>
     <script src="/_author/review-decisions.js"></script>
     <script src="/_author/review.js"></script>
     <script src="/_author/images.js"></script>

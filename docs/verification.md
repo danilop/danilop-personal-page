@@ -4,6 +4,251 @@ Earlier entries retain the commands/ports used at the time. The unified preview
 entry below supersedes the former default snapshot and separate author command;
 see [current preview usage](authoring-preview.md).
 
+## Social link previews — 2026-10-01
+
+Implemented static Open Graph/X metadata, source language and regional locale,
+article dates, local body-image/collection-cover JPEG cards and title-card fallback.
+Build verification checks metadata consistency and actual 1200 × 630 JPEG bytes
+within 1 MB. A public crawler-check CLI tests full/short URLs with bounded HTTP
+redirects, GET/HEAD parity and image delivery. No arbitrary remote image download
+or social post submission occurs.
+
+13 focused tests passed: eight card/metadata/crawler cases, one isolated non-root
+release build and four existing deployment-verification cases. The release fixture
+checks escaped French title/language/locale, article dates, distinct book cover,
+reading-page summary and exclusion of draft cards. It caught Astro's content schema
+dropping the language field; the schema now retains it. Portrait artwork fit and
+multilingual title-card generation pass. Generated beetle-artwork and branded
+title-card JPEGs were inspected visually. Astro/TypeScript checks and focused
+ESLint passed; documentation links and diff whitespace checks passed.
+
+Live inspection found the existing portrait metadata, no viewer-request function
+on the configured short-link distribution, and unresolved short hostnames from
+the checking environment. No cloud writes or deployment were performed. Actual
+logged-in platform previews and live redirect/card checks after activation remain
+pending. See [current behaviour and commands](social-previews.md).
+
+## Automatic image cleanup — 2026-10-01
+
+Implemented local save/startup/daily sweeps, private source-asset ownership,
+reference protection, browser recovery name backups, expiring Undo-session pins,
+seven-day unused grace periods, checksum-verified recoverable quarantine and
+30-day trash deletion. Existing generated assets can be adopted using matching
+candidate owner, filename and bytes. Cleanup covers interrupted candidate pairs,
+temporary metadata and identical expired alternatives; it preserves manual or
+modified assets and images needed by current content or retained recovery.
+
+31 focused tests passed: 14 cleanup lifecycle tests, seven image-service tests,
+nine authoring browser tests and the real-server browser integration. Controlled
+clocks verify ageing and actual file deletion without waiting for retention periods.
+The real server verifies removal from disk and API inventory on startup and after
+Save. Browser checks verify current/Undo reference separation, recovery after
+reload, removal of stale candidate controls and retained editable descriptions.
+An asynchronous test wait and candidate-selection timing were corrected during
+verification. Core type checking, focused ESLint and diff whitespace checks passed.
+No live generation, source publication or deployment was performed.
+
+## Cover composition — 2026-10-01
+
+Inspected both locally generated Chronicles cover records and one corresponding
+image. Both canvases were correctly 1024×1536, but their identical brief requested
+a horizontal row and open centre; shared style also encouraged ample negative
+space. Updated shared style and both brief/generation prompts with purpose-specific
+composition guidance. Covers use most of the selected canvas, modest margins and
+no reserved lettering area. Portrait cover guidance adapts a conflicting horizontal
+brief to vertical composition. Missing request shapes now default to portrait for
+covers and landscape for articles.
+
+All seven image-service tests passed with provider fixtures, including cover and
+article defaults, square/landscape cover brief choices, and layout guidance on
+generation from an older horizontal brief. Core type checking, focused ESLint and
+diff whitespace checks passed. Actual output composition is not automatically
+validated; no new image was generated and existing candidates were preserved.
+
+## Content-based image filenames — 2026-10-01
+
+New generated images return a short content-based filename stem in the same
+structured response as their alt text. Imports and legacy candidates derive a safe
+stem from their description. Source assets append a checksum suffix; published
+local image and cover URLs retain the descriptive stem with their content hash.
+Renamed the existing beetle illustration to
+`wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8.png` and updated the article
+reference and matching private candidate label. Image bytes and publication time
+were preserved.
+
+20 focused naming, image-service, media/export and real-server browser tests passed.
+The diagram browser needed an unsandboxed test run; its rerun passed. Core type
+checking, focused ESLint and diff whitespace checks passed. Provider generation
+responses were fixtures. No live generation or deployment was performed.
+
+## Book and collection covers — 2026-10-01
+
+Added optional explicit collection `cover` metadata and reused the Images workflow
+for collection-wide briefs, generation/import, editable descriptions and unsaved
+cover assignment/removal. Homepage features and collection overviews render the
+assigned cover independently of chapter images. Imports include cover assets;
+the build validates and generates hashed WebP renditions.
+
+31 focused service, import, homepage and isolated-preview tests passed, plus eight
+authoring browser tests and the real-server browser integration. The latter checks
+assignment, removal, Undo, explicit Save, matching homepage/overview images and a
+reachable cover rendition. Generation was tested with provider fixtures, without
+a live model call. Core type checking, focused ESLint and diff whitespace checks
+passed. No cover was assigned to the user's books, and nothing was deployed.
+
+## Homepage article artwork — 2026-10-01
+
+Replaced the fixed site-wide hero in the featured article with that article's
+first rendered image and alt text. Collection-only articles use their own rendered
+node content; an imageless article has no artwork. Eight focused tests passed:
+homepage selection/image derivation and a real local-server Chromium round trip
+from a featured draft image to the published article's image (or none) and back.
+Core type checking and focused ESLint passed. No publication flags were changed
+and nothing was deployed.
+
+## Live preview draft visibility — 2026-10-01
+
+The local banner now offers **Show drafts / Published only**. Switching rebuilds
+the isolated site with or without draft promotion; publication flags and release
+output stay unchanged. Eight focused tests passed, including an actual server and
+Chromium round trip through both views, absence/restoration of draft links,
+unchanged draft source, invalid input rejection, browser error recovery and
+disabled controls during rebuilding. Focused ESLint, core type checking and diff
+whitespace checks passed. Documentation covers shared server-session state and
+the reset on restart. This feature is local only; nothing was deployed.
+
+## Image placement — 2026-10-01
+
+Replaced the remembered-cursor option with **Beginning of article** (default),
+alongside **End of article**. Beginning inserts after source frontmatter, so the
+rendered image follows the title, summary and publication metadata and precedes
+the body. All eight authoring browser tests passed, including placement at both
+ends, unchanged frontmatter, unsaved insertion and undo. Focused ESLint and diff
+whitespace checks passed. This change is local and has not been deployed.
+
+## Generated image descriptions — 2026-10-01
+
+Image generation now returns and persists a suggested alt description with each
+candidate. The editor fills it automatically and retains manual edits per candidate
+during the session. Imported and older undescribed candidates still require manual
+alt text. Six image service tests and eight browser tests passed, including candidate
+switching, manual overrides, deliberate clearing, import, reload and insertion.
+Core type checking and focused ESLint passed. Provider responses were fixtures;
+no live generation or deployment was performed for this change.
+
+## Article publication review and batch approaches — 2026-10-01
+
+Reviewed the saved **Clever Enough to Find the Loophole** draft against the recent
+editor changes and its cited sources. The edits retained the distinction between
+RL failure mechanisms and deployment controls, and between RLCD, supervised
+learning, DPO and predictive world models. Corrected **50 simulated malicious
+tasks** to **50 simulated malicious trials**: Anthropic's GLM-5.3 experiment repeats
+requests across conditions rather than testing 50 distinct tasks. Two paragraphs
+were rewrapped without changing their rendered text. No other publication-blocking
+error was found in this pass.
+
+The quality command completed with zero technical errors and zero incomplete
+checks. The article's 12 advisory findings were inspected: nine passive-voice
+candidates, the intentional first use of the AI tag, a negated attribution of
+feelings to a model, and an adverb flag on a deliberate parallel. These do not
+require changes. Live source retrieval checked the references; the large Mythos
+PDF exceeded the web reader's limit, so its relevant passages were checked in
+the previously downloaded source excerpt. The draft's local page rendered at
+1440×1000 and 390×844 with 34 source links, correct title/description, the intended
+ending, no internal research notes and no browser errors or horizontal overflow.
+Screenshots were inspected. The article remains a draft; it was not published.
+
+Batch fix review now offers **Small changes per passage** and **Rephrase where
+useful**, with matching helper text and server guidance. Both require a complete
+pass; **Assess first** remains available only for individual findings. All 14
+focused fix tests and seven browser tests passed, along with ESLint and core type
+checking. Documentation reflects the two-option batch behaviour.
+
+## Complete repetition pass — 2026-10-01
+
+Batch repetition review now requests all worthwhile edits together and labels
+the default approach **Small changes per passage**, explaining that each edit
+should be small. Saved batch instructions and Reset are separate from
+single-finding preferences. A required keep/change assessment covers every
+paragraph target, with complete unique coverage and replacement consistency
+checked before display. The result offers expandable per-passage reasons.
+
+The current article produced 27 repetition groups across 29 targets. A live
+Claude Opus 5.5 response assessed all 29, proposed one change and gave reasons
+for keeping the others. It passed validation on its first attempt. A test assertion
+expecting multiple edits was therefore not satisfied; completeness is not an edit
+quota. This demonstrates explicit coverage, not that the model cannot miss an
+editorial improvement or change its judgement on another run.
+
+Focused tests cover incomplete, duplicate and unknown assessments, disagreements
+between assessments and edits, no-change responses and schema requirements.
+Browser regression checks cover separate instruction storage, the batch Reset,
+the explanatory label, assessment display and independently applying two edits.
+All 27 focused tests and seven browser tests passed, along with type checking and
+ESLint. One browser run had an intermittent detached-element failure in the
+existing Reopen finding interaction; a repeat passed. Replaying the recorded live
+response verified all 29 assessment reasons in the UI, exact application and Undo,
+with no additional model request or browser errors. Desktop screenshots were
+inspected at 1440×1000; mobile layout was not retested. The article was not saved
+or published by these tests.
+
+## Live repetition review — 2026-10-01
+
+The current draft of **Clever Enough to Find the Loophole** was tested in the
+local editor at `127.0.0.1:4322`, using Playwright at 1440×1000. The browser used
+the real UI; test routing connected review/fix requests to freshly loaded
+`Reviews` and `AuthorFixes` services, including the real Python writing checks
+and live Claude CLI. No model response or repetition report was mocked. Saving
+was blocked in the test session.
+
+Writing checks found 28 repeated stem groups across 30 editable paragraphs.
+The first Claude response failed exact-source validation and was rejected; its
+individual mismatch was not retained, so the cause within that response remains
+unconfirmed. A fresh run with the same normal selective-edit prompt returned two
+verified changes from `claude-opus-5-5`, without requesting a minimum edit count.
+
+Both changes appeared with separate checkboxes, original text and editable
+replacements. Applying the first alone, the second alone, and both together
+produced the exact expected source each time. Unselected changes stayed out;
+Undo restored the complete original. Selection and application made no additional
+model requests. Browser error/warning checks passed, and the draft on disk
+remained byte-for-byte unchanged. This verifies multi-fix handling, not a guarantee
+that every live response will pass validation or propose multiple edits.
+
+The persistent browser regression also exercises two paragraph edits, each
+selected separately and then together; all seven browser tests passed.
+
+Following this test, fix generation gained one automatic retry after invalid
+output, before exposing any proposal. Controlled tests cover Claude, Codex and Pi
+recovering from an invalid source quote to two valid edits, a second invalid
+response failing without results, cancellation, CLI failures and valid no-change
+responses. A retry uses a fresh output file and the unchanged source request plus
+validation feedback. All 27 focused fix, review and structured-output tests passed,
+as did type checking and ESLint. A further live Claude run with the updated service
+returned one valid edit on its first attempt; the earlier multi-fix test's minimum
+of two was not met on that run. This is a valid selective result, not a reason to
+retry. Automatic repair is verified with controlled provider outputs, not a
+live model correction. This is local implementation and testing, not deployment.
+
+## Dependency and shared-helper refresh — 2026-10-01
+
+`npm run verify:ci` passed all 27 checks against an isolated working-tree snapshot
+using Node 24.21.0 and npm 12.2.0. This included 197 JavaScript/TypeScript tests,
+16 Python tests, coverage gates, formatting, static analysis, dependency boundaries,
+workflow checks and the production build. The built artifact verified 185 output
+files, 897 local links, 307 legacy records and private-content sentinels. Rendering
+tests covered the upgraded Mermaid, KaTeX and citation dependencies.
+
+Both npm packages report zero known vulnerabilities after the documented
+`lodash-es` override. The separate prototype rendered at `127.0.0.1:4173` with no
+browser console warnings or errors; its temporary server and tab were closed.
+Shared finding and repetition helpers are served at their existing authoring URLs
+from `lib/`, and architecture checks pass without exceptions. Browser/server tests
+verify those assets and editor interactions. No hosted deployment, commit or push
+was performed as part of this refresh.
+
+See [current dependency versions and compatibility holds](dependencies-and-hosting.md).
+
 ## Finding fixes and agent comparison — 2026-09-24
 
 - Repository suite passed 107 tests (13 JavaScript, 94 TypeScript). New tests
@@ -19,7 +264,6 @@ see [current preview usage](authoring-preview.md).
   manuscript save occurred. Session persistence and cross-file batch application
   remain outside this implementation.
 
-
 ## Exact finding selection — 2026-09-24
 
 - The author editor now uses per-occurrence UTF-16 source ranges for repeated
@@ -31,7 +275,6 @@ see [current preview usage](authoring-preview.md).
 - All 104 repository tests and 16 Python quality tests passed; type checks passed.
   New cases cover repeated same-line matches, Unicode offsets, wrapped quotations
   and missing-match fallback.
-
 
 ## Subscription-based article images — 2026-09-24
 
@@ -55,7 +298,6 @@ see [current preview usage](authoring-preview.md).
   requests were made. Other browsers and interrupted-job recovery remain unverified.
   No publication or deployment.
 
-
 ## Author editor visual refresh — 2026-09-24
 
 - In-app browser checks at 1440×1000 and 390×844 passed page identity,
@@ -70,7 +312,6 @@ see [current preview usage](authoring-preview.md).
   icons/line numbers, kept advanced settings together. Results scroll within the
   review pane; narrow screens stack panes. No generated image is a runtime asset.
 - This is a local authoring change, not a public-site redesign or deployment.
-
 
 ## Authoring session recovery — 2026-09-24
 
@@ -163,7 +404,6 @@ collection articles, per-piece badges, Start reading → next → contents, and 
 fallback without public badges. Screenshots were inspected; no console warnings,
 errors or horizontal overflow were found. The Browser plugin was unavailable, so
 bundled Playwright and installed Chrome for Testing were used.
-
 
 ## Simplified draft workflow — local verification, 2026-09-20
 
@@ -352,15 +592,15 @@ browser screenshots using the image viewer. Local captures:
 `/tmp/notes-home-native-final.png`, `/tmp/notes-home-desktop-final.png`, and
 `/tmp/notes-home-mobile-final.png`.
 
-| Comparison | Evidence and outcome |
-| --- | --- |
-| Identity hierarchy | Large Danilo Poccia masthead, spaced secondary publication name, upper-right ink portrait retained |
-| Typography | Newsreader headlines/prose and Inter navigation/metadata preserve the selected literary/editorial hierarchy |
-| Palette | Warm ivory `#f6f3eb`, charcoal and blue ink; no added gradient or image color overlay |
-| Containers and spacing | Open editorial layout with thin rules; no invented dashboard/card chrome |
-| Asset treatment | Ink portrait and matching paper illustration; all rendered images load and stay clear of text |
-| Responsive behavior | Masthead and headline reflow at mobile widths; readable navigation and article text remain within the viewport |
-| Copy and populated sections | Approved welcome copy and agreed historical labels replace illustrative sample content |
+| Comparison                  | Evidence and outcome                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Identity hierarchy          | Large Danilo Poccia masthead, spaced secondary publication name, upper-right ink portrait retained             |
+| Typography                  | Newsreader headlines/prose and Inter navigation/metadata preserve the selected literary/editorial hierarchy    |
+| Palette                     | Warm ivory `#f6f3eb`, charcoal and blue ink; no added gradient or image color overlay                          |
+| Containers and spacing      | Open editorial layout with thin rules; no invented dashboard/card chrome                                       |
+| Asset treatment             | Ink portrait and matching paper illustration; all rendered images load and stay clear of text                  |
+| Responsive behavior         | Masthead and headline reflow at mobile widths; readable navigation and article text remain within the viewport |
+| Copy and populated sections | Approved welcome copy and agreed historical labels replace illustrative sample content                         |
 
 Intentional content-driven differences: only one native article is published,
 so the recent-writing rail is hidden. No invented books or photos fill empty
@@ -376,8 +616,9 @@ clipping, asset-loading or responsive mismatch remains in the checked views.
 
 ## Hosted preview
 
-The dependency modernization passes local and hosted checks on Node 24.21.0 and
-npm 12.0.2. See
+The earlier hosted dependency modernization passed checks on Node 24.21.0 and
+npm 12.0.2. The 1 October 2026 update is verified locally separately; no new
+hosted deployment is claimed. See
 [dependencies and hosting](dependencies-and-hosting.md).
 
 The hosted preview (URL in the private operations note)
@@ -400,7 +641,10 @@ included since preview job 4. Cross-post media export is included in job 6.
 ## Not yet verified remotely
 
 - Production cutover, production redirects/404 and the live main-domain revision.
-- CloudFront/KVS setup, actual alias resolution, IAM/OIDC and cloud rollback.
+- Article alias activation after the next source deployment, optional CI access
+  and a full infrastructure rollback rehearsal. The private-S3/OAC resolver,
+  TTL/privacy and disposable test cleanup passed on 2 October; see
+  [short-link verification](#private-s3-short-links-and-free-plan--2026-10-02).
 - Actual DEV account draft delivery and Leanpub rendering/publication.
 - Anonymous viewing of the author's Google documents or iCloud albums.
 
@@ -654,7 +898,6 @@ returned 404 for both the draft and editor. Temporary test servers were stopped;
 the normal unified preview remains on port 4322. No manuscript edits, provider
 requests or deployment were needed for these checks.
 
-
 ## Article lifecycle
 
 `test/author-lifecycle.test.ts` exercises identity-preserving unpublish, draft-only
@@ -662,11 +905,10 @@ deletion, placement/promotion/distribution cleanup, recovery copies, stale sourc
 and dependency rejection, incoming-reference blockers, symlink rejection, rollback
 on write failure, short-link deactivation/republication/deletion, idempotency and
 ownership conflicts. The regular test command includes this suite. Cloud removal
-uses the existing exact-deployment gate; unit tests do not establish live KVS
-publication. UI validation should use disposable content in an isolated copy,
+uses the existing exact-deployment gate. The S3/OAC replacement now has storage, CLI and editor tests; lifecycle
+tests alone do not establish cloud publication. UI validation should use disposable content in an isolated copy,
 including confirmation cancellation, unpublished-to-draft transition, deletion,
 unsaved-edit guards and catalog refresh. Never delete a real article for a smoke test.
-
 
 Local validation on 2026-09-24: 140 automated tests passed; Astro/core checks
 reported no errors or warnings; the release build verified 185 output files,
@@ -709,22 +951,22 @@ working, blocking gate, not a claim that existing source meets the new policy.
 There is no suppression baseline. The detailed report and machine-readable metrics
 are `.analysis/report.md`, `.analysis/summary.json` and `.analysis/metrics.json`.
 
-| Measurement | Observed result |
-| --- | --- |
-| JS/TS tests (including prototype and new regression tests) | 151 passed, no failures or skips |
-| Python tests | 16 passed |
-| JS/TS coverage | 48.14% lines/statements, 81.01% functions, 76.06% branches; line/statement gate fails against 80% |
-| Python coverage | 84.57% combined statements/branches; 80% gate passes |
-| Astro and core TypeScript checks | Pass |
-| ESLint | 223 findings, including 27 cyclomatic and 45 cognitive-complexity violations |
-| Ruff | 96 findings, including two functions over the complexity limit (19 and 17 versus 15) |
-| ty | Two type diagnostics |
-| Knip | 23 dependency/export/type findings |
-| Stylelint / HTML-validate | 764 style findings / 54 HTML findings |
-| Formatting | 49 Prettier file findings; Python formatting also requires cleanup |
-| Security | Gitleaks passes for versionable source; Bandit reports four subprocess review findings, not four confirmed vulnerabilities |
-| Other static checks | Vulture, actionlint, ShellCheck and tool-version verification pass |
-| Builds | Prototype and release build pass; release verifies 185 files, 897 local links, 307 legacy records and private-content sentinels |
+| Measurement                                                | Observed result                                                                                                                 |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| JS/TS tests (including prototype and new regression tests) | 151 passed, no failures or skips                                                                                                |
+| Python tests                                               | 16 passed                                                                                                                       |
+| JS/TS coverage                                             | 48.14% lines/statements, 81.01% functions, 76.06% branches; line/statement gate fails against 80%                               |
+| Python coverage                                            | 84.57% combined statements/branches; 80% gate passes                                                                            |
+| Astro and core TypeScript checks                           | Pass                                                                                                                            |
+| ESLint                                                     | 223 findings, including 27 cyclomatic and 45 cognitive-complexity violations                                                    |
+| Ruff                                                       | 96 findings, including two functions over the complexity limit (19 and 17 versus 15)                                            |
+| ty                                                         | Two type diagnostics                                                                                                            |
+| Knip                                                       | 23 dependency/export/type findings                                                                                              |
+| Stylelint / HTML-validate                                  | 764 style findings / 54 HTML findings                                                                                           |
+| Formatting                                                 | 49 Prettier file findings; Python formatting also requires cleanup                                                              |
+| Security                                                   | Gitleaks passes for versionable source; Bandit reports four subprocess review findings, not four confirmed vulnerabilities      |
+| Other static checks                                        | Vulture, actionlint, ShellCheck and tool-version verification pass                                                              |
+| Builds                                                     | Prototype and release build pass; release verifies 185 files, 897 local links, 307 legacy records and private-content sentinels |
 
 Six snapshot contracts cover partial staging, untracked/ignored files, deletions,
 special filenames, dependency-lock mismatch, independent Git metadata, source
@@ -917,3 +1159,30 @@ A later Amplify run passed 174 tests but exceeded the prototype browser test's
 five-second initial page-load timeout during cold Vite compilation. Initial
 navigation now allows 30 seconds within a 60-second test limit; interaction
 assertions, console-error checks and coverage requirements are unchanged.
+
+## Private S3 short links and Free plan — 2026-10-02
+
+The existing distribution uses an S3 REST origin with OAC, public bucket access
+blocked, and CloudFront read access restricted to `redirects/*` for that distribution.
+One viewer-response Function converts S3 redirect metadata to HTTP 302. It preserves
+read-only Via/Warning headers and runs an AWS runtime check before provisioning
+publishes it. The managed uncompressed caching policy is accepted by the Free plan.
+The five-second error mapping returns 404 for missing private-origin keys.
+
+The Free subscription was observed ACTIVE for the short-link distribution, its
+required dedicated WAF ACL and matching Route 53 zone. DNS/TLS and the root 302
+were checked over the public hostname. Access logging was disabled for Free;
+previous settings, resource IDs and test evidence remain outside this repository.
+
+A disposable S3 alias passed GET/HEAD equivalence, empty-body 302, browser no-store,
+edge cache hit, 60-second update expiry, targeted invalidation, unknown-path 404,
+private-prefix denial through CloudFront and anonymous direct-S3 403. Its redirect
+and temporary private object were deleted; invalidation completed and the test URL
+returned 404. The final object inventory contained only the intended root/error
+objects. No article aliases or website source changes were published in this task.
+
+Local tests cover paired alias paths, destination-sensitive ETags, ownership and
+removal tombstones, retry after interruption, deployment gates, CLI ordering and
+editor reservation/check/deactivation. Browser tests exercise a draft reservation,
+a deployment error and live-status feedback. Optional CI publication requires
+both private configuration and a scoped role; neither is activated by local saves.

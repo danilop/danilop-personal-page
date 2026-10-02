@@ -357,6 +357,13 @@ export async function prepareImport(options: ImportOptions) {
                 await fs.readFile(path.join(source, e.relative)),
               ],
             ]);
+      if (e.kind === "collection" && e.data.cover) {
+        const cover = await localAsset(
+          path.dirname(path.join(source, e.relative)),
+          e.data.cover.path,
+        );
+        files.set(e.data.cover.path, await fs.readFile(cover));
+      }
       prepareEntryFiles();
       if (previous)
         warnings.push(
@@ -371,7 +378,13 @@ export async function prepareImport(options: ImportOptions) {
           const relative = main
             ? targetRelative
             : path.join(path.dirname(targetRelative), local);
-          if (!previous && before.has(relative))
+          if (
+            before.has(relative) &&
+            ((!previous && (main || !before.get(relative)!.equals(bytes))) ||
+              (e.kind === "collection" &&
+                !main &&
+                !before.get(relative)!.equals(bytes)))
+          )
             throw Error(
               `Destination path belongs to other content: ${relative}`,
             );

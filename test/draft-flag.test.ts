@@ -36,10 +36,13 @@ test("draft flag controls publication and removal or false enables publication",
     assert.throws(() => schema.parse({ ...base, draft: "false" }));
   }
 });
-test("draft omission retains standalone date and slug requirements", () => {
+test("draft omission requires a standalone slug while the local save assigns publication time", () => {
   const standalone = { ...piece, publication: { surfaces: ["standalone"] } };
   assert.doesNotThrow(() => pieceSchema.parse({ ...standalone, draft: true }));
-  assert.throws(() => pieceSchema.parse(standalone), /slug and publishedAt/);
+  assert.throws(() => pieceSchema.parse(standalone), /require a slug/);
+  assert.doesNotThrow(() =>
+    pieceSchema.parse({ ...standalone, slug: "example" }),
+  );
   const parsed = pieceSchema.parse({
     ...standalone,
     slug: "example",
