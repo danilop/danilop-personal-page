@@ -1,8 +1,8 @@
 # Publication timestamps
 
-Status: implemented and tested locally. Clever Enough to Find the Loophole is
-marked published in source with a saved timestamp; the two Chronicles pieces
-remain drafts. The article and timestamp changes await the next main deployment.
+Status: implemented, tested and deployed on 2 October 2026. Clever Enough to Find
+the Loophole is publicly available with its saved local publication timestamp;
+the two Chronicles pieces remain drafts.
 
 ## Publish locally, then deliver
 

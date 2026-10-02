@@ -1198,5 +1198,22 @@ before delivery, preserving the previous public site.
 
 Astro and Vite now use workspace-local caches under ignored `.astro/` paths.
 A new concurrent-build regression and the preview-server integration test passed
-locally. The corrected source still requires a successful main deployment and
-live verification before article aliases can be activated.
+locally. The corrected source passed Amplify's tests and deployed successfully.
+
+## Article and social-card delivery — 2026-10-02
+
+Release `49efd5f` passed all 25 analysis checks and 246 JavaScript tests, with
+16 Python tests passing. The combined pre-publication check found no technical
+errors or incomplete checks; editorial review targets remain advisory. Production
+verification checked 190 files, 921 local links and 307 historical records.
+
+The public build marker matched the exact main revision. Live checks passed for
+the homepage, public routes/resources, RSS, true missing-page 404 and original-site
+navigation. Clever Enough to Find the Loophole is published; the two Chronicles
+pieces and their collection remain draft and absent from production output.
+
+The saved welcome and AI-article short aliases were activated only after this
+verification. Full and short URL crawler checks confirmed matching GET/HEAD chains,
+canonical URLs, titles and publicly fetchable 1200 × 630 JPEG cards within the
+image budget. No logged-in social platform rendering was tested. Private resource
+identifiers and publication evidence remain in the operator note.

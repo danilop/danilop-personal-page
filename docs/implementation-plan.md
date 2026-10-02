@@ -1,9 +1,10 @@
 # Implementation and verification status
 
-Status: the root website is deployed and verified. Local tagging, book-preview,
-content-review and import additions are implemented and tested but not deployed.
-Short-link infrastructure is active and live-tested; article alias activation,
-deployment of the newer local changes, and real provider delivery remain pending.
+Status: the root website, AI article, public topic labels, publication ordering
+and article social cards are deployed and verified. Local book-preview,
+content-review and import additions are implemented and tested; the author editor
+remains local-only. Short-link infrastructure and saved article aliases are active
+and live-tested. Real provider delivery remains pending.
 Off-repository editorial asset storage remains a proposed design.
 Updated: 2026-10-02.
 
@@ -26,7 +27,7 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | DEV / Medium                                      | Manual-only API and assisted adapters, durable state, mapping/review/recovery commands                                          | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
 | `danilop.link`                                    | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback                                                       | S3/OAC and Free active; live resolver test passed; CI access unconfigured                                                                                        |
 | Main deployment                                   | Existing Amplify integration; build/check/test configuration and console fallback updated                                       | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md)                                    |
-| Tag vocabulary and private inventory              | Registry, aliases, unique-piece usage counts, review guidance, public topic labels                                              | Locally tested, including desktop/mobile reports; not deployed; public topic pages remain unimplemented                                                          |
+| Tag vocabulary and private inventory              | Registry, aliases, unique-piece usage counts, review guidance, public topic labels                                              | Public labels deployed; private desktop/mobile reports tested locally; public topic pages remain unimplemented                                                          |
 | Chronicles book pilot                             | Separate Introduction and Chapter 1 pages, next/previous navigation, contents and continuous view                               | Imported as drafts; full-site preview tested; publication pending                                                                                                |
 | Pre-publication content review                    | Local spaCy analysis, Snowball sequence counts, references, optional source baselines and declared Python examples              | Current three-article corpus tested; private report and full validation evidence in [verification](verification.md); NLP is not a CI gate                        |
 | Content import                                    | Canonical source selection, dependency expansion, dry-run/apply, draft defaults and controlled updates                          | Twelve focused tests, full validation and a real Chronicles rehearsal passed; opening imported as drafts; see [usage](content-import.md)                         |
@@ -44,13 +45,14 @@ acceptance checks. See [cross-posting](cross-posting.md#media-portability-clarif
    Free-plan enrolment are implemented; the resolver, DNS and plan are active.
    Live TTL, privacy, updates, redirect parity and disposable cleanup passed.
 3. Commit/deploy eligible source and saved reservations before activating article
-   aliases. Optional automatic reconciliation still requires scoped CI access.
+   aliases; the current saved aliases are now active. Optional automatic
+   reconciliation still requires scoped CI access.
    Before adding live external-publishing credentials, implement the isolation
    and authentication checks in [credentials and access](credentials-and-access.md).
    This includes a separate protected DEV environment and matching delivery role;
    the earlier KVS/GitHub-role proposal is superseded by the new access scope.
-4. The root release is already live. For the newer local changes, obtain release
-   approval before committing/pushing to `main`; local verification is not deployment.
+4. The root release and newer public article changes are live. The user authorised
+   their main commit/push; source and deployment verification are recorded below.
 5. After any further deployment, verify the exact revision, homepage, article, old
    routes, 404, feeds and snapshot, plus short links when configured. Update release
    status with live evidence.
@@ -68,8 +70,8 @@ without publishing filler content beyond the approved welcome article.
 
 Homepage discovery now includes visible collection-only articles, with optional
 piece/book featuring and automatic latest fallback. Preview-only draft badges
-appear in cards, contents and headers. These additions are locally implemented
-and tested, not deployed; see verification.
+appear in local-preview cards, contents and headers. Public homepage discovery is
+deployed and verified; the current book stays draft. See verification.
 
 ### Local author review integration
 

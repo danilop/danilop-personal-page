@@ -1,7 +1,8 @@
 # Tag authoring and review
 
-Status: implemented locally on 2026-09-20; not deployed. Public topic pages and
-automatic semantic tag assignment are not implemented.
+Status: authoring vocabulary/private review implemented locally; public article
+labels deployed on 2026-10-02. Public topic pages and automatic semantic tag
+assignment are not implemented.
 
 ## Vocabulary and assignments
 

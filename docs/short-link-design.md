@@ -2,10 +2,12 @@
 
 Status: implemented locally; the S3/OAC resolver, DNS and CloudFront Free plan are
 active as of 2 October 2026. Live GET/HEAD, update freshness, invalidation, origin
-privacy and disposable-test cleanup passed. Article aliases remain unactivated
-until their saved registry is committed and its site deployment verified. Local
+privacy and disposable-test cleanup passed. The saved welcome and AI-article
+aliases were activated after verified main deployment; full/short crawler checks
+passed. New aliases require committed reservations and verified deployment. Local
 editor controls require restarting the preview server after this code change.
-No website source changes were committed or pushed in this task.
+Website source and local editor controls are committed on main; the public article
+and its social card are deployed. The editor remains a local-only application.
 
 ## Behaviour
 

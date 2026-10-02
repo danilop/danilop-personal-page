@@ -1,10 +1,9 @@
 # Social link previews
 
-Status: implemented and tested locally, not deployed. Open Graph previously used
-the same portrait on every page. Static page metadata and generated preview images
-now describe the actual article or collection. Short-link infrastructure is active
-and live-tested; article aliases remain unactivated. These are separate from
-deploying the new metadata.
+Status: article metadata/cards deployed and full/short URLs verified live on
+2 October 2026. Collection/book-cover cards are implemented and locally tested;
+the current collection remains draft. Open Graph previously used the same portrait
+on every page. Static metadata and images now describe the actual published work.
 
 ## Reader behaviour
 
@@ -59,10 +58,11 @@ JavaScript redirect or serve different HTML to different crawler user agents.
 The [active resolver](short-link-design.md) uses private S3 with OAC and one
 viewer-response function. DNS/TLS, GET/HEAD parity, update freshness and disposable
 test cleanup were verified on 2 October. The configured hostname is `danilop.link`,
-not `danilo.link`. Article aliases still require a committed registry and verified
-site deployment before activation. The new source-generated social cards remain
-local until the website source changes are deployed; resolver activation does not
-replace the canonical site's existing Open Graph image.
+not `danilo.link`. Article aliases require a committed registry and verified site
+deployment before activation. The saved welcome and AI-article aliases are active.
+Crawler checks of both short URLs confirmed matching GET/HEAD chains, the final
+canonical page and its public JPEG card. Logged-in platform rendering remains
+outside this verification.
 
 ## Verification
 

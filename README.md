@@ -164,8 +164,9 @@ Jev's RLCD and methods outside RL alongside recent agent safety evidence,
 including AISI and FelonyBench. The article uses sourced stories to explain the
 mechanisms for readers interested in AI, with detailed method comparisons kept
 in the research notes. Sources were checked on 1 October 2026.
-The article is saved with `draft: false` and a publication timestamp; delivery
-requires the next committed `main` deployment. The Chronicles pieces remain drafts.
+The article is published at its canonical writing URL. Its `clever-loophole`
+short code is active and resolves to the same verified social preview.
+The Chronicles pieces remain drafts.
 
 Keep [content structure separate from publishing](docs/content-model.md#content-structure-and-publication-are-independent):
 pieces and book order remain independent of weekly release groups and announcements.
@@ -180,7 +181,7 @@ source integration is complete; publication and scheduling remain pending.
 The [tagging system](docs/tagging.md) is implemented locally: a shared vocabulary,
 article topic labels, and a private searchable inventory with published/draft/retired
 usage counts and reuse guidance. Run `npm run tags` to generate the review. Public
-topic pages are not implemented; tagging changes have not been deployed. The
+topic pages are not implemented; public article labels are deployed. The
 [content discovery review](docs/content-discovery.md) retains proposed search
 improvements for separate book reading pages.
 
@@ -285,7 +286,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
 - [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
 - [Asset release design](docs/asset-release-design.md): proposed off-repository media, checksum manifests, release/deployment gates and remote retention.
-- [Social link previews](docs/social-previews.md): implemented local Open Graph/X cards, article illustrations, book covers and full/short URL verification; live activation remains pending.
+- [Social link previews](docs/social-previews.md): deployed Open Graph/X article cards, locally tested book covers and verified full/short article URLs.
 - [Private operations](docs/private-operations.md): where account-specific notes live and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
@@ -333,7 +334,7 @@ The homepage and Writing index include visible collection articles as well as
 standalone posts, without duplicate entries. Book articles show their collection
 and chapter context and link to the reading page. Publication dates determine
 latest order. The [publication timestamp workflow](docs/publication-time.md) is
-implemented locally, not deployed: first local publication saves a UTC timestamp
+implemented, with public date ordering deployed: first local publication saves a UTC timestamp
 in the article's `publishedAt` metadata. Commit and push to `main`; Amplify delivers
 the dated article in one deployment. Drafting dates stay internal, and edits or
 republishing preserve the original publication time. Actual delivery can be later
@@ -391,14 +392,16 @@ article has been unpublished or deleted as part of this implementation.
 
 The [social publishing and Trash plan](docs/social-publishing-plan.md) records the
 next agreed scope: public sharing without AI; a private social composer preserving
-each article's language and voice; a reusable assistant catalog; automatic,
+each article's language and voice; a reusable assistant catalog;
 automatic short-code allocation and richer link management; further social preview controls; and
 free analysis hooks/CI. Draft removal will become **Move to Trash**, with restore
 as draft, explicit permanent deletion and **no automatic expiration**. These
 composer, sharing, link-management and Trash additions remain planned. Automatic
-Open Graph/X preview cards are now implemented locally: article illustrations and
+Open Graph/X preview cards are implemented and deployed: article illustrations and
 book covers become hashed JPEGs, with title-card fallback, complete static metadata
-and `npm run verify:social -- <url>` for crawler checks. They have not been deployed.
+and `npm run verify:social -- <url>` for crawler checks. Full and short article URLs
+were verified live on 2 October 2026; book-cover cards remain locally tested while
+the current collection is draft.
 See [social previews](docs/social-previews.md). The plan includes platform limitations,
 ordered technical milestones and acceptance tests. The
 [code-analysis pipeline](docs/code-analysis.md) is now implemented locally: the
