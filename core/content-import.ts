@@ -16,6 +16,7 @@ import {
 } from "./model";
 import { hash, localAsset } from "./assets";
 import { extractReviewPiece } from "./content-quality";
+import { readAssetManifest } from "./asset-manifest";
 import { Dirent } from "fs";
 
 export type ImportOptions = {
@@ -240,6 +241,8 @@ export async function prepareImport(options: ImportOptions) {
     selectContent();
   const before = await tree(destination),
     incoming: Files = new Map();
+  const managedSource = await readAssetManifest(path.dirname(source));
+  let sourceLibrary: Library | undefined;
   const merged = await prepareFiles();
   const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "content-import-"));
   try {
@@ -293,42 +296,40 @@ export async function prepareImport(options: ImportOptions) {
           );
         await validateResources(p);
       }
-
-    async function validateResources(p: Piece) {
-      const checkLinks = (node: Nodes) => {
-        if (
-          (node.type === "image" ||
-            node.type === "link" ||
-            node.type === "definition") &&
-          node.url &&
-          !/^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(node.url)
-        ) {
-          const resolved = path.resolve(
-            p.dir,
-            decodeURIComponent(node.url.split(/[?#]/)[0]),
+  }
+  async function validateResources(p: Piece, boundary = temporary) {
+    const checkLinks = (node: Nodes) => {
+      if (
+        (node.type === "image" ||
+          node.type === "link" ||
+          node.type === "definition") &&
+        node.url &&
+        !/^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(node.url)
+      ) {
+        const resolved = path.resolve(
+          p.dir,
+          decodeURIComponent(node.url.split(/[?#]/)[0]),
+        );
+        if (!resolved.startsWith(boundary + path.sep))
+          throw Error(
+            `${p.id}: relative resource escapes the imported library: ${node.url}`,
           );
-          if (!resolved.startsWith(temporary + path.sep))
-            throw Error(
-              `${p.id}: relative resource escapes the imported library: ${node.url}`,
-            );
-        }
-        for (const child of "children" in node ? node.children : [])
-          checkLinks(child);
-      };
-      checkLinks(p.ast);
-      for (const block of Object.values(p.blocks)) {
-        for (const field of ["path", "data"])
-          if (
-            typeof block.source[field] === "string" &&
-            !block.source[field].startsWith("media:")
-          )
-            await localAsset(p.dir, block.source[field]);
-        for (const asset of block.alternative?.assets ?? [])
-          await localAsset(p.dir, asset.path);
       }
+      for (const child of "children" in node ? node.children : [])
+        checkLinks(child);
+    };
+    checkLinks(p.ast);
+    for (const block of Object.values(p.blocks)) {
+      for (const field of ["path", "data"])
+        if (
+          typeof block.source[field] === "string" &&
+          !block.source[field].startsWith("media:")
+        )
+          await localAsset(p.dir, block.source[field]);
+      for (const asset of block.alternative?.assets ?? [])
+        await localAsset(p.dir, asset.path);
     }
   }
-
   async function prepareFiles() {
     for (const e of [...selected].sort((a, b) => a.id.localeCompare(b.id))) {
       await prepareEntry(e);
@@ -348,6 +349,22 @@ export async function prepareImport(options: ImportOptions) {
         (e.kind === "piece"
           ? `pieces/${e.id}/index.md`
           : `collections/${e.id}.yaml`);
+      if (e.kind === "piece" && managedSource) {
+        sourceLibrary ??= await loadLibrary(source);
+        const original = sourceLibrary.pieces.get(e.id)!;
+        // Resolve linked managed bytes before copying to the manifest-free import
+        // sandbox. Unreferenced private candidates are not needed by a public build.
+        await extractReviewPiece({
+          id: original.id,
+          title: original.title,
+          summary: original.summary,
+          status: original.status,
+          tags: original.tags,
+          sources: [path.join(original.dir, "index.md")],
+          fingerprint: "",
+        });
+        await validateResources(original, source);
+      }
       const files =
         e.kind === "piece"
           ? await tree(path.dirname(path.join(source, e.relative)))

@@ -7,6 +7,11 @@ import { spawnSync } from "node:child_process";
 import matter from "gray-matter";
 import YAML from "yaml";
 import { prepareImport, applyImport } from "../core/content-import";
+import {
+  emptyAssetManifest,
+  sourceRecord,
+  writeAssetManifest,
+} from "../core/asset-manifest";
 
 async function fixture(t: import("node:test").TestContext) {
   const root = await fs.mkdtemp(
@@ -56,6 +61,53 @@ async function fixture(t: import("node:test").TestContext) {
     );
   return { root, from, to, piece, collection };
 }
+test("managed imports restore only linked bytes before sandbox validation and copy block resources", async (t) => {
+  const f = await fixture(t);
+  const dir = await f.piece(
+    "intro",
+    "![Image](assets/image.png)\n\n[Guide](assets/guide.pdf)\n",
+  );
+  await fs.writeFile(
+    path.join(dir, "blocks.yaml"),
+    YAML.stringify({
+      schemaVersion: 1,
+      blocks: {
+        artwork: {
+          kind: "image",
+          source: { path: "assets/block.png", alt: "Block image" },
+        },
+      },
+    }),
+  );
+  const from = path.join(f.root, "content");
+  await fs.rename(f.from, from);
+  const manifest = emptyAssetManifest();
+  const bytes = Buffer.from("verified managed import bytes");
+  for (const name of ["image.png", "guide.pdf", "block.png", "unused.png"]) {
+    const logical = "content/pieces/intro/assets/" + name;
+    manifest.sources[logical] = {
+      ...sourceRecord(logical, bytes),
+      ...(name === "unused.png" ? {} : { publicKey: "sources/" + name }),
+    };
+  }
+  await writeAssetManifest(f.root, manifest);
+  const requested: string[] = [];
+  t.mock.method(globalThis, "fetch", async (url: string) => {
+    requested.push(path.basename(String(url)));
+    return new Response(bytes);
+  });
+  const prepared = await prepareImport({ ...f, from, pieces: ["intro"] });
+  await applyImport(prepared);
+  assert.deepEqual(requested.sort(), ["block.png", "guide.pdf", "image.png"]);
+  for (const name of requested)
+    assert.deepEqual(
+      await fs.readFile(path.join(f.to, "pieces/intro/assets", name)),
+      bytes,
+    );
+  await assert.rejects(
+    fs.access(path.join(f.to, "pieces/intro/assets/unused.png")),
+  );
+});
 test("collection selection excludes unrelated snapshots, copies binary assets and preserves body, then is idempotent", async (t) => {
   const f = await fixture(t);
   const body = "\n## Heading\n\nExact prose.  \n\n![Diagram](figure.png)\n";

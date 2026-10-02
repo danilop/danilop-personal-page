@@ -270,7 +270,10 @@ export async function extractReviewPiece(
     if (!file.url || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(file.url)) continue;
     try {
       const local = decodeURIComponent(file.url.split(/[?#]/)[0]);
-      await hydrateManagedAsset(path.dirname(piece.sources[0]), local);
+      await hydrateManagedAsset(
+        await fs.realpath(path.dirname(piece.sources[0])),
+        local,
+      );
       await fs.access(path.resolve(path.dirname(piece.sources[0]), local));
     } catch {
       technical.push({
