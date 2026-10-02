@@ -9,6 +9,7 @@ import { z } from "zod";
 import { parser } from "./model";
 import type { TagPiece } from "./tags";
 import { escape } from "./assets";
+import { hydrateManagedAsset } from "./asset-manifest";
 import { displayFindingExcerpt } from "../lib/finding-range.js";
 
 export const hash = (text: string | Uint8Array) =>
@@ -269,6 +270,7 @@ export async function extractReviewPiece(
     if (!file.url || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(file.url)) continue;
     try {
       const local = decodeURIComponent(file.url.split(/[?#]/)[0]);
+      await hydrateManagedAsset(path.dirname(piece.sources[0]), local);
       await fs.access(path.resolve(path.dirname(piece.sources[0]), local));
     } catch {
       technical.push({

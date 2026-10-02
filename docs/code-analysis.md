@@ -95,6 +95,9 @@ snapshot. No AWS credentials or private operator configuration are copied. Dispo
 authoring integration fixtures seed their own image bytes and identities when
 private draft artwork is absent in CI; public production assets still resolve
 against their committed checksums.
+The collector's pure Python tests also support Amplify's Python 3.10 runtime;
+the deployed collector runs on Python 3.13. Tests of local preparation isolate
+their disposable environment and separately assert that CI cannot prepare assets.
 
 An empty staged diff reports that there is nothing to check; use `verify:worktree`
 for the current checkout. Fixes are never automatically applied by the hook. Existing

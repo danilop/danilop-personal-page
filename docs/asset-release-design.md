@@ -32,6 +32,9 @@ OAC origin serves only `published/`; it cannot expose private originals.
 Bucket settings and credentials remain outside the repository.
 
 The common local-asset resolver restores missing files and checks their identity.
+Writing checks use this resolver too, so a fresh checkout can validate linked
+assets before a preview build. Rewriting local `/media/` paths preserves authored
+absolute URLs, including existing media-domain links.
 A fresh production checkout restores selected sources and pinned social cards
 from the public CDN without AWS credentials. It rejects private-only dependencies.
 Local authoring can restore draft sources through authenticated S3 reads. Images

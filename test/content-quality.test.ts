@@ -7,6 +7,11 @@ import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
 import { readTagPieces } from "../core/tags";
 import {
+  emptyAssetManifest,
+  sourceRecord,
+  writeAssetManifest,
+} from "../core/asset-manifest";
+import {
   qualitySchema,
   extractReviewPiece,
   checkBaselines,
@@ -68,6 +73,40 @@ test("missing footnotes and relative assets are technical errors, external URLs 
   assert(r.technical.some((f) => f.rule === "reference-missing"));
   assert(r.technical.some((f) => f.rule === "local-resource-missing"));
   assert.equal(r.technical.length, 2);
+});
+test("writing checks restore a missing managed asset and reject corrupt downloaded bytes", async (t) => {
+  const { p, dir, file } = await fixture(
+    t,
+    "![Managed image](assets/image.png)\n",
+  );
+  const source = "content/pieces/example/index.md";
+  const logical = "content/pieces/example/assets/image.png";
+  const canonical = await fs.realpath(dir);
+  await fs.mkdir(path.dirname(path.join(dir, source)), { recursive: true });
+  await fs.copyFile(file, path.join(dir, source));
+  const bytes = Buffer.from("checksum-pinned image");
+  const manifest = emptyAssetManifest();
+  manifest.sources[logical] = {
+    ...sourceRecord(logical, bytes),
+    publicKey: "media/image.png",
+  };
+  await writeAssetManifest(dir, manifest);
+  const piece = { ...p, sources: [path.join(canonical, source)] };
+  let downloaded = bytes;
+  t.mock.method(globalThis, "fetch", async (url: string) => {
+    assert.match(String(url), /\/media\/image\.png$/);
+    return new Response(downloaded);
+  });
+  assert.equal((await extractReviewPiece(piece)).technical.length, 0);
+  assert.deepEqual(await fs.readFile(path.join(dir, logical)), bytes);
+  await fs.rm(path.join(dir, logical));
+  downloaded = Buffer.from("corrupt");
+  assert(
+    (await extractReviewPiece(piece)).technical.some(
+      (f) => f.rule === "local-resource-missing",
+    ),
+  );
+  await assert.rejects(fs.access(path.join(dir, logical)));
 });
 test("baseline checks detect body/source drift without modifying source", async (t) => {
   const { p, file, dir } = await fixture(t, "Stable prose.\n");

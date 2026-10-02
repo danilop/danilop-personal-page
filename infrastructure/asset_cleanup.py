@@ -4,7 +4,7 @@ import json
 import os
 import re
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from urllib.request import urlopen
 
 
@@ -124,7 +124,7 @@ def handler(event, _context):
 
     client = boto3.client("s3")
     bucket = os.environ["ASSET_BUCKET"]
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)  # noqa: UP017 -- Amplify's test runtime is Python 3.10.
     lease_key = "asset-control/lease.json"
     lock = acquire_lease(client, bucket, now)
     if lock is None:

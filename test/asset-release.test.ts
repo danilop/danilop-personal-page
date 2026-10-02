@@ -218,10 +218,16 @@ test("a replacement keeps pinned legacy URLs, while unprepared new renditions fa
   const { root } = await repository(t);
   const before = process.cwd(),
     oldPrepare = process.env.NOTES_ASSET_PREPARE;
+  const oldCI = process.env.CI,
+    oldBranch = process.env.AWS_BRANCH;
   t.after(async () => {
     process.chdir(before);
     if (oldPrepare === undefined) delete process.env.NOTES_ASSET_PREPARE;
     else process.env.NOTES_ASSET_PREPARE = oldPrepare;
+    if (oldCI === undefined) delete process.env.CI;
+    else process.env.CI = oldCI;
+    if (oldBranch === undefined) delete process.env.AWS_BRANCH;
+    else process.env.AWS_BRANCH = oldBranch;
   });
   process.chdir(root);
   const manifest = emptyAssetManifest(),
@@ -250,9 +256,20 @@ test("a replacement keeps pinned legacy URLs, while unprepared new renditions fa
     /Uncommitted rendition/,
   );
   process.env.NOTES_ASSET_PREPARE = "1";
+  await assert.rejects(async () => {
+    process.env.CI = "true";
+    await finishAssetBuild({}, assets, false);
+  }, /must run locally/);
+  delete process.env.CI;
+  delete process.env.AWS_BRANCH;
   const linkedKey = "sources/" + path.basename(manifest.sources[guide].key);
   const site = await finishAssetBuild(
-    { image: replacement, guide: "https://media.example.invalid/" + linkedKey },
+    {
+      image: replacement,
+      guide: "https://media.example.invalid/" + linkedKey,
+      external: "https://external.example.invalid/media/" + name,
+      cdn: "https://media.example.invalid/media/" + name,
+    },
     assets,
     false,
   );
@@ -261,6 +278,8 @@ test("a replacement keeps pinned legacy URLs, while unprepared new renditions fa
     linkedKey,
   );
   assert.match(site.image, /^https:\/\//);
+  assert.equal(site.external, "https://external.example.invalid/media/" + name);
+  assert.equal(site.cdn, "https://media.example.invalid/media/" + name);
   assert.deepEqual(
     await fs.readFile(".generated/public/media/original.png"),
     bytes,

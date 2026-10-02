@@ -158,7 +158,7 @@ export async function finishAssetBuild<T>(
     await writeAssetManifest(root, manifest);
   }
   const encoded = JSON.stringify(site).replace(
-    /\/media\/([a-zA-Z0-9._-]+)/g,
+    /(?<![a-zA-Z0-9_:/.-])\/media\/([a-zA-Z0-9._-]+)/g,
     (match, name) =>
       outputs[name] ? mediaUrl("media:" + outputs[name].key) : match,
   );
