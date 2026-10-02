@@ -19,6 +19,7 @@ async function main() {
   const lock = await fs.open(path.join(cleanup.state, "write.lock"), "wx");
   try {
     const manifest = (await readAssetManifest(root)) ?? emptyAssetManifest();
+    const previousShared = new Set(manifest.shared);
     const args = process.argv.slice(2);
     if (args.length) {
       if (
@@ -66,6 +67,16 @@ async function main() {
         ) {
           const bytes = await fs.readFile(file);
           const next = sourceRecord(file.split(path.sep).join("/"), bytes);
+          const previous = manifest.sources[file];
+          if (
+            previousShared.has(file) &&
+            manifest.shared.includes(file) &&
+            previous &&
+            previous.sha256 !== next.sha256
+          )
+            throw Error(
+              `Shared download changed: ${file}. Use a new filename and keep the old pin, or explicitly --unshare to retire its old URL.`,
+            );
           manifest.sources[file] = next;
           const ownership = path.join(
             cleanup.state,

@@ -1,6 +1,8 @@
 # Asset release workflow
 
-Status: implemented locally; migration and live verification are in progress.
+Status: implemented. Existing editorial binaries are backed up in S3 and removed
+from Git's current tree; source-only public builds and private resource restoration
+have been verified. Releases confirm hosted delivery before recording deployment.
 The existing private S3 media bucket and CloudFront distribution are reused.
 No second media domain or asset distribution is required.
 
@@ -88,7 +90,9 @@ npm run assets:prepare -- --share content/pieces/example/assets/guide.pdf
 The command prints a portable `media:sources/<descriptive-name>-<checksum>.pdf`
 reference. Use that reference in Markdown or a PDF block, prepare again after
 changing content, commit, then release. The corresponding HTTPS URL works for
-external sharing after release. The `shared` manifest list is an explicit pin:
+external sharing after release. A shared file cannot be changed in place during preparation: use a new filename
+and retain the old pin while its URL is still needed. `--unshare` explicitly
+retires the old identity. The `shared` manifest list is an explicit pin:
 a file shared elsewhere stays protected even without an article link. Retire it
 only when its external consumers no longer need it:
 
@@ -97,6 +101,8 @@ npm run assets:prepare -- --unshare content/pieces/example/assets/guide.pdf
 ```
 
 Retirement is not immediate deletion; live and rollback inventories still apply.
+Managed `media:sources/` links in eligible public content also remain protected
+while linked, even after their external-share pin is removed.
 The existing manual `npm run media -- upload` command remains supported. Unknown
 manually maintained objects outside the managed prefixes are never swept.
 
@@ -121,7 +127,10 @@ Local cleanup never mirrors a deletion into S3.
 `npm run assets:provision-cleanup` prepares the collector's CloudFormation change
 set; `-- --apply` deploys it and applies managed-prefix lifecycle rules while
 preserving unrelated rules. The media stack template contains matching retention
-rules. The collector runs after verified releases and once daily independently of
+rules. Existing media stacks can report lifecycle drift after this direct
+reconciliation until their updated template is applied; review change sets before
+refreshing that stack. Cleanup provisioning does not change its CDN or DNS.
+The collector runs after verified releases and once daily independently of
 local preview. `npm run assets:cleanup` is a dry run; `-- --apply` performs collection.
 
 The collector protects the live deployment regardless of age, deployed inventories
@@ -130,9 +139,11 @@ explicit shared pins in those inventories. Retained local editions protect their
 source identities during preparation; exported editions carry their own bytes.
 There is no separate indefinitely retained remote edition registry.
 
-Unprotected objects are first tagged unused. After seven days, another scan checks
+Only objects tagged `asset-managed=v1` by this workflow are eligible. Other
+objects remain untouched even inside a managed prefix. Unprotected owned objects
+are first tagged unused. After seven days, another scan checks
 all protection roots again and adds a recoverable S3 delete marker. Private trash
-receipts record the original version ID. Data versions remain recoverable for
+receipts record the original version ID. Owned data versions remain recoverable for
 thirty days after deletion; lifecycle then expires noncurrent versions and unused
 delete markers. Expired release inventories are collected; their obsolete versions
 and lease versions expire after one day, and trash receipts after thirty-one days.

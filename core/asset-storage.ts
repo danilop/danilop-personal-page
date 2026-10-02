@@ -89,16 +89,19 @@ export async function ensureStoredAsset(
   }
   if (await existing()) {
     const tags = await client.send(new GetObjectTaggingCommand(request));
-    if (tags.TagSet?.some((tag) => tag.Key === "asset-unused-since"))
+    const current = tags.TagSet ?? [];
+    const next = current.filter(
+      (tag) => tag.Key !== "asset-unused-since" && tag.Key !== "asset-managed",
+    );
+    next.push({ Key: "asset-managed", Value: "v1" });
+    if (
+      !current.some(
+        (tag) => tag.Key === "asset-managed" && tag.Value === "v1",
+      ) ||
+      current.some((tag) => tag.Key === "asset-unused-since")
+    )
       await client.send(
-        new PutObjectTaggingCommand({
-          ...request,
-          Tagging: {
-            TagSet: tags.TagSet.filter(
-              (tag) => tag.Key !== "asset-unused-since",
-            ),
-          },
-        }),
+        new PutObjectTaggingCommand({ ...request, Tagging: { TagSet: next } }),
       );
     return;
   }
@@ -113,6 +116,7 @@ export async function ensureStoredAsset(
         CacheControl: publicFile
           ? "public, max-age=0, s-maxage=300, must-revalidate"
           : "private, no-store",
+        Tagging: "asset-managed=v1",
         ChecksumSHA256: checksum,
         Metadata: { sha256: record.sha256 },
         IfNoneMatch: "*",

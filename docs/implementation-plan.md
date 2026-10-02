@@ -6,7 +6,8 @@ content-review and import additions are implemented and tested; the author edito
 remains local-only. Short-link infrastructure and saved article aliases are active
 and live-tested. Real provider delivery remains pending.
 Off-repository editorial assets, checksum manifests and coordinated release are
-implemented locally; storage migration and hosted verification are in progress.
+implemented and migrated. Source-only builds and private book/image resources are
+verified; the release command verifies exact-revision hosted delivery.
 Updated: 2026-10-02.
 
 Danilo selected **all planned publishing capabilities before deployment**.

@@ -72,7 +72,9 @@ async function fixture(t) {
       const value = {
         ...input,
         bytes,
-        TagSet: [],
+        TagSet: [...new URLSearchParams(input.Tagging ?? "")].map(
+          ([Key, Value]) => ({ Key, Value }),
+        ),
         ETag: `"etag-${calls.length}"`,
       };
       objects.set(input.Key, value);
@@ -115,6 +117,7 @@ test("storage writes immutable checked objects, keeps drafts private and verifie
   await ensureStoredAsset(record, bytes, false);
   assert.deepEqual(f.objects.get(record.key).TagSet, [
     { Key: "owner", Value: "keep" },
+    { Key: "asset-managed", Value: "v1" },
   ]);
   assert.deepEqual(await privateAssetBytes(record), bytes);
   await ensureStoredAsset({ ...record, key: "media/figure.png" }, bytes, true);

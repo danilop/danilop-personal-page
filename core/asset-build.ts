@@ -94,11 +94,20 @@ function selectPublicSources(
   manifest: AssetManifest,
   assets: Assets,
   root: string,
+  serializedSite: string,
 ) {
   const outputs = manifest.outputs;
   for (const record of Object.values(manifest.sources)) delete record.publicKey;
   const dependencies = new Map(assets.dependencies);
-  for (const logical of manifest.shared) {
+  const linked = Object.entries(manifest.sources)
+    .filter(([, record]) =>
+      serializedSite.includes(
+        mediaUrl("media:sources/" + path.basename(record.key)),
+      ),
+    )
+    .map(([logical]) => logical);
+  const shared = new Set([...manifest.shared, ...linked]);
+  for (const logical of shared) {
     const source = manifest.sources[logical];
     if (!source)
       throw Error(`Shared file is missing from manifest: ${logical}`);
@@ -113,7 +122,9 @@ function selectPublicSources(
     const same = Object.values(outputs).find(
       (output) => output.sha256 === sha256,
     );
-    source.publicKey = same?.key ?? "sources/" + path.basename(source.key);
+    source.publicKey = shared.has(logical)
+      ? "sources/" + path.basename(source.key)
+      : (same?.key ?? "sources/" + path.basename(source.key));
   }
 }
 export async function finishAssetBuild<T>(
@@ -141,7 +152,7 @@ export async function finishAssetBuild<T>(
     if (!Object.keys(manifest.outputs).length)
       manifest.legacy = Object.keys(outputs);
     manifest.outputs = outputs;
-    selectPublicSources(manifest, assets, root);
+    selectPublicSources(manifest, assets, root, JSON.stringify(site));
     for (const [recipe, name] of Object.entries(manifest.recipes))
       if (!outputs[name]) delete manifest.recipes[recipe];
     await writeAssetManifest(root, manifest);

@@ -200,7 +200,14 @@ async function main() {
         {
           ID: `ManagedAssetVersions${index}`,
           Status: "Enabled",
-          Filter: { Prefix: prefix },
+          Filter: prefix.startsWith("asset-")
+            ? { Prefix: prefix }
+            : {
+                And: {
+                  Prefix: prefix,
+                  Tags: [{ Key: "asset-managed", Value: "v1" }],
+                },
+              },
           NoncurrentVersionExpiration: {
             NoncurrentDays: prefix.startsWith("asset-") ? 1 : 30,
           },
@@ -225,7 +232,10 @@ async function main() {
         ...rules,
       ];
       const lifecycleFile = path.join(temp, "lifecycle.json");
-      await fs.writeFile(lifecycleFile, JSON.stringify(lifecycle));
+      await fs.writeFile(
+        lifecycleFile,
+        JSON.stringify({ Rules: lifecycle.Rules }),
+      );
       execFileSync(
         "aws",
         [
@@ -235,6 +245,12 @@ async function main() {
           bucket,
           "--lifecycle-configuration",
           "file://" + lifecycleFile,
+          ...(lifecycle.TransitionDefaultMinimumObjectSize
+            ? [
+                "--transition-default-minimum-object-size",
+                lifecycle.TransitionDefaultMinimumObjectSize,
+              ]
+            : []),
         ],
         { stdio: "inherit" },
       );

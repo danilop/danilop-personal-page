@@ -31,12 +31,14 @@ class Fake:
  def __init__(self):self.writes=[];self.deletes=[]
  def get_paginator(self,_):return self
  def paginate(self,**kw):return [{'Contents':[{'Key':'originals/old'}]}] if kw['Prefix']=='originals/' else [{}]
- def get_object_tagging(self,**kw):return {'TagSet':[{'Key':'asset-unused-since','Value':(now-timedelta(days=8)).isoformat()}]}
+ def get_object_tagging(self,**kw):return {'TagSet':[{'Key':'asset-managed','Value':'v1'},{'Key':'asset-unused-since','Value':(now-timedelta(days=8)).isoformat()}]}
  def head_object(self,**kw):return {'VersionId':'retained-version','ETag':'immutable-etag'}
  def put_object(self,**kw):self.writes.append(kw)
  def delete_object(self,**kw):self.deletes.append(kw)
 fake=Fake();assert module.collect(fake,'bucket',keep,now,True)['quarantine']==1;assert not fake.writes and not fake.deletes
 assert module.collect(fake,'bucket',keep,now,False)['quarantine']==1
+fake.get_object_tagging=lambda **kw:{'TagSet':[]}
+assert module.collect(fake,'bucket',keep,now,False)=={'mark':0,'restore':0,'quarantine':0}
 assert len(fake.writes)==1 and fake.writes[0]['Key'].startswith('asset-trash/')
 assert fake.deletes==[{'Bucket':'bucket','Key':'originals/old','IfMatch':'immutable-etag'}]
 `,

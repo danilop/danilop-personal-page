@@ -325,7 +325,7 @@ verifies Amplify delivery. Fresh public builds need no AWS credentials.
 The [asset release workflow](docs/asset-release-design.md) preserves local cleanup,
 book/export resolution and existing `/media/` URLs. The remote collector protects
 the live release, thirty-day rollbacks, seven-day pending releases and explicit
-shared downloads. It uses a seven-day unused grace period and recoverable S3
+shared downloads. Only workflow-owned objects are collected. It uses a seven-day unused grace period and recoverable S3
 deletions, then scoped lifecycle expiry. Collection runs after releases and daily;
 local file deletion is never mirrored with `sync --delete`.
 

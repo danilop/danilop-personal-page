@@ -69,6 +69,8 @@ def collect(client, bucket, keep, now, dry_run):
             key = item["Key"]
             result = client.get_object_tagging(Bucket=bucket, Key=key)
             tags = {tag["Key"]: tag["Value"] for tag in result["TagSet"]}
+            if tags.get("asset-managed") != "v1":
+                continue
             action = unused_action(key, tags, keep, now)
             if action == "keep":
                 continue

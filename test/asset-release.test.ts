@@ -230,6 +230,8 @@ test("a replacement keeps pinned legacy URLs, while unprepared new renditions fa
     record = { ...sourceRecord("original.png", bytes), key: "media/" + name };
   manifest.outputs[name] = record;
   manifest.legacy = [name];
+  const guide = "content/pieces/story/assets/guide.png";
+  manifest.sources[guide] = sourceRecord(guide, bytes);
   await fs.mkdir(".asset-cache");
   await fs.writeFile(path.join(".asset-cache", record.sha256 + ".png"), bytes);
   await writeAssetManifest(root, manifest);
@@ -248,7 +250,16 @@ test("a replacement keeps pinned legacy URLs, while unprepared new renditions fa
     /Uncommitted rendition/,
   );
   process.env.NOTES_ASSET_PREPARE = "1";
-  const site = await finishAssetBuild({ image: replacement }, assets, false);
+  const linkedKey = "sources/" + path.basename(manifest.sources[guide].key);
+  const site = await finishAssetBuild(
+    { image: replacement, guide: "https://media.example.invalid/" + linkedKey },
+    assets,
+    false,
+  );
+  assert.equal(
+    (await readAssetManifest(root))!.sources[guide].publicKey,
+    linkedKey,
+  );
   assert.match(site.image, /^https:\/\//);
   assert.deepEqual(
     await fs.readFile(".generated/public/media/original.png"),
@@ -326,4 +337,36 @@ test("changed HEAD blocks push and failed push remains a failed release", async 
     ),
     /Push rejected/,
   );
+});
+
+test("preparation refuses to replace an explicitly shared download identity", async (t) => {
+  const { root } = await repository(t),
+    logical = "content/pieces/story/assets/guide.pdf";
+  const manifest = emptyAssetManifest();
+  manifest.shared = [logical];
+  manifest.sources[logical] = sourceRecord(
+    logical,
+    Buffer.from("%PDF-1.7 original"),
+  );
+  await writeAssetManifest(root, manifest);
+  await fs.mkdir(path.dirname(path.join(root, logical)), { recursive: true });
+  await fs.writeFile(
+    path.join(root, logical),
+    "%PDF-1.7 changed after sharing",
+  );
+  await fs.symlink(
+    path.resolve("node_modules"),
+    path.join(root, "node_modules"),
+    "dir",
+  );
+  assert.throws(
+    () =>
+      execFileSync(
+        process.execPath,
+        ["--import", "tsx", path.resolve("scripts/prepare-assets.ts")],
+        { cwd: root, stdio: "pipe" },
+      ),
+    /Shared download changed/,
+  );
+  assert.deepEqual(await readAssetManifest(root), manifest);
 });

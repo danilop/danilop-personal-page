@@ -42,6 +42,7 @@ Resources:
           - Id: ManagedAssetVersions0
             Status: Enabled
             Prefix: originals/
+            TagFilters: [{ Key: asset-managed, Value: v1 }]
             NoncurrentVersionExpiration: { NoncurrentDays: 30 }
           - Id: ManagedAssetMarkers0
             Status: Enabled
@@ -50,6 +51,7 @@ Resources:
           - Id: ManagedAssetVersions1
             Status: Enabled
             Prefix: published/media/
+            TagFilters: [{ Key: asset-managed, Value: v1 }]
             NoncurrentVersionExpiration: { NoncurrentDays: 30 }
           - Id: ManagedAssetMarkers1
             Status: Enabled
@@ -58,6 +60,7 @@ Resources:
           - Id: ManagedAssetVersions2
             Status: Enabled
             Prefix: published/sources/
+            TagFilters: [{ Key: asset-managed, Value: v1 }]
             NoncurrentVersionExpiration: { NoncurrentDays: 30 }
           - Id: ManagedAssetMarkers2
             Status: Enabled

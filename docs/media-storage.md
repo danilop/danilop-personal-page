@@ -105,7 +105,8 @@ The managed collector protects live, recent rollback and pending inventories,
 legacy URLs and explicit shared pins. Unused managed objects get seven days of
 grace before recoverable deletion; noncurrent data versions expire after thirty
 days. Operational inventories and lease versions have shorter scoped retention.
-Manual files outside the managed prefixes remain protected from collection.
+Objects without this workflow's ownership tag remain protected from collection
+and data-version expiry, including manually uploaded files inside those prefixes.
 See [retention and recovery](asset-release-design.md#remote-retention).
 Versioning is not an independent backup. No AWS credentials or private inventory
 belong in Git. Automatic local cleanup never deletes remote published media.
