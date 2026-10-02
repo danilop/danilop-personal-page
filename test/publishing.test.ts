@@ -652,3 +652,38 @@ test("S3 response resolver redirects only canonical metadata and strips S3 heade
     assert.equal(call("/hello", "GET", destination).statusCode, 404);
   assert.equal(call("/hello", "POST").statusCode, 404);
 });
+
+test("short-link status query exposes only the public destination with CORS", async () => {
+  const { runInNewContext } = await import("node:vm");
+  const handler = runInNewContext(
+    (await fs.readFile("infrastructure/shortlinks.js", "utf8")) + "\nhandler;",
+  );
+  const target = "https://www.danilop.net/writing/hello-brave-new-world/";
+  const call = (method = "GET", uri = "/hello", destination = target) =>
+    handler({
+      request: { method, uri, querystring: { __link_status: { value: "1" } } },
+      response: {
+        statusCode: 200,
+        headers: {
+          "x-amz-website-redirect-location": { value: destination },
+          "x-amz-meta-owner": { value: "private-owner" },
+          etag: { value: "private-etag" },
+        },
+      },
+    });
+  const status = call();
+  assert.equal(status.statusCode, 200);
+  assert.deepEqual(JSON.parse(status.body), { target });
+  assert.equal(status.headers["access-control-allow-origin"].value, "*");
+  assert.equal(status.headers["cache-control"].value, "no-store");
+  assert.equal(status.headers.location, undefined);
+  assert.equal(status.headers.etag, undefined);
+  assert.equal(status.headers["x-amz-meta-owner"], undefined);
+  assert.equal(call("HEAD").body, "");
+  assert.equal(call("POST").statusCode, 404);
+  assert.equal(call("GET", "/publication/owners").statusCode, 404);
+  assert.equal(
+    call("GET", "/hello", "https://outside.invalid/").statusCode,
+    404,
+  );
+});

@@ -48,6 +48,17 @@ returns an empty body. No KeyValueStore or Lambda@Edge is needed. Destination
 validation rejects credentials, control characters and off-origin targets;
 viewer-supplied query strings cannot choose a destination.
 
+The read-only query `?__link_status=1` returns HTTP 200 JSON `{target}` for an
+active alias, with `Cache-Control: no-store` and public wildcard CORS (no
+credentials). GET carries the body; HEAD does not. It uses the same validated S3
+metadata as the redirect and strips all S3 entity/owner metadata. The existing
+managed cache policy ignores query strings; the viewer-response Function sees the
+query for each request, so status and redirect reuse the same cached origin object.
+No new S3 objects or forwarding/cache rules are required. Removed/missing aliases
+still fail; origin errors may omit CORS, which clients treat as unavailable. Reader
+sharing confirms an exact target match on demand, never merely a reserved code.
+See [article sharing](article-sharing.md).
+
 Static response-header policies and custom error responses cannot perform this
 per-object status/header conversion. CloudFront Functions support changing a
 viewer-response status code. They are not invoked for origin errors of 400 or
@@ -92,7 +103,8 @@ object and temporary records, invalidate its cached path, and verify its removal
 Verify custom-domain DNS/TLS separately from the CloudFront default hostname.
 The disposable live test passed and both its redirect object and private test
 record were deleted. The cached path was invalidated and returned 404 afterwards.
-Only the intended system root/error objects remain; no article aliases were activated.
+At the disposable-test stage only system root/error objects remained. The saved
+article aliases were subsequently activated after verified deployment.
 
 ## Pricing recommendation
 

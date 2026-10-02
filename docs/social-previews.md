@@ -64,6 +64,10 @@ Crawler checks of both short URLs confirmed matching GET/HEAD chains, the final
 canonical page and its public JPEG card. Logged-in platform rendering remains
 outside this verification.
 
+Reader [sharing controls](article-sharing.md) expose an active short link after
+an on-demand target check. Email and platform handoff links use the same visible
+URL. This does not change canonical/Open Graph metadata or post to any platform.
+
 ## Verification
 
 `npm run build` validates generated metadata consistency and the actual JPEG
@@ -81,8 +85,8 @@ npm run verify:social -- https://danilop.link/hello
 This command checks initial HTML as a crawler, bounded HTTP redirects, GET/HEAD
 parity, final site/canonical origin, published/indexable metadata and publicly
 retrievable JPEG bytes. It needs no AWS access and does not publish a social post.
-It intentionally fails on the old deployed metadata until the new website ships;
-the short example also requires resolver activation, DNS and an active alias.
+It fails on stale/missing metadata or inactive aliases. The examples above passed
+after production deployment and alias activation.
 
 Test the resulting card in platform composition tools after deployment. LinkedIn's
 Post Inspector can request a metadata refresh; it does not guarantee replacement

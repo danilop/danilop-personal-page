@@ -1,0 +1,215 @@
+---
+import { site } from "../data";
+import { siteUrl } from "../../core/deployment.mjs";
+import { siteConfig } from "../../core/config";
+import { shareLinks } from "../../runtime/share-links";
+interface Props {
+  pieceId: string;
+  collectionId?: string;
+  title: string;
+  url: string;
+  position: "top" | "bottom";
+}
+const { pieceId, collectionId, title, url, position } = Astro.props;
+const draft =
+  site.authoring?.pieces.includes(pieceId) ||
+  (collectionId && site.authoring?.collections.includes(collectionId));
+const config = await siteConfig();
+const full = siteUrl(url, config.url);
+const code = Object.keys(site.shortlinks)
+  .sort()
+  .find((key) => site.shortlinks[key] === full);
+const short =
+  code && config.shortLinkOrigin ? `${config.shortLinkOrigin}/${code}` : "";
+const links = shareLinks(title, full);
+const id = "article-share";
+---
+
+{!draft && (
+  <>
+    <button
+      type="button"
+      class:list={["share-trigger", position]}
+      data-share-open={id}
+      aria-haspopup="dialog"
+      aria-controls={id}
+      hidden
+    >
+      {position === "top" ? "Share ↗" : "Share this article"}
+    </button>
+    <noscript>
+      <details class="share-fallback">
+        <summary>Share this article</summary>
+        <p>
+          Full article link: <a href={full}>{full}</a>
+        </p>
+        <a href={links.email}>Email</a>
+      </details>
+    </noscript>
+    {position === "bottom" && (
+      <dialog
+        id={id}
+        class="share-panel"
+        data-article-share
+        data-full={full}
+        data-short={short}
+        data-title={title}
+        aria-labelledby="share-heading"
+      >
+        <div class="share-heading">
+          <h2 id="share-heading">Share this article</h2>
+          <button
+            type="button"
+            data-share-close
+            aria-label="Close sharing panel"
+          >
+            Close
+          </button>
+        </div>
+        <p class="share-title">{title}</p>
+        <p data-share-status role="status">
+          This article uses its full link.
+        </p>
+        <label for="share-url">Link to share</label>
+        <input
+          id="share-url"
+          type="text"
+          inputmode="url"
+          value={full}
+          readonly
+        />
+        <div class="share-actions">
+          <button type="button" data-share-copy>
+            Copy full link
+          </button>
+          <button type="button" data-share-device hidden>
+            Share on your device
+          </button>
+          {Object.entries(links).map(([platform, href]) => (
+            <a
+              href={href}
+              data-share-platform={platform}
+              target={platform === "email" ? undefined : "_blank"}
+              rel={platform === "email" ? undefined : "noopener noreferrer"}
+            >
+              {
+                {
+                  email: "Email",
+                  x: "X",
+                  linkedin: "LinkedIn",
+                  bluesky: "Bluesky",
+                }[platform as keyof typeof links]
+              }
+            </a>
+          ))}
+        </div>
+      </dialog>
+    )}
+  </>
+)}
+<script>
+  import "../../runtime/article-sharing";
+</script>
+<style>
+  .share-trigger {
+    color: var(--blue);
+    font-size: 12px;
+    background: transparent;
+    border: 0;
+    padding: 10px 4px;
+    min-height: 44px;
+  }
+
+  .share-trigger.bottom {
+    display: block;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+
+  .share-trigger[hidden] {
+    display: none;
+  }
+
+  .share-panel {
+    width: min(480px, calc(100% - 32px));
+    max-height: calc(100% - 32px);
+    padding: 24px;
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 14px/1.5 var(--sans);
+  }
+
+  .share-panel::backdrop {
+    background: rgb(19 25 28 / 35%);
+  }
+
+  .share-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .share-heading h2 {
+    font: 500 23px/1.2 var(--serif);
+    margin: 0;
+  }
+
+  .share-title {
+    color: var(--muted);
+    margin: 16px 0 8px;
+  }
+
+  .share-panel label {
+    display: block;
+    margin-top: 16px;
+  }
+
+  .share-panel input {
+    width: 100%;
+    min-width: 0;
+    margin: 6px 0 16px;
+    padding: 10px;
+    border: 1px solid var(--hairline);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+  }
+
+  .share-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .share-actions a,
+  .share-panel button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    color: var(--blue);
+    background: transparent;
+    font: inherit;
+  }
+
+  .share-actions [aria-disabled="true"],
+  .share-panel button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+
+  .share-panel button[hidden] {
+    display: none;
+  }
+
+  .share-fallback {
+    margin: 14px 0;
+    overflow-wrap: anywhere;
+  }
+</style>

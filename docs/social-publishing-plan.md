@@ -9,8 +9,9 @@ rollout; existing publication, content-identity and privacy rules still apply.
 
 Update, 2026-10-02: private S3/OAC short-link infrastructure, DNS and CloudFront
 Free pricing are active. Local editor reservation, deactivation, publication and
-GET/HEAD checks are implemented; automatic allocation and richer readiness/composer
-integration remain planned. See [short-link design](short-link-design.md).
+GET/HEAD checks are implemented. Public reader sharing and an on-demand public
+short-link status query are implemented; see [article sharing](article-sharing.md).
+Automatic allocation and private readiness/composer integration remain planned. See [short-link design](short-link-design.md).
 
 Update, 2026-10-01: automatic static Open Graph/X metadata, local article/cover
 preview cards, title-card fallback, source-language propagation and crawler
@@ -27,14 +28,14 @@ Ruff/ty/Vulture for Python. The remaining sections retain the researched scope.
 
 ## 1. Intended experience and decisions
 
-| Surface               | Proposed behavior                                                                                                                                                                                          |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Public article        | One quiet **Share** button at the article footer. Opens a small panel with Copy link, X, LinkedIn, Bluesky, and the device share sheet where supported. No AI, platform SDKs, counters or tracking pixels. |
-| Private article tools | One **Create social post** button for publicly available articles. Opens an in-page dialog with Platform, Format and Assistant selectors, editable output and explicit handoff controls.                   |
-| Private navigation    | Content, Short links, Trash, Settings. Preserve the existing writing workspace instead of adding another dashboard.                                                                                        |
-| Short links           | A searchable table, newest creation date first, configurable sorting/filtering, one quiet row-action menu.                                                                                                 |
-| Assistants            | One configured catalog and shared picker for review, fixes, image briefs, supported image generation and social composition.                                                                               |
-| Trash                 | Recoverable removal of drafts. Restore as draft or explicitly Delete permanently. No automatic expiry, cleanup timer or implicit bulk purge.                                                               |
+| Surface               | Proposed behavior                                                                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public article        | **Share ↗** beside date/read time and **Share this article** after topic tags open one small panel with Copy link, Email, X, LinkedIn, Bluesky, and device sharing where supported. No AI, platform SDKs, counters or tracking pixels. |
+| Private article tools | One **Create social post** button for publicly available articles. Opens an in-page dialog with Platform, Format and Assistant selectors, editable output and explicit handoff controls.                                               |
+| Private navigation    | Content, Short links, Trash, Settings. Preserve the existing writing workspace instead of adding another dashboard.                                                                                                                    |
+| Short links           | A searchable table, newest creation date first, configurable sorting/filtering, one quiet row-action menu.                                                                                                                             |
+| Assistants            | One configured catalog and shared picker for review, fixes, image briefs, supported image generation and social composition.                                                                                                           |
+| Trash                 | Recoverable removal of drafts. Restore as draft or explicitly Delete permanently. No automatic expiry, cleanup timer or implicit bulk purge.                                                                                           |
 
 Use an accessible native `<dialog>` for the author composer: focus the first
 meaningful control, trap focus, Escape closes, return focus to the trigger, and
@@ -44,9 +45,9 @@ assistant allowance. Keep advanced instructions/model settings collapsed. Rememb
 last-used platform/format/assistant as local preferences, without silently
 substituting a different assistant if the chosen one is unavailable.
 
-The public Share control opens a disclosure/popover containing ordinary links and
-buttons, not an application-style ARIA menu unless its full keyboard pattern is
-implemented. Include a no-JavaScript fallback link/disclosure. Show clear labels
+The public Share controls open one accessible native dialog containing ordinary
+links and buttons. Escape and Close return focus to the opening control. Include a
+no-JavaScript fallback link/disclosure. Show clear labels
 beside any icons. Do not add separate floating buttons for every platform.
 
 ### Author composer
@@ -363,12 +364,17 @@ unknowns last. Never fabricate a historical creation date from a rebuild time.
 
 There is a real interval between deploying static pages and activating aliases.
 A static HTML `shareUrl` alone cannot prove live readiness. Use a small read-only
-status endpoint on the configured short-link origin, e.g. `/_link-status/<code>`.
-It exposes only an already public mapping and revision/target fingerprint; no
-management operations, drafts, credentials or private records. Give it CORS only
-for configured site origins, strict code validation, bounded caching and no
-arbitrary fetch/redirect capability. Reserve its path prefix. The author server
-uses the same contract and additionally verifies the final destination.
+status query on the configured short-link origin: `<short-url>?__link_status=1`.
+This is now implemented by the existing viewer-response Function using the same
+cached S3 metadata as the redirect. It exposes only `{target}`, never the object's
+private body, ownership records or revision. Public mappings use wildcard CORS
+without credentials, allowing production and local previews to check the same
+contract. No extra objects, reserved path, cache policy or forwarding rule is
+needed. Ordinary requests still redirect; status responses are browser `no-store`
+and share the existing 60-second origin freshness. Strict path/target validation
+prevents arbitrary destinations. Missing aliases may fail CORS on an origin error;
+the reader still gets the explicit full-link fallback. The private composer and
+author-server integration with this contract remain planned.
 
 When the reader opens Share, check the primary alias on demand; use it when its
 resolved target matches the displayed article. Platform sharing and **Copy short
@@ -608,17 +614,17 @@ skip the new source checks. AI-generated fixes are not a mandatory commit gate.
 
 ## 11. Ordered implementation milestones
 
-| Step | Deliverable and main files                                                                                                                                                              | Depends on                                               | Completion evidence                                                                                                                            |
-| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0    | Record baseline, install compatible analysis tools, configure owned-source scope and staged validation; `package.json`, lint/type/Knip configs, hooks, `.github/workflows/validate.yml` | None                                                     | Existing tests/build preserved; true-positive and false-positive fixtures; staged/unstaged safety tests; timing recorded                       |
-| 1    | Extract assistant service/adapters/picker; migrate review, fixes and images; remove repeated provider lists and implicit browser globals in touched features                            | 0                                                        | Contract tests with a fake fourth assistant; old workflows unchanged; cancellation/auth/errors covered                                         |
-| 2    | Centralize URL/target resolution and private infrastructure inputs; add versioned link schema, migration and automatic allocation                                                       | 0                                                        | Existing codes unchanged; alternate-domain/base-path tests; atomic publication and concurrency tests; no source writes during build            |
-| 3    | Generalize existing save/lifecycle transaction handling just enough for multi-file publication/trash/restore; add Trash list, restore, purge                                            | 2                                                        | Crash recovery, conflict/three-way merge, permanent-delete ownership, no-expiry and no-republication tests                                     |
-| 4    | Add Short links management, desired/live status, readiness endpoint and deployment reconciliation reporting                                                                             | 2–3                                                      | Filter/sort/action tests; collisions and ownership enforced server-side; pending/failed publication visible; no public admin routes            |
-| 5    | Partly implemented: automatic shared metadata/cards and language propagation deployed; explicit selection/UI and published-source fingerprints remain planned                            | 2 for full scope; automatic metadata works independently | Static metadata/image assertions and live full/short article crawler checks pass; logged-in platform rendering remains untested |
-| 6    | Add public Share component and platform registry; explicit Copy full link fallback while aliases are pending                                                                            | 4–5                                                      | No AI/network-on-read; keyboard/mobile/no-JS/copy/popup tests; alternate-domain tests                                                          |
-| 7    | Add private social composer, local variants, platform counters, source/voice constraints and thread handoff                                                                             | 1, 4–5                                                   | Fake-provider integration suite; curated voice review; all five requested platform/formats; stale-source and pending-link safeguards           |
-| 8    | Operational activation, logged-in handoff/card acceptance, production deployment and verification                                                                                       | 3–7                                                      | Verified resolver/DNS/TLS, exact revision and active aliases; public and private acceptance matrices pass; no test posts sent                  |
+| Step | Deliverable and main files                                                                                                                                                              | Depends on                                               | Completion evidence                                                                                                                  |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 0    | Record baseline, install compatible analysis tools, configure owned-source scope and staged validation; `package.json`, lint/type/Knip configs, hooks, `.github/workflows/validate.yml` | None                                                     | Existing tests/build preserved; true-positive and false-positive fixtures; staged/unstaged safety tests; timing recorded             |
+| 1    | Extract assistant service/adapters/picker; migrate review, fixes and images; remove repeated provider lists and implicit browser globals in touched features                            | 0                                                        | Contract tests with a fake fourth assistant; old workflows unchanged; cancellation/auth/errors covered                               |
+| 2    | Centralize URL/target resolution and private infrastructure inputs; add versioned link schema, migration and automatic allocation                                                       | 0                                                        | Existing codes unchanged; alternate-domain/base-path tests; atomic publication and concurrency tests; no source writes during build  |
+| 3    | Generalize existing save/lifecycle transaction handling just enough for multi-file publication/trash/restore; add Trash list, restore, purge                                            | 2                                                        | Crash recovery, conflict/three-way merge, permanent-delete ownership, no-expiry and no-republication tests                           |
+| 4    | Add Short links management, desired/live status, readiness endpoint and deployment reconciliation reporting                                                                             | 2–3                                                      | Filter/sort/action tests; collisions and ownership enforced server-side; pending/failed publication visible; no public admin routes  |
+| 5    | Partly implemented: automatic shared metadata/cards and language propagation deployed; explicit selection/UI and published-source fingerprints remain planned                           | 2 for full scope; automatic metadata works independently | Static metadata/image assertions and live full/short article crawler checks pass; logged-in platform rendering remains untested      |
+| 6    | Implemented: two public Share controls, one panel, shared handoff links and explicit full-link fallback                                                                                 | 4–5                                                      | No AI/network-on-read; keyboard/mobile/no-JS/copy/popup tests; alternate-domain tests                                                |
+| 7    | Add private social composer, local variants, platform counters, source/voice constraints and thread handoff                                                                             | 1, 4–5                                                   | Fake-provider integration suite; curated voice review; all five requested platform/formats; stale-source and pending-link safeguards |
+| 8    | Operational activation, logged-in handoff/card acceptance, production deployment and verification                                                                                       | 3–7                                                      | Verified resolver/DNS/TLS, exact revision and active aliases; public and private acceptance matrices pass; no test posts sent        |
 
 Steps 1 and 2 are independent after the baseline, but implementation should remain
 reviewable and avoid concurrent edits to shared authoring files. Each milestone
@@ -638,7 +644,7 @@ its short-link infrastructure or platform handoff acceptance is unresolved.
 | Links              | Auto-allocation and idempotency; collision/race; old-code retention; date sorting including nulls; alias primary changes; disable/restore/remove; partial deployment; unknown remote owner; alternate domains/base path; import dry run and CSV safety.     |
 | Trash              | Published-delete rejection; dependency cleanup; source/asset recovery; missing parent/conflicting slug/code; restoration preserves unrelated edits; partial-write recovery; tampered manifests; purge scoped to owned data; no automatic expiration.        |
 | Metadata           | Both canonical and short URL resolve to identical public title/description/image/canonical; correct language/date fields; image type/bytes/dimensions/alt; redirect/HEAD parity; unavailable drafts and removed aliases; no draft text in generated assets. |
-| Public UI          | One compact control; keyboard/focus/Escape; mobile layout; no JS fallback; no AI catalog or admin endpoint bundled; no third-party scripts or requests before sharing.                                                                                      |
+| Public UI          | Two discreet controls opening one compact panel; keyboard/focus/Escape; mobile layout; no JS fallback; no AI catalog or admin endpoint bundled; no third-party scripts or requests before sharing.                                                          |
 | Private UI         | Accessible dialog/table; draft persistence; provider switches; generation failures; cancel; reviewed replacement; source changes; distinct copied/opened versus posted state.                                                                               |
 | Analysis pipeline  | Staged file additions/deletions/renames/spaces, partial staging, dirty trees, missing tools, offline commits, cache invalidation, deliberate lint/type/dead-code/secret fixtures, CI cannot falsely pass skipped checks.                                    |
 

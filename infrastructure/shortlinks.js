@@ -2,6 +2,8 @@
 function handler(event) {
   var request = event.request;
   var response = event.response;
+  var statusQuery = request.querystring && request.querystring.__link_status;
+  var checkStatus = statusQuery && statusQuery.value === "1";
   var uri = request.uri;
   var header = response.headers["x-amz-website-redirect-location"];
   var target = header && header.value;
@@ -22,6 +24,8 @@ function handler(event) {
   delete response.headers["x-amz-website-redirect-location"];
   // CloudFront rejects removing these read-only headers, even when rebuilding a response.
   function safeHeaders(headers) {
+    // Only public destinations are exposed; no credentials or private S3 body.
+    if (checkStatus) headers["access-control-allow-origin"] = { value: "*" };
     if (response.headers.via) headers.via = response.headers.via;
     if (response.headers.warning) headers.warning = response.headers.warning;
     return headers;
@@ -39,6 +43,16 @@ function handler(event) {
         "content-type": { value: "text/plain; charset=utf-8" },
       }),
       body: request.method === "HEAD" ? "" : "Short link not found.",
+    };
+  }
+  if (checkStatus) {
+    return {
+      statusCode: 200,
+      headers: safeHeaders({
+        "cache-control": { value: "no-store" },
+        "content-type": { value: "application/json; charset=utf-8" },
+      }),
+      body: request.method === "HEAD" ? "" : JSON.stringify({ target: target }),
     };
   }
   // Rebuild headers so S3's entity validators and internal metadata do not leak.

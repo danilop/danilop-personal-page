@@ -180,6 +180,14 @@ test(
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
     assert.equal((await api("files")).build.state, "ready", log);
+    const draftHtml = await (
+      await fetch(origin + "/writing/server-fixture/")
+    ).text();
+    assert.equal(
+      load(draftHtml)("[data-share-open]").length,
+      0,
+      "draft previews must not advertise public sharing",
+    );
     async function waitForCleanup(id: string) {
       for (let i = 0; i < 600; i++) {
         if (

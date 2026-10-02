@@ -6,6 +6,7 @@ import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
 import { readingContext } from "../../../../../core/reading-navigation";
 import TagList from "../../../../components/TagList.astro";
+import ArticleSharing from "../../../../components/ArticleSharing.astro";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
     c.nodes
@@ -52,6 +53,13 @@ const original = site.articles.find((p) => p.id === n.pieceId);
           Section {position} of {total}
         </p>
       )}
+      <ArticleSharing
+        pieceId={n.pieceId!}
+        collectionId={c.id}
+        title={n.title}
+        url={`${c.url}read/${n.id}/`}
+        position="top"
+      />
     </header>
     <div
       id={n.id}
@@ -59,6 +67,13 @@ const original = site.articles.find((p) => p.id === n.pieceId);
       set:html={readingLinks(n.html, c.url, [n.id])}
     />
     <TagList tags={n.tags ?? []} />
+    <ArticleSharing
+      pieceId={n.pieceId!}
+      collectionId={c.id}
+      title={n.title}
+      url={`${c.url}read/${n.id}/`}
+      position="bottom"
+    />
     <ReadingNavigation collection={c} nodeId={n.id} />
     {original && (
       <p class="meta">

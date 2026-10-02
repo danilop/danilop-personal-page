@@ -391,12 +391,17 @@ These controls and short-link removal handling are implemented locally; no publi
 article has been unpublished or deleted as part of this implementation.
 
 The [social publishing and Trash plan](docs/social-publishing-plan.md) records the
-next agreed scope: public sharing without AI; a private social composer preserving
+next agreed scope: a private social composer preserving
 each article's language and voice; a reusable assistant catalog;
 automatic short-code allocation and richer link management; further social preview controls; and
 free analysis hooks/CI. Draft removal will become **Move to Trash**, with restore
 as draft, explicit permanent deletion and **no automatic expiration**. These
-composer, sharing, link-management and Trash additions remain planned. Automatic
+composer, link-management and Trash additions remain planned. Reader sharing is
+implemented: **Share ↗** beside article metadata and **Share this article** after
+topic tags open one accessible panel with copy, Email, device sharing and platform
+links. An on-demand status check confirms a short link before using it; an explicit
+full-link fallback handles unavailable aliases. Drafts have no sharing controls.
+See [article sharing](docs/article-sharing.md) for behavior and verification. Automatic
 Open Graph/X preview cards are implemented and deployed: article illustrations and
 book covers become hashed JPEGs, with title-card fallback, complete static metadata
 and `npm run verify:social -- <url>` for crawler checks. Full and short article URLs

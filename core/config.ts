@@ -17,6 +17,13 @@ export const siteSchema = z
     name: z.string(),
     title: z.string(),
     description: z.string(),
+    shortLinkOrigin: z
+      .url()
+      .refine((value) => {
+        const url = new URL(value);
+        return url.protocol === "https:" && url.origin === value;
+      }, "Short-link origin must be HTTPS without a path or credentials")
+      .optional(),
     socialLinks: z
       .array(
         z

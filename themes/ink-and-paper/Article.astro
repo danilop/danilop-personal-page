@@ -4,6 +4,7 @@ import Layout from "../../site/components/Layout.astro";
 import { dateLabel } from "../../site/data";
 import type { ArticleData } from "../../core/site-data";
 import TagList from "../../site/components/TagList.astro";
+import ArticleSharing from "../../site/components/ArticleSharing.astro";
 interface Props {
   article: ArticleData;
 }
@@ -25,29 +26,43 @@ const { article } = Astro.props;
         {article.title} <DraftBadge pieceId={article.id} />
       </h1>
       <p class="dek">{article.summary}</p>
-      <p class="meta">
-        {article.publishedAt && (
-          <>
-            <time datetime={article.publishedAt}>
-              {dateLabel(article.publishedAt)}
-            </time>
-            {" · "}
-          </>
-        )}
-        {article.minutes} min read
-        {article.updatedAt && (
-          <>
-            {" "}
-            · Updated{" "}
-            <time datetime={article.updatedAt}>
-              {dateLabel(article.updatedAt)}
-            </time>
-          </>
-        )}
-      </p>
+      <div class="article-meta-row">
+        <p class="meta">
+          {article.publishedAt && (
+            <>
+              <time datetime={article.publishedAt}>
+                {dateLabel(article.publishedAt)}
+              </time>
+              {" · "}
+            </>
+          )}
+          {article.minutes} min read
+          {article.updatedAt && (
+            <>
+              {" "}
+              · Updated{" "}
+              <time datetime={article.updatedAt}>
+                {dateLabel(article.updatedAt)}
+              </time>
+            </>
+          )}
+        </p>
+        <ArticleSharing
+          pieceId={article.id}
+          title={article.title}
+          url={article.url}
+          position="top"
+        />
+      </div>
     </header>
     <div class="prose" set:html={article.html} />
     <TagList tags={article.tags} />
+    <ArticleSharing
+      pieceId={article.id}
+      title={article.title}
+      url={article.url}
+      position="bottom"
+    />
     {article.collections.length > 0 && (
       <aside class="memberships">
         <h2>Continue exploring</h2>
@@ -65,3 +80,16 @@ const { article } = Astro.props;
     </a>
   </article>
 </Layout>
+<style>
+  .article-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 18px;
+    margin-top: 14px;
+  }
+
+  .article-meta-row .meta {
+    margin: 0;
+  }
+</style>

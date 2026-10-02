@@ -3,6 +3,7 @@ relaunchDate: 2026-09-15
 name: Danilo Poccia
 title: Notes Along the Way
 description: Articles, experiments, and ideas that can grow over time.
+shortLinkOrigin: https://danilop.link
 socialLinks:
   - { label: GitHub, url: "https://github.com/danilop", icon: github }
   - {
