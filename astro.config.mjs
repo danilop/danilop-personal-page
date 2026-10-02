@@ -6,9 +6,10 @@ export default defineConfig({
   outDir: siteOutput,
   srcDir: "./site",
   publicDir: "./.generated/public",
+  cacheDir: "./.astro/cache",
   output: "static",
   trailingSlash: "always",
   build: { format: "directory" },
-  vite: { build: { target: "es2022" } },
+  vite: { cacheDir: "./.astro/vite", build: { target: "es2022" } },
   devToolbar: { enabled: false },
 });

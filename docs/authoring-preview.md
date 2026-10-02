@@ -28,6 +28,11 @@ a local authoring preview, not a production deployment. All tabs on the same ser
 share the selection until restart. A failed build retains the last successful view.
 This switch is available in live preview, not read-only snapshots or release mode.
 
+Astro's content cache and Vite's cache live under each workspace's ignored
+`.astro/` directory. Temporary previews and concurrent test builds share installed
+dependencies through a symlink, but never share generated content stores. This
+prevents one build's article inventory from replacing another build's routes.
+
 ### Watch application code
 
 For development, leave this running:

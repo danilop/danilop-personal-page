@@ -1186,3 +1186,17 @@ removal tombstones, retry after interruption, deployment gates, CLI ordering and
 editor reservation/check/deactivation. Browser tests exercise a draft reservation,
 a deployment error and live-status feedback. Optional CI publication requires
 both private configuration and a scoped role; neither is activated by local saves.
+
+## Release cache isolation — 2026-10-02
+
+The article/editor release was committed and pushed to main. Its local checks
+passed (25 analysis checks, 245 JavaScript tests, production validation of 190
+output files and 921 local links). Amplify's parallel integration tests exposed
+a shared Astro content cache: temporary builds shared `node_modules`, allowing
+another fixture's inventory to replace the preview's routes. Deployment stopped
+before delivery, preserving the previous public site.
+
+Astro and Vite now use workspace-local caches under ignored `.astro/` paths.
+A new concurrent-build regression and the preview-server integration test passed
+locally. The corrected source still requires a successful main deployment and
+live verification before article aliases can be activated.

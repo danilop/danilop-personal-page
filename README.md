@@ -339,6 +339,10 @@ the dated article in one deployment. Drafting dates stay internal, and edits or
 republishing preserve the original publication time. Actual delivery can be later
 than the local publication action.
 
+Preview and test builds keep Astro/Vite caches inside their own ignored `.astro/`
+directories, even when installed dependencies are shared. Concurrent builds cannot
+replace each other's cached article inventory.
+
 Set `lead` in `publishing/home.yaml` to a piece or collection ID to feature it, or
 omit it for automatic latest selection. Chronicles of Computation is selected;
 Start reading opens its Introduction. While it is draft, the release homepage

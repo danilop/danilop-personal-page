@@ -85,7 +85,9 @@ through AppArmor so Chromium's sandbox can run.
 2. Pushing to `main` triggers Amplify's connected GitHub build automatically.
    The checked-in `amplify.yml` is authoritative; the console copy is a fallback.
 3. Amplify runs `npm run validate` and deploys `dist/`. It caches npm downloads,
-   render output, and Chromium, not `node_modules`.
+   render output, and Chromium, not `node_modules`. Astro's content store and Vite
+   caches use workspace-local `.astro/` paths, keeping parallel isolated builds
+   independent even when they share dependency installations.
 4. **Verify deployment and update short links** independently waits for the exact
    revision at the uncached build marker, even when publication is disabled.
    It checks pages, resources/cache headers, RSS, true 404 responses, and original
