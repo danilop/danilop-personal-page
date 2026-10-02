@@ -99,13 +99,12 @@ preview locally, upload with `npm run media`, verify the public URL, then use th
 returned `media:` reference in Markdown or a PDF block. Bucket settings stay private;
 the public base URL is configured once. The local workflow below remains supported.
 
-Commit selected source assets. Build output and rejected image candidates do not
-belong in the publication commit.
-
-This is the current workflow. Moving managed editorial binaries out of Git,
-recording their checksums in a manifest and coordinating upload with push is
-[proposed](asset-release-design.md). Do not Git-ignore existing source images yet:
-current deployment builds still need their bytes in the checkout.
+Managed editorial binary files are ignored in their existing asset folders.
+Run `npm run assets:prepare` after final content/publication changes; review and
+commit `publishing/media-assets.json` with the content. Editable diagram sources,
+small datasets and stable theme resources remain versioned. Use `npm run release`
+for upload-before-push and exact-commit verification; see
+[asset release gates](asset-release-design.md#prepare-commit-and-release).
 
 ## 3. Preview and approve locally
 
@@ -165,8 +164,10 @@ After editorial and visual approval:
    reserve a `shortCode` or alias. Short links are not required to publish.
 3. Rebuild and review any changes made since the preview.
    The build checks [social preview metadata and image bytes](social-previews.md).
-4. Review the Git diff; commit the article, source assets, relevant configuration,
-   and affected documentation. Push and merge the reviewed change into `main`.
+4. Run `npm run assets:prepare`; review the Git diff and commit the article,
+   checksum manifest, editable sources, relevant configuration and documentation.
+   On a clean `main` tracking `origin/main`, run `npm run release`. It validates
+   exact bytes, uploads and checks S3/CDN before pushing the captured commit.
 5. Wait for Amplify and GitHub’s live-deployment verification to pass. Use
    `npm run verify:deployment -- --wait` for the same check locally, then review
    the published article and its media in the browser.
@@ -178,12 +179,10 @@ URL requires the separate reviewed resolver setup; metadata alone does not activ
 A push to `main` triggers Amplify; a local commit does not. The original snapshot
 ships with the new website. The separate Amplify branch preview requires a manual release.
 
-The current push/build flow has no managed remote-asset manifest or availability
-gate. The proposed asset release operation checks clean source state, uploads
-and verifies the committed dependency set, rechecks HEAD and then pushes; Amplify
-must independently verify its checked-out commit. See
-[release gates](asset-release-design.md#release-gate). These steps are not commands
-available today.
+The release script waits for exact-revision deployment verification and records
+its private asset inventory before triggering cleanup. Amplify independently
+checks committed outputs and CDN availability; pushing without required asset
+uploads fails the build. See [release gates](asset-release-design.md#prepare-commit-and-release).
 
 Draft flags control website publication, not repository access. This repository
 is public: pushing a draft makes its source readable on GitHub even while
@@ -193,7 +192,8 @@ external local library until it can be shared.
 ### Publication timestamp — implemented locally, not deployed
 
 Local publication saves a UTC `publishedAt` timestamp in the article's frontmatter.
-Commit this together with the draft-state change and push to `main`. Amplify builds
+Prepare assets and commit this together with the draft-state change, then run
+`npm run release`. Amplify builds
 and delivers the dated article in one deployment; CI verifies delivery without
 creating another commit. Public listings and RSS use the saved timestamp. Edits,
 unpublishing and republishing retain it. Local draft saves and previews do not

@@ -5,7 +5,8 @@ and article social cards are deployed and verified. Local book-preview,
 content-review and import additions are implemented and tested; the author editor
 remains local-only. Short-link infrastructure and saved article aliases are active
 and live-tested. Real provider delivery remains pending.
-Off-repository editorial asset storage remains a proposed design.
+Off-repository editorial assets, checksum manifests and coordinated release are
+implemented locally; storage migration and hosted verification are in progress.
 Updated: 2026-10-02.
 
 Danilo selected **all planned publishing capabilities before deployment**.

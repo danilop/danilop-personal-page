@@ -11,6 +11,7 @@ import { collectionSchema, loadLibrary, assemble } from "./model";
 import { AuthorStore } from "./author-store";
 import { imageFilenameStem } from "./image-filenames";
 import { AuthorImageCleanup } from "./author-image-cleanup";
+import { registerManagedAsset } from "./asset-manifest";
 import { agentArgs, executable, runProcess, snapshot } from "./author-review";
 
 const imageResult = z
@@ -506,6 +507,7 @@ export class AuthorImages {
         throw Error("Asset name conflict.", { cause: caught });
     }
     const relative = path.relative(this.root, path.join(assets, name));
+    await registerManagedAsset(this.root, relative, bytes);
     // Track ownership before releasing the response to an unsaved editor. Reused
     // managed files get a fresh pending protection; unrelated old files stay unowned.
     const tracked = path.join(

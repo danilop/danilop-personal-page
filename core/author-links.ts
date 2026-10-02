@@ -8,6 +8,7 @@ import { loadEditions } from "./editions";
 import { AuthorStore } from "./author-store";
 import { compileLinks, linksSchema } from "./shortlinks";
 import { shortLinkConfig, ShortLinkStorage } from "./shortlink-storage";
+import { suggestShortCode } from "./short-code";
 
 export class AuthorLinks {
   private store: AuthorStore;
@@ -17,11 +18,16 @@ export class AuthorLinks {
   async context(file: string) {
     const source = await this.store.read(file);
     let ref: string;
-    if (file.endsWith("/index.md"))
-      ref = String(matter(source.text).data.id ?? "");
-    else if (/^content\/collections\/[^/]+\.yaml$/.test(file))
-      ref = String(YAML.parse(source.text, { maxAliasCount: 0 }).id ?? "");
-    else throw Error("Short links belong to articles or collections");
+    let title: string;
+    if (file.endsWith("/index.md")) {
+      const metadata = matter(source.text).data;
+      ref = String(metadata.id ?? "");
+      title = String(metadata.title ?? "");
+    } else if (/^content\/collections\/[^/]+\.yaml$/.test(file)) {
+      const metadata = YAML.parse(source.text, { maxAliasCount: 0 });
+      ref = String(metadata.id ?? "");
+      title = String(metadata.title ?? "");
+    } else throw Error("Short links belong to articles or collections");
     const registry = await this.store.read("publishing/links.yaml");
     const manifest = linksSchema.parse(
       YAML.parse(registry.text, { maxAliasCount: 0 }),
@@ -34,7 +40,13 @@ export class AuthorLinks {
       config.url,
       await loadEditions(),
     );
-    return { ref, source, registry, manifest, targets };
+    const suggestedCode = suggestShortCode(
+      title,
+      ref,
+      [...lib.pieces.values(), ...lib.collections].map((item) => item.title),
+      [...Object.keys(manifest.links), ...Object.keys(manifest.removed)],
+    );
+    return { ref, source, registry, manifest, targets, suggestedCode };
   }
   async list(file: string) {
     const context = await this.context(file);
@@ -63,6 +75,7 @@ export class AuthorLinks {
       configurationError,
       registryRevision: context.registry.revision,
       sourceRevision: context.source.revision,
+      suggestedCode: context.suggestedCode,
     };
   }
   async reserve(data: {

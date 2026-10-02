@@ -2,7 +2,11 @@
   const panel = $("short-links-panel");
   let state,
     loadedFile,
-    busy = false;
+    busy = false,
+    manualCode = false;
+  $("short-link-code").addEventListener("input", () => {
+    manualCode = true;
+  });
   const status = $("short-link-status");
   const controls = [
     "short-link-reserve",
@@ -42,6 +46,8 @@
     if (file !== requestedFile) return;
     state = next;
     loadedFile = requestedFile;
+    const input = $("short-link-code");
+    if (!manualCode) input.value = state.suggestedCode ?? "";
     const list = $("short-link-list");
     list.replaceChildren();
     for (const link of state.links) {
@@ -89,13 +95,15 @@
   $("short-link-refresh").onclick = () => run(refresh);
   $("short-link-reserve").onclick = () =>
     run(async () => {
-      render(
-        await api("short-link-reserve", {
-          ...payload(),
-          code: $("short-link-code").value.trim(),
-        }),
-      );
+      const request = payload();
+      const next = await api("short-link-reserve", {
+        ...request,
+        code: $("short-link-code").value.trim(),
+      });
+      if (file !== request.file) return;
       $("short-link-code").value = "";
+      manualCode = false;
+      render(next, request.file);
       status.textContent =
         "Code reserved locally. Commit and deploy before activating it.";
     });
@@ -124,6 +132,8 @@
   $("files").addEventListener("change", () => {
     state = null;
     loadedFile = null;
+    manualCode = false;
+    $("short-link-code").value = "";
     $("short-link-list").replaceChildren();
     status.textContent = "Refresh links for this content.";
   });

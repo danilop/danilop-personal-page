@@ -88,11 +88,20 @@ read-only and snapshot-based.
 | `npm run test:coverage`   | Run the coverage suite directly in this checkout, including the prototype build                                          |
 | `npm run verify:ci`       | Worktree snapshot full analysis/coverage plus the existing release preparation and verified build                        |
 
+Analysis snapshots also copy ignored managed source/rendition bytes whose hashes
+match their staged manifest. This permits asset checks without committing binaries.
+Missing source files are left for the resolver to restore; mismatches fail the
+snapshot. No AWS credentials or private operator configuration are copied. Disposable
+authoring integration fixtures seed their own image bytes and identities when
+private draft artwork is absent in CI; public production assets still resolve
+against their committed checksums.
+
 An empty staged diff reports that there is nothing to check; use `verify:worktree`
 for the current checkout. Fixes are never automatically applied by the hook. Existing
 `npm test`, `npm run check` and `npm run validate` remain available.
 
-`npm test` builds the prototype, then runs the JS/TS suite, worker contracts and Chromium interaction
+`npm test` builds the prototype, then runs every `.test.js`, `.test.mjs` and
+`.test.ts` file, worker contracts and Chromium interaction
 tests. Install both npm workspaces first. Playwright drives the pinned Puppeteer
 Chrome headless shell, reusing the renderer browser installation and Linux system
 libraries. Tests start disposable loopback authoring/Vite servers and temporary Git

@@ -4,8 +4,10 @@ Status: implemented locally; the S3/OAC resolver, DNS and CloudFront Free plan a
 active as of 2 October 2026. Live GET/HEAD, update freshness, invalidation, origin
 privacy and disposable-test cleanup passed. The saved welcome and AI-article
 aliases were activated after verified main deployment; full/short crawler checks
-passed. New aliases require committed reservations and verified deployment. Local
-editor controls require restarting the preview server after this code change.
+passed. New aliases require committed reservations and verified deployment.
+The byte-range response fix is deployed and tested in LinkedIn Post Inspector:
+the published AI article alias now resolves through 302 → 200 with a preview.
+Local editor controls require restarting the preview server after this code change.
 Website source and local editor controls are committed on main; the public article
 and its social card are deployed. The editor remains a local-only application.
 
@@ -13,6 +15,8 @@ and its social card are deployed. The editor remains a local-only application.
 
 A short URL returns a real HTTP 302 to its saved HTTPS canonical destination,
 with equivalent GET and HEAD results. Root requests redirect to the website.
+Byte-range GETs must redirect too: a partial S3/cache response (HTTP 206) still
+contains the destination metadata and must not become a false 404.
 Unknown aliases return 404. Aliases remain owned by their original content
 identity; unpublish disables them and deletion retains an ownership tombstone.
 Shared codes must never be reassigned to unrelated content.
@@ -20,6 +24,16 @@ Shared codes must never be reassigned to unrelated content.
 The local editor can reserve codes, inspect live GET/HEAD results, disable aliases
 locally and publish saved redirects explicitly. Destinations derive from content
 identity; editing a title does not reassign a code.
+The **New code** field now has a deterministic title-based suggestion (implemented
+locally). Common English/Italian words are filtered; the two remaining words used
+in the fewest library titles are selected in title order. Repeated words count
+once per title. ASCII normalisation removes accents; titles without usable words
+fall back to their stable content ID. Codes are bounded and checked against the
+complete local registry, removal tombstones and shared system reservations, with
+numeric suffixes for collisions. Suggestions are editable, cause no writes, and
+do not prove remote availability; Reserve retains the remote object/ownership
+check and optimistic source/registry revision guards. Refresh preserves manual
+input. Changing a title never changes an existing alias. No model service is used.
 A saved draft does not activate a cloud redirect. Publication must verify that the
 canonical destination is deployed and publicly reachable before activation.
 Automated reconciliation must retain the existing exact-deployment gate.
@@ -44,7 +58,9 @@ serve equivalent redirects. The system root and error objects have empty bodies.
 Associate one viewer-response CloudFront Function. It validates the metadata
 against the configured canonical HTTPS origin, changes a successful object
 response into a 302 with `Location`, removes the internal metadata header, and
-returns an empty body. No KeyValueStore or Lambda@Edge is needed. Destination
+returns an empty body. Both HTTP 200 and 206 are successful object responses;
+S3 entity validators and partial-content headers are stripped from the redirect.
+No KeyValueStore or Lambda@Edge is needed. Destination
 validation rejects credentials, control characters and off-origin targets;
 viewer-supplied query strings cannot choose a destination.
 

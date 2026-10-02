@@ -2,6 +2,7 @@ import { siteUrl } from "./deployment.mjs";
 import { z } from "zod";
 import { editionUrl, type Edition } from "./editions";
 import { allowed, articleUrl, collectionUrl, type Library } from "./model";
+import { reservedShortCodes } from "./short-code";
 const code = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/);
 export const linksSchema = z
   .object({
@@ -39,11 +40,7 @@ export function compileLinks(
     alias: string,
     t: z.infer<typeof linksSchema>["links"][string],
   ) {
-    if (
-      ["api", "assets", "media", "www", "admin", "index", "not-found"].includes(
-        alias,
-      )
-    )
+    if (reservedShortCodes.includes(alias))
       throw Error(`Reserved alias ${alias}`);
     if (config.removed[alias])
       throw Error(`Removed alias ${alias} cannot be reused`);

@@ -1217,3 +1217,21 @@ verification. Full and short URL crawler checks confirmed matching GET/HEAD chai
 canonical URLs, titles and publicly fetchable 1200 × 630 JPEG cards within the
 image budget. No logged-in social platform rendering was tested. Private resource
 identifiers and publication evidence remain in the operator note.
+
+## Managed asset release migration — 2026-10-02
+
+Local implementation covers checksum manifests, private original backup, selected
+public CDN delivery, pinned social cards, strict build availability checks and
+exact-commit upload-before-push. The original authoring paths and initial public
+media URLs are preserved. Local cleanup excludes catalog-only references, protects
+explicit shared files and checks unused cached renditions; release holds its lock.
+A daily collector shares the S3 lease and performs mark/grace/recoverable deletion
+with scoped noncurrent-version retention. Cloud migration is still in progress.
+
+Focused tests cover dirty repositories, upload failure, edits during upload,
+changed ignored bytes, public-source hydration, corrupt bytes/MIME/status,
+private-only draft upload, PDF reference protection, orphan collection, replacement
+with legacy URL preservation and remote live/rollback/pending retention.
+Remote collection dry runs make no mutations; deletion uses a conditional delete
+marker and records the retained version ID. Hosted migration and source-only
+checkout verification must pass before deployment is recorded here.

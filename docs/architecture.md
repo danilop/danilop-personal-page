@@ -73,12 +73,15 @@ Only assets reachable from eligible pieces are copied into public outputs.
 A standalone piece has no collection context; a collection view uses its own
 placements, contextual titles, and settings.
 
-Local editorial media currently becomes hashed files in Amplify's build artifact;
-explicit `media:` references use the separate S3/CloudFront path. The proposed
-[asset release design](asset-release-design.md) introduces a tracked checksum
-manifest and shared cache/resolver, first hydrating builds and then optionally
-serving web renditions directly from the media CDN. Commit-specific deployment
-checks and remote retention are part of that proposal, not implemented features.
+Managed editorial binaries stay at ignored local authoring paths. A tracked
+checksum manifest and shared resolver restore verified bytes for preview, import,
+book exports and production builds. Preparation selects public dependencies;
+release uploads private originals and selected public copies to the existing media
+bucket before pushing an exact clean commit. Public pages and social cards use the
+media CDN; initial legacy `/media/` URLs remain in Amplify's artifact. Public build
+hydration requires no AWS credentials. The collector uses verified deployment
+inventories, explicit shared pins, retention and recoverable deletion; local orphan
+cleanup stays separate. See [asset release](asset-release-design.md).
 
 Imported external Open Graph data remains a legacy-source adapter. Preserve the existing
 precedence of raw cache, imported metadata, and per-field editorial overrides.

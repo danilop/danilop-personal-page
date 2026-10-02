@@ -52,6 +52,10 @@ and the Free flat-rate plan. The local editor has **Short links** controls for
 reservations, verified activation and live checks. Article aliases require a
 committed registry and verified deployment; see the
 [design and operating instructions](docs/short-link-design.md).
+The local editor suggests new short codes from distinctive saved-title words,
+avoiding existing, removed and system codes. Suggestions stay editable; remote
+ownership is checked on reservation. No code is reserved merely by opening the
+panel, and existing aliases are preserved.
 Article illustrations can be generated explicitly in the local editor through a
 ChatGPT-signed-in Codex CLI. Search and a site-wide AI assistant remain future work.
 
@@ -131,7 +135,9 @@ Follow the [publishing workflow](docs/publishing-workflow.md) from draft to rele
    standalone articles also require a slug. Enable the collection separately if
    needed. Run
    `npm run prepublish:check` and `npm run preview -- --release` before pushing.
-3. Commit and merge into `main`; verify the production deployment.
+3. Run `npm run assets:prepare`, review and commit the manifest with the source,
+   then run `npm run release` on `main`. It uploads and verifies assets before
+   pushing the exact commit and waiting for the production deployment.
 4. Optionally review and manually deliver an explicitly selected external copy.
 
 `draft: true` excludes content from the website build. This GitHub repository is
@@ -285,7 +291,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
 - [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
 - [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
-- [Asset release design](docs/asset-release-design.md): proposed off-repository media, checksum manifests, release/deployment gates and remote retention.
+- [Asset release design](docs/asset-release-design.md): ignored editorial media, checksum manifests, release/deployment gates and automatic retention.
 - [Social link previews](docs/social-previews.md): deployed Open Graph/X article cards, locally tested book covers and verified full/short article URLs.
 - [Private operations](docs/private-operations.md): where account-specific notes live and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
@@ -309,12 +315,19 @@ the publication workflow requires that verification before activating
 short links. Third-party delivery is a separate manual operation. Local commits
 must be pushed to trigger website deployment.
 
-Inserted article images and collection covers currently become files in Amplify's
-deployment artifact; they are not automatically uploaded to the separate S3 media
-bucket. Source copies remain eligible for Git commits. The proposed
-[asset release design](docs/asset-release-design.md) moves managed editorial bytes
-out of Git and adds verification for the exact commit before push and deployment.
-That integration and remote garbage collection are not implemented yet.
+Editorial image/PDF binaries stay in ignored article/collection asset folders;
+`publishing/media-assets.json` tracks their checksums. `npm run assets:prepare`
+prepares selected public renditions and privately backed-up sources before commit.
+`npm run release` rejects uncommitted work, verifies ignored bytes, uploads to the
+existing media bucket, checks `media.danilop.net`, then pushes the exact commit and
+verifies Amplify delivery. Fresh public builds need no AWS credentials.
+
+The [asset release workflow](docs/asset-release-design.md) preserves local cleanup,
+book/export resolution and existing `/media/` URLs. The remote collector protects
+the live release, thirty-day rollbacks, seven-day pending releases and explicit
+shared downloads. It uses a seven-day unused grace period and recoverable S3
+deletions, then scoped lifecycle expiry. Collection runs after releases and daily;
+local file deletion is never mirrored with `sync --delete`.
 
 ## License
 
@@ -335,7 +348,7 @@ standalone posts, without duplicate entries. Book articles show their collection
 and chapter context and link to the reading page. Publication dates determine
 latest order. The [publication timestamp workflow](docs/publication-time.md) is
 implemented, with public date ordering deployed: first local publication saves a UTC timestamp
-in the article's `publishedAt` metadata. Commit and push to `main`; Amplify delivers
+in the article's `publishedAt` metadata. Prepare assets, commit, then run `npm run release`; Amplify delivers
 the dated article in one deployment. Drafting dates stay internal, and edits or
 republishing preserve the original publication time. Actual delivery can be later
 than the local publication action.
@@ -393,7 +406,7 @@ article has been unpublished or deleted as part of this implementation.
 The [social publishing and Trash plan](docs/social-publishing-plan.md) records the
 next agreed scope: a private social composer preserving
 each article's language and voice; a reusable assistant catalog;
-automatic short-code allocation and richer link management; further social preview controls; and
+automatic short-code allocation on publication and richer link management; further social preview controls; and
 free analysis hooks/CI. Draft removal will become **Move to Trash**, with restore
 as draft, explicit permanent deletion and **no automatic expiration**. These
 composer, link-management and Trash additions remain planned. Reader sharing is
@@ -404,9 +417,11 @@ full-link fallback handles unavailable aliases. Drafts have no sharing controls.
 See [article sharing](docs/article-sharing.md) for behavior and verification. Automatic
 Open Graph/X preview cards are implemented and deployed: article illustrations and
 book covers become hashed JPEGs, with title-card fallback, complete static metadata
-and `npm run verify:social -- <url>` for crawler checks. Full and short article URLs
+and `npm run verify:social -- <url>` for crawler checks, including GET/HEAD and
+byte-range redirect parity. Full and short article URLs
 were verified live on 2 October 2026; book-cover cards remain locally tested while
-the current collection is draft.
+the current collection is draft. LinkedIn Post Inspector rendered the AI article's
+short-link preview after the deployed byte-range redirect fix.
 See [social previews](docs/social-previews.md). The plan includes platform limitations,
 ordered technical milestones and acceptance tests. The
 [code-analysis pipeline](docs/code-analysis.md) is now implemented locally: the

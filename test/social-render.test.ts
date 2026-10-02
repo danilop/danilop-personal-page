@@ -80,6 +80,12 @@ test(
     };
     delete env.NOTES_AUTHORING_PREVIEW;
     delete env.AWS_BRANCH;
+    delete env.CI; // Disposable local fixtures prepare new assets; they are not deployments.
+    await promisify(execFile)("npm", ["run", "assets:prepare"], {
+      cwd: fixture.dir,
+      env,
+      maxBuffer: 10 * 1024 * 1024,
+    });
     await promisify(execFile)("npm", ["run", "build"], {
       cwd: fixture.dir,
       env,
@@ -103,7 +109,7 @@ test(
     );
     assert(
       article.image.startsWith(
-        "https://www.danilop.net/new/media/social-preview-",
+        "https://media.danilop.net/media/social-preview-",
       ),
     );
     const $ = load(articleHtml);
@@ -132,7 +138,15 @@ test(
       load(placement)('meta[property="og:description"]').attr("content"),
       "Une explication accessible.",
     );
-    const file = path.join(fixture.dir, "dist", new URL(book.image).pathname);
+    const file = path.join(
+      fixture.dir,
+      ".generated/public/media",
+      path.basename(new URL(book.image).pathname),
+    );
+    await assert.rejects(
+      fs.stat(path.join(fixture.dir, "dist/new/media", path.basename(file))),
+      /ENOENT/,
+    );
     const metadata = await sharp(await fs.readFile(file)).metadata();
     assert.deepEqual(
       [metadata.width, metadata.height, metadata.format],

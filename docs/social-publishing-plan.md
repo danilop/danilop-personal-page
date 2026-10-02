@@ -293,6 +293,10 @@ The selected resolver is [private S3 with OAC and one response function](short-l
 This supersedes KVS. The resolver and Free plan are active, basic editor controls
 are implemented locally and live resolver verification passed. Automatic code
 allocation and richer readiness/status reporting remain future work.
+The editor now suggests an unused readable code from distinctive saved-title
+words, with local collision/tombstone checks and remote ownership validation on
+reservation. This prefills a reviewable field; automatic allocation on publication
+and primary-code/schema migration remain planned. See [short-link design](short-link-design.md).
 
 ### Central URL configuration
 

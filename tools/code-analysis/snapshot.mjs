@@ -55,6 +55,7 @@ export function createSnapshot(cwd, { worktree = false } = {}) {
     }
     if (indexFingerprint(cwd) !== before)
       throw Error("The Git index changed while creating the snapshot; retry.");
+    copyManagedAssets(cwd, dir);
     return {
       dir,
       fingerprint: before,
@@ -63,6 +64,39 @@ export function createSnapshot(cwd, { worktree = false } = {}) {
   } catch (error) {
     fs.rmSync(dir, { recursive: true, force: true });
     throw error;
+  }
+}
+
+function copyManagedAssets(cwd, snapshot) {
+  const assetManifest = path.join(snapshot, "publishing/media-assets.json");
+  if (!fs.existsSync(assetManifest)) return;
+  const manifest = JSON.parse(fs.readFileSync(assetManifest, "utf8"));
+  for (const [logical, record] of Object.entries(manifest.sources)) {
+    if (
+      !/^content\/(?:pieces\/[a-zA-Z0-9_-]+|collections)\/assets\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(
+        logical,
+      )
+    )
+      throw Error(`Invalid managed source path: ${logical}`);
+    const source = path.join(cwd, logical);
+    if (!fs.existsSync(source)) continue;
+    if (fs.realpathSync(source) !== path.resolve(source))
+      throw Error(`Symbolic-link managed source: ${logical}`);
+    const bytes = fs.readFileSync(source);
+    if (createHash("sha256").update(bytes).digest("hex") !== record.sha256)
+      throw Error(`Ignored asset differs from staged manifest: ${logical}`);
+    const target = path.join(snapshot, logical);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, bytes);
+  }
+  for (const [name, record] of Object.entries(manifest.outputs)) {
+    const cache = path.join(".asset-cache", record.sha256 + path.extname(name));
+    if (!fs.existsSync(path.join(cwd, cache))) continue;
+    const bytes = fs.readFileSync(path.join(cwd, cache));
+    if (createHash("sha256").update(bytes).digest("hex") !== record.sha256)
+      throw Error(`Rendition cache differs from staged manifest: ${name}`);
+    fs.mkdirSync(path.join(snapshot, ".asset-cache"), { recursive: true });
+    fs.writeFileSync(path.join(snapshot, cache), bytes);
   }
 }
 

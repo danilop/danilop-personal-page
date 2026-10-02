@@ -168,6 +168,27 @@ vite.config.ts.timestamp-*
 
 # Private local editor recovery and revision history
 /.authoring-state/
+/.asset-cache/
+/content/pieces/*/assets/*.png
+/content/pieces/*/assets/*.jpg
+/content/pieces/*/assets/*.jpeg
+/content/pieces/*/assets/*.webp
+/content/pieces/*/assets/*.avif
+/content/pieces/*/assets/*.gif
+/content/pieces/*/assets/*.pdf
+/content/pieces/*/assets/*.zip
+/content/pieces/*/assets/*.mp3
+/content/pieces/*/assets/*.mp4
+/content/collections/assets/*.png
+/content/collections/assets/*.jpg
+/content/collections/assets/*.jpeg
+/content/collections/assets/*.webp
+/content/collections/assets/*.avif
+/content/collections/assets/*.gif
+/content/collections/assets/*.pdf
+/content/collections/assets/*.zip
+/content/collections/assets/*.mp3
+/content/collections/assets/*.mp4
 
 # Local static analysis tools and private reports
 /.venv-analysis/

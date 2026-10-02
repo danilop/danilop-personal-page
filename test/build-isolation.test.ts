@@ -36,7 +36,13 @@ test(
         const env = isolatedGitEnvironment(root);
         delete env.NOTES_AUTHORING_PREVIEW;
         delete env.AWS_BRANCH;
+        delete env.CI; // Disposable local fixtures prepare new assets; they are not deployments.
         delete env.NOTES_BASE_PATH;
+        await run("npm", ["run", "assets:prepare"], {
+          cwd: fixture.dir,
+          env,
+          maxBuffer: 8 * 1024 * 1024,
+        });
         await run("npm", ["run", "build"], {
           cwd: fixture.dir,
           env,

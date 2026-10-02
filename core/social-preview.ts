@@ -5,6 +5,8 @@ import { load } from "cheerio";
 import { Assets, escape } from "./assets";
 import { localPath } from "./deployment.mjs";
 import type { CompiledSite } from "./site-data";
+import { digestAsset } from "./asset-manifest";
+import { pinnedSocialBytes, recordSocialRecipe } from "./asset-build";
 
 export type SocialImage = {
   src: string;
@@ -54,8 +56,18 @@ export async function socialCard(
   publicDir = ".generated/public",
 ): Promise<SocialImage> {
   const input = image ? await preparedImage(image.src, publicDir) : undefined;
+  const recipe = digestAsset(
+    JSON.stringify({
+      version: 1,
+      title,
+      brand,
+      image: input ? digestAsset(input) : null,
+    }),
+  );
+  const pinned = await pinnedSocialBytes(recipe);
   let output: Buffer;
-  if (input) {
+  if (pinned) output = pinned;
+  else if (input) {
     output = await sharp(input, { limitInputPixels: 40_000_000 })
       .rotate()
       .resize(width, height, { fit: "contain", background: "#f6f3eb" })
@@ -104,8 +116,10 @@ export async function socialCard(
   }
   if (output.length > 1_000_000)
     throw Error("Social card exceeds the 1 MB budget");
+  const src = await assets.emit(output, ".jpg", "social-preview");
+  await recordSocialRecipe(recipe, path.basename(src));
   return {
-    src: await assets.emit(output, ".jpg", "social-preview"),
+    src,
     alt: input ? image!.alt : `${title} — ${brand}`,
     type: "image/jpeg",
     width,

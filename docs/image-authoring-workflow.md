@@ -64,37 +64,19 @@ remains in Codex's generated-images folder. Unused candidates expire through the
 [automatic cleanup](#automatic-cleanup) described below.
 The browser retains editable briefs separately in local storage.
 
-Explicit insertion copies a descriptively named PNG with a checksum suffix into the article's `assets/`
-folder and does not overwrite an existing different file. These local assets
-work with web/book rendering. For published media delivery, use the existing
-[media upload workflow](media-storage.md) and replace the local Markdown reference
-with the returned `media:` reference when appropriate. This panel does not upload
-to S3 or publish content. Local assets remain supported; review repository size
-before committing large originals.
+Explicit insertion copies a descriptively named PNG with a checksum suffix into
+the article's `assets/` folder without overwriting different bytes. The binary is
+ignored by Git; its source identity is registered in the tracked asset manifest.
+Alt text, captions and the local reference stay in content. Cover insertion uses
+the same mechanism. Preview and book export resolve these paths normally.
 
-The [asset release design](asset-release-design.md) proposes moving managed source
-bytes out of Git, while keeping image selection, alt text and checksum identities
-versioned. It includes covers and reproducible book exports; simply replacing
-every local path with `media:` is not sufficient. This integration is not implemented.
-Local cleanup never deletes remote published media.
-
-Names describe image content rather than the article or book title, for example
-`wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8.png`. Generation returns a
-short lowercase filename label with the image and alt text, using the same provider
-call. Imported and older candidates derive a safe, bounded label from the entered
-description. Assigning an image again with the same label and bytes reuses its asset.
-Existing references remain valid if a title changes. Private candidate records keep
-their stable UUIDs. Built local image URLs preserve the label and append the full
-content hash; cover renditions use their own WebP hash.
-
-The panel inserts inline illustrations. The homepage's featured article reuses
-the first rendered body image and its alt text; inserting at the beginning makes
-that illustration the homepage image. An article with no images has no homepage
-artwork. This also applies to collection-only articles featured individually.
-Articles have no explicit cover-image field. Books and collections instead use
-the dedicated cover workflow below. [Social preview metadata](social-previews.md)
-now uses article illustrations and explicit covers, with title-card fallback;
-this is implemented locally, not deployed.
+Save stays local. Run `npm run assets:prepare`, commit the reviewed source and
+manifest, then `npm run release` to back up originals privately and deliver selected
+public renditions through the existing media CDN. There is no need to rewrite
+image references. Missing required bytes block release. Preparation/release take
+the editor's write lock, and remote cleanup uses a separate shared S3 lease.
+Local deletion never removes a live remote asset. See the
+[asset release workflow](asset-release-design.md#compatibility-with-existing-orphan-cleanup).
 
 ## Automatic cleanup
 
@@ -130,10 +112,11 @@ is protected by the matching bytes; expired identical alternatives are deduplica
 Old candidate PNGs without metadata, metadata without PNGs and interrupted atomic
 metadata writes are also collected after their grace period.
 
-Cleanup only owns images created by this workflow. New copied assets have an
+Cleanup owns generated images and supported binary files explicitly registered
+by `assets:prepare`. New copied assets have an
 ownership/checksum record in `image-assets/`; older generated assets are adopted
 only when their filename, bytes and candidate owner prove the match, with a fresh
-grace period. Hand-authored or modified files, Codex's original outputs, unrelated
+grace period. Unregistered or checksum-modified files, Codex's original outputs, unrelated
 assets and exported book resources are preserved. Edition exports contain their
 own resource copies. Unreadable reference state, malformed content,
 symlinks or lock contention defer collection. Partially moved or modified trash

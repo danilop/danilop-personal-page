@@ -99,6 +99,9 @@ async function fixture(
     shortOrigin: "https://short.example.com",
     sourceRevision: digest(saved),
     registryRevision: String(registryVersion),
+    suggestedCode: shortLinks.some((link) => link.code === "browser-fixture")
+      ? "browser-fixture-2"
+      : "browser-fixture",
   });
   const handlers = {
     "short-links": linkState,
@@ -930,12 +933,28 @@ test("short-link controls reserve drafts, show deployment errors and check activ
       .querySelector("#short-link-status")
       .textContent.includes("Saved reservations"),
   );
+  assert.equal(
+    await page.locator("#short-link-code").inputValue(),
+    "browser-fixture",
+  );
   await page.locator("#short-link-code").fill("fixture-link");
+  await page.locator("#short-link-refresh").click();
+  await page.waitForFunction(
+    () => !document.querySelector("#short-link-refresh").disabled,
+  );
+  assert.equal(
+    await page.locator("#short-link-code").inputValue(),
+    "fixture-link",
+  );
   await page.locator("#short-link-reserve").click();
   await page.waitForFunction(() =>
     document
       .querySelector("#short-link-list")
       .textContent.includes("fixture-link"),
+  );
+  assert.equal(
+    await page.locator("#short-link-code").inputValue(),
+    "browser-fixture",
   );
   assert.match(
     await page.locator("#short-link-list").innerText(),

@@ -2,7 +2,7 @@ import { readdirSync, mkdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 // One V8 coverage session includes both suites and the prototype's worker contract.
 const files = readdirSync("test")
-  .filter((f) => /\.test\.(js|ts)$/.test(f))
+  .filter((f) => /\.test\.(js|mjs|ts)$/.test(f))
   .map((f) => `test/${f}`);
 files.push("prototypes/ink-and-paper/tests/sites-worker.test.mjs");
 const result = spawnSync(

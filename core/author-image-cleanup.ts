@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { z } from "zod";
+import { readAssetManifest } from "./asset-manifest";
 
 const day = 86400000;
 export const imageCleanupPolicy = { graceDays: 7, trashDays: 30 };
@@ -12,7 +13,7 @@ const date = z.iso.datetime();
 const assetPath = z
   .string()
   .regex(
-    /^content\/(?:pieces\/[a-zA-Z0-9_-]+|collections)\/assets\/[a-z0-9-]+-[a-f0-9]{20}\.png$/,
+    /^content\/(?:pieces\/[a-zA-Z0-9_-]+|collections)\/assets\/[a-zA-Z0-9_.-]+\.(?:png|jpe?g|webp|avif|gif|pdf|zip|mp3|mp4)$/,
   );
 const assetSchema = z.object({
   path: assetPath,
@@ -53,7 +54,11 @@ const recoveryRequest = recoverySchema
 // snapshots, YAML, raw HTML and encoded URLs, without interpreting provider text.
 function imageReferenceNames(text: string) {
   return [
-    ...new Set(text.match(/[a-zA-Z0-9_.%-]+\.(?:png|jpe?g|webp)\b/gi) || []),
+    ...new Set(
+      text.match(
+        /[a-zA-Z0-9_.%-]+\.(?:png|jpe?g|webp|avif|gif|pdf|zip|mp3|mp4)\b/gi,
+      ) || [],
+    ),
   ];
 }
 function candidateKeepers(records: z.infer<typeof candidateSchema>[]) {
@@ -190,6 +195,10 @@ export class AuthorImageCleanup {
     await this.write(file, { ...record, lastUsed: date.parse(now) });
     return { ok: true };
   }
+  async sharedNames() {
+    const manifest = await readAssetManifest(this.root);
+    return (manifest?.shared ?? []).map((logical) => path.basename(logical));
+  }
   async references(now = Date.now()) {
     const sources = [
       ...(await filesIn(path.join(this.root, "content"))),
@@ -206,8 +215,11 @@ export class AuthorImageCleanup {
       ),
     ];
     const texts = new Map<string, string>();
-    for (const file of sources.filter((file) =>
-      /\.(?:md|ya?ml|json|html|astro|[cm]?js|ts|css|txt|tex|bib)$/i.test(file),
+    for (const file of sources.filter(
+      (file) =>
+        /\.(?:md|ya?ml|json|html|astro|[cm]?js|ts|css|txt|tex|bib)$/i.test(
+          file,
+        ) && file !== path.join(this.root, "publishing/media-assets.json"),
     )) {
       const text = await fs.readFile(file, "utf8");
       if (file.endsWith(".json")) {
@@ -217,7 +229,11 @@ export class AuthorImageCleanup {
       }
       texts.set(file, text);
     }
-    const names = new Set([...texts.values()].flatMap(imageReferenceNames));
+    const names = new Set(
+      [...texts.values()]
+        .flatMap(imageReferenceNames)
+        .concat(await this.sharedNames()),
+    );
     const sessions = await filesIn(path.join(this.state, "image-sessions"));
     for (const file of sessions.filter((file) => file.endsWith(".json"))) {
       const session = sessionSchema.parse(
@@ -494,6 +510,7 @@ export class AuthorImageCleanup {
         (await this.collectOrphans(refs, now));
       await this.expireSessions(now);
       await this.collectTemps(now);
+      await this.collectAssetCache(now);
       return {
         deferred: false,
         candidates: removedCandidates,
@@ -503,6 +520,22 @@ export class AuthorImageCleanup {
     } finally {
       await lock.close();
       await fs.rm(lockFile, { force: true });
+    }
+  }
+  async collectAssetCache(now: number) {
+    const manifest = await readAssetManifest(this.root);
+    if (!manifest) return;
+    const used = new Set(
+      Object.values(manifest.outputs).map((record) => record.sha256),
+    );
+    for (const file of await filesIn(path.join(this.root, ".asset-cache"))) {
+      const match = path.basename(file).match(/^([a-f0-9]{64})\.[a-z0-9]+$/);
+      if (!match || used.has(match[1])) continue;
+      if (
+        now - (await fs.stat(file)).mtimeMs >=
+        imageCleanupPolicy.graceDays * day
+      )
+        await this.quarantine([file], new Date(now).toISOString());
     }
   }
   async adopt(candidates: z.infer<typeof candidateSchema>[], now: number) {

@@ -5,11 +5,13 @@ it over HTTPS using a custom subdomain, an existing wildcard certificate and
 Route 53 A/AAAA aliases. Account-specific identifiers are in the private
 operations note and `~/.config/notes-along-the-way/media.json`, outside Git.
 
-This is the explicit `media:` upload/delivery path. Inserted local article images
-and collection covers currently ship in Amplify's artifact instead; Save does not
-upload them here. A manifest-based integration with authoring, exact-commit release
-checks and remote cleanup is [proposed separately](asset-release-design.md), not
-implemented by the current upload command.
+Inserted article images, collection covers and social cards now use the
+[manifest release workflow](asset-release-design.md). Original binary files remain
+in ignored authoring folders; checksums and selected public renditions are tracked
+in `publishing/media-assets.json`. Save stays local. Prepare assets, commit, then
+run `npm run release` to upload and verify before pushing code. The same bucket and
+media distribution deliver PDFs and explicitly shared downloads.
+The manual `media:` upload command below remains available for independent assets.
 
 ## Configuration
 
@@ -67,8 +69,7 @@ resolve `media:` against the configured public URL.
 Uploads use temporary/default AWS credentials, verify the bucket owner and write
 only beneath `published/`. The public CDN maps that prefix to its root. By
 default, an existing key causes an error rather than an overwrite. The printed
-hash is available for an author's asset record; a managed remote-asset manifest
-and checksum-pinned book download workflow are not implemented yet.
+hash is available for an author's asset record; this manual command does not register the file in the automatic managed manifest.
 
 ## Correct a published file
 
@@ -100,14 +101,14 @@ originals elsewhere in the bucket are not served. Published files are public
 through the CDN. GET/HEAD, PDF ranges and public cross-origin reads are supported;
 the CDN accepts no upload/write methods. Origin traffic requires TLS.
 
-Lifecycle cleanup only aborts incomplete uploads after seven days. Published
-assets and old versions do not expire automatically. Keep files referenced by
-posts, syndicated copies or frozen editions. Versioning is not an independent
-backup. No AWS credentials or private inventory belong in Git.
-
-Automatic local image cleanup does not delete S3 objects. The proposed remote
-collector must use verified deployment, rollback, edition and external-reference
-inventories; a local folder sync with deletion cannot supply those protections.
+The managed collector protects live, recent rollback and pending inventories,
+legacy URLs and explicit shared pins. Unused managed objects get seven days of
+grace before recoverable deletion; noncurrent data versions expire after thirty
+days. Operational inventories and lease versions have shorter scoped retention.
+Manual files outside the managed prefixes remain protected from collection.
+See [retention and recovery](asset-release-design.md#remote-retention).
+Versioning is not an independent backup. No AWS credentials or private inventory
+belong in Git. Automatic local cleanup never deletes remote published media.
 
 ## Limits and verification
 
@@ -115,8 +116,7 @@ Rich image blocks still use local `source.path`; use ordinary Markdown for
 externally stored images. Remote images are retained as external HTTPS URLs in
 cross-posting; target-platform display must be reviewed. Book export deliberately
 rejects remote image freezing without an explicit local/versioned alternative.
-Responsive variants, metadata stripping and a managed remote-media manifest remain
-future work. The upload command reports successful S3 storage; verify the public
+Responsive variants and automatic metadata stripping remain future work. The upload command reports successful S3 storage; verify the public
 URL before publishing the article, especially immediately after infrastructure changes.
 
 Validation covers portable references/path restrictions, full website checks,

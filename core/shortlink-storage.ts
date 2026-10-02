@@ -16,6 +16,7 @@ import {
   CreateInvalidationCommand,
 } from "@aws-sdk/client-cloudfront";
 import { linksSchema, reconcileLinks } from "./shortlinks";
+import { reservedShortCodes } from "./short-code";
 
 export const redirectCacheControl = "public, max-age=0, s-maxage=60";
 const origin = z.url().refine((s) => {
@@ -69,7 +70,7 @@ export function redirectTarget(value: string, canonicalOrigin: string) {
 const aliasKey = (code: string) => {
   if (
     !/^[a-z0-9][a-z0-9-]{0,63}$/.test(code) ||
-    ["index", "not-found"].includes(code)
+    reservedShortCodes.includes(code)
   )
     throw Error("Invalid or reserved short code");
   return "redirects/" + code;

@@ -32,7 +32,8 @@ function handler(event) {
   }
   if (
     (request.method !== "GET" && request.method !== "HEAD") ||
-    response.statusCode !== 200 ||
+    // Crawlers can request a byte range; the redirect metadata is still valid on 206.
+    (response.statusCode !== 200 && response.statusCode !== 206) ||
     !validPath ||
     !validTarget
   ) {

@@ -1,7 +1,9 @@
 # Social link previews
 
 Status: article metadata/cards deployed and full/short URLs verified live on
-2 October 2026. Collection/book-cover cards are implemented and locally tested;
+2 October 2026. LinkedIn Post Inspector also rendered the published AI article's
+short-link preview after the deployed byte-range handling fix. Collection/book-cover
+cards are implemented and locally tested;
 the current collection remains draft. Open Graph previously used the same portrait
 on every page. Static metadata and images now describe the actual published work.
 
@@ -28,11 +30,15 @@ font coverage depends on the build environment's installed fonts. Image alt text
 is preserved, including empty alt text for a decorative source image. No model
 call, new artwork generation or new source image is involved.
 
-Cards are generated in `.generated/public/media`, copied into `dist/`, ignored by
-Git and served by Amplify after deployment. Every prepare regenerates only the
-selected target's cards; it does not accumulate discarded candidates. The proposed
-[S3 asset resolver](asset-release-design.md) must eventually include these public
-renditions and their deployment retention. It is not required for today's cards.
+`npm run assets:prepare` generates cards in `.generated/public/media` and records
+their recipes and byte checksums in `publishing/media-assets.json`. Release backs
+up prepared bytes and serves them through the configured media CDN. Later builds
+restore those exact JPEGs from the verified cache/CDN; they do not depend on a
+second machine's fonts producing identical cards. Initial migration URLs remain
+available under the website's `/media/` path for existing consumers.
+The [asset resolver](asset-release-design.md) includes cards in deployment
+availability and retention checks. Validators allow only the site origin or the
+explicitly configured media origin and check actual image bytes and dimensions.
 
 Open Graph includes title, description, type, canonical URL, site name, image URL,
 MIME type, dimensions and alt text, plus article publication/modification dates
@@ -54,6 +60,9 @@ then read the destination's metadata; the short response does not need a separat
 Open Graph document. Keep `og:url` and the canonical link set to the full canonical
 website URL. GET and HEAD must resolve through the same chain. Do not introduce a
 JavaScript redirect or serve different HTML to different crawler user agents.
+Byte-range requests must also redirect correctly; crawlers may request only the
+beginning of a resource. A partial origin/cache response must not turn an active
+short link into a 404.
 
 The [active resolver](short-link-design.md) uses private S3 with OAC and one
 viewer-response function. DNS/TLS, GET/HEAD parity, update freshness and disposable
@@ -61,8 +70,13 @@ test cleanup were verified on 2 October. The configured hostname is `danilop.lin
 not `danilo.link`. Article aliases require a committed registry and verified site
 deployment before activation. The saved welcome and AI-article aliases are active.
 Crawler checks of both short URLs confirmed matching GET/HEAD chains, the final
-canonical page and its public JPEG card. Logged-in platform rendering remains
-outside this verification.
+canonical page and its public JPEG card. An actual LinkedIn Post Inspector check
+initially reported 404 for the AI article alias. Byte-range GETs reproduced the
+failure: the resolver accepted only HTTP 200 and rejected valid HTTP 206 responses.
+After the deployed fix, Inspector showed the article image/title and a
+302 → 200 redirect trail. This validates that alias in Inspector, rather than
+assuming a simulated crawler user agent proves platform access. Other platforms
+and actual published social posts remain outside this verification.
 
 Reader [sharing controls](article-sharing.md) expose an active short link after
 an on-demand target check. Email and platform handoff links use the same visible
@@ -73,7 +87,8 @@ URL. This does not change canonical/Open Graph metadata or post to any platform.
 `npm run build` validates generated metadata consistency and the actual JPEG
 bytes/dimensions/budget for every page carrying Open Graph metadata. Focused tests
 exercise artwork fit, text escaping, matching full/short cards, GET/HEAD parity,
-missing images, redirect loops, drafts and a non-root deployment path.
+byte-range redirect parity, missing images, redirect loops, drafts and a non-root
+deployment path.
 
 After deploying, check an actual full URL and an active short URL:
 
@@ -83,7 +98,8 @@ npm run verify:social -- https://danilop.link/hello
 ```
 
 This command checks initial HTML as a crawler, bounded HTTP redirects, GET/HEAD
-parity, final site/canonical origin, published/indexable metadata and publicly
+parity, byte-range requests to short-link hosts, final site/canonical origin,
+published/indexable metadata and publicly
 retrievable JPEG bytes. It needs no AWS access and does not publish a social post.
 It fails on stale/missing metadata or inactive aliases. The examples above passed
 after production deployment and alias activation.

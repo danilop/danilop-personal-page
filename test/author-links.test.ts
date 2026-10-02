@@ -5,6 +5,34 @@ import path from "node:path";
 import YAML from "yaml";
 import { repositoryFixture } from "./repository-fixture";
 import { AuthorLinks } from "../core/author-links";
+import { suggestShortCode } from "../core/short-code";
+
+test("short codes favour distinctive title words in order and avoid every owned or reserved code", () => {
+  const title = "Clever Enough to Find the Loophole";
+  assert.equal(suggestShortCode(title, "id", [title], []), "clever-loophole");
+  assert.equal(
+    suggestShortCode(
+      "Understanding Agents, Rewards and Loopholes",
+      "id",
+      ["Understanding Agents", "Understanding Rewards", "Understanding Agents"],
+      [],
+    ),
+    "rewards-loopholes",
+  );
+  assert.equal(
+    suggestShortCode(title, "id", [], ["clever-loophole", "clever-loophole-2"]),
+    "clever-loophole-3",
+  );
+  assert.equal(
+    suggestShortCode("Introduction", "book-introduction", [], []),
+    "book-introduction",
+  );
+  assert.equal(suggestShortCode("索引", "index", [], []), "index-2");
+  assert.equal(suggestShortCode("Caffè e città", "id", [], []), "caffe-citta");
+  const long = suggestShortCode("x".repeat(100), "id", [], ["x".repeat(48)]);
+  assert.match(long, /^[a-z0-9][a-z0-9-]{0,63}$/);
+  assert.equal(long, "x".repeat(48) + "-2");
+});
 
 test("editor reservations use saved revisions, retain tombstones and block premature live publication", async (t) => {
   const fixture = await repositoryFixture(process.cwd());
@@ -21,6 +49,21 @@ test("editor reservations use saved revisions, retain tombstones and block prema
   const links = new AuthorLinks(await fs.realpath(fixture.dir));
   const file = "content/pieces/hello-brave-new-world/index.md";
   const before = await links.list(file);
+  assert(before.suggestedCode);
+  const sourceBefore = await fs.readFile(path.join(fixture.dir, file), "utf8");
+  const registryBefore = await fs.readFile(
+    path.join(fixture.dir, "publishing/links.yaml"),
+    "utf8",
+  );
+  assert.equal((await links.list(file)).suggestedCode, before.suggestedCode);
+  assert.equal(
+    await fs.readFile(path.join(fixture.dir, file), "utf8"),
+    sourceBefore,
+  );
+  assert.equal(
+    await fs.readFile(path.join(fixture.dir, "publishing/links.yaml"), "utf8"),
+    registryBefore,
+  );
   assert.equal(before.configured, false);
   const request = {
     file,
@@ -52,6 +95,7 @@ test("editor reservations use saved revisions, retain tombstones and block prema
     ...request,
     registryRevision: reserved.registryRevision,
   });
+  assert.notEqual(disabled.suggestedCode, request.code);
   assert(!disabled.links.some((link) => link.code === request.code));
   const manifest = YAML.parse(
     await fs.readFile(path.join(fixture.dir, "publishing/links.yaml"), "utf8"),

@@ -139,8 +139,14 @@ test("full and short links expose identical cards through HTTP redirects with GE
   })
     .jpeg()
     .toBuffer();
+  const rangeRequests: string[] = [];
   const fetcher: typeof fetch = async (input, init) => {
     const url = new URL(String(input));
+    const headers = new Headers(init?.headers);
+    if (headers.has("range")) {
+      assert.equal(headers.get("user-agent"), "LinkedInBot/1.0");
+      rangeRequests.push(url.href);
+    }
     if (url.hostname === "short.example")
       return new Response(null, {
         status: 302,
@@ -166,6 +172,31 @@ test("full and short links expose identical cards through HTTP redirects with GE
   assert.equal(short.image, direct.image);
   assert.equal(short.canonical, direct.canonical);
   assert.equal(short.title, direct.title);
+  assert.deepEqual(rangeRequests, ["https://short.example/story"]);
+});
+
+test("crawler check catches short links that fail only on byte-range requests", async () => {
+  const fetcher: typeof fetch = async (input, init) => {
+    if (new URL(String(input)).hostname === "short.example") {
+      if (new Headers(init?.headers).has("range"))
+        return new Response("Short link not found.", { status: 404 });
+      return new Response(null, {
+        status: 302,
+        headers: { location: "https://example.com/writing/story/" },
+      });
+    }
+    return new Response(init?.method === "HEAD" ? null : html, {
+      headers: { "content-type": "text/html" },
+    });
+  };
+  await assert.rejects(
+    verifySharedLink(
+      "https://short.example/story",
+      "https://example.com",
+      fetcher,
+    ),
+    /HTTP 404/,
+  );
 });
 
 test("crawler check rejects broken image delivery and redirect loops", async () => {

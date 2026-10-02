@@ -39,6 +39,58 @@ Resources:
           - Id: AbortIncompleteUploads
             Status: Enabled
             AbortIncompleteMultipartUpload: { DaysAfterInitiation: 7 }
+          - Id: ManagedAssetVersions0
+            Status: Enabled
+            Prefix: originals/
+            NoncurrentVersionExpiration: { NoncurrentDays: 30 }
+          - Id: ManagedAssetMarkers0
+            Status: Enabled
+            Prefix: originals/
+            ExpiredObjectDeleteMarker: true
+          - Id: ManagedAssetVersions1
+            Status: Enabled
+            Prefix: published/media/
+            NoncurrentVersionExpiration: { NoncurrentDays: 30 }
+          - Id: ManagedAssetMarkers1
+            Status: Enabled
+            Prefix: published/media/
+            ExpiredObjectDeleteMarker: true
+          - Id: ManagedAssetVersions2
+            Status: Enabled
+            Prefix: published/sources/
+            NoncurrentVersionExpiration: { NoncurrentDays: 30 }
+          - Id: ManagedAssetMarkers2
+            Status: Enabled
+            Prefix: published/sources/
+            ExpiredObjectDeleteMarker: true
+          - Id: ManagedAssetVersions3
+            Status: Enabled
+            Prefix: asset-control/
+            NoncurrentVersionExpiration: { NoncurrentDays: 1 }
+          - Id: ManagedAssetMarkers3
+            Status: Enabled
+            Prefix: asset-control/
+            ExpiredObjectDeleteMarker: true
+          - Id: ManagedAssetVersions4
+            Status: Enabled
+            Prefix: asset-releases/
+            NoncurrentVersionExpiration: { NoncurrentDays: 1 }
+          - Id: ManagedAssetMarkers4
+            Status: Enabled
+            Prefix: asset-releases/
+            ExpiredObjectDeleteMarker: true
+          - Id: ManagedAssetVersions5
+            Status: Enabled
+            Prefix: asset-trash/
+            NoncurrentVersionExpiration: { NoncurrentDays: 1 }
+          - Id: ManagedAssetMarkers5
+            Status: Enabled
+            Prefix: asset-trash/
+            ExpiredObjectDeleteMarker: true
+          - Id: ManagedAssetTrashRecords
+            Status: Enabled
+            Prefix: asset-trash/
+            ExpirationInDays: 31
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins: ["*"]

@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { deployment, siteOutput, sitePath } from "../core/deployment.mjs";
+import { readAssetManifest } from "../core/asset-manifest";
 
 async function walk(dir: string): Promise<string[]> {
   return (
@@ -13,7 +14,15 @@ async function walk(dir: string): Promise<string[]> {
     )
   ).flat();
 }
+async function stripCDNAssets() {
+  const manifest = await readAssetManifest(process.cwd());
+  if (manifest && process.env.NOTES_AUTHORING_PREVIEW !== "1")
+    for (const name of Object.keys(manifest.outputs))
+      if (!manifest.legacy.includes(name))
+        await fs.rm(path.join(siteOutput, "media", name), { force: true });
+}
 async function main() {
+  await stripCDNAssets();
   // Remove prior root artifacts without touching the current nested build.
   if (deployment.basePath !== "/") {
     const top = deployment.basePath.split("/")[1];

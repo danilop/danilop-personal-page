@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { imageAssetStem } from "./image-filenames";
+import { hydrateManagedAsset } from "./asset-manifest";
 export const hash = (data: string | Uint8Array) =>
   createHash("sha256").update(data).digest("hex");
 export const escape = (s: unknown) =>
@@ -21,6 +22,10 @@ export function safeUrl(s: string) {
 export async function localAsset(owner: string, relative: string) {
   if (path.isAbsolute(relative)) throw Error("Asset paths must be relative");
   const root = await fs.realpath(owner);
+  const requested = path.resolve(root, relative);
+  if (!requested.startsWith(root + path.sep))
+    throw Error(`Asset escapes source directory: ${relative}`);
+  await hydrateManagedAsset(root, relative);
   const file = await fs.realpath(path.resolve(owner, relative));
   if (!file.startsWith(root + path.sep))
     throw Error(`Asset escapes source directory: ${relative}`);

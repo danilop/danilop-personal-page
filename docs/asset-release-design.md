@@ -1,161 +1,156 @@
-# Assets and website releases
+# Asset release workflow
 
-Status: proposed, not implemented. This records the requested move towards
-off-repository editorial media and a release gate that coordinates assets with
-GitHub-triggered Amplify deployments. The existing upload command and local image
-cleanup remain separate implemented capabilities. No migration or cloud writes
-have been performed for this proposal.
+Status: implemented locally; migration and live verification are in progress.
+The existing private S3 media bucket and CloudFront distribution are reused.
+No second media domain or asset distribution is required.
 
-## Current behaviour
+## Storage and identities
 
-| Asset | Source storage | Public delivery |
-| --- | --- | --- |
-| Generated/imported candidates | Ignored `.authoring-state/images/` | Local authoring only |
-| Inserted article illustrations | `content/pieces/<id>/assets/`; eligible for Git commits | Referenced files become hashed `/media/` files in the Amplify build |
-| Explicit collection/book covers | `content/collections/assets/`; eligible for Git commits | A hashed WebP rendition in the Amplify build |
-| Explicit `media:` references | Manual upload to the configured S3 bucket, under `published/` | The configured CloudFront media domain |
-| Fonts, icons and other theme resources | Versioned source files | Amplify build |
+`publishing/media-assets.json` is the tracked inventory. Each logical source and
+public rendition has a SHA-256, byte size, MIME type and immutable storage key.
+Content, image selection, alt text, captions and publication settings stay in Git.
+Generated social cards also have committed recipe identities and byte checksums;
+builds reuse their prepared bytes instead of relying on fonts to reproduce them.
+Other regenerated outputs must match their committed checksums.
 
-`core/assets.ts` writes local renditions into `.generated/public/media`, Astro
-copies its public directory into `dist/`, and `amplify.yml` publishes `dist/`.
-Saving or publishing an article locally does not upload its images to S3. The
-separate media command does not yet integrate with image insertion, covers or a
-commit-based asset inventory. See [current storage operations](media-storage.md).
+Managed binary sources stay at their existing authoring paths:
 
-## Required behaviour
+- `content/pieces/<id>/assets/<filename>`
+- `content/collections/assets/<filename>`
 
-- Keep content, alt text, captions, cover selection and a small asset manifest
-  versioned in Git. Keep managed editorial image/PDF bytes out of new Git commits.
-  Editable diagrams, code, small datasets and stable theme assets can remain in Git.
-- Draft authoring and Save work locally without a public upload. Candidate
-  cleanup remains automatic and protects saved versions and unsaved recovery.
-- A commit identifies the exact asset bytes it requires. Preview, website builds,
-  content import and frozen book exports resolve that same identity.
-- Website outputs use only reviewed public renditions. Access to a private original
-  during a build is not permission to copy it into public output; preserve the
-  existing publication-target boundary when resolving assets.
-- Upload and verify required assets before pushing a release. Reject dirty or
-  changed source state; fail the deployment build when required assets are missing
-  or have different checksums. Keep the existing GitHub/Amplify deployment path.
-- Collect abandoned remote uploads automatically using deployment and edition
-  inventories, without breaking live pages, rollbacks or externally shared URLs.
+Supported image binaries, PDFs, ZIPs, MP3s and MP4s in those folders are ignored by
+Git. `.asset-cache/` holds ignored checksum-addressed public renditions. Editable
+SVGs, diagrams, code, small CSV datasets, theme resources and the historical
+snapshot remain versioned. Changing the ignore rules does not erase old Git history.
 
-## Recommended storage and implementation stages
+S3 stores originals under private `originals/`. Only production dependencies and
+explicitly shared downloads get public copies under `published/media/` or
+`published/sources/`. Draft cover candidates are backed up privately. CloudFront's
+OAC origin serves only `published/`; it cannot expose private originals.
+Bucket settings and credentials remain outside the repository.
 
-Use a tracked manifest, proposed as `publishing/media-assets.json`, with an entry
-for each managed logical source path. Record the SHA-256, byte size, media type,
-dimensions when relevant, storage key and reviewed renditions. Renditions have
-their own checksums; the original checksum does not identify a transformed WebP.
-Record transformation settings and tool versions; regenerated renditions must
-match the committed checksum before use in a release.
-Alt text and captions remain contextual content rather than a global asset label.
+The common local-asset resolver restores missing files and checks their identity.
+A fresh production checkout restores selected sources and pinned social cards
+from the public CDN without AWS credentials. It rejects private-only dependencies.
+Local authoring can restore draft sources through authenticated S3 reads. Images
+and covers keep their local syntax, so preview, import and book exports use the
+same verified source bytes. Frozen editions still contain their own resource
+copies and checksums; arbitrary remote book-image freezing remains unsupported.
 
-Use an ignored, checksum-addressed local cache and a common asset resolver. Resolve
-existing logical article and cover paths through the manifest; authors should not
-have to rewrite content to change storage providers. Resolve ordinary local assets
-as before. Do not ignore every file in `assets/`, since some are editable sources.
-Do not silently adopt or overwrite manually maintained files.
+Published pages and social metadata use the configured media domain. New managed
+renditions are omitted from Amplify's artifact. The initial migration's old
+`/media/` URLs are explicitly pinned, hydrated and retained in that artifact so
+existing links and cached social previews keep working after image replacements.
 
-Store reviewed originals under a private S3 prefix outside `published/`; store
-public renditions under `published/`. Keep descriptive names with the full content
-checksum, preserving the current image naming approach. The configured CloudFront
-origin can only serve `published/*`. Bucket identifiers, account settings and
-credentials remain outside this public repository.
+## Prepare, commit and release
 
-1. **First stage:** hydrate the assets required by a release into a temporary build
-   workspace/cache, verify their checksums and retain today's rendering. Amplify
-   still serves the website's `/media/` files. This removes managed binary growth
-   from Git without changing reader URLs or breaking local covers and book exports.
-2. **Second stage:** resolve web renditions directly to the existing CloudFront
-   media domain. Keep checksum-verified originals available to local preview and
-   book export. This avoids shipping those editorial renditions in every Amplify
-   artifact. Rich image blocks, cover rendering and distribution adapters must use
-   the resolver before this stage is enabled.
+```sh
+npm run assets:prepare
+# Review content, settings and publishing/media-assets.json.
+git add <reviewed-source-and-manifest-files>
+git commit -m "Publish the reviewed article"
+npm run release
+```
 
-Both stages require asset availability checks. The first stage also needs scoped,
-read-only S3 access in Amplify and trusted CI, configured before migration. Use
-temporary role credentials; never place an operator's private configuration or
-write credentials in a build. Public renditions can be verified through the CDN
-without AWS credentials. Reuse valid caches, but verify bytes against the manifest.
+Preparation takes the editor's write lock, discovers supported sources, registers
+cleanup ownership, reconciles missing unreferenced entries and prepares production
+renditions. Missing referenced files must be restored with matching checksums or
+preparation fails. Save alone neither uploads files nor deploys content.
 
-Include [social preview cards](social-previews.md) in the public rendition and
-deployment dependency set. Current card validators expect the website origin;
-the second stage must also allow the explicitly configured media origin, without
-accepting arbitrary image hosts or weakening checksum/image-delivery checks.
+Release requires `main`, upstream `origin/main`, and no unstaged, staged or
+non-ignored untracked work. It captures HEAD, runs validation with strict source
+checks and locks local cleanup. Ignored bytes must match the committed inventory.
+It then acquires a distributed S3 lease shared with the collector, records a
+private pending inventory, and uploads missing objects using create-only writes.
+Existing objects must match S3 SHA-256, size and MIME type; they are reused.
+Reviewed public copies are checked through CloudFront, with a bounded retry for
+its short negative cache. It rechecks the source tree and HEAD and pushes exactly
+that SHA to `origin/main` without force. A failed upload or changed tree prevents
+the push. `npm run release -- --upload-only` performs the same validation and
+storage checks but skips push and deployment; it is useful during migration.
 
-Frozen book exports must package verified bytes and record their identities in
-the edition inventory. A live URL is not sufficient for a reproducible edition.
-The current rejection of remote book-image freezing stays in place until that
-verified resolver is implemented.
+Amplify independently checks the checked-out manifest, generated bytes and CDN
+availability. A push that omitted required asset uploads fails the build. After
+pushing, release waits for exact-revision live verification, records the confirmed
+deployment inventory from that immutable Git tree (even if local edits were made
+while deployment was running) and invokes remote cleanup. A successful build alone does
+not mark an inventory deployed. There is no transaction spanning S3, GitHub and
+Amplify: immutable objects and upload-before-push make partial failures recoverable.
 
-## Release gate
+## Share a download
 
-Preparation and publishing are separate operations. Preparation can change the
-manifest and create reviewed renditions; commit those changes before release.
-The release operation must not modify tracked content after its clean-state check.
+Place the file in an article's or collection's managed asset folder, then:
 
-1. Require the intended branch and upstream, and a clean repository, including
-   non-ignored untracked files. Ignored authoring/cache state is permitted. Capture
-   the commit SHA and read content/configuration/manifest from that committed tree.
-2. Resolve the complete asset dependency set for the production publication target,
-   including collection covers and shared dependencies. Do not upload every cached
-   image or unpublished draft. Book/distribution releases select their own targets.
-3. Verify prepared local files against committed checksums; retrieve existing
-   matching remote objects when local bytes are absent. Fail with named missing
-   assets rather than substituting another version.
-4. Upload missing immutable objects using create-only conditional writes. For an
-   existing key, verify its stored checksum/bytes and skip a matching upload. Fail
-   on mismatches. Do not overwrite objects or use `sync --delete` for a release.
-5. Verify S3 availability/integrity and public CDN delivery for web dependencies,
-   allowing a bounded retry for newly uploaded URLs in the CDN's error cache.
-6. Recheck that HEAD and the source state are unchanged, then push the exact
-   validated commit without a force push. A failed push leaves collectible uploads,
-   while the live website continues using its previous assets.
-7. Amplify verifies and resolves the dependency set for its own checked-out commit
-   before building/deploying. A normal Git push must not bypass this build gate.
-   Record successful deployment inventories and retain them for remote cleanup.
+```sh
+npm run assets:prepare -- --share content/pieces/example/assets/guide.pdf
+```
 
-Local pre-push integration can make this convenient; it is not the deployment
-guarantee because hooks can be skipped. The build gate provides that guarantee.
-There is no atomic transaction spanning S3, GitHub and Amplify. Immutable objects
-and uploading before deploying references make partial failures recoverable.
+The command prints a portable `media:sources/<descriptive-name>-<checksum>.pdf`
+reference. Use that reference in Markdown or a PDF block, prepare again after
+changing content, commit, then release. The corresponding HTTPS URL works for
+external sharing after release. The `shared` manifest list is an explicit pin:
+a file shared elsewhere stays protected even without an article link. Retire it
+only when its external consumers no longer need it:
 
-The current uploader already uses conditional writes, but treats an existing key
-as an error; it needs manifest-aware, idempotent verification for this workflow.
-Use an actual SHA-256 checksum, not an assumption that an S3 ETag is a file hash.
-See [S3 conditional writes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html),
-[S3 integrity checks](https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html)
-and [Amplify build phases](https://docs.aws.amazon.com/amplify/latest/userguide/yml-specification-syntax.html).
+```sh
+npm run assets:prepare -- --unshare content/pieces/example/assets/guide.pdf
+```
 
-## Cleanup, retention and migration
+Retirement is not immediate deletion; live and rollback inventories still apply.
+The existing manual `npm run media -- upload` command remains supported. Unknown
+manually maintained objects outside the managed prefixes are never swept.
 
-Local candidate/source cleanup and remote published-asset cleanup have different
-roots. Never mirror local deletions into `published/`. A replaced local image may
-still be required by the live deployment, a rollback or a frozen edition.
+## Compatibility with existing orphan cleanup
 
-The remote collector must protect the current verified deployment, retained
-rollback deployments, retained editions, explicit external-distribution pins and
-pending releases during a grace period. Record candidate release inventories before
-uploads, so failed/abandoned releases have a defined owner and expiry. Store these
-operational records privately. A successful build alone does not mark a release
-live: record the confirmed deployment revision. Handle an object still being used
-by another release as shared, not abandoned.
+Local image cleanup still runs after Save, at preview startup and daily while
+preview is open. It protects saved content, covers, history, trash, retained
+edition checksums, recovery sessions and explicit shared-file pins. Preparation
+opts supported imported/manual binary assets into managed ownership; modified
+files with a different ownership checksum are preserved rather than deleted.
+A manifest catalog entry alone does not pin an abandoned source indefinitely.
 
-Run remote collection after confirmed deployments and on a scheduled sweep, so
-abandoned uploads expire even when no subsequent release occurs. Preview startup
-must not be the only trigger for cleaning cloud storage.
+Unused managed sources and cached renditions have a seven-day grace period,
+then move to recoverable local trash, retained for thirty days. Preparation prunes
+missing unreferenced manifest entries before commit. It never treats a missing
+referenced file as an orphan. Release and preparation share the editor's write
+lock, so cleanup cannot remove required bytes during either operation.
+Local cleanup never mirrors a deletion into S3.
 
-Choose and document rollback retention and the remote grace period before enabling
-deletion. Use mark, grace, recheck and recoverable deletion; retry interrupted
-collection. Account for S3 noncurrent versions and expired inventory/cache records,
-not just visible objects. Existing public URLs with unknown external consumers
-remain pinned until explicitly retired. Local seven-day candidate and thirty-day
-trash policies are not remote publication policies.
+## Remote retention
 
-Before migration, inventory existing assets, prove that a fresh clone can hydrate
-and build, exercise local preview/covers/import/book export, and test missing,
-corrupt and already-uploaded objects, dirty state, a changed HEAD, failed pushes,
-failed deployments and rollback. Keep legacy/snapshot assets and URLs supported.
-Remove managed source binaries from Git's latest tree only once they are safely
-stored and resolvable. This does not remove binary history from older commits;
-history rewriting is outside this proposal.
+`npm run assets:provision-cleanup` prepares the collector's CloudFormation change
+set; `-- --apply` deploys it and applies managed-prefix lifecycle rules while
+preserving unrelated rules. The media stack template contains matching retention
+rules. The collector runs after verified releases and once daily independently of
+local preview. `npm run assets:cleanup` is a dry run; `-- --apply` performs collection.
+
+The collector protects the live deployment regardless of age, deployed inventories
+for thirty days, pending inventories for seven days, initial legacy URLs and
+explicit shared pins in those inventories. Retained local editions protect their
+source identities during preparation; exported editions carry their own bytes.
+There is no separate indefinitely retained remote edition registry.
+
+Unprotected objects are first tagged unused. After seven days, another scan checks
+all protection roots again and adds a recoverable S3 delete marker. Private trash
+receipts record the original version ID. Data versions remain recoverable for
+thirty days after deletion; lifecycle then expires noncurrent versions and unused
+delete markers. Expired release inventories are collected; their obsolete versions
+and lease versions expire after one day, and trash receipts after thirty-one days.
+The collector has no permission to permanently delete object versions. Manually
+uploaded objects outside `originals/`, `published/media/` and `published/sources/`
+remain untouched. Corrupt inventories, an unknown live revision or a held lease
+stop collection. Both release and collection use conditional S3 writes/deletes.
+
+## Migration and verification
+
+Back up and verify existing source bytes before removing them from Git's current
+tree. Preserve authoring paths and legacy delivery URLs. Test dirty source state,
+changed ignored bytes, missing and corrupt CDN files, private draft isolation,
+failed uploads, source changes before push, replacements, PDF references and
+recoverable collection. Verify a production build from a clean source-only
+checkout, public media checks and exact-revision hosted output before calling the
+migration deployed. Existing binary history is intentionally retained.
+
+See [media operations](media-storage.md), [publishing](publishing-workflow.md),
+[image authoring](image-authoring-workflow.md), [social previews](social-previews.md)
+and [verification evidence](verification.md).

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import sharp from "sharp";
 import { verifySocialMetadata } from "./social-metadata";
+import { mediaSettings } from "./media";
 
 /** Follow real HTTP redirects and check the metadata/images available to crawlers. */
 export async function verifySharedLink(
@@ -8,7 +9,7 @@ export async function verifySharedLink(
   origin: string,
   fetcher: typeof fetch = fetch,
 ) {
-  async function follow(method: "GET" | "HEAD") {
+  async function follow(method: "GET" | "HEAD", rangeProbe = false) {
     let url = new URL(input);
     const chain: string[] = [];
     for (let hop = 0; hop <= 5; hop++) {
@@ -22,7 +23,12 @@ export async function verifySharedLink(
         method,
         redirect: "manual",
         signal: AbortSignal.timeout(15000),
-        headers: { "user-agent": "Twitterbot/1.0" },
+        headers: {
+          "user-agent": rangeProbe ? "LinkedInBot/1.0" : "Twitterbot/1.0",
+          ...(rangeProbe && url.origin !== origin
+            ? { range: "bytes=0-524287" }
+            : {}),
+        },
       });
       if ([301, 302, 303, 307, 308].includes(response.status)) {
         const location = response.headers.get("location");
@@ -56,8 +62,17 @@ export async function verifySharedLink(
   assert.equal(new URL(metadata.canonical).origin, origin);
   const head = await follow("HEAD");
   assert.deepEqual(head.chain, get.chain, "GET/HEAD redirects differ");
+  await head.response.body?.cancel();
+  if (new URL(input).origin !== origin) {
+    const range = await follow("GET", true);
+    await range.response.body?.cancel();
+    assert.deepEqual(range.chain, get.chain, "Byte-range redirects differ");
+  }
   const imageUrl = new URL(metadata.image);
-  assert.equal(imageUrl.origin, origin, "Unexpected preview image origin");
+  assert(
+    [origin, new URL(mediaSettings().baseUrl).origin].includes(imageUrl.origin),
+    "Unexpected preview image origin",
+  );
   const image = await fetcher(imageUrl, {
     redirect: "error",
     signal: AbortSignal.timeout(15000),

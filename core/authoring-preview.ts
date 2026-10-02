@@ -10,6 +10,7 @@ import {
   type ImportOptions,
 } from "./content-import";
 import { Library, loadLibrary } from "./model";
+import { readAssetManifest, verifyAsset } from "./asset-manifest";
 export type AuthoringContext = {
   workspace: string;
   pieces: string[];
@@ -151,6 +152,21 @@ export async function stageAuthoring(
   }
 
   async function copyWorkspace() {
+    const manifest = await readAssetManifest(repository);
+    for (const [logical, record] of Object.entries(manifest?.sources ?? {})) {
+      const bytes = await fs
+        .readFile(path.join(repository, logical))
+        .catch((e: NodeJS.ErrnoException) => {
+          if (e.code === "ENOENT") return undefined;
+          throw e;
+        });
+      if (!bytes) continue; // The managed resolver hydrates a missing source on demand.
+      verifyAsset(bytes, record, logical);
+      await fs.mkdir(path.dirname(path.join(workspace, logical)), {
+        recursive: true,
+      });
+      await fs.writeFile(path.join(workspace, logical), bytes);
+    }
     const files = execFileSync(
       "git",
       ["ls-files", "--cached", "--others", "--exclude-standard", "-z"],

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "content/collections/assets/bone-abacus-calculator-notebook-laptop-53330d49937911e5529d.png": {
+      "sha256": "53330d49937911e5529d302b69fadd697ed41a9a38d94640c70e3db9b8e800d3",
+      "bytes": 2330152,
+      "contentType": "image/png",
+      "key": "originals/bone-abacus-calculator-notebook-laptop-53330d49937911e5529d302b69fadd697ed41a9a38d94640c70e3db9b8e800d3.png"
+    },
+    "content/collections/assets/counting-objects-notebook-closed-laptop-5e89986b58e51494eb01.png": {
+      "sha256": "5e89986b58e51494eb015f65d4e9b211e8c09823c17fa63ad3298dd441e485fb",
+      "bytes": 1227439,
+      "contentType": "image/png",
+      "key": "originals/counting-objects-notebook-closed-laptop-5e89986b58e51494eb015f65d4e9b211e8c09823c17fa63ad3298dd441e485fb.png"
+    },
+    "content/pieces/clever-enough-to-find-the-loophole/assets/wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8.png": {
+      "sha256": "8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce",
+      "bytes": 1468597,
+      "contentType": "image/png",
+      "key": "originals/wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce.png",
+      "publicKey": "media/wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce.png"
+    }
+  },
+  "outputs": {
+    "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg": {
+      "sha256": "367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec",
+      "bytes": 37783,
+      "contentType": "image/jpeg",
+      "key": "media/social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg"
+    },
+    "social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg": {
+      "sha256": "8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6",
+      "bytes": 32215,
+      "contentType": "image/jpeg",
+      "key": "media/social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg"
+    },
+    "social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg": {
+      "sha256": "f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62",
+      "bytes": 34339,
+      "contentType": "image/jpeg",
+      "key": "media/social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg"
+    },
+    "wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce.png": {
+      "sha256": "8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce",
+      "bytes": 1468597,
+      "contentType": "image/png",
+      "key": "media/wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce.png"
+    }
+  },
+  "recipes": {
+    "90b08c3f4f4d328c8977b1671a44a40fadf3ad6db655fb93994949805534b6ad": "social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg",
+    "022cb5e1fdfbc55669090d43357b06e34a77fbb119a467cf0ea4d48970b3a419": "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg",
+    "178b1db734423668a704a50261627658ae3019da3b8bc8e2298823f57be686e6": "social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg"
+  },
+  "legacy": [
+    "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg",
+    "social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg",
+    "social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg",
+    "wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8201b94e4510967d12063cc39070987f5013b355520ce.png"
+  ],
+  "shared": []
+}

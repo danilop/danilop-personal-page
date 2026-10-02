@@ -1,7 +1,7 @@
 {
   "name": "danilop-personal-page",
   "version": "1.0.0",
-  "description": "Notes Along the Way — articles, collections, books, and interactive explanations",
+  "description": "Notes Along the Way \u2014 articles, collections, books, and interactive explanations",
   "main": "processLinks.js",
   "engines": {
     "node": ">=24.21.0 <25",
@@ -55,6 +55,9 @@
     "zod": "^4.6.5"
   },
   "scripts": {
+    "assets:prepare": "node --import tsx scripts/prepare-assets.ts",
+    "assets:provision-cleanup": "node --import tsx scripts/provision-asset-cleanup.ts",
+    "release": "node --import tsx scripts/release.ts",
     "dev": "node --import tsx scripts/prepare.ts && astro dev --host 127.0.0.1",
     "build": "npm run prepare:site && npm run build:prepared",
     "preview": "node scripts/preview-site.mjs",
@@ -85,7 +88,8 @@
     "verify:worktree": "node tools/code-analysis/pre-commit.mjs --worktree",
     "verify:static": "node tools/code-analysis/pre-commit.mjs --worktree --static",
     "verify:ci": "node tools/code-analysis/pre-commit.mjs --worktree --ci",
-    "test:coverage": "node tools/code-analysis/run.mjs coverage"
+    "test:coverage": "node tools/code-analysis/run.mjs coverage",
+    "assets:cleanup": "node --import tsx scripts/cleanup-assets.ts"
   },
   "author": "",
   "license": "MIT",

@@ -36,6 +36,7 @@ test(
     const env = isolatedGitEnvironment(root);
     delete env.NOTES_AUTHORING_PREVIEW;
     delete env.AWS_BRANCH;
+    delete env.CI; // Disposable local fixtures prepare new assets; they are not deployments.
     delete env.NOTES_BASE_PATH;
     const run = (script: string) =>
       execFileSync("npm", ["run", script], {
@@ -84,6 +85,7 @@ test(
       // Fixed clocks make the rendering assertions deterministic.
       await fs.writeFile(path.join(fixture.dir, file), text);
     }
+    run("assets:prepare");
     run("build");
     const site = JSON.parse(await read(".generated/site.json")) as CompiledSite;
     assert.deepEqual(

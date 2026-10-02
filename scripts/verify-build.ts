@@ -13,6 +13,9 @@ import type { CompiledSite } from "../core/site-data";
 import { loadLibrary, allowed } from "../core/model";
 import { verifySocialMetadata } from "../core/social-metadata";
 import sharp from "sharp";
+import { mediaSettings } from "../core/media";
+import { readAssetManifest, verifyAsset } from "../core/asset-manifest";
+import { verifyPublicAsset } from "../core/asset-release";
 async function walk(dir: string): Promise<string[]> {
   const files: string[] = [];
   for (const d of await fs.readdir(dir, { withFileTypes: true })) {
@@ -24,6 +27,14 @@ async function walk(dir: string): Promise<string[]> {
 }
 async function main() {
   const config = await siteConfig();
+  const manifest = await readAssetManifest(process.cwd());
+  if (
+    manifest &&
+    process.env.NOTES_ASSET_PREPARE !== "1" &&
+    (process.env.CI || process.env.AWS_BRANCH)
+  )
+    for (const record of Object.values(manifest.outputs))
+      await verifyPublicAsset(record);
   const aliases: Record<string, string> = {
     "posts.html": "/archive/posts/",
     "decks.html": "/archive/decks/",
@@ -85,28 +96,38 @@ async function main() {
       await verifyPageLinks(file);
     }
 
+    async function verifyPageSocial(html: string) {
+      const social = verifySocialMetadata(html);
+      const image = new URL(social.image);
+      assert(
+        [config.url, new URL(mediaSettings().baseUrl).origin].includes(
+          image.origin,
+        ),
+        "Unexpected social image origin",
+      );
+      const external = image.origin !== config.url;
+      const name = path.basename(image.pathname);
+      const imageFile = external
+        ? path.join(".generated/public/media", name)
+        : path.join("dist", decodeURIComponent(image.pathname));
+      if (external)
+        assert(manifest?.outputs[name], "Unregistered social image");
+      if (!socialImages.has(imageFile)) {
+        const bytes = await fs.readFile(imageFile);
+        if (external) verifyAsset(bytes, manifest!.outputs[name], name);
+        const metadata = await sharp(bytes).metadata();
+        assert.equal(metadata.format, "jpeg");
+        assert.equal(metadata.width, 1200);
+        assert.equal(metadata.height, 630);
+        assert(bytes.length <= 1_000_000, "Social image exceeds 1 MB");
+        socialImages.add(imageFile);
+      }
+    }
+
     async function verifyPageLinks(file: string) {
       const html = await fs.readFile(file, "utf8");
       const $ = load(html);
-      if ($('meta[property="og:title"]').length) {
-        const social = verifySocialMetadata(html);
-        const image = new URL(social.image);
-        assert.equal(
-          image.origin,
-          config.url,
-          "Unexpected social image origin",
-        );
-        const imageFile = path.join("dist", decodeURIComponent(image.pathname));
-        if (!socialImages.has(imageFile)) {
-          const bytes = await fs.readFile(imageFile);
-          const metadata = await sharp(bytes).metadata();
-          assert.equal(metadata.format, "jpeg");
-          assert.equal(metadata.width, 1200);
-          assert.equal(metadata.height, 630);
-          assert(bytes.length <= 1_000_000, "Social image exceeds 1 MB");
-          socialImages.add(imageFile);
-        }
-      }
+      if ($('meta[property="og:title"]').length) await verifyPageSocial(html);
       const ids = new Set<string>();
       $("[id]").each((_, el) => {
         const id = $(el).attr("id")!;

@@ -605,6 +605,7 @@ test("S3 response resolver redirects only canonical metadata and strips S3 heade
     uri: string,
     method = "GET",
     destination: string | undefined = target,
+    statusCode = 200,
   ) =>
     handler({
       request: {
@@ -613,7 +614,7 @@ test("S3 response resolver redirects only canonical metadata and strips S3 heade
         querystring: { next: { value: "https://example.com/" } },
       },
       response: {
-        statusCode: 200,
+        statusCode,
         headers: {
           ...(destination
             ? { "x-amz-website-redirect-location": { value: destination } }
@@ -622,6 +623,9 @@ test("S3 response resolver redirects only canonical metadata and strips S3 heade
           via: { value: "1.1 cloudfront" },
           warning: { value: "cached warning" },
           "content-type": { value: "application/octet-stream" },
+          ...(statusCode === 206
+            ? { "content-range": { value: "bytes 0-100/101" } }
+            : {}),
         },
       },
     });
@@ -651,6 +655,18 @@ test("S3 response resolver redirects only canonical metadata and strips S3 heade
   ])
     assert.equal(call("/hello", "GET", destination).statusCode, 404);
   assert.equal(call("/hello", "POST").statusCode, 404);
+  const partial = call("/hello", "GET", target, 206);
+  assert.equal(partial.statusCode, 302);
+  assert.equal(partial.headers.location.value, target);
+  assert.equal(partial.headers["content-range"], undefined);
+  assert.equal(partial.body, "");
+  assert.equal(call("/hello", "HEAD", target, 206).statusCode, 302);
+  assert.equal(
+    call("/hello", "GET", "https://outside.invalid/", 206).statusCode,
+    404,
+  );
+  for (const status of [304, 403, 404, 416, 500])
+    assert.equal(call("/hello", "GET", target, status).statusCode, 404);
 });
 
 test("short-link status query exposes only the public destination with CORS", async () => {

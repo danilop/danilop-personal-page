@@ -30,6 +30,7 @@ import { homepageWriting } from "../core/homepage";
 import { collectionCover } from "../core/collection-cover";
 import { authoringContext } from "../core/authoring-preview";
 import { prepareSocialPreviews } from "../core/social-preview";
+import { finishAssetBuild } from "../core/asset-build";
 async function main() {
   const authoring = await authoringContext();
   const lib = await loadLibrary(),
@@ -95,11 +96,15 @@ async function main() {
       r.publishedAt.slice(0, 10) > cutoff,
   );
   site.archive = site.archive.filter((r) => !site.elsewhere.includes(r));
-  await fs.writeFile(".generated/site.json", JSON.stringify(site));
-  await fs.writeFile(".generated/pieces.json", JSON.stringify(site.articles));
+  const delivered = await finishAssetBuild(site, assets, Boolean(authoring));
+  await fs.writeFile(".generated/site.json", JSON.stringify(delivered));
+  await fs.writeFile(
+    ".generated/pieces.json",
+    JSON.stringify(delivered.articles),
+  );
   await fs.writeFile(
     ".generated/collections.json",
-    JSON.stringify(site.collections),
+    JSON.stringify(delivered.collections),
   );
   await fs.writeFile(
     ".generated/public/build.json",

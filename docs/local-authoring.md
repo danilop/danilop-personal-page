@@ -52,6 +52,14 @@ The file list includes existing piece manuscripts, collection outlines, the tag
 registry, `publishing/home.yaml` and `publishing/links.yaml`. Collection order
 and homepage selection use YAML editing. The **Short links** panel provides
 local alias reservations, deactivation, verified S3 publication and live checks.
+Opening the panel prefills **New code** with up to two distinctive words from the
+saved title, skipping common English/Italian words and favouring words used less
+often in other library titles. Word order is preserved. Reserved, removed and
+system codes are excluded; collisions get `-2`, `-3`, and so on. You can override
+the suggestion, and Refresh preserves your typed value. Remote ownership is
+checked when you reserve; opening the panel never reserves or activates an alias.
+Save a changed title and Refresh to update an untouched suggestion. Existing
+aliases stay unchanged.
 Creating/importing pieces and automatic alias allocation still use the existing
 file/command workflows. The Images panel can import local images; tag reuse
 suggestions are available in Post details. Short-link infrastructure is active;
@@ -77,7 +85,7 @@ Save unsaved edits first. Confirming writes `draft: true` locally and records a
 saved version. Republishing uses the existing Draft control and Save; retain the
 original `publishedAt`. For a new article, clearing Draft and saving assigns the
 current UTC publication time atomically with the source. Toggling without saving
-or previewing does not assign one. Commit and push to `main` for Amplify delivery.
+or previewing does not assign one. Run `npm run assets:prepare`, commit, then `npm run release` for Amplify delivery.
 See [publication timestamps](publication-time.md).
 
 **Delete draft…** is available only for a saved draft. Published and retired
@@ -300,3 +308,15 @@ Editing one passage does not disable other finding links: exact, unambiguous
 quotations remain clickable at their updated positions. Only missing/ambiguous
 locations are disabled. Review coverage and generated suggestions remain marked
 out of date until rerun.
+
+## Managed media and release
+
+Image/cover insertion registers a checksum identity; binary sources remain local
+and ignored in the same `assets/` folders. Save does not upload them. After final
+publication settings, run `npm run assets:prepare`, review the manifest and commit,
+then run `npm run release`. A dirty source tree is rejected. Missing referenced
+bytes must be recovered with matching checksums; they are not silently removed.
+Local cleanup protects shared-file pins and retained history/edition identities,
+and preparation/release share its write lock. Fresh local checkouts can restore
+private draft sources with AWS credentials. Public builds use selected CDN bytes
+without those credentials. See [asset release](asset-release-design.md).
