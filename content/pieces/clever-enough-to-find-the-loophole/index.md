@@ -13,7 +13,7 @@ tags:
   - ai
 publishedAt: 2026-10-01T20:00:14.881Z
 ---
-![Blue ink illustration of a wind-up beetle walking past a low rope barrier, with a bell and a loose winding key behind it.](assets/wind-up-beetle-bell-rope-barrier-8d113315a70e86eafdd8.png)
+![Blue pen-and-ink illustration of a wind-up beetle walking beyond a low rope barrier, with one key attached to its back and a bell with a central hanging clapper behind it.](assets/wind-up-beetle-rope-centred-bell-clapper-26b08d77c1f26abe1c4b.png)
 
 The interesting part of a new AI launch increasingly comes after the benchmark
 chart: the explanation of who is allowed to use it.

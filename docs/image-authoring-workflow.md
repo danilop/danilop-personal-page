@@ -22,7 +22,10 @@ saves or deployment. See [local authoring](local-authoring.md).
    These are instructions to Codex's image tool, not guaranteed output dimensions
    or price tiers. Click **Generate image**. Only the brief, shared style and
    reference image are sent for this step; not the full article.
-5. Inspect the candidate. **Use this brief again** lets you revise it and generate
+5. Inspect the candidate, including repeated objects, physical attachments,
+   perspective and framing. Check that the subjects fill the chosen format without
+   large blank bands or clipped essential details. These are visual checks;
+   generation does not guarantee mechanical accuracy. **Use this brief again** lets you revise it and generate
    another candidate. Earlier candidates remain available; this is a fresh
    generation, not a pixel-preserving edit of the selected image.
 6. Review the automatically populated **Image description (alt text)** and edit it
@@ -51,8 +54,10 @@ metadata is stripped by the image processor.
 ## Style and storage
 
 `publishing/image-style.md` defines the default: fine blue pen-and-ink on warm
-ivory, restrained hatching and mobile legibility. Article illustrations allow
-generous space; cover artwork uses most of the selected canvas. Generation also
+ivory, restrained hatching and mobile legibility. Article illustrations and cover
+artwork use most of the selected canvas, with small outer margins and clear gaps
+between objects. Article generation explicitly discourages large blank bands.
+Generation also
 receives `site-assets/brand/notebooks.png` as a style reference. The image brief
 can specify a subject and composition; exact charts and factual diagrams should
 continue to use data, Mermaid or D2.
@@ -159,9 +164,13 @@ by content or recovery. Conflicting edits made while an assignment runs are pres
 Cover assets are copied to `content/collections/assets/SUBJECT-HASH.png`. The
 collection's relative path and alt text are explicit; imports carry the referenced
 asset with the collection. Builds generate a content-hashed WebP rendition for the
-featured homepage entry and collection overview. No cover means no image: neither
+featured homepage entry and collection overview. The Ink & Paper theme preserves
+its aspect ratio in a centred container up to 320 pixels wide, without a fixed
+height cap. Article artwork fills its available column at its natural aspect
+ratio. No cover means no image: neither
 chapter order nor the first article controls it. This does not create a PDF/ebook
-cover or assign social sharing metadata.
+cover. Social preview generation uses the selected cover; see
+[social link previews](social-previews.md).
 
 ## Local setup and limits
 

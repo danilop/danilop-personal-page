@@ -11,6 +11,54 @@ delivery. See [publishing workflow](publishing-workflow.md#5-manually-publish-an
 for the per-article file and explicit local command, and
 [credentials and access](credentials-and-access.md) for secret/state setup.
 
+## Local export and readiness
+
+Implemented locally on 2026-10-03: the editor's **External copies · export** panel
+sits below **Short links**, beside publication controls. It exports current text to
+DEV.to or Medium, including unsaved edits and explicitly labelled drafts. Drafts
+require a standalone surface and a slug; this local preview exception never enables
+remote delivery. Editor-generated payloads always request an unpublished copy.
+Collections, book-only pieces and retired articles cannot be exported here.
+
+**Generate export** creates a Markdown preview, an asset inventory and media review.
+**Download bundle** contains `article.md` with relative `assets/` paths,
+`article-online.md` and `payload.json` with CDN URLs, media review in Markdown/JSON,
+`assets.json` with checksums, and referenced image/download bytes. Local PNGs,
+PDFs, audio and other downloads are included. Local PDF/audio/video blocks retain
+their authored fallback and add the downloadable source; manifest-pinned public CDN objects
+are restored from checksum-verified cache or public storage. Arbitrary remote images
+and live embeds remain external references, explicitly listed for review. No remote
+page, private original, credential, delivery state or unrelated asset is packaged.
+The `zip` command is required (included with macOS). Exports are ignored by Git.
+
+**Copy online Markdown** copies the platform-facing version. **Download asset**
+saves an individual bundled file. Downloads require the local session token, are
+restricted to generated files, and expire after regeneration or a server restart.
+Changing text/settings invalidates the visible result; failed regeneration removes
+old files. One output directory is reused per article/destination.
+
+**Save export settings** requires saved source and records explicit enrolment and
+tag overrides in `publishing/distribution.yaml`. It retains existing title, summary,
+series, excerpt, embed and delivery settings; advanced options remain in YAML.
+New assignments default to full article, draft creation and reviewed updates.
+Neither saving settings nor exporting sends anything. For online use: save source
+and settings, run `npm run assets:prepare`, review and commit the manifest, then
+`npm run release`. Enrolled public exports contribute rendition and source
+identities to the same release/cleanup inventory as website assets. Draft enrolment
+never puts its private media into public build outputs.
+
+The old absolute website `/media/` export path is replaced by the configured media
+CDN for generated assets. The panel distinguishes unprepared assets from manifest
+pins; a pin does not prove live availability. Local bundles work immediately;
+online assets must be released and verified before provider use. CLI delivery
+checks both image URLs and bundled downloads after the exact source deployment.
+
+The DEV adapter has local draft/update/remote-ID fixture coverage, but real-account
+creation, rendering and authentication remain unverified. No article is enrolled
+initially. GitHub website workflows do not consume the stored `DEV_API_KEY`.
+Local API delivery still needs a separately injected key; GitHub secrets cannot
+be retrieved into a local command. See [local usage](local-authoring.md#export-an-external-copy).
+
 ## Provider feasibility
 
 | Destination | Initial adapter | Update behavior |
@@ -58,7 +106,8 @@ spans are normalized before rasterization. Unsupported inputs fail the copy rath
 than silently dropping an image. Remote images remain authored HTTPS URLs and are
 reported for review; the exporter does not download or convert them.
 
-Images are hosted by the canonical website, not uploaded as binaries into DEV.
+Images and downloads are hosted by the configured media CDN, with local bytes
+in the export bundle; DEV payloads reference those public URLs.
 A changed rendition gets a new URL derived from its PNG bytes; the payload changes
 and delivery updates the stored remote article ID. Delivery checks that image URLs
 are reachable after the exact canonical revision has deployed.
@@ -87,8 +136,10 @@ this records an author check, not an automated provider guarantee. It cannot add
 support to DEV. Required block IDs must appear in a full-article export; excerpt
 assignments cannot declare them.
 
-Exports include `media-review.md` and `media-review.json` alongside the article and
-payload. A failed export clears stale outputs and writes `blocked.json`. Build
+CLI exports use the same bundle writer as the local editor. `article.md` is the
+portable local copy; `article-online.md` and `payload.json` use public URLs. Exports
+also include `bundle.zip`, referenced `assets/`, checksum inventory,
+`media-review.md` and `media-review.json`. A failed export clears stale outputs and writes `blocked.json`. Build
 preparation records blocked copies privately in `.generated/distribution-blocked.json`
 and continues building the canonical website; the delivery command independently
 blocks those copies and reports failure. Medium completion requires

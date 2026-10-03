@@ -128,6 +128,7 @@ export default [
         stack: "readonly",
         error: "readonly",
         api: "readonly",
+        token: "readonly",
         file: "readonly",
         base: "readonly",
         changed: "readonly",

@@ -138,14 +138,18 @@ RSS rebuilds automatically with summaries of public standalone articles.
 `npm run validate` remains available for technical website checks alone; it is not
 a substitute for the local content review or factual/source verification.
 
-If cross-posting is planned, configure the destination and explicit assignment,
-then run:
+For a local copy, use the editor’s **External copies · export** panel:
+choose a destination, generate, review media and download its bundle. It can review
+draft/unsaved text without publishing. Save source and **Save export settings** to
+enrol it for release preparation; see [local exports](local-authoring.md#export-an-external-copy).
+For saved public assignments, the CLI also prepares bundles:
 
 ```sh
 npm run distribute
 ```
 
-Review the article and media report in `exports/distribution/<destination>/<piece>/`;
+Review `article-online.md`, the bundled portable `article.md`, assets and media
+report in `exports/distribution/<destination>/<piece>/`;
 resolve any `blocked.json`. This prepares exports without sending them. Review
 assignment settings before committing. Assignments only prepare exports; they
 never authorize a send on commit, push, or tag.
@@ -202,6 +206,11 @@ action. See [publication timestamps](publication-time.md).
 
 ## 5. Manually publish an external copy, when wanted
 
+Exports use the managed media CDN and include local asset bytes. Save the source
+and destination settings, prepare assets, commit and release before online use.
+Verify the exported image/download URLs. First real provider delivery remains
+unverified; a local export is not evidence of account authentication.
+
 Use `publishing/distribution.yaml`, not topic tags or Git tags:
 
 ```yaml
@@ -214,8 +223,8 @@ assignments:
 ```
 
 An assignment prepares the destination version and its media during builds. It
-never sends anything. Keep the current empty list until there is an article to
-cross-post. `creation: published` requests a public first copy when you explicitly
+never sends anything. The editor’s **Save export settings** can create this
+assignment for a saved standalone article; the list starts empty. `creation: published` requests a public first copy when you explicitly
 run delivery; `manual` selects assisted creation. `updates: paused` blocks delivery.
 
 After reviewing the export and deploying that exact commit, inject the provider

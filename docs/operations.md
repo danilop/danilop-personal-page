@@ -142,9 +142,14 @@ and Medium's assisted workflow require no publishing credentials here.
 
 No article is enrolled initially. Add an explicit assignment to
 `publishing/distribution.yaml` and a destination/account to `destinations.yaml`.
-Run `npm run distribute` to generate an article, payload and previous body under
+Run `npm run distribute` to generate online/portable articles, a payload, a ZIP
+with referenced assets and the previous body under
 `exports/distribution/`; compare these before delivery. Each copy also includes
 `media-review.md` and `media-review.json` for conversions, embeds and fallbacks.
+The local editor offers the same export via **External copies · export**; see
+[local exports](local-authoring.md#export-an-external-copy). `article-online.md`
+uses CDN URLs; `article.md` uses relative bundled files. Prepare, commit and release
+enrolled assets before using the online version.
 A blocked copy has `blocked.json` instead of stale deliverable files. Build-time
 blocked copies are listed privately in `.generated/distribution-blocked.json`;
 they do not prevent canonical site deployment. Credentials are named

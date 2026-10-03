@@ -1,6 +1,7 @@
 import { mediaUrl } from "./media";
 import { siteUrl } from "./deployment.mjs";
 import sharp from "sharp";
+import path from "node:path";
 import { z } from "zod";
 import { load } from "cheerio";
 import { Assets, escape as e, safeUrl } from "./assets";
@@ -19,7 +20,8 @@ export const mediaPolicySchema = z
 export type MediaPolicy = z.infer<typeof mediaPolicySchema>;
 export type MediaReview = {
   block?: string;
-  action: "png" | "embed" | "embed-review" | "fallback" | "external-image";
+  action:
+    "png" | "embed" | "embed-review" | "fallback" | "external-image" | "asset";
   source?: string;
   url?: string;
   detail: string;
@@ -75,6 +77,15 @@ export function mediaProfiles() {
 
 /** Only authored local assets are rasterized. Remote URLs are not fetched here. */
 export class PortableAssets extends Assets {
+  emitted = new Map<string, { file: string; bytes: number }>();
+  private async record(data: Uint8Array | string, extension: string) {
+    const url = await super.emit(data, extension);
+    this.emitted.set(url, {
+      file: path.resolve(this.out, url.slice(7)),
+      bytes: Buffer.byteLength(data),
+    });
+    return url;
+  }
   constructor(
     public policy: MediaPolicy,
     public review: MediaReview[],
@@ -83,8 +94,17 @@ export class PortableAssets extends Assets {
     super(out);
   }
   override async emit(data: Uint8Array | string, extension: string) {
-    if (!/^\.(svg|png|jpe?g|webp|avif|tiff?|gif|heif|heic)$/i.test(extension))
-      return super.emit(data, extension);
+    if (!/^\.(svg|png|jpe?g|webp|avif|tiff?|gif|heif|heic)$/i.test(extension)) {
+      const url = await this.record(data, extension);
+      if (!this.review.some((item) => item.url === url))
+        this.review.push({
+          action: "asset",
+          source: extension,
+          url,
+          detail: "Local download retained with its original bytes.",
+        });
+      return url;
+    }
     let input =
       typeof data === "string" ? Buffer.from(data) : Buffer.from(data);
     if (
@@ -134,7 +154,7 @@ export class PortableAssets extends Assets {
       .flatten({ background: "#ffffff" })
       .png()
       .toBuffer();
-    const url = await super.emit(png, ".png");
+    const url = await this.record(png, ".png");
     if (!this.review.some((item) => item.action === "png" && item.url === url))
       this.review.push({
         action: "png",
@@ -243,7 +263,11 @@ export function portableRegistry(
             );
           // Reuse the authored alternative, not the book's renderer selection or document target.
           const rendered = await plugin.render({ ...r, target: "book" });
-          const destination = r.block.alternative.url ?? url;
+          const download = await localDownload(r);
+          const destination =
+            r.block.alternative.url ??
+            url ??
+            (download ? mediaUrl("media:" + download.slice(1)) : undefined);
           if (!destination)
             throw Error(
               `Cross-post fallback requires a companion URL for ${block ?? r.block.kind}`,
@@ -255,7 +279,9 @@ export function portableRegistry(
             parsed.password
           )
             throw Error("Fallback links require public HTTPS URLs");
-          if (!r.block.alternative.url)
+          if (download)
+            rendered.html += `<p><a href="${e(download)}">Download ${e(r.block.title ?? r.block.kind)}</a></p>`;
+          else if (!r.block.alternative.url)
             rendered.html += `<p><a href="${e(destination)}">Open ${e(r.block.title ?? "companion content")}</a></p>`;
           review.push({
             block,
@@ -291,12 +317,22 @@ export function portableRegistry(
   return result;
 }
 
+async function localDownload(r: Request) {
+  if (
+    !["document", "audio", "video"].includes(r.block.kind) ||
+    typeof r.block.source.path !== "string"
+  )
+    return undefined;
+  return r.assets.copy(r.owner, r.block.source.path);
+}
+
 /** Retain figure destinations in the canonical site; platform heading rules differ. */
 export function portableHtml(
   html: string,
   canonical: string,
   origin: string,
   review: MediaReview[],
+  assetUrls = new Map<string, string>(),
 ) {
   const $ = load(html, {}, false);
   $("a[href^='#']").each((_, element) => {
@@ -304,7 +340,8 @@ export function portableHtml(
   });
   $("a[href]").each((_, element) => {
     const href = $(element).attr("href")!;
-    if (href.startsWith("/")) $(element).attr("href", siteUrl(href, origin));
+    if (href.startsWith("/"))
+      $(element).attr("href", assetUrls.get(href) ?? siteUrl(href, origin));
   });
   $("img").each((_, element) => {
     const node = $(element),
@@ -312,7 +349,7 @@ export function portableHtml(
       alt = node.attr("alt");
     if (!src || !alt)
       throw Error("Every cross-post image requires a URL and alternative text");
-    const url = new URL(siteUrl(src, origin));
+    const url = new URL(assetUrls.get(src) ?? siteUrl(src, origin));
     if (url.protocol !== "https:" || url.username || url.password)
       throw Error("Cross-post images require public HTTPS URLs");
     node.attr("src", url.href);

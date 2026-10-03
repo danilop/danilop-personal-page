@@ -44,6 +44,13 @@ and covers keep their local syntax, so preview, import and book exports use the
 same verified source bytes. Frozen editions still contain their own resource
 copies and checksums; arbitrary remote book-image freezing remains unsupported.
 
+Enrolled public external copies use the same dependency and output inventory.
+Their PNG renditions and downloads are prepared, pinned and uploaded before the
+source is pushed, even when that rendition differs from the website image. Draft
+enrolment stays private. Local export bundles contain their referenced bytes and
+are never cleanup protection roots or deployment inputs; save enrolment and prepare
+a release to retain CDN assets for online copies.
+
 Published pages and social metadata use the configured media domain. New managed
 renditions are omitted from Amplify's artifact. The initial migration's old
 `/media/` URLs are explicitly pinned, hydrated and retained in that artifact so

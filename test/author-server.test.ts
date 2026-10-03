@@ -172,6 +172,43 @@ test(
     const disk = await api("read?file=" + encodeURIComponent(file));
     assert.equal(disk.publication, "draft");
     assert.equal(disk.text, original);
+    const exports = await api(
+      "export-settings?file=" + encodeURIComponent(file),
+    );
+    assert(exports.destinations.some((d: { id: string }) => d.id === "dev"));
+    const exported = await api("export-generate", {
+      file,
+      revision: disk.revision,
+      text: original,
+      destination: "dev",
+    });
+    assert.equal(exported.assets.length, 1);
+    assert.match(exported.markdown, /media\.danilop\.net/);
+    const downloadPath =
+      "/_author/api/export-download?" +
+      new URLSearchParams({ id: exported.id, name: "bundle.zip" });
+    assert.equal((await fetch(origin + downloadPath)).status, 403);
+    const bundle = await fetch(origin + downloadPath, {
+      headers: { "X-Author-Token": token },
+    });
+    assert.equal(bundle.status, 200);
+    assert.equal(bundle.headers.get("content-type"), "application/zip");
+    assert.equal(
+      Buffer.from(await bundle.arrayBuffer())
+        .subarray(0, 2)
+        .toString(),
+      "PK",
+    );
+    await api(
+      "export-download?" +
+        new URLSearchParams({
+          id: exported.id,
+          name: "../../publishing/site.yaml",
+        }),
+      undefined,
+      400,
+    );
+
     // Switch the actual rendered preview, not just visibility of existing cards.
     let readyState;
     for (let i = 0; i < 600; i++) {

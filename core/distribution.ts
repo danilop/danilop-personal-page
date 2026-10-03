@@ -26,6 +26,7 @@ import {
   articleUrl,
   standalone,
   readYaml,
+  parser,
   type Piece,
   type Library,
 } from "./model";
@@ -125,6 +126,54 @@ export function payloadHash(payload: Payload) {
     }),
   );
 }
+function validateExportSource(piece: Piece, previewDraft = false) {
+  if (
+    !allowed(piece, "standalone") &&
+    !(
+      previewDraft &&
+      piece.status === "draft" &&
+      piece.publication.surfaces.includes("standalone")
+    )
+  )
+    throw Error("Only public standalone articles can be distributed");
+  if (!piece.slug)
+    throw Error("Set an article slug before exporting its canonical URL");
+}
+function prepareExportPiece(piece: Piece, a: Assignment) {
+  const exportedPiece =
+    a.mode === "excerpt"
+      ? {
+          ...piece,
+          body: a.excerpt!,
+          ast: parser().parse(a.excerpt),
+        }
+      : { ...piece, ast: structuredClone(piece.ast) };
+  visit(exportedPiece.ast, (node) => {
+    if (
+      "url" in node &&
+      typeof node.url === "string" &&
+      node.url.startsWith("media:")
+    )
+      node.url = mediaUrl(node.url);
+  });
+  const definitions = new Map<string, Definition>();
+  visit(exportedPiece.ast, "definition", (node) => {
+    definitions.set(node.identifier, node);
+  });
+  visit(exportedPiece.ast, "imageReference", (node, index, parent) => {
+    const definition = definitions.get(node.identifier);
+    if (!definition) throw Error(`Missing image definition ${node.identifier}`);
+    if (parent && index !== undefined)
+      parent.children[index] = {
+        type: "image",
+        url: definition.url,
+        title: definition.title,
+        alt: node.alt,
+        position: node.position,
+      };
+  });
+  return exportedPiece;
+}
 export async function exportPublication(
   piece: Piece,
   lib: Library,
@@ -134,10 +183,10 @@ export async function exportPublication(
     plugin?: string;
     assetsOut?: string;
     profiles?: MediaProfiles;
+    previewDraft?: boolean;
   } = {},
 ) {
-  if (!allowed(piece, "standalone"))
-    throw Error("Only public standalone articles can be distributed");
+  validateExportSource(piece, options.previewDraft);
   const configured =
     options.plugin ??
     (await readYaml("publishing/destinations.yaml")).destinations[a.destination]
@@ -145,6 +194,8 @@ export async function exportPublication(
   const profile = (options.profiles ?? mediaProfiles()).get(configured ?? "");
   const policy = mediaPolicySchema.parse(a.media ?? {});
   const review: MediaReview[] = [];
+  const assets = new PortableAssets(policy, review, options.assetsOut);
+  const assetUrls = new Map<string, string>();
   const canonical_url = siteUrl(articleUrl(piece), origin);
   let body: string;
   if (a.mode === "excerpt") {
@@ -153,55 +204,27 @@ export async function exportPublication(
       throw Error("Required block embeds cannot be omitted by an excerpt");
   }
   {
-    const exportedPiece =
-      a.mode === "excerpt"
-        ? {
-            ...piece,
-            body: a.excerpt!,
-            ast: (await import("./model")).parser().parse(a.excerpt),
-          }
-        : { ...piece, ast: structuredClone(piece.ast) };
-    visit(exportedPiece.ast, (node) => {
-      if (
-        "url" in node &&
-        typeof node.url === "string" &&
-        node.url.startsWith("media:")
-      )
-        node.url = mediaUrl(node.url);
-    });
-    const definitions = new Map<string, Definition>();
-    visit(exportedPiece.ast, "definition", (node) => {
-      definitions.set(node.identifier, node);
-    });
-    visit(exportedPiece.ast, "imageReference", (node, index, parent) => {
-      const definition = definitions.get(node.identifier);
-      if (!definition)
-        throw Error(`Missing image definition ${node.identifier}`);
-      if (parent && index !== undefined)
-        parent.children[index] = {
-          type: "image",
-          url: definition.url,
-          title: definition.title,
-          alt: node.alt,
-          position: node.position,
-        };
-    });
+    const exportedPiece = prepareExportPiece(piece, a);
     const doc = standalone(exportedPiece);
     const tokens = new Map<string, string>();
     const rendered = await renderDocument(
       doc,
       lib,
       await readYaml("publishing/renderers.yaml"),
-      new PortableAssets(policy, review, options.assetsOut),
+      assets,
       portableRegistry(exportedPiece, profile, policy, review, tokens),
     );
+    for (const url of assets.emitted.keys())
+      assetUrls.set(url, mediaUrl("media:" + url.slice(1)));
     body = String(
       await unified()
         .use(rehypeParse, { fragment: true })
         .use(rehypeRemark)
         .use(remarkGfm)
         .use(remarkStringify)
-        .process(portableHtml(rendered.html, canonical_url, origin, review)),
+        .process(
+          portableHtml(rendered.html, canonical_url, origin, review, assetUrls),
+        ),
     );
     for (const [token, markdown] of tokens)
       body = body.replaceAll(token, markdown);
@@ -222,7 +245,7 @@ export async function exportPublication(
   body = `The original article can be found [here](${canonical_url}).\n\n${body.trimStart()}`;
   body += `\n\nOriginally published at [Notes Along the Way](${canonical_url}).\n`;
   const tags = a.overrides.tags ?? piece.tags;
-  if (tags.length > 4 && a.destination === "dev")
+  if (tags.length > 4 && profile.id === "dev")
     throw Error("DEV supports four tags; specify destination overrides");
   const payload = {
     title: a.overrides.title ?? piece.title,
@@ -231,25 +254,24 @@ export async function exportPublication(
     canonical_url,
     tags,
     series: a.overrides.series,
-    published: a.creation === "published",
+    published: !options.previewDraft && a.creation === "published",
   } satisfies Payload;
   return {
     payload,
     profile: profile.id,
+    dependencies: assets.dependencies,
+    assets: [...assets.emitted].map(([localUrl, value]) => ({
+      ...value,
+      name: path.basename(value.file),
+      url: assetUrls.get(localUrl)!,
+    })),
     review: review.map((item) => ({
       ...item,
-      ...(item.url ? { url: new URL(item.url, origin).href } : {}),
+      ...(item.url
+        ? { url: assetUrls.get(item.url) ?? new URL(item.url, origin).href }
+        : {}),
     })),
   };
-}
-export async function exportPayload(
-  piece: Piece,
-  lib: Library,
-  a: Assignment,
-  origin: string,
-  options: Parameters<typeof exportPublication>[4] = {},
-) {
-  return (await exportPublication(piece, lib, a, origin, options)).payload;
 }
 export function devAdapter(
   apiKey: string,

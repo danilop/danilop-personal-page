@@ -45,7 +45,12 @@ for release evidence.
 
 Third-party publication is manual: assignments prepare exports; commits and tags
 never send or update external posts. No articles are enrolled. The DEV key is
-not consumed by website builds or GitHub workflows. See
+not consumed by website builds or GitHub workflows. The local editor’s **External
+copies · export** panel prepares DEV.to/Medium Markdown, platform payloads and ZIP
+bundles with referenced local media/downloads. Online assets use the media CDN;
+**Save export settings** includes their renditions in release preparation, without
+sending a post. Draft/unsaved exports remain local. See
+[local exports](docs/local-authoring.md#export-an-external-copy) and
 [credentials and access](docs/credentials-and-access.md) before first delivery.
 Short-link infrastructure is active with private S3, OAC, one CloudFront Function
 and the Free flat-rate plan. The local editor has **Short links** controls for
@@ -221,8 +226,9 @@ suggested, editable alt text for generated images. Insert at the beginning (afte
 the title and summary) or the end of the article.
 For books and collections, the same panel generates or imports a dedicated cover;
 **Use as cover** assigns it to the unsaved collection, then **Save** applies it.
-Cover briefs and generation use the chosen shape and ask for artwork filling the
-canvas, with modest margins and no blank area reserved for title lettering.
+Article and cover generation use the chosen shape and ask for artwork filling the
+canvas, with small margins, clear silhouettes and no blank bands; covers reserve
+no space for title lettering. Inspect physical details before selecting a candidate.
 Image filenames describe their visible content and retain a hash suffix for uniqueness.
 Automatic image cleanup runs after saves, at startup and daily while preview runs.
 Unused candidates and managed source assets get a seven-day grace period, then
@@ -342,6 +348,9 @@ is not used as an article fallback. Switching preview visibility therefore chang
 the artwork along with the selected article.
 Featured books and collections use their explicitly assigned cover, also shown on
 their overview page. They never inherit the first chapter's illustration.
+Featured artwork keeps its natural aspect ratio. Article illustrations fill the
+available column; covers sit in centred containers up to 320 pixels wide, without
+a fixed height that shrinks portrait artwork into a wide empty band.
 
 The homepage and Writing index include visible collection articles as well as
 standalone posts, without duplicate entries. Book articles show their collection

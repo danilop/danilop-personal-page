@@ -1,6 +1,6 @@
 # Asset provenance
 
-Updated: 2026-09-17.
+Updated: 2026-10-03.
 
 - The existing portrait photograph belongs to the original site and is reused on
   the biography page. The ink portrait is the generated interpretation selected
@@ -13,6 +13,18 @@ Updated: 2026-09-17.
 - The three images in `docs/design-concepts/` are generated design studies. Their
   illustrative article/book titles are not published content. The first design,
   Ink & Paper, is the selected starting point.
+- The selected illustration for **Clever Enough to Find the Loophole** was revised
+  with the built-in image-generation tool on 2026-10-03: one winding key attached
+  to the beetle, a central bell clapper and a tighter landscape composition.
+  Its article-local PNG and alt text are selected locally; this revision has not
+  been deployed.
+- The **Chronicles of Computation** draft cover was revised with the same tool on
+  2026-10-03: computing tools in a tighter portrait composition, rectangular card
+  punches and a recognisable closed laptop. It remains a draft cover. These are
+  symbolic illustrations, not reproductions of specific historical artefacts.
+  Both replacements use content-based filenames and the managed-asset manifest;
+  their exact prompts and descriptions are retained in ignored local candidate
+  records. Previous selections remain available through saved-version recovery.
 - Inter and Newsreader are self-hosted from their Fontsource packages. Their SIL
   Open Font License files are retained under `site-assets/licenses/` and copied
   into `/licenses/` in the generated site. Third-party libraries retain their own licenses; the repository's MIT

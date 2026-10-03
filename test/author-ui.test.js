@@ -103,7 +103,56 @@ async function fixture(
       ? "browser-fixture-2"
       : "browser-fixture",
   });
+  let exportRequest,
+    exportEnrollment = null;
+  const exportSettings = () => ({
+    sourceRevision: digest(saved),
+    registryRevision: "registry-export",
+    tags: ["computing"],
+    destinations: [
+      { id: "dev", label: "DEV.to", assignment: exportEnrollment },
+      { id: "medium", label: "Medium", assignment: null },
+    ],
+  });
   const handlers = {
+    "export-settings": exportSettings,
+    "export-generate": (data) => {
+      exportRequest = data;
+      if (data.tags.length > 4)
+        return {
+          error: "DEV supports four tags; specify destination overrides",
+        };
+      return {
+        id: "export-one",
+        markdown: "# Exported fixture\n\n" + data.text,
+        canonical: "https://example.com/writing/browser-fixture/",
+        assets: [
+          {
+            name: "fixture.png",
+            bytes: 1024,
+            url: "https://media.example.com/media/fixture.png",
+          },
+        ],
+        unprepared: ["fixture.png"],
+        external: [],
+        review: [{ action: "png", detail: "PNG rendition." }],
+        unsaved: data.text !== saved,
+        draft: true,
+        enrolled: !!exportEnrollment,
+      };
+    },
+    "export-enroll": (data) => {
+      if (data.text !== saved)
+        return { error: "Save article edits before saving export settings." };
+      exportEnrollment = {
+        mode: "full",
+        creation: "draft",
+        updates: "review",
+        overrides: { tags: data.tags },
+      };
+      return exportSettings();
+    },
+    "export-download": () => Buffer.from("fixture archive"),
     "short-links": linkState,
     "short-link-reserve": (data) => {
       assert.equal(data.file, filename);
@@ -289,6 +338,16 @@ async function fixture(
         for await (const chunk of req) chunks.push(chunk);
         const data = JSON.parse(Buffer.concat(chunks).toString() || "{}");
         assert(handlers[action], `Unexpected API call ${action}`);
+        if (action === "image-list")
+          assert(
+            url.searchParams.get("file"),
+            "Image cleanup must wait for a selected file",
+          );
+        if (action === "export-download") {
+          res.setHeader("Content-Type", "application/zip");
+          res.end(handlers[action]());
+          return;
+        }
         res.setHeader("Content-Type", "application/json");
         const result = handlers[action](data);
         if (result.error) res.statusCode = 409;
@@ -384,6 +443,7 @@ async function fixture(
     page,
     getSaved: () => saved,
     getFixRequest: () => lastFixRequest,
+    getExportRequest: () => exportRequest,
     setDisk: (text) => {
       saved = text;
     },
@@ -994,4 +1054,70 @@ test("short-link controls reserve drafts, show deployment errors and check activ
       .querySelector("#short-link-list")
       .textContent.includes("No short codes"),
   );
+});
+
+test("external copies preview current edits, download assets/bundles and invalidate stale results", async (t) => {
+  const f = await fixture(t),
+    { page } = f;
+  await page.evaluate(() =>
+    document.dispatchEvent(
+      new CustomEvent("author-image-cleanup", { detail: { version: 99 } }),
+    ),
+  );
+  await page.locator("#exports-panel summary").click();
+  await page.waitForFunction(
+    () => document.querySelector("#export-destination").options.length === 2,
+  );
+  await page.locator("#export-generate").click();
+  await page.waitForFunction(
+    () => !document.querySelector("#export-download").disabled,
+  );
+  assert.match(
+    await page.locator("#export-markdown").inputValue(),
+    /Exported fixture/,
+  );
+  assert.match(
+    await page.locator("#export-assets").textContent(),
+    /needs asset preparation/,
+  );
+  const download = page.waitForEvent("download");
+  await page.locator("#export-download").click();
+  assert.equal((await download).suggestedFilename(), "browser-fixture-dev.zip");
+  const asset = page.waitForEvent("download");
+  await page.locator("#export-assets button").click();
+  assert.equal((await asset).suggestedFilename(), "fixture.png");
+  await page.locator("#export-enroll").click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#export-status")
+      .textContent.includes("Export settings saved locally"),
+  );
+  await page.locator("#proseEditor").fill("Changed current text.");
+  assert(await page.locator("#export-download").isDisabled());
+  await page.locator("#export-generate").click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#export-status")
+      .textContent.includes("unsaved edits"),
+  );
+  assert.match(f.getExportRequest().text, /Changed current text/);
+  await page.locator("#export-enroll").click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#export-status")
+      .textContent.includes("Save article edits"),
+  );
+  await page.locator("#export-tags").fill("one,two,three,four,five");
+  await page.locator("#export-generate").click();
+  await page.waitForFunction(() =>
+    document.querySelector("#export-status").textContent.includes("four tags"),
+  );
+  assert(await page.locator("#export-download").isDisabled());
+  await page.locator("#export-destination").selectOption("medium");
+  assert.equal(await page.locator("#export-tags").inputValue(), "computing");
+  await page.locator("#export-generate").click();
+  await page.waitForFunction(
+    () => !document.querySelector("#export-download").disabled,
+  );
+  assert.equal(f.getExportRequest().destination, "medium");
 });

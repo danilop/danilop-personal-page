@@ -50,7 +50,9 @@ function compositionInstructions(cover: boolean, size: string) {
   if (!cover)
     return (
       canvas +
-      "Compose an editorial illustration for this format, with ample breathing room around a clear, legible subject."
+      "Compose an editorial illustration for this format with a clear, legible subject occupying most of the canvas in both dimensions. " +
+      "Use small outer margins and intentional gaps between objects; avoid large blank bands above, below or beside the scene. " +
+      "Keep essential objects fully visible, without a decorative border."
     );
   return (
     canvas +

@@ -68,6 +68,42 @@ reservations, wait for Amplify, then use **Publish saved redirects** and **Check
 links**. Publishing reconciles the full saved registry; drafts stay inactive. See
 [short-link operations](short-link-design.md#local-configuration-and-commands).
 
+The Images panel defers candidate refresh until its selected content is ready;
+startup cleanup cannot issue a request for an empty or stale file.
+
+## Export an external copy
+
+Open an article and expand **External copies · export**, below **Short links**.
+Choose DEV.to or Medium, adjust the copy's tags (DEV allows four), and click
+**Generate export**. Review the online Markdown, bundled assets and media notes.
+**Download bundle** saves a ZIP with portable Markdown, platform payload, media
+review and referenced image/download files. **Copy online Markdown** copies the
+version with public CDN links; **Download asset** saves an individual file.
+
+Generating uses current editor text, including unsaved changes. Drafts are allowed
+only for local review, require a standalone surface and slug, and display that their
+canonical page is not public yet. Editor payloads always request a provider draft.
+Changing text, tags or destination invalidates downloads until regeneration.
+No post is sent, credentials are unnecessary, and the article's publication state
+is unchanged. Remote images and live embeds remain links; the media report lists
+them. This is a portable copy, not an offline archive of remote services.
+
+For CDN-hosted media, save source first and choose **Save export settings**. This
+records the destination/tag choices locally and enrols the copy for build-time media
+preparation. Existing excerpt, override and embed settings are retained (edit those
+advanced settings in `publishing/distribution.yaml`). Then run `npm run assets:prepare`,
+review and commit, and `npm run release`. Local ZIPs already contain their media;
+online copies need released, reachable CDN URLs. A manifest pin in the panel is
+not a live availability check. Enrolled drafts remain excluded from public builds.
+
+Exports reuse `exports/editor/<destination>/<piece>/`; failed regeneration removes
+old results. CLI exports use `exports/distribution/<destination>/<piece>/` and
+include the same bundle. ZIP creation requires the system `zip` command, supplied
+with macOS. Nothing from these ignored directories is deployed.
+For subsequent DEV delivery or Medium completion, use the separate explicit
+[reviewed publication workflow](publishing-workflow.md#5-manually-publish-an-external-copy-when-wanted).
+The editor does not access GitHub's stored DEV token or send external posts.
+
 ## Review repetitions together
 
 Run **Writing checks**, expand **All repeated stem sequences**, and select
@@ -238,7 +274,10 @@ unchanged; this is not a rich-text editor.
 
 The **Images** view provides **Suggest brief** (installed Claude Code, Codex or Pi),
 **Generate image** (Codex signed in with ChatGPT), and explicit candidate insertion.
-It uses the blog's shared ink illustration style. API keys are not used. Candidates
+It uses the blog's shared ink illustration style, with subjects filling the chosen
+canvas, small margins and clear gaps between objects. Inspect physical details and
+framing before insertion; generation does not validate these automatically.
+API keys are not used. Candidates
 survive restarts with their generated descriptions. Selecting a generated candidate
 fills **Image description (alt text)** automatically; review or edit it before
 inserting. Manual edits are retained per candidate during the editor session.

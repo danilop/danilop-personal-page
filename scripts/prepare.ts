@@ -2,7 +2,7 @@ import { publicationOrder } from "../core/publication-time.mjs";
 import { asError } from "../core/errors";
 import { deployment, siteUrl } from "../core/deployment.mjs";
 import { deploymentHtml } from "../core/deployment-html";
-import { assignmentSchema, exportPayload } from "../core/distribution";
+import { assignmentSchema, exportPublication } from "../core/distribution";
 import { loadEditions } from "../core/editions";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -248,7 +248,14 @@ async function main() {
       const piece = lib.pieces.get(assignment.piece);
       if (!piece) throw Error("Unknown distribution source");
       try {
-        await exportPayload(piece, lib, assignment, config.url);
+        const exported = await exportPublication(
+          piece,
+          lib,
+          assignment,
+          config.url,
+        );
+        for (const [file, digest] of exported.dependencies)
+          assets.dependencies.set(file, digest);
       } catch (error) {
         distributionReview.push({
           piece: piece.id,

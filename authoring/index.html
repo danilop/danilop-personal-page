@@ -405,7 +405,8 @@
       }
 
       #metadata,
-      #short-links-panel {
+      #short-links-panel,
+      #exports-panel {
         margin: 0 32px 14px;
         border: 1px solid var(--line);
         border-radius: 5px;
@@ -850,7 +851,8 @@
       }
 
       #metadata .bar,
-      #short-links-panel .bar {
+      #short-links-panel .bar,
+      #exports-panel .bar {
         padding: 6px 16px 16px;
         align-items: end;
         flex-wrap: wrap;
@@ -868,6 +870,11 @@
 
       #version-diff:empty {
         display: none;
+      }
+
+      #exports-panel label {
+        display: grid;
+        gap: 5px;
       }
 
       #short-links-panel label {
@@ -979,7 +986,8 @@
         }
 
         #metadata,
-        #short-links-panel {
+        #short-links-panel,
+        #exports-panel {
           margin: 0 20px 12px;
         }
       }
@@ -1065,7 +1073,8 @@
         }
 
         #metadata,
-        #short-links-panel {
+        #short-links-panel,
+        #exports-panel {
           margin: 0 16px 12px;
         }
 
@@ -1151,7 +1160,8 @@
         }
 
         #metadata,
-        #short-links-panel {
+        #short-links-panel,
+        #exports-panel {
           max-height: 35dvh;
           overflow: auto;
         }
@@ -1179,6 +1189,46 @@
           [aria-pressed="true"]:not(#show-write) {
           border-color: transparent;
           color: var(--muted);
+        }
+      }
+
+      #exports-panel[open] {
+        max-height: 60dvh;
+        overflow: auto;
+        flex-shrink: 0;
+      }
+
+      .export-content {
+        padding: 0 16px 16px;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+
+      #export-markdown {
+        width: 100%;
+        max-height: 300px;
+        resize: vertical;
+        font: 13px/1.5 monospace;
+      }
+
+      #exports-panel ul {
+        padding-left: 20px;
+      }
+
+      @media (width > 760px) {
+        body:has(#exports-panel[open]) {
+          height: auto;
+          min-height: 100dvh;
+        }
+
+        body:has(#exports-panel[open]) main {
+          min-height: 400px;
+        }
+      }
+
+      @media (width <= 760px) {
+        #exports-panel[open] {
+          max-height: 35dvh;
         }
       }
     </style>
@@ -1269,6 +1319,47 @@
       </p>
       <div id="short-link-list"></div>
       <p id="short-link-status" role="status"></p>
+    </details>
+    <details id="exports-panel">
+      <summary>External copies · export</summary>
+      <div class="bar">
+        <label
+          >Destination
+          <select
+            id="export-destination"
+            aria-label="Export destination"
+          ></select
+        ></label>
+        <label
+          >Copy tags (comma separated) <input id="export-tags" type="text"
+        /></label>
+        <button id="export-refresh" type="button">Refresh exports</button>
+        <button id="export-generate" type="button">Generate export</button>
+        <button id="export-enroll" type="button">Save export settings</button>
+        <button id="export-download" type="button" disabled>
+          Download bundle
+        </button>
+        <button id="export-copy" type="button" disabled>
+          Copy online Markdown
+        </button>
+      </div>
+      <div class="export-content">
+        <p id="export-enrollment"></p>
+        <p>
+          Export standalone articles to DEV.to or Medium without sending a post.
+          Bundles contain Markdown, a platform payload, media review and local
+          assets. Remote images and live embeds remain links. Saving export
+          settings enrols this copy for media preparation during a release; it
+          does not publish it.
+        </p>
+        <p id="export-status" role="status"></p>
+        <label for="export-markdown">Online Markdown preview</label>
+        <textarea id="export-markdown" rows="8" readonly></textarea>
+        <h3>Bundled assets</h3>
+        <ul id="export-assets"></ul>
+        <h3>Media review</h3>
+        <ul id="export-review"></ul>
+      </div>
     </details>
     <div id="error" role="alert"></div>
     <main>
@@ -1667,6 +1758,7 @@
         $("error").textContent = e.message || String(e);
       }
       function controls() {
+        document.dispatchEvent(new Event("author-export-context"));
         window.syncAuthorEditor?.();
         const clean = !metadataPending && editor.value === saved;
         $("unpublish").hidden = savedPublication !== "published";
@@ -2258,6 +2350,7 @@
     <script src="/_author/image-recovery.js"></script>
     <script src="/_author/ux.js"></script>
     <script src="/_author/links.js"></script>
+    <script src="/_author/exports.js"></script>
     <script src="/_author/finding-range.js"></script>
     <script src="/_author/repetition-batch.js"></script>
     <script src="/_author/review-decisions.js"></script>

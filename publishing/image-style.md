@@ -11,6 +11,9 @@ speculative historical scenes as documentary fact. Use source-driven diagrams
 and charts when exact quantities or relationships matter.
 
 Follow the composition requirements for the selected canvas and purpose. Article
-illustrations can use ample negative space. Book and collection covers should
-use most of the canvas, with modest margins and no blank space reserved for title
-lettering. The reference provides ink and palette, not a layout to copy.
+illustrations and book/collection covers should use most of the canvas, with small
+outer margins and enough space between objects to keep their silhouettes clear.
+Avoid large blank bands and do not reserve space for title lettering. Keep
+essential objects fully visible. The reference provides ink and palette, not a
+layout to copy. Inspect mechanical details, attachments and repeated objects
+before selecting a candidate; a plausible overall scene can still contain errors.

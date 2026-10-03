@@ -117,7 +117,7 @@
   }
   async function refresh() {
     const f = currentFile;
-    if (!isContent()) return;
+    if (!f || f !== file || !isContent()) return;
     const list = await api("image-list?file=" + encodeURIComponent(f));
     if (f !== currentFile) return;
     candidates = list;

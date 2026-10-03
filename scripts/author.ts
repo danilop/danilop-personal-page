@@ -27,6 +27,7 @@ import {
 } from "../core/author-navigation";
 import { authorCatalog, authorTags } from "../core/author-catalog";
 import { AuthorLifecycle } from "../core/author-lifecycle";
+import { AuthorExports } from "../core/author-exports";
 import { AuthorLinks } from "../core/author-links";
 import { AuthorStore } from "../core/author-store";
 import {
@@ -67,6 +68,7 @@ async function main() {
     store = new AuthorStore(root);
   const lifecycle = new AuthorLifecycle(root);
   const links = new AuthorLinks(root);
+  const exports = new AuthorExports(root);
   const reviews = new Reviews(root);
   const images = new AuthorImages(root);
   const fixes = new AuthorFixes(root);
@@ -351,35 +353,7 @@ async function main() {
     try {
       if (req.headers.host !== `127.0.0.1:${port}`) throw Error("Invalid host");
       const u = new URL(req.url!, origin);
-      if (
-        [
-          "/_author/review.js",
-          "/_author/review-decisions.js",
-          "/_author/images.js",
-          "/_author/image-recovery.js",
-          "/_author/finding-range.js",
-          "/_author/repetition-batch.js",
-          "/_author/fixes.js",
-          "/_author/fix-checks.js",
-          "/_author/ux.js",
-          "/_author/preview.js",
-          "/_author/links.js",
-        ].includes(u.pathname) &&
-        req.method === "GET"
-      ) {
-        res.setHeader("Content-Type", "text/javascript");
-        res.end(
-          await fs.readFile(
-            (["finding-range.js", "repetition-batch.js"].includes(
-              path.basename(u.pathname),
-            )
-              ? "lib/"
-              : "authoring/") + path.basename(u.pathname),
-            "utf8",
-          ),
-        );
-        return;
-      }
+      if (await serveAuthorModule(u)) return;
       if (u.pathname === "/_author/" && req.method === "GET") {
         res.setHeader("Content-Type", "text/html");
         res.end(
@@ -405,11 +379,16 @@ async function main() {
           );
           return;
         }
+        if (await serveExportDownload(u)) return;
         const body = await readRequestBody(u);
         const data = body ? JSON.parse(body) : {},
           action = u.pathname.split("/").pop();
         const result = await exclusive(async () => {
           const routes: Record<string, () => Promise<unknown>> = {
+            "GET export-settings": async () =>
+              exports.settings(u.searchParams.get("file")!),
+            "POST export-generate": async () => exports.generate(data),
+            "POST export-enroll": async () => exports.enroll(data),
             "GET short-links": async () =>
               links.list(u.searchParams.get("file")!),
             "POST short-link-reserve": async () => links.reserve(data),
@@ -642,6 +621,61 @@ async function main() {
       res.end(JSON.stringify({ error: e.message }));
     }
 
+    async function serveAuthorModule(u: URL) {
+      if (
+        [
+          "/_author/review.js",
+          "/_author/review-decisions.js",
+          "/_author/images.js",
+          "/_author/image-recovery.js",
+          "/_author/finding-range.js",
+          "/_author/repetition-batch.js",
+          "/_author/fixes.js",
+          "/_author/fix-checks.js",
+          "/_author/ux.js",
+          "/_author/preview.js",
+          "/_author/links.js",
+          "/_author/exports.js",
+        ].includes(u.pathname) &&
+        req.method === "GET"
+      ) {
+        res.setHeader("Content-Type", "text/javascript");
+        res.end(
+          await fs.readFile(
+            (["finding-range.js", "repetition-batch.js"].includes(
+              path.basename(u.pathname),
+            )
+              ? "lib/"
+              : "authoring/") + path.basename(u.pathname),
+            "utf8",
+          ),
+        );
+        return true;
+      }
+      return false;
+    }
+    async function serveExportDownload(u: URL) {
+      if (u.pathname !== "/_author/api/export-download" || req.method !== "GET")
+        return false;
+      const result = await exclusive(() =>
+        exports.download(
+          u.searchParams.get("id")!,
+          u.searchParams.get("name")!,
+        ),
+      );
+      res.setHeader(
+        "Content-Type",
+        result.name.endsWith(".zip")
+          ? "application/zip"
+          : "application/octet-stream",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${result.name}"`,
+      );
+      res.end(result.bytes);
+      return true;
+    }
     async function readRequestBody(u: URL) {
       let body = "";
       for await (const chunk of req) {

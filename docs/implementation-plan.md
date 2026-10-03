@@ -26,7 +26,7 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 | Local browser models                              | Replaceable runtime, WebLLM worker, pinned model manifest                                                                       | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified                                                                 |
 | Frozen editions                                   | Markua exporter, hashed manifest, immutable output directory, public edition routes                                             | Real fixture export and tamper detection; no public edition created                                                                                              |
 | Leanpub                                           | Preview/status/publication adapter for an existing book                                                                         | API contract tests; live account/source/preview not configured                                                                                                   |
-| DEV / Medium                                      | Manual-only API and assisted adapters, durable state, mapping/review/recovery commands                                          | Local contract/media tests; PNG renditions, native video embeds, Medium URL review and explicit fallback/blocking implemented; no real account delivery enrolled |
+| DEV / Medium                                      | Manual-only adapters, durable state, local editor/CLI bundles and CDN media preparation                                          | Local contract/media/bundle and browser tests; no real provider delivery. See [export readiness](cross-posting.md#local-export-and-readiness) |
 | `danilop.link`                                    | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback                                                       | S3/OAC and Free active; live resolver test passed; CI access unconfigured                                                                                        |
 | Main deployment                                   | Existing Amplify integration; build/check/test configuration and console fallback updated                                       | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md)                                    |
 | Tag vocabulary and private inventory              | Registry, aliases, unique-piece usage counts, review guidance, public topic labels                                              | Public labels deployed; private desktop/mobile reports tested locally; public topic pages remain unimplemented                                                          |
@@ -37,8 +37,10 @@ assistant, browser editing, and subscriptions remain separate future decisions.
 
 ## Remaining release work
 
-Destination-specific media export is implemented and locally tested. Real DEV
-rendering/cache behavior and Medium public-document viewers remain account-dependent
+Destination-specific media exports, local editor controls and asset bundles are
+implemented and locally tested. Generated media uses the managed CDN and release
+inventory; enrolment and media deployment do not send external posts.
+Real DEV rendering/cache behavior and Medium public-document viewers remain account-dependent
 acceptance checks. See [cross-posting](cross-posting.md#media-portability-clarification--2026-09-16).
 
 1. Local regression/browser checks are recorded in [verification](verification.md).

@@ -162,7 +162,11 @@ test("all brief agents receive unsaved snapshot and generation imports only fres
     assert.equal(result.state, "complete");
     assert(seen.includes("Unsaved sentence."));
     assert.match(seen, /Canvas: landscape \(3:2\), 1536x1024 pixels/);
-    assert.match(seen, /ample breathing room/);
+    assert.match(
+      seen,
+      /subject occupying most of the canvas in both dimensions/,
+    );
+    assert.match(seen, /avoid large blank bands/);
     assert.doesNotMatch(seen, /cover layout requirements/);
     assert.equal(result.brief, "A notebook in blue ink.");
   }

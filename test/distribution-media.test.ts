@@ -110,7 +110,7 @@ test("reference-style images and dated fallback previews are rasterized without 
   );
   assert.match(
     exported.payload.body_markdown,
-    /!\[Reference image\]\(https:\/\/www.danilop.net\/media\/[a-f0-9]+\.png\)/,
+    /!\[Reference image\]\(https:\/\/media.danilop.net\/media\/[a-f0-9]+\.png\)/,
   );
   assert.match(exported.payload.body_markdown, /!\[A green page preview\.\]/);
   assert.match(
@@ -169,7 +169,7 @@ test("cross-post charts, both diagram engines and local figures become real PNGs
   assert.match(body, /Figure 4\. Local figure/);
   assert.match(
     body,
-    /!\[Blue rectangle\.\]\(https:\/\/www\.danilop\.net\/media\/[a-f0-9]+\.png\)/,
+    /!\[Blue rectangle\.\]\(https:\/\/media\.danilop\.net\/media\/[a-f0-9]+\.png\)/,
   );
   assert.match(body, /\| step\s*\| value/);
   assert.match(

@@ -48,7 +48,13 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
         )}
       </p>
       {lead.image && (
-        <a href={lead.url} class="article-art">
+        <a
+          href={lead.url}
+          class:list={[
+            "article-art",
+            { "cover-art": lead.kind === "collection" },
+          ]}
+        >
           <img
             src={lead.image.src}
             alt={lead.image.alt}

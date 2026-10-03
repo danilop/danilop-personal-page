@@ -1,3 +1,4 @@
+import { writePublicationExport } from "../core/publication-export";
 import { deployment, siteUrl } from "../core/deployment.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -100,9 +101,14 @@ async function main() {
           if (!destination) throw Error("Unknown destination " + a.destination);
           const exported = await exportPublication(p, lib, a, config.url, {
               plugin: destination.plugin,
+              assetsOut: path.join(out, "assets"),
             }),
             payload = exported.payload;
-          await writePreview(out, payload, exported, key);
+          const bundle = await writePublicationExport(out, exported);
+          await fs.writeFile(
+            path.join(out, "previous.md"),
+            ledger[key]?.remote?.payload.body_markdown ?? "",
+          );
           if (!apply) {
             console.log(`${key}: preview ready at ${out}`);
             return;
@@ -127,7 +133,7 @@ async function main() {
             await adoptCopy(adopt, adapter, payload);
             return;
           }
-          await verifyPublishedImages(payload);
+          await verifyPublishedImages(payload, bundle.assets);
           const result = await syncCopy(
             adapter,
             payload,
@@ -144,6 +150,7 @@ async function main() {
           if (["conflict", "failed"].includes(result.status)) failures++;
         } catch (error) {
           failures++;
+          await fs.rm(out, { recursive: true, force: true });
           await fs.mkdir(out, { recursive: true });
           await fs.writeFile(
             path.join(out, "blocked.json"),
@@ -164,15 +171,23 @@ async function main() {
           console.error(`${key}: ${String(error)}`);
         }
 
-        async function verifyPublishedImages(payload: {
-          title: string;
-          description: string;
-          body_markdown: string;
-          canonical_url: string;
-          tags: string[];
-          series: string | undefined;
-          published: boolean;
-        }) {
+        async function verifyPublishedImages(
+          payload: {
+            title: string;
+            description: string;
+            body_markdown: string;
+            canonical_url: string;
+            tags: string[];
+            series: string | undefined;
+            published: boolean;
+          },
+          assets: { url: string }[],
+        ) {
+          for (const asset of assets) {
+            const response = await fetch(asset.url, { method: "HEAD" });
+            if (!response.ok)
+              throw Error("Published asset is unavailable: " + asset.url);
+          }
           for (const match of payload.body_markdown.matchAll(
             /!\[[^\]]*\]\((https:\/\/[^\s)]+)\)/g,
           )) {
@@ -234,7 +249,8 @@ async function main() {
                 | "embed"
                 | "embed-review"
                 | "fallback"
-                | "external-image";
+                | "external-image"
+                | "asset";
               source?: string;
               detail: string;
             }[];
@@ -276,72 +292,6 @@ async function main() {
           await save();
           console.log(`${key}: author-confirmed ${url}`);
         }
-      }
-
-      async function writePreview(
-        out: string,
-        payload: {
-          title: string;
-          description: string;
-          body_markdown: string;
-          canonical_url: string;
-          tags: string[];
-          series: string | undefined;
-          published: boolean;
-        },
-        exported: {
-          payload: {
-            title: string;
-            description: string;
-            body_markdown: string;
-            canonical_url: string;
-            tags: string[];
-            series: string | undefined;
-            published: boolean;
-          };
-          profile: string;
-          review: {
-            url?: string;
-            block?: string;
-            action:
-              "png" | "embed" | "embed-review" | "fallback" | "external-image";
-            source?: string;
-            detail: string;
-          }[];
-        },
-        key: string,
-      ) {
-        await fs.writeFile(
-          path.join(out, "article.md"),
-          `# ${payload.title}\n\n${payload.body_markdown}`,
-        );
-        await fs.writeFile(
-          path.join(out, "payload.json"),
-          JSON.stringify(payload, null, 2) + "\n",
-        );
-        await fs.writeFile(
-          path.join(out, "media-review.json"),
-          JSON.stringify(
-            { profile: exported.profile, media: exported.review },
-            null,
-            2,
-          ) + "\n",
-        );
-        await fs.writeFile(
-          path.join(out, "media-review.md"),
-          `# Media review\n\nDestination: ${exported.profile}\n\n` +
-            (exported.review
-              .map(
-                (item) =>
-                  `- **${item.action}**${item.block ? ` (${item.block})` : ""}: ${item.detail}${item.url ? `\n  ${item.url}` : ""}`,
-              )
-              .join("\n") || "No media conversions or embeds.") +
-            "\n",
-        );
-        await fs.writeFile(
-          path.join(out, "previous.md"),
-          ledger[key]?.remote?.payload.body_markdown ?? "",
-        );
       }
     },
   );

@@ -223,6 +223,12 @@ video {
   margin: 20px 0 6px;
 }
 
+.article-art.cover-art {
+  width: 100%;
+  max-width: 320px;
+  margin-inline: auto;
+}
+
 .read-link {
   display: inline-flex;
   gap: 10px;
@@ -522,8 +528,7 @@ button:disabled {
 .article-art img {
   display: block;
   width: 100%;
-  max-height: 245px;
-  object-fit: contain;
+  height: auto;
   mix-blend-mode: multiply;
   filter: contrast(1.1) brightness(1.06);
 }
@@ -1053,10 +1058,6 @@ button:disabled {
   .lead h1 {
     font-size: 46px;
     letter-spacing: -1.2px;
-  }
-
-  .article-art img {
-    max-height: 170px;
   }
 
   .recent h3 {

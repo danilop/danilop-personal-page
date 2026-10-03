@@ -161,6 +161,11 @@ The automatic recent list includes eligible standalone and collection-only piece
 counted once per identity. Collection-only entries link directly to their reading
 page and carry book/chapter context. A piece or collection can be featured; a
 featured book links to its first readable piece while its articles remain recent.
+In the implemented Ink & Paper theme, article artwork fills the available column
+at its natural aspect ratio. Dedicated covers use centred containers up to 320
+pixels wide on the homepage and collection overview, with height determined by
+the image. Fixed-height boxes must not reduce portrait artwork to a small image
+surrounded by empty horizontal space.
 Earlier Work shows pre-relaunch AWS/DEV publications and other historical material.
 Elsewhere is reserved for external publications after relaunch and remains hidden
 until populated. Identify publishers and external destinations clearly.
@@ -334,7 +339,15 @@ Capabilities differ by destination: assisted export/import and manual updates
 are valid plugin outcomes when automation is unavailable. Adapt rich content
 with readable static alternatives and links back to interactive originals.
 Exclude drafts, book-only pieces and the legacy catalogue from external
-distribution. Retirement does not silently delete remote copies.
+delivery. Local standalone draft exports may be reviewed without becoming public.
+Retirement does not silently delete remote copies.
+
+The local editor offers destination selection, a Markdown preview, media review
+and a downloadable portable copy with referenced assets. Exporting and enrolment
+are separate actions. Saving destination settings includes media in later release
+preparation; sending a third-party post always remains explicit and separate.
+Remote services stay linked, with limitations visible, rather than falsely claiming
+an offline copy.
 
 This is an accepted launch requirement; actual external publication remains an
 explicit per-article choice. See
