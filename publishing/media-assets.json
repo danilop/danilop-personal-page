@@ -31,9 +31,22 @@
       "bytes": 2646560,
       "contentType": "image/png",
       "key": "originals/tally-bone-abacus-calculator-punched-cards-closed-laptop-9c68aff2bab6f5883666068c897edb26e813c3943165bc2944db7ff3d32e0cfa.png"
+    },
+    "content/pieces/hello-brave-new-world/assets/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21.png": {
+      "sha256": "6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed",
+      "bytes": 2003138,
+      "contentType": "image/png",
+      "key": "originals/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png",
+      "publicKey": "media/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png"
     }
   },
   "outputs": {
+    "open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png": {
+      "sha256": "6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed",
+      "bytes": 2003138,
+      "contentType": "image/png",
+      "key": "media/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png"
+    },
     "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg": {
       "sha256": "367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec",
       "bytes": 37783,
@@ -51,6 +64,12 @@
       "bytes": 32215,
       "contentType": "image/jpeg",
       "key": "media/social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg"
+    },
+    "social-preview-85a068ddcc3d78d6245c51dce6f339f92412a050a2b31759e3d297f9908eb3c5.jpg": {
+      "sha256": "85a068ddcc3d78d6245c51dce6f339f92412a050a2b31759e3d297f9908eb3c5",
+      "bytes": 79708,
+      "contentType": "image/jpeg",
+      "key": "media/social-preview-85a068ddcc3d78d6245c51dce6f339f92412a050a2b31759e3d297f9908eb3c5.jpg"
     },
     "social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg": {
       "sha256": "f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62",
@@ -75,7 +94,8 @@
     "90b08c3f4f4d328c8977b1671a44a40fadf3ad6db655fb93994949805534b6ad": "social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg",
     "022cb5e1fdfbc55669090d43357b06e34a77fbb119a467cf0ea4d48970b3a419": "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg",
     "178b1db734423668a704a50261627658ae3019da3b8bc8e2298823f57be686e6": "social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg",
-    "7304fa327afd8cb7af61aec5de04abe0fbbb706e2a05f2b431715412302a6d7a": "social-preview-4c1ea2e341d969ddb21886534c350a12d1adfe5f43878dc3991b57ecaa98a1f4.jpg"
+    "7304fa327afd8cb7af61aec5de04abe0fbbb706e2a05f2b431715412302a6d7a": "social-preview-4c1ea2e341d969ddb21886534c350a12d1adfe5f43878dc3991b57ecaa98a1f4.jpg",
+    "0255e4760865ccb3257c5d0aaab9c3f5d8e5f5475f998049abff0fdd0ee34c1a": "social-preview-85a068ddcc3d78d6245c51dce6f339f92412a050a2b31759e3d297f9908eb3c5.jpg"
   },
   "legacy": [
     "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg",

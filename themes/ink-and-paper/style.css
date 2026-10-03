@@ -160,7 +160,7 @@ video {
 .masthead {
   display: grid;
   grid-template-columns: 1fr 190px;
-  grid-template-rows: 142px 43px;
+  grid-template-rows: 132px 43px;
   padding-top: 15px;
   border-bottom: 1px solid var(--rule);
 }
@@ -497,8 +497,8 @@ button:disabled {
 }
 
 .identity > p {
-  font-size: 27px;
-  letter-spacing: 4px;
+  font-size: 20px;
+  letter-spacing: 1px;
   color: var(--ink);
   line-height: 1.3;
 }
@@ -829,10 +829,10 @@ button:disabled {
 .identity .name {
   display: block;
   font-family: var(--serif);
-  font-size: 88px;
-  font-weight: 600;
+  font-size: 80px;
+  font-weight: 500;
   line-height: 1.03;
-  letter-spacing: -3.1px;
+  letter-spacing: -1.7px;
   white-space: nowrap;
 }
 
@@ -900,7 +900,7 @@ button:disabled {
 
   .masthead {
     grid-template-columns: 1fr 145px;
-    grid-template-rows: 125px 43px;
+    grid-template-rows: 115px 43px;
   }
 
   .portrait-link {
@@ -921,8 +921,8 @@ button:disabled {
   }
 
   .identity > p {
-    font-size: 22px;
-    letter-spacing: 3px;
+    font-size: 18px;
+    letter-spacing: 0.8px;
   }
 
   .portrait-link img {
@@ -931,7 +931,7 @@ button:disabled {
   }
 
   .identity .name {
-    font-size: 72px;
+    font-size: 68px;
   }
 }
 
@@ -1037,8 +1037,8 @@ button:disabled {
   }
 
   .identity > p {
-    font-size: clamp(12px, 3.2vw, 18px);
-    letter-spacing: 1.5px;
+    font-size: clamp(12px, 3.5vw, 16px);
+    letter-spacing: 0.6px;
     margin-top: 5px;
   }
 
@@ -1119,7 +1119,7 @@ button:disabled {
 
   .identity .name {
     font-size: clamp(31px, 7.5vw, 50px);
-    letter-spacing: -1.4px;
+    letter-spacing: -0.6px;
     line-height: 1.08;
   }
 }

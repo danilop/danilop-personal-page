@@ -13,8 +13,9 @@ make it a section of a growing book. Collections can gain chapters, introduction
 appendices, and other book material without duplicating the original writing.
 
 The Ink & Paper theme puts reading first: a name-first masthead, blue ink,
-serif headlines, and generous space. Fonts, colors, images, CSS, and templates
-live apart from the content and publishing system.
+serif headlines, and generous space. Its masthead pairs medium-weight Newsreader
+for the name with a smaller, lightly spaced Inter publication title. Fonts, colors,
+images, CSS, and templates live apart from the content and publishing system.
 The configurable SVG favicon generates browser and iPhone home-screen icons;
 see [branding assets](docs/authoring-format.md#browser-icons).
 

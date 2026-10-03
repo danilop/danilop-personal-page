@@ -14,6 +14,8 @@ tags: [website, notes]
 shortCode: hello
 ---
 
+![Blue pen-and-ink illustration of an open notebook, loose manuscript pages and an upright book linked by a winding line, with small diagrams and landscapes on the pages.](assets/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21.png)
+
 Welcome to *Notes Along the Way*: a place for articles, experiments, and ideas
 that will grow over time.
 

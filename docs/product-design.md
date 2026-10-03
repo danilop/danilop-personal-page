@@ -24,8 +24,11 @@ The identity hierarchy is **Danilo Poccia** first, with **Notes Along the Way**
 beneath it as the publication title. Explore their visual
 presentation together with the portrait and overall style. The title accommodates writing, experiments, photography,
 and collections that grow into books. The preference does not select a portrait
-or visual direction. Final typography and any tagline remain open. Website naming
-is separate from the archive label and does not imply a domain change.
+or visual direction. The implemented Ink & Paper masthead pairs Newsreader for
+the name with Inter for the publication title. The current refinement uses a
+lighter name and a smaller, more closely spaced title; a separate tagline remains
+open. Website naming is separate from the archive label and does not imply a
+domain change.
 
 ### Profile portrait
 
