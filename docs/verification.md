@@ -4,6 +4,16 @@ Earlier entries retain the commands/ports used at the time. The unified preview
 entry below supersedes the former default snapshot and separate author command;
 see [current preview usage](authoring-preview.md).
 
+## Publication CLI fixture isolation — 2026-10-03
+
+The publication CLI test now replaces the welcome article's body in its disposable
+checkout with controlled prose and a generated PNG. Both destination previews must
+bundle that PNG without network calls. This removes a dependency on ignored source
+artwork and local image caches that caused the hosted build to fail after adding
+the welcome illustration. Production content and export behaviour are unchanged.
+The focused regression passes with the copied source artwork and asset cache
+explicitly removed, and verifies the bundled image dimensions for both destinations.
+
 ## Social link previews — 2026-10-01
 
 Implemented static Open Graph/X metadata, source language and regional locale,

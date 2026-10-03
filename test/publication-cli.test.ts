@@ -152,9 +152,52 @@ test(
       path.join(fixture.dir, "publishing/distribution.yaml"),
       "schemaVersion: 1\nassignments:\n  - {piece: hello-brave-new-world, destination: dev}\n  - {piece: hello-brave-new-world, destination: medium}\n",
     );
+    // Deliver controlled fixture content, independent of the real article's
+    // ignored artwork/cache, which is absent from a fresh CI checkout.
+    const articleFile = path.join(
+      fixture.dir,
+      "content/pieces/hello-brave-new-world/index.md",
+    );
+    const frontmatter = (await fs.readFile(articleFile, "utf8")).split(
+      /\n---\n/,
+    )[0];
+    await fs.rm(path.join(fixture.dir, ".asset-cache"), {
+      recursive: true,
+      force: true,
+    });
+    await fs.rm(path.join(path.dirname(articleFile), "assets"), {
+      recursive: true,
+      force: true,
+    });
+    await fs.copyFile(
+      image,
+      path.join(path.dirname(articleFile), "fixture.png"),
+    );
+    await fs.writeFile(
+      articleFile,
+      frontmatter +
+        "\n---\n\nFixture publication.\n\n![Fixture pixel](fixture.png)\n",
+    );
     const dry = await run("scripts/distribute.ts", []);
     assert.match(dry.output, /preview ready/);
     assert.equal(dry.calls.filter((c) => c.url).length, 0);
+    for (const destination of ["dev", "medium"]) {
+      const out = path.join(
+        fixture.dir,
+        "exports/distribution",
+        destination,
+        "hello-brave-new-world",
+      );
+      const assets = JSON.parse(
+        await fs.readFile(path.join(out, "assets.json"), "utf8"),
+      );
+      assert.equal(assets.length, 1);
+      const metadata = await sharp(
+        path.join(out, "assets", assets[0].name),
+      ).metadata();
+      assert.equal(metadata.width, 2);
+      assert.equal(metadata.height, 2);
+    }
     const delivered = await run("scripts/distribute.ts", [
       "--apply",
       "--reviewed",

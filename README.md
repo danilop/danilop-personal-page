@@ -440,7 +440,10 @@ and `npm run verify:worktree` runs the same checks before staging. ESLint/Knip,
 Astro/TypeScript, HTML/CSS/configuration checks, Ruff/ty/Vulture, security checks,
 complexity limits and JS/Python coverage gates block on failures. The initial
 findings have been corrected without lowering thresholds; browser and disposable
-server integration tests exercise the authoring and publishing boundaries. Dependency rules also block runtime cycles and forbidden browser/server
+server integration tests exercise the authoring and publishing boundaries.
+Publication CLI tests use controlled article text and generated image bytes,
+so fresh CI checkouts do not depend on the author's ignored artwork or local cache.
+Dependency rules also block runtime cycles and forbidden browser/server
 or production/prototype imports. Reports prioritise complex files using current
 changes, 90-day commit frequency and file coverage, with unavailable measurements
 labelled explicitly. See the guide for setup, thresholds and coverage scope.
