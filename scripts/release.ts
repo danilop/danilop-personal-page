@@ -1,3 +1,4 @@
+import { checkAwsCli } from "../core/aws-cli";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
@@ -6,11 +7,7 @@ import {
   releaseAssetCommit,
   uploadReleaseAssets,
 } from "../core/asset-release";
-import {
-  ensureStoredAsset,
-  withAssetLease,
-  recordAssetRelease,
-} from "../core/asset-storage";
+import { withAssetLease, recordAssetRelease } from "../core/asset-storage";
 
 async function main() {
   const root = process.cwd();
@@ -19,6 +16,7 @@ async function main() {
     process.argv.slice(2).length === 1 && process.argv[2] === "--upload-only";
   if (process.argv.length > 2 && !uploadOnly)
     throw Error("Usage: npm run release [-- --upload-only]");
+  await checkAwsCli(); // Fail before validation, credentials, leases or uploads.
   const state = path.join(root, ".authoring-state");
   await fs.mkdir(state, { recursive: true });
   const file = path.join(state, "write.lock");
@@ -36,7 +34,23 @@ async function main() {
       await recordAssetRelease(original, "pending");
       return releaseAssetCommit(
         root,
-        () => uploadReleaseAssets(root, ensureStoredAsset),
+        async () => {
+          const transfers = await uploadReleaseAssets(root);
+          const receipts = path.join(root, ".publication-state/assets");
+          await fs.mkdir(receipts, { recursive: true });
+          await fs.writeFile(
+            path.join(receipts, `${original}.transfers.json`),
+            JSON.stringify(
+              {
+                revision: original,
+                verifiedAt: new Date().toISOString(),
+                transfers,
+              },
+              null,
+              2,
+            ) + "\n",
+          );
+        },
         async (sha) => {
           if (uploadOnly) return;
           execFileSync("git", ["push", "origin", sha + ":refs/heads/main"], {

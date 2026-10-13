@@ -269,3 +269,13 @@ permissions are unchanged.
 
 Keep the README, product/content specifications, authoring examples, architecture,
 launch status and operating instructions synchronized in the same change.
+
+### Asset transfer dependency
+
+Local releases require AWS CLI v2 >= 2.37.12. Run `npm run assets:doctor` after
+installation or updates; `npm run test:aws-cli` checks the actual CLI against a
+local S3 fixture without AWS credentials. Release checks the dependency before
+validation, then uses conditional recursive copies with no deletion. CI installs
+a checksum-pinned version and runs the same contract test. No automatic installs
+or upgrades occur during authoring or release. See the [asset release workflow](asset-release-design.md#aws-cli-dependency-and-transfer-boundary)
+for setup, update policy, output/exit-code checks and ignored transfer reports.

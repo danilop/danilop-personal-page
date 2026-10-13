@@ -1413,3 +1413,32 @@ playback, speed changes and resumption after reload were checked. The exact spok
 transcript remains folded inside More listening options; it may contain reviewed
 adaptations absent from the article text. Safari/iPhone and VoiceOver remain manual
 platform checks; no claim of verification on those platforms is made.
+
+### AWS CLI asset transfer checks
+
+`npm run test:aws-cli` is an explicit native-tool contract test, also run in CI
+with the pinned CLI from `core/aws-cli-version.json`. It uses a loopback S3 server
+and dummy credentials to check actual conditional requests for small and multipart
+uploads, safe existing-key reuse, retained remote objects, quiet transfer output,
+JSON service responses/errors and non-zero failure handling. Ordinary unit tests
+cover missing/unsupported CLI versions, argument safety, all documented failure
+codes, manifest staging and post-transfer verification without requiring the CLI.
+The publication gate still verifies S3 identities and CDN bytes; process success
+alone never authorises a push. These checks do not constitute a live S3 release.
+
+Local verification on 2026-10-13: 312 ordinary tests passed (the native contract
+was skipped in that suite and passed separately with AWS CLI 2.37.12). Observed
+CLI results: initial upload and existing-object reuse returned 0 with empty output;
+a forced transfer failure returned 1; a service denial returned 254 with JSON
+`Code: AccessDenied`. TypeScript, targeted ESLint, Knip, workflow/shell lint and
+changed documentation links passed. The Linux installer archive's AWS signature
+and pinned checksum were verified on Mac; Linux installation/execution awaits CI.
+This adapter has not yet been deployed or exercised against the production bucket.
+
+Release validation also exposed a fixed 100 ms wait in the existing multi-agent
+editing test. It now waits for all jobs to finish, with a five-second deadline,
+and closes the service even on failure. Production job behaviour is unchanged.
+
+The preview watcher fixture also retries its initial edit until Node's watch
+parent observes it, addressing the race between child startup output and parent
+watch registration. Restart, syntax-error recovery and shutdown assertions remain.

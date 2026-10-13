@@ -328,7 +328,12 @@ Editorial image/PDF binaries stay in ignored article/collection asset folders;
 prepares selected public renditions and privately backed-up sources before commit.
 `npm run release` rejects uncommitted work, verifies ignored bytes, uploads to the
 existing media bucket, checks `media.danilop.net`, then pushes the exact commit and
-verifies Amplify delivery. Fresh public builds need no AWS credentials.
+verifies Amplify delivery. Asset transfers use AWS CLI v2 (>= 2.37.12) conditional
+recursive copies; the SDK retains integrity checks, tags and release coordination.
+Run `npm run assets:doctor` to check the native dependency and `npm run test:aws-cli`
+to test the real CLI against a local fixture. CI pins and checks the CLI; publishing
+never installs or upgrades it automatically. Fresh public builds need neither AWS
+credentials nor the CLI. This transfer adapter is locally implemented, not yet released.
 
 The [asset release workflow](docs/asset-release-design.md) preserves local cleanup,
 book/export resolution and existing `/media/` URLs. The remote collector protects

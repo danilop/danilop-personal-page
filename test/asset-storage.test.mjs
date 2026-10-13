@@ -7,7 +7,7 @@ import { execFileSync } from "node:child_process";
 import { S3Client } from "@aws-sdk/client-s3";
 import { sourceRecord, emptyAssetManifest } from "../core/asset-manifest.ts";
 import {
-  ensureStoredAsset,
+  syncStoredAssets,
   privateAssetBytes,
   withAssetLease,
   recordAssetRelease,
@@ -42,6 +42,9 @@ async function fixture(t) {
       $metadata: { httpStatusCode: status },
     });
   const handlers = {
+    HeadBucketCommand() {
+      return {};
+    },
     HeadObjectCommand(input, old) {
       if (!old) throw failure(404);
       return { ...old, ContentLength: old.bytes.length };
@@ -53,6 +56,13 @@ async function fixture(t) {
         Body: {
           transformToString: async () => old.bytes.toString(),
           transformToByteArray: async () => old.bytes,
+          transformToWebStream: () =>
+            new ReadableStream({
+              start(controller) {
+                controller.enqueue(old.bytes);
+                controller.close();
+              },
+            }),
         },
       };
     },
@@ -96,46 +106,87 @@ async function fixture(t) {
   });
   return { root, objects, calls };
 }
-test("storage writes immutable checked objects, keeps drafts private and verifies idempotent reuse", async (t) => {
+test("CLI sync verifies stored objects, preserves ownership tags and rejects corrupt or absent assets", async (t) => {
   const f = await fixture(t),
     bytes = Buffer.from("reviewed original"),
     record = sourceRecord("figure.png", bytes);
-  await ensureStoredAsset(record, bytes, false);
-  assert.equal(f.objects.get(record.key).CacheControl, "private, no-store");
-  assert.equal(f.objects.get(record.key).ContentType, "image/png");
-  assert.equal(
-    f.objects.get(record.key).ChecksumSHA256,
-    Buffer.from(record.sha256, "hex").toString("base64"),
-  );
-  assert.equal(f.calls.filter((x) => x.type === "PutObjectCommand").length, 1);
-  await ensureStoredAsset(record, bytes, false);
-  assert.equal(f.calls.filter((x) => x.type === "PutObjectCommand").length, 1);
-  f.objects.get(record.key).TagSet = [
-    { Key: "asset-unused-since", Value: "old" },
-    { Key: "owner", Value: "keep" },
-  ];
-  await ensureStoredAsset(record, bytes, false);
+  const originalId = process.env.AWS_ACCESS_KEY_ID,
+    originalSecret = process.env.AWS_SECRET_ACCESS_KEY;
+  process.env.AWS_ACCESS_KEY_ID = "fixture-id";
+  process.env.AWS_SECRET_ACCESS_KEY = "fixture-secret";
+  t.after(() => {
+    if (originalId === undefined) delete process.env.AWS_ACCESS_KEY_ID;
+    else process.env.AWS_ACCESS_KEY_ID = originalId;
+    if (originalSecret === undefined) delete process.env.AWS_SECRET_ACCESS_KEY;
+    else process.env.AWS_SECRET_ACCESS_KEY = originalSecret;
+  });
+  const group = {
+    directory: f.root,
+    publicFile: false,
+    contentType: record.contentType,
+    records: [record],
+  };
+  const commands = [];
+  const run = async (args, env) => {
+    if (args[0] === "--version")
+      return { exitCode: 0, stdout: "aws-cli/2.37.12 Python/test", stderr: "" };
+    commands.push(args);
+    assert.equal(env.AWS_ACCESS_KEY_ID, "fixture-id");
+    assert.equal(env.AWS_SECRET_ACCESS_KEY, "fixture-secret");
+    assert(args.includes("--no-overwrite"));
+    assert(!args.includes("--delete"));
+    return { exitCode: 0, stdout: "", stderr: "" };
+  };
+  // A successful process is not proof that all expected objects exist.
+  await assert.rejects(syncStoredAssets([group], run), /S3 fixture/);
+  f.objects.set(record.key, {
+    bytes,
+    ContentType: record.contentType,
+    ChecksumSHA256: Buffer.from(record.sha256, "hex").toString("base64"),
+    TagSet: [
+      { Key: "owner", Value: "keep" },
+      { Key: "asset-unused-since", Value: "old" },
+    ],
+  });
+  await syncStoredAssets([group], run);
   assert.deepEqual(f.objects.get(record.key).TagSet, [
     { Key: "owner", Value: "keep" },
     { Key: "asset-managed", Value: "v1" },
   ]);
+  const taggingCalls = () =>
+    f.calls.filter((x) => x.type === "PutObjectTaggingCommand").length;
+  assert.equal(taggingCalls(), 1);
+  await syncStoredAssets([group], run);
+  assert.equal(taggingCalls(), 1);
   assert.deepEqual(await privateAssetBytes(record), bytes);
-  await ensureStoredAsset({ ...record, key: "media/figure.png" }, bytes, true);
-  assert(f.objects.has("published/media/figure.png"));
-  assert.match(
-    f.objects.get("published/media/figure.png").CacheControl,
-    /s-maxage=300/,
-  );
-  await assert.rejects(
-    ensureStoredAsset(record, Buffer.from("altered"), false),
-    /checksum mismatch/,
-  );
   f.objects.get(record.key).ChecksumSHA256 = "corrupt";
-  await assert.rejects(
-    ensureStoredAsset(record, bytes, false),
-    /differs from manifest/,
+  await assert.rejects(syncStoredAssets([group], run), /differs from manifest/);
+  f.objects.get(record.key).ChecksumType = "COMPOSITE";
+  await syncStoredAssets([group], run);
+  f.objects.get(record.key).bytes = Buffer.alloc(bytes.length);
+  await assert.rejects(syncStoredAssets([group], run), /differs from manifest/);
+  f.objects.set("published/" + record.key, {
+    bytes,
+    ContentType: record.contentType,
+    ChecksumSHA256: Buffer.from(record.sha256, "hex").toString("base64"),
+    TagSet: [],
+  });
+  await syncStoredAssets([{ ...group, publicFile: true }], run);
+  assert(commands.at(-1).includes("s3://fixture/published/"));
+  assert(
+    commands
+      .at(-1)
+      .includes("public, max-age=0, s-maxage=300, must-revalidate"),
   );
-  assert.equal(f.calls.filter((x) => x.type === "PutObjectCommand").length, 2);
+  assert(!f.calls.some((x) => x.type === "PutObjectCommand"));
+  const before = f.calls.length;
+  await assert.rejects(
+    syncStoredAssets([group], async () => {
+      throw Error("CLI unavailable");
+    }),
+    /CLI unavailable/,
+  );
+  assert.equal(f.calls.length, before);
 });
 test("leases use create-first acquisition, exclude concurrent work and release even on failure", async (t) => {
   const f = await fixture(t),

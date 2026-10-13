@@ -3,6 +3,7 @@ import path from "node:path";
 import os from "node:os";
 import {
   S3Client,
+  HeadBucketCommand,
   HeadObjectCommand,
   PutObjectCommand,
   GetObjectCommand,
@@ -13,6 +14,7 @@ import {
 import { z } from "zod";
 import type { AssetRecord } from "./asset-manifest";
 import { execFileSync } from "node:child_process";
+import { runAwsCli, checkAwsCli, type AwsCliRunner } from "./aws-cli";
 import { createHash, randomUUID } from "node:crypto";
 
 const operatorSchema = z
@@ -48,88 +50,155 @@ export async function privateAssetBytes(record: AssetRecord) {
   const bytes = await result.Body.transformToByteArray();
   return bytes;
 }
-export async function ensureStoredAsset(
+export type AssetSyncGroup = {
+  directory: string;
+  publicFile: boolean;
+  contentType: string;
+  records: AssetRecord[];
+};
+
+async function verifyStoredAsset(
+  client: S3Client,
+  request: { Bucket: string; ExpectedBucketOwner: string; Key: string },
   record: AssetRecord,
-  bytes: Uint8Array,
-  publicFile: boolean,
 ) {
+  const object = await client.send(
+    new HeadObjectCommand({ ...request, ChecksumMode: "ENABLED" }),
+  );
   if (
-    bytes.length !== record.bytes ||
-    createHash("sha256").update(bytes).digest("hex") !== record.sha256
+    object.ContentLength !== record.bytes ||
+    object.ContentType !== record.contentType
   )
-    throw Error(`Asset checksum mismatch: ${record.key}`);
-  const { config, client } = await assetStorage();
-  const key = publicFile ? "published/" + record.key : record.key;
-  const request = {
-    Bucket: config.bucket,
-    ExpectedBucketOwner: config.accountId,
-    Key: key,
-  };
-  const checksum = Buffer.from(record.sha256, "hex").toString("base64");
-  async function existing() {
-    try {
-      const object = await client.send(
-        new HeadObjectCommand({ ...request, ChecksumMode: "ENABLED" }),
-      );
-      if (
-        object.ChecksumSHA256 !== checksum ||
-        object.ContentLength !== record.bytes ||
-        object.ContentType !== record.contentType
-      )
-        throw Error(`Stored asset differs from manifest: ${key}`);
-      return true;
-    } catch (error) {
-      if (
-        (error as { $metadata?: { httpStatusCode?: number } }).$metadata
-          ?.httpStatusCode === 404
-      )
-        return false;
-      throw error;
+    throw Error(`Stored asset differs from manifest: ${request.Key}`);
+  const expected = Buffer.from(record.sha256, "hex").toString("base64");
+  if (object.ChecksumType === "COMPOSITE") {
+    // Multipart SHA-256 is a hash of part hashes, not the manifest's whole-file hash.
+    // Verify the actual bytes without inventing multipart/checksum reconstruction.
+    const downloaded = await client.send(
+      new GetObjectCommand({ ...request, IfMatch: object.ETag }),
+    );
+    if (!downloaded.Body) throw Error(`Missing asset body: ${request.Key}`);
+    const hash = createHash("sha256");
+    let length = 0;
+    for await (const chunk of downloaded.Body.transformToWebStream()) {
+      hash.update(chunk);
+      length += chunk.length;
     }
+    if (length !== record.bytes || hash.digest("hex") !== record.sha256)
+      throw Error(`Stored asset differs from manifest: ${request.Key}`);
+  } else if (object.ChecksumSHA256 !== expected) {
+    throw Error(`Stored asset differs from manifest: ${request.Key}`);
   }
-  if (await existing()) {
-    const tags = await client.send(new GetObjectTaggingCommand(request));
-    const current = tags.TagSet ?? [];
+  const tags = await client.send(new GetObjectTaggingCommand(request));
+  const current = tags.TagSet ?? [];
+  if (
+    !current.some((tag) => tag.Key === "asset-managed" && tag.Value === "v1") ||
+    current.some((tag) => tag.Key === "asset-unused-since")
+  ) {
     const next = current.filter(
       (tag) => tag.Key !== "asset-unused-since" && tag.Key !== "asset-managed",
     );
     next.push({ Key: "asset-managed", Value: "v1" });
-    if (
-      !current.some(
-        (tag) => tag.Key === "asset-managed" && tag.Value === "v1",
-      ) ||
-      current.some((tag) => tag.Key === "asset-unused-since")
-    )
-      await client.send(
-        new PutObjectTaggingCommand({ ...request, Tagging: { TagSet: next } }),
-      );
-    return;
-  }
-  try {
     await client.send(
-      new PutObjectCommand({
-        ...request,
-        Body: bytes,
-        ContentType: record.contentType,
-        ContentDisposition:
-          record.contentType === "application/zip" ? "attachment" : "inline",
-        CacheControl: publicFile
-          ? "public, max-age=0, s-maxage=300, must-revalidate"
-          : "private, no-store",
-        Tagging: "asset-managed=v1",
-        ChecksumSHA256: checksum,
-        Metadata: { sha256: record.sha256 },
-        IfNoneMatch: "*",
-      }),
+      new PutObjectTaggingCommand({ ...request, Tagging: { TagSet: next } }),
     );
-  } catch (error) {
-    if (
-      (error as { $metadata?: { httpStatusCode?: number } }).$metadata
-        ?.httpStatusCode !== 412
-    )
-      throw error;
   }
-  if (!(await existing())) throw Error(`Asset upload not verified: ${key}`);
+}
+
+export async function syncStoredAssets(
+  groups: AssetSyncGroup[],
+  run: AwsCliRunner = runAwsCli,
+) {
+  const cliVersion = await checkAwsCli(run);
+  const { config, client } = await assetStorage();
+  // High-level transfers have no ExpectedBucketOwner option. Check it before any CLI write.
+  await client.send(
+    new HeadBucketCommand({
+      Bucket: config.bucket,
+      ExpectedBucketOwner: config.accountId,
+    }),
+  );
+  const credentials = await client.config.credentials();
+  const env = {
+    ...process.env,
+    AWS_ACCESS_KEY_ID: credentials.accessKeyId,
+    AWS_SECRET_ACCESS_KEY: credentials.secretAccessKey,
+    AWS_SESSION_TOKEN: credentials.sessionToken,
+    // Use the SDK-resolved identity for both halves of this operation.
+    AWS_PROFILE: undefined,
+    AWS_DEFAULT_PROFILE: undefined,
+  };
+  const reports = [];
+  const transferConfig = await fs.mkdtemp(
+    path.join(os.tmpdir(), "notes-aws-config-"),
+  );
+  try {
+    const file = path.join(transferConfig, "config");
+    // Test and production use the same documented transfer engine. User profiles
+    // have already resolved credentials; do not inherit untested CRT settings.
+    await fs.writeFile(
+      file,
+      "[default]\ns3 =\n    preferred_transfer_client = classic\n",
+      { mode: 0o600 },
+    );
+    Object.assign(env, { AWS_CONFIG_FILE: file });
+    for (const group of groups) {
+      const result = await run(
+        [
+          "s3",
+          "cp",
+          "--recursive",
+          group.directory,
+          `s3://${config.bucket}/${group.publicFile ? "published/" : ""}`,
+          "--region",
+          config.region,
+          "--no-overwrite",
+          "--no-follow-symlinks",
+          "--checksum-algorithm",
+          "SHA256",
+          "--content-type",
+          group.contentType,
+          "--content-disposition",
+          group.contentType === "application/zip" ? "attachment" : "inline",
+          "--cache-control",
+          group.publicFile
+            ? "public, max-age=0, s-maxage=300, must-revalidate"
+            : "private, no-store",
+          "--only-show-errors",
+          "--no-progress",
+          "--no-cli-pager",
+          "--no-cli-auto-prompt",
+          "--output",
+          "json",
+          "--cli-error-format",
+          "json",
+        ],
+        env,
+      );
+      // CLI zero is necessary, but never sufficient evidence to publish.
+      for (const record of group.records)
+        await verifyStoredAsset(
+          client,
+          {
+            Bucket: config.bucket,
+            ExpectedBucketOwner: config.accountId,
+            Key: (group.publicFile ? "published/" : "") + record.key,
+          },
+          record,
+        );
+      reports.push({
+        operation: "s3 cp --recursive --no-overwrite",
+        cliVersion,
+        publicFile: group.publicFile,
+        contentType: group.contentType,
+        verifiedObjects: group.records.length,
+        ...result,
+      });
+    }
+    return reports;
+  } finally {
+    await fs.rm(transferConfig, { recursive: true, force: true });
+  }
 }
 
 export async function withAssetLease<T>(run: () => Promise<T>) {

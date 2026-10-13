@@ -114,10 +114,19 @@ test("ignored source changes fail checksum checks and drafts never become public
   await fs.mkdir(path.dirname(path.join(root, logical)), { recursive: true });
   await fs.writeFile(path.join(root, logical), bytes);
   const uploaded: boolean[] = [];
-  await uploadReleaseAssets(root, async (_, value, publicFile) => {
-    assert.deepEqual(value, bytes);
-    uploaded.push(publicFile);
+  let staged = "";
+  await uploadReleaseAssets(root, async (groups) => {
+    for (const group of groups) {
+      staged = group.directory;
+      for (const record of group.records)
+        assert.deepEqual(
+          await fs.readFile(path.join(group.directory, record.key)),
+          bytes,
+        );
+      uploaded.push(group.publicFile);
+    }
   });
+  await assert.rejects(fs.stat(staged), /ENOENT/);
   assert.deepEqual(uploaded, [false]);
   await fs.writeFile(path.join(root, logical), "changed ignored bytes");
   await assert.rejects(
@@ -388,4 +397,77 @@ test("preparation refuses to replace an explicitly shared download identity", as
     /Shared download changed/,
   );
   assert.deepEqual(await readAssetManifest(root), manifest);
+});
+
+test("staging isolates draft and public bytes, groups MIME types, verifies all inputs first and cleans up on failure", async (t) => {
+  const { root } = await repository(t);
+  const logical = "content/pieces/story/assets/audio.mp3";
+  const bytes = Buffer.from("reviewed audio");
+  const manifest = emptyAssetManifest();
+  const original = sourceRecord(logical, bytes);
+  const publicRecord = { ...original, key: "media/audio.mp3" };
+  manifest.sources[logical] = { ...original, publicKey: publicRecord.key };
+  manifest.outputs["audio.mp3"] = publicRecord;
+  await writeAssetManifest(root, manifest);
+  await fs.mkdir(path.dirname(path.join(root, logical)), { recursive: true });
+  await fs.writeFile(path.join(root, logical), bytes);
+  await fs.mkdir(path.join(root, ".asset-cache"));
+  const cached = path.join(root, ".asset-cache", original.sha256 + ".mp3");
+  await fs.writeFile(cached, bytes);
+  let staged = "";
+  const verified: string[] = [];
+  const report = await uploadReleaseAssets(
+    root,
+    async (groups) => {
+      assert.equal(groups.length, 2);
+      assert.deepEqual(
+        groups.map((group) => group.publicFile),
+        [false, true],
+      );
+      for (const group of groups) {
+        assert.equal(group.records.length, 1);
+        assert.equal(group.contentType, "audio/mpeg");
+        staged = group.directory;
+        const file = path.join(staged, group.records[0].key);
+        assert.equal((await fs.lstat(file)).isSymbolicLink(), false);
+        assert.deepEqual(await fs.readFile(file), bytes);
+      }
+      // Editing the authoring file cannot alter staged bytes.
+      await fs.writeFile(path.join(root, logical), "later edit");
+      assert.deepEqual(
+        await fs.readFile(path.join(groups[0].directory, original.key)),
+        bytes,
+      );
+      return { exitCode: 0 };
+    },
+    async (record) => {
+      verified.push(record.key);
+    },
+  );
+  assert.deepEqual(report, { exitCode: 0 });
+  assert.deepEqual(verified, [publicRecord.key]);
+  await assert.rejects(fs.stat(staged), /ENOENT/);
+  await fs.writeFile(path.join(root, logical), bytes);
+  await fs.writeFile(cached, "bad output");
+  await assert.rejects(
+    uploadReleaseAssets(root, async () => {
+      assert.fail("No transfers before all hashes pass");
+    }),
+    /checksum mismatch/,
+  );
+  await fs.writeFile(cached, bytes);
+  await assert.rejects(
+    uploadReleaseAssets(
+      root,
+      async (groups) => {
+        staged = groups[0].directory;
+        throw Error("Transfer failed");
+      },
+      async () => {
+        assert.fail("No CDN verification after failed transfer");
+      },
+    ),
+    /Transfer failed/,
+  );
+  await assert.rejects(fs.stat(staged), /ENOENT/);
 });

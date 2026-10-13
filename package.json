@@ -95,7 +95,9 @@
     "narration:sample": "node --import tsx scripts/narration.ts sample",
     "narration:prepare": "node --import tsx scripts/narration.ts prepare",
     "narration:check": "node --import tsx scripts/narration.ts check",
-    "narration:recover": "node --import tsx scripts/narration.ts recover"
+    "narration:recover": "node --import tsx scripts/narration.ts recover",
+    "assets:doctor": "node --import tsx scripts/check-aws-cli.ts",
+    "test:aws-cli": "NOTES_TEST_AWS_CLI=1 node --import tsx --test test/aws-cli-contract.test.ts"
   },
   "author": "",
   "license": "MIT",

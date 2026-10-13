@@ -91,6 +91,90 @@ while deployment was running) and invokes remote cleanup. A successful build alo
 not mark an inventory deployed. There is no transaction spanning S3, GitHub and
 Amplify: immutable objects and upload-before-push make partial failures recoverable.
 
+## AWS CLI dependency and transfer boundary
+
+The CLI adapter is implemented locally and covered by automated tests; this change
+has not yet been released. Earlier asset storage/deployment remains operational.
+
+Install AWS CLI **v2 2.37.12 or newer (v2 only)** on the release machine using the
+[official installer](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+An existing Homebrew-managed installation can remain Homebrew-managed. Do not add
+an npm package named `aws-cli` or the Python `awscli` v1 package: this is a native
+operator dependency, not a website or Python narration dependency. Check it with:
+
+```sh
+npm run assets:doctor
+npm run test:aws-cli
+```
+
+`assets:doctor` only runs `aws --version`; it needs no credentials or network.
+`test:aws-cli` runs the actual executable against a loopback S3 fixture with dummy
+credentials and an isolated profile. It tests conditional small/multipart uploads,
+existing-key preservation, retained remote objects, output formats and failures.
+Use `NOTES_AWS_CLI=/absolute/path/to/aws` to select another installation. Release
+runs the version check automatically, before expensive validation or AWS writes.
+Missing, old, malformed and future-major versions fail with setup guidance.
+There is no silent install or automatic machine-wide upgrade during publishing.
+Preview, builds, commit checks and ordinary unit tests do not require the CLI.
+
+CI installs the exact `tested` version from `core/aws-cli-version.json` using
+`tools/aws-cli/install-ci.sh`, verifies its pinned SHA-256 before extraction, then
+runs the doctor and real-CLI contract test without AWS credentials. The initial
+Linux archive checksum was established after verifying AWS's detached signature.
+To update: choose an official v2 release, verify its signature, update the tested
+version and archive checksum together, run the contract test on Mac and CI, and
+raise the minimum only when needed. AWS CLI is outside npm audit/lockfile coverage.
+
+The release stages only manifest-approved bytes in a temporary private directory,
+grouped by visibility and MIME type. All source/output hashes are checked before
+any transfer. Files are copied, not symlinked, into the snapshot; conflicting
+identities fail. The directory is removed on success or failure. Draft originals
+and selected public renditions use separate destination prefixes and metadata.
+
+**The upload command is `aws s3 cp --recursive --no-overwrite`, not `s3 sync`.**
+Testing CLI 2.37.12 exposed a distinction in AWS's implementation: `sync` drops the
+conditional-write parameter after listing/comparing keys; `cp` retains it for
+both PutObject and CompleteMultipartUpload. Conditional copies preserve the
+existing create-only contract even if another writer appears after comparison.
+The CLI handles file traversal, concurrency, multipart transfer, retries and
+existing-object skips. This repository does not implement a general sync planner
+or parse human-readable dry-run output. Repeated copies can issue extra requests;
+existing multipart objects can incur part uploads before the conditional
+completion is skipped. This is the tradeoff for retaining atomic protection
+without maintaining a separate remote comparison engine.
+
+The adapter uses argv without a shell, disables prompts/progress/pagers, sets
+explicit region/MIME/cache/disposition, requests SHA-256, and never uses `--delete`.
+It checks the expected bucket owner before transfer and supplies the SDK-resolved
+credentials in the child environment so CLI and SDK use the same identity. A
+separate temporary config selects the tested classic transfer engine; profile
+transfer tuning is not inherited. No
+credentials are written to staging, reports or command arguments. Normal AWS
+credential setup (including SSO) remains external. Release credentials need bucket
+listing, object reads/writes/tagging and multipart-abort permissions, in addition
+to the existing lease/inventory/cleanup permissions. Incomplete multipart uploads
+should be expired by the bucket's existing lifecycle policy.
+
+Every non-zero exit code, launch failure, timeout or signal blocks publication.
+`--output json --cli-error-format json` requests structured output where supported,
+but high-level S3 progress/errors can still be text; successful copies with
+`--only-show-errors` normally return empty stdout/stderr. The adapter captures both
+streams without treating text as proof of success. CLI-recognised precondition
+skips are successful reuse candidates; missing/unreadable-file warnings (code 2)
+and transfer failures (code 1) fail. No error is ignored based on message matching.
+See AWS's [return codes](https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-returncodes.html)
+and [error formats](https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-error-format.html).
+
+After a zero exit, SDK checks verify every expected object's size, MIME and whole
+file SHA-256, preserve unrelated tags and renew cleanup ownership. Multipart
+SHA-256 is composite, so those objects are streamed back and hashed rather than
+compared incorrectly with the manifest hash. Full-object checksums avoid that
+extra read. CDN byte/MIME checks still run before pushing. A successful release
+upload saves an ignored `.publication-state/assets/<revision>.transfers.json`
+report containing revision, timestamp, CLI version, exit code, captured output and
+verified-object counts. It is diagnostic evidence, not a deployment receipt.
+No production bucket mutation is part of the automated CLI tests.
+
 ## Share a download
 
 Place the file in an article's or collection's managed asset folder, then:

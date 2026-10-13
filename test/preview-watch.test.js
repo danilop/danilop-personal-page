@@ -124,7 +124,14 @@ test(
       });
     }
     await expectOutput(/START first --port 4331/);
-    await fs.writeFile(module, 'export const value: string = "second";');
+    // Child stdout can arrive before Node's watch parent registers imported
+    // modules. Retry the initial edit until the watcher observes it; subsequent
+    // restart/recovery assertions still exercise actual file notifications.
+    const watchDeadline = Date.now() + 8000;
+    while (!/STOP first/.test(output) && Date.now() < watchDeadline) {
+      await fs.writeFile(module, 'export const value: string = "second";');
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
     await expectOutput(/STOP first/);
     await expectOutput(/START second --port 4331/);
     await fs.writeFile(module, "export const value: string = ;");

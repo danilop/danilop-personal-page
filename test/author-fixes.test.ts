@@ -156,9 +156,14 @@ test("multiple installed agents can work independently without editing files", a
       service.start({ ...request, agent }),
     ),
   );
-  await new Promise((r) => setTimeout(r, 100));
-  assert(jobs.every((j) => j.state === "complete"));
-  service.close();
+  t.after(() => service.close());
+  const deadline = Date.now() + 5000;
+  while (jobs.some((job) => job.state === "running") && Date.now() < deadline)
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  assert(
+    jobs.every((job) => job.state === "complete"),
+    JSON.stringify(jobs.map(({ agent, state }) => ({ agent, state }))),
+  );
 });
 
 test("whole-article repetition review groups overlapping targets, includes distance and accepts selective edits", async () => {
