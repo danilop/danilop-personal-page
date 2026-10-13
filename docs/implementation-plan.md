@@ -188,6 +188,16 @@ audio headers/ranges and public browser playback were verified. Safari/iPhone an
 VoiceOver checks remain outstanding, so deployment does not imply that every
 original platform acceptance check has passed. See [verification](verification.md).
 
+### Commit-time preparation — implemented locally, 13 October 2026
+
+The native pre-commit hook now prepares missing or stale public article narration
+and public audiobooks from the staged snapshot. The accepted workflow stages
+generated metadata automatically and continues into the existing verification
+gate. Partial staging and unrelated edits are preserved; conflicting unstaged
+metadata, changed staging, missing runtime or unreviewed spoken explanations stop
+the commit. Draft preparation remains explicit. CI and the standalone verification
+commands only validate. This local hook change does not require a website deployment.
+
 ## Growing audiobooks — implementation complete, 13 October 2026
 
 The five [audiobook stages](book-audiobooks.md#implementation-sequence-and-evidence-required)

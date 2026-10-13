@@ -789,8 +789,12 @@ boundaries, platform constraints and validation gates.
 
 `tools/code-analysis/` provides a common runner for the native Git pre-commit hook,
 manual worktree validation and CI. It uses a temporary source snapshot with its
-own Git metadata and explicitly attached dependency environments. The real index
-and working files are not reformatted, stashed or staged. Missing tools, analyzer
+own Git metadata and explicitly attached dependency environments. Validation does
+not reformat, stash or stage working files. The native hook first runs
+`scripts/prepare-commit-narration.ts`: it prepares stale public audio in an isolated
+staged snapshot and promotes only verified asset bytes and generated metadata,
+automatically staging the metadata under an index lock. Unstaged prose and
+conflicting metadata are protected. Missing tools, analyzer
 failures and absent reports fail closed; checks continue to collect independent
 findings. Tool versions, complexity and coverage thresholds are versioned. Reports
 remain ignored artifacts; see [code analysis](code-analysis.md) for scope and limits.

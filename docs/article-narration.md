@@ -201,7 +201,8 @@ draft. Existing publication timestamps are retained on updates and republication
 
 Saving an already published article preserves the edit and queues narration when
 its adaptations are ready, or displays a review-needed notice. A public build and
-commit remain blocked until the saved revision has current audio. Draft Save,
+commit remain blocked until the committed revision has current audio. The local
+commit hook can prepare missing/stale audio from the exact staged source. Draft Save,
 unpublishing and deletion do not require synthesis. Manual collection changes are
 saved locally; `assets:prepare` prepares every newly exposed rendition before
 commit. No background task enables a collection or publishes a draft.
@@ -213,11 +214,21 @@ belonging to an active writer. A conflicting source requires operator reconcilia
 
 ### Enforcement at three boundaries
 
-1. The existing pre-commit workflow validates the staged snapshot and its exact
-   prepared bytes, independently of unstaged prose. It never generates or stages.
+1. The local Git pre-commit hook first checks the exact staged source. If public
+   article narration or a public audiobook is missing/stale, it runs the existing
+   `assets:prepare` pipeline in an isolated staged snapshot using installed local
+   Kokoro. Current recordings are reused; drafts are not generated automatically.
+   Generated narration sidecars, article/book indexes and the asset manifest are
+   copied back and staged automatically, then the normal full commit gate runs.
+   Audio and derived asset bytes stay ignored. Unstaged prose is never included.
+   Conflicting unstaged metadata, a changed/locked index, unresolved explanations,
+   missing runtime or preparation failure stop the commit. No provider proposals,
+   approvals, package installation, publication or upload happens in this phase.
+   `npm run verify:commit`, worktree analysis and CI remain validation-only.
 2. Production preparation/build verifies the public graph. Release uses the
    existing immutable asset upload-before-push workflow and validates the captured
-   commit. Run `assets:prepare` before committing.
+   commit. Manual `assets:prepare` remains available; the local hook also runs it
+   when staged narration needs preparation.
 3. CI/Amplify verifies speech/review identities and pinned public bytes without
    Kokoro, provider access or private draft state. Direct hook bypass cannot make
    missing or stale narration pass the production build.

@@ -1,3 +1,4 @@
 #!/bin/sh
 set -eu
+node --import tsx scripts/prepare-commit-narration.ts
 exec node tools/code-analysis/pre-commit.mjs "$@"

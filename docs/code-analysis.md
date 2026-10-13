@@ -103,7 +103,9 @@ source assets can legitimately queue a second watch build. The tests then check
 the rendered pages rather than assuming a later status request stays idle.
 
 An empty staged diff reports that there is nothing to check; use `verify:worktree`
-for the current checkout. Fixes are never automatically applied by the hook. Existing
+for the current checkout. General code fixes are never automatically applied. The native Git hook has a
+separate narration preparation phase described below; `verify:commit` itself
+remains validation-only. Existing
 `npm test`, `npm run check` and `npm run validate` remain available.
 
 `npm test` builds the prototype, then runs every `.test.js`, `.test.mjs` and
@@ -124,8 +126,9 @@ on a browser that a later cleanup hook would close.
 
 ## Commit safety and failure behavior
 
-The hook copies staged bytes into a disposable directory without stashing or changing
-the real index. Unstaged edits cannot conceal a staged error. Worktree mode copies
+The validation phase copies staged bytes into a disposable directory without
+stashing or changing the real index. Before validation, the native Git hook can
+prepare and automatically stage generated audio metadata as described below. Unstaged edits cannot conceal a staged error. Worktree mode copies
 only files Git considers versionable. A snapshot has its own Git index/refs so
 existing authoring/edition tests can inspect repository state; existing objects are
 read through Git's alternate-object mechanism, not through a shared `.git` directory.
@@ -279,8 +282,28 @@ Primary documentation: [ESLint](https://eslint.org/docs/latest/use/configure/con
 ## Narration readiness check
 
 The analyzer checks narration against the snapshot's public graph, speech/review
-identities, timing coverage, manifests and exact bytes. The local hook stays offline
-and never generates/stages. CI mode can hydrate known public assets, and production
+identities, timing coverage, manifests and exact bytes. Before this validation,
+the native Git hook checks readiness and, if necessary, uses the installed local
+Kokoro runtime and `assets:prepare` in a disposable snapshot of the exact index.
+It reuses current audio, prepares eligible public articles/books, verifies the
+results, and stages only generated sidecars/indexes/asset metadata. Binaries stay
+ignored. It never approves explanations or invokes a provider. Model downloads
+and runtime installation are not performed; set up narration beforehand.
+Existing asset preparation may hydrate registered source assets as usual.
+
+Promotion uses the authoring write lock and a recoverable metadata transaction.
+It refuses unexpected source changes, symlink outputs and conflicting unstaged
+metadata. The real Git index is locked, rechecked against its original fingerprint,
+and replaced atomically using only the generated text, preserving partial staging
+and unrelated files. A preparation or validation failure still aborts the commit;
+prepared metadata may remain staged for inspection and retry. No push or deployment
+is triggered. The normal analysis snapshot is created after successful preparation.
+When audio needs preparation, path-limited commits (`git commit --only` or explicit
+file arguments) stop: Git maintains a separate retained index for these commits.
+Stage the intended changes, including selected hunks, then use ordinary
+`git commit`. Alternate indexes remain supported when no second index is locked.
+`verify:commit`, `verify:worktree`, static analysis and CI do not synthesise audio.
+CI mode can hydrate known public assets, and production
 builds independently enforce readiness. Tests prove staged old prose is checked
 independently from unstaged edits. See [narration gates](article-narration.md#enforcement-at-three-boundaries).
 

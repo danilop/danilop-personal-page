@@ -364,9 +364,11 @@ They do not publish content or change the existing approval/deployment workflow.
 ## Narration gate
 
 [Article narration](article-narration.md#publication-and-commit-behaviour) is
-required for the public reading graph. Prepare on the Mac before commit with
-`npm run assets:prepare`; this covers changed articles and newly enabled
-collections. Review unresolved spoken adaptations in the Narration pane.
+required for the public reading graph. The local Git hook prepares missing or
+stale public audio on the Mac from the exact staged content and automatically
+stages generated metadata before validation. Manual `npm run assets:prepare`
+remains available for changed articles and newly enabled collections. Review
+unresolved spoken adaptations in the Narration pane; the hook cannot approve them.
 
 A new article's **Publish locally when audio is ready** action and `article:publish`
 wait for audio before assigning publication state/date. Existing public edits can
@@ -374,7 +376,16 @@ be saved, but stale narration blocks the staged check and production build.
 Unpublishing does not require synthesis. `npm run narration:check` is an offline
 readiness check; `-- --hydrate` explicitly restores known public bytes.
 
-The hook never generates or stages. Release uploads immutable bytes before push;
-CI verifies exact pinned artifacts without Kokoro. Both current public articles
+The hook preserves partial staging and unrelated edits, refusing conflicting
+unstaged metadata or changes to the index during preparation. Install Kokoro with
+`npm run narration:setup` beforehand. Draft audio remains a manual preview action.
+Standalone verification commands and CI only validate prepared audio. Release
+uploads immutable bytes before push; CI verifies exact pinned artifacts without
+Kokoro. Both current public articles
 are backfilled and the policy is enabled. Narration was deployed and verified on
 13 October 2026; authoring and synthesis remain local.
+
+For automatic preparation, stage the intended edits and run ordinary `git commit`.
+Selected hunks are supported. If stale audio is found during `git commit --only`
+or a commit with file arguments, the hook stops before generation to protect Git's
+separate retained index; retry after staging the intended edits normally.

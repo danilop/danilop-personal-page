@@ -472,8 +472,12 @@ short-link preview after the deployed byte-range redirect fix.
 See [social previews](docs/social-previews.md). The plan includes platform limitations,
 ordered technical milestones and acceptance tests. The
 [code-analysis pipeline](docs/code-analysis.md) is now implemented locally: the
-installed pre-commit hook checks the staged snapshot without changing other work,
-and `npm run verify:worktree` runs the same checks before staging. ESLint/Knip,
+installed pre-commit hook prepares missing/stale public narration from staged
+content, automatically stages only generated audio metadata, then checks the
+resulting staged snapshot. Conflicting unstaged metadata stops the commit; partial
+staging and unrelated work are preserved. This commit-time preparation is
+implemented locally and tested separately from deployed site behaviour.
+`npm run verify:worktree` runs validation before staging without synthesis. ESLint/Knip,
 Astro/TypeScript, HTML/CSS/configuration checks, Ruff/ty/Vulture, security checks,
 complexity limits and JS/Python coverage gates block on failures. The initial
 findings have been corrected without lowering thresholds; browser and disposable

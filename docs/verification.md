@@ -1737,3 +1737,30 @@ HTTP server, force-closing remaining connections, so polling cannot hold server
 shutdown ahead of browser cleanup. All test files still run, with concurrency
 capped at four to reduce browser/build contention. The release remains gated on
 the complete suite and exact-revision deployment verification.
+
+### Automatic commit-time narration — 13 October 2026
+
+The native hook now prepares missing/stale public narration and audiobooks from
+the exact staged content and automatically stages generated metadata. Seven
+focused tests cover partial staging, unrelated files, unstaged metadata conflicts,
+concurrent staging, unexpected source changes, synthesis failures, index locks,
+current-audio reuse, CI bypass, alternate indexes and macOS path aliases. A real
+native path-limited commit is rejected before synthesis because Git retains a
+second index that would otherwise miss the hook's additions.
+
+In a disposable checkout, the installed Kokoro/MLX runtime regenerated the welcome
+article after a staged sentence change while a different later edit remained
+unstaged. The resulting transcript matched the staged sentence, the generated
+metadata was staged automatically, and a repeated readiness check reused the
+recording. Preparation and the repeat check took 28.6 seconds on this Mac.
+A separate ordinary native Git commit passed with actual synthesis and narration
+validation; its commit contained the article and generated metadata, excluded an
+unrelated file, and left no metadata/index mismatch. No fixture commit or audio
+was promoted to the working repository. Existing content and draft asset-manifest
+hashes remained unchanged. README and the affected workflow/specification docs
+were updated. This is a local hook change, not a website deployment.
+
+The final isolated staged-snapshot verification passed all 26 checks: 332
+JavaScript tests passed, with the opt-in AWS CLI contract test skipped; Python
+tests, coverage gates, types, lint, architecture and narration readiness passed.
+All 187 checked local documentation links resolve, and `git diff --check` passes.

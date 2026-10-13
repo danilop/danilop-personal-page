@@ -223,3 +223,11 @@ passed an end-to-end human listening review.
 - [Article narration](article-narration.md) remains the implemented foundation.
   [Book serialisation](book-serialization.md) and [shared reading structure](reading-structure.md)
   describe the shared book composition used by this implementation.
+### Commit-time preparation
+
+The local Git hook also prepares missing/stale public audiobooks when checking
+staged publication content. It uses the same staged snapshot, local Kokoro runtime,
+asset pipeline and guarded automatic metadata staging as
+[article narration](article-narration.md#enforcement-at-three-boundaries).
+Draft books remain explicit preview jobs. CI validates prepared bytes without
+running synthesis.
