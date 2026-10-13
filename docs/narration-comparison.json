@@ -1,0 +1,65 @@
+{
+  "method": "PCM16 WAV at 24 kHz; equal sample lengths, direct alignment; 20 ms symmetric Hann windows, 10 ms hop, common -60 dB spectral peak floor. A=MLX and B=reference, except repeat control. Numerical similarity is not perceived quality.",
+  "results": [
+    {
+      "sample": "first-paragraph",
+      "samples": 243000,
+      "sampleRate": 24000,
+      "durationSeconds": 10.125,
+      "correlation": 0.749270697488621,
+      "rmsDbfsA": -24.821615117724885,
+      "rmsDbfsB": -24.663289947672755,
+      "rmse": 0.041033651775852345,
+      "spectralRmseDb": 2.0406417341278265,
+      "frameEnergyCorrelation": 0.9991722733531816
+    },
+    {
+      "sample": "long-excerpt",
+      "samples": 2273400,
+      "sampleRate": 24000,
+      "durationSeconds": 94.725,
+      "correlation": 0.6629176383519999,
+      "rmsDbfsA": -24.809130029826775,
+      "rmsDbfsB": -24.655362329870606,
+      "rmse": 0.04762911850285391,
+      "spectralRmseDb": 2.0628358474392336,
+      "frameEnergyCorrelation": 0.9988051202308421
+    },
+    {
+      "sample": "technical",
+      "samples": 495000,
+      "sampleRate": 24000,
+      "durationSeconds": 20.625,
+      "correlation": 0.973969370004557,
+      "rmsDbfsA": -24.75958707804303,
+      "rmsDbfsB": -24.604059534491615,
+      "rmse": 0.01335089280032493,
+      "spectralRmseDb": 1.849672930558237,
+      "frameEnergyCorrelation": 0.9995830643228141
+    },
+    {
+      "sample": "full-hello",
+      "samples": 1141800,
+      "sampleRate": 24000,
+      "durationSeconds": 47.575,
+      "correlation": 0.7812211779621243,
+      "rmsDbfsA": -24.778288464600536,
+      "rmsDbfsB": -24.615655669823195,
+      "rmse": 0.038534039545798544,
+      "spectralRmseDb": 1.891801654742179,
+      "frameEnergyCorrelation": 0.9991190344100379
+    },
+    {
+      "sample": "mlx-repeat-control",
+      "samples": 243000,
+      "sampleRate": 24000,
+      "durationSeconds": 10.125,
+      "correlation": 0.996001809629735,
+      "rmsDbfsA": -24.821615117724885,
+      "rmsDbfsB": -24.818326663831137,
+      "rmse": 0.0051339493723531835,
+      "spectralRmseDb": 1.2440951634296242,
+      "frameEnergyCorrelation": 0.9998553721712176
+    }
+  ]
+}

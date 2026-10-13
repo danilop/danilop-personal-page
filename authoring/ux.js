@@ -120,7 +120,7 @@
   $("preview-pane").before(tabs);
   window.authorPane = (mode) => {
     document.body.dataset.pane = mode;
-    for (const name of ["Write", "Preview", "Review", "Images"])
+    for (const name of ["Write", "Preview", "Review", "Images", "Narration"])
       $("show-" + name.toLowerCase()).setAttribute(
         "aria-pressed",
         String(mode === name.toLowerCase()),

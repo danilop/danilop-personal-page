@@ -1,0 +1,10 @@
+schemaVersion: 1
+voice: bm_george
+pace: 1
+profile: kokoro-mlx-bf16-v1
+pronunciations: {}
+adaptations:
+  image-f8abd42311cb0521a7df556b:
+    treatment: decorative
+    text: ""
+    reason: Opening atmospheric artwork; the article is complete without describing it.

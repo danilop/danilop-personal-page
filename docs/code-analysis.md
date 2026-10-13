@@ -271,3 +271,16 @@ Primary documentation: [ESLint](https://eslint.org/docs/latest/use/configure/con
 [HTML-validate](https://html-validate.org/usage/index.html),
 [Gitleaks](https://github.com/gitleaks/gitleaks), and
 [actionlint](https://github.com/rhysd/actionlint).
+
+## Narration readiness check
+
+The analyzer checks narration against the snapshot's public graph, speech/review
+identities, timing coverage, manifests and exact bytes. The local hook stays offline
+and never generates/stages. CI mode can hydrate known public assets, and production
+builds independently enforce readiness. Tests prove staged old prose is checked
+independently from unstaged edits. See [narration gates](article-narration.md#enforcement-at-three-boundaries).
+
+Speech Python is a separate Apple Silicon environment. Portable CI runs lint,
+formatting, security and coordinator tests without installing MLX. Only unresolved
+imports in `tools/narration` are exempted from the portable type environment;
+local setup/runtime checks pin those dependencies and real generation validates them.

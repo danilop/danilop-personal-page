@@ -8,6 +8,12 @@ async function repositoryFixture(root) {
   try {
     attachRepository(root, fixture.dir);
     await seedPrivateImages(fixture.dir);
+    // Publication tests supply their own content and assets. Narration's strict
+    // gate is exercised separately with self-contained required:true fixtures.
+    fs.writeFileSync(
+      path.join(fixture.dir, "publishing/narration.yaml"),
+      "schemaVersion: 1\nrequired: false\nprofiles: {}\n",
+    );
     for (const folder of [
       "node_modules",
       "prototypes/ink-and-paper/node_modules",

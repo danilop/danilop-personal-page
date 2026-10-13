@@ -375,6 +375,52 @@
         margin-top: 0;
       }
 
+      #narration-panel {
+        padding: 20px;
+        overflow: auto;
+      }
+
+      .narration-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: end;
+        margin: 12px 0;
+      }
+
+      #narration-panel label {
+        display: block;
+        margin: 8px 0;
+      }
+
+      #narration-panel textarea,
+      #narration-panel audio,
+      #narration-progress {
+        width: 100%;
+      }
+
+      #narration-panel pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        max-height: 250px;
+        overflow: auto;
+        font-size: 12px;
+      }
+
+      .narration-block {
+        border-top: 1px solid #b4b5b6;
+        padding: 12px 0;
+      }
+
+      .narration-block button {
+        margin: 4px;
+      }
+
+      #narration-panel summary {
+        cursor: pointer;
+        padding: 12px 0;
+      }
+
       button:hover:not(:disabled) {
         background: var(--soft);
         border-color: #a9bcb0;
@@ -1387,6 +1433,9 @@
           <button type="button" id="show-images" aria-pressed="false">
             Images
           </button>
+          <button type="button" id="show-narration" aria-pressed="false">
+            Narration
+          </button>
         </div>
         <div class="preview-options">
           <label
@@ -2069,6 +2118,7 @@
           recover();
           controls();
           $("error").textContent = "";
+          if (d.narrationNotice) $("status").textContent = d.narrationNotice;
         } catch (e) {
           error(e);
           controls();
@@ -2358,5 +2408,6 @@
     <script src="/_author/images.js"></script>
     <script src="/_author/fix-checks.js"></script>
     <script src="/_author/fixes.js"></script>
+    <script src="/_author/narration.js"></script>
   </body>
 </html>

@@ -425,3 +425,83 @@ test("progressive enhancement loads an embed only on request and handles clipboa
     "Select code to copy",
   );
 });
+
+test("narration player uses measured time, explicit playback, bounded seeking and hash-scoped resume", async (t) => {
+  const { document, window, click } = dom(
+    t,
+    `<section data-narration data-hash="new-audio" data-title="Article" data-duration="45.07"><audio controls preload="none"></audio><button data-play hidden><span data-play-icon></span><span data-play-label></span></button><div data-controls hidden></div><input data-seek><select data-speed><option value="0.8">0.8</option><option value="1">1</option><option value="1.1" selected>1.1</option><option value="1.2">1.2</option><option value="1.5">1.5</option><option value="2">2</option></select><span data-native-label></span><p data-error hidden></p><button data-retry></button><output data-time></output><button data-back></button><button data-forward></button></section><video></video>`,
+  );
+  const audio = document.querySelector("audio"),
+    video = document.querySelector("video");
+  let plays = 0,
+    pauses = 0,
+    loads = 0,
+    reject = false;
+  audio.currentTime = 0;
+  audio.duration = 45.07;
+  audio.paused = true;
+  audio.play = async () => {
+    plays++;
+    if (reject) throw Error("Network");
+    audio.paused = false;
+    audio.dispatchEvent(new Event("play", { bubbles: true }));
+  };
+  audio.pause = () => {
+    audio.paused = true;
+    audio.dispatchEvent(new Event("pause"));
+  };
+  audio.load = () => {
+    loads++;
+    audio.playbackRate = audio.defaultPlaybackRate;
+  };
+  video.pause = () => pauses++;
+  localStorage.setItem("narration:old-audio", "33");
+  localStorage.setItem("narration:new-audio", "12");
+  await import("../runtime/narration-player.ts");
+  assert.equal(plays, 0);
+  assert.equal(audio.playbackRate, 1.1);
+  assert.equal(audio.defaultPlaybackRate, 1.1);
+  assert.equal(audio.getAttribute("preload"), "none");
+  window.dispatchEvent(new Event("pagehide"));
+  assert.equal(localStorage.getItem("narration:new-audio"), "12");
+  assert.equal(localStorage.getItem("narration:old-audio"), "33");
+  audio.dispatchEvent(new Event("loadedmetadata"));
+  assert.equal(audio.currentTime, 12);
+  click("[data-play]");
+  await tick();
+  assert.equal(plays, 1);
+  assert.equal(pauses, 1);
+  click("[data-forward]");
+  assert.equal(audio.currentTime, 27);
+  click("[data-forward]");
+  click("[data-forward]");
+  assert.equal(audio.currentTime, 45.07);
+  click("[data-back]");
+  assert.equal(audio.currentTime, 30.07);
+  const speed = document.querySelector("[data-speed]");
+  for (const rate of [0.8, 1, 1.1, 1.2, 2, 1.5]) {
+    speed.querySelector(`[value="${rate}"]`).selected = true;
+    speed.dispatchEvent(new Event("change"));
+    assert.equal(audio.playbackRate, rate);
+    assert.equal(audio.defaultPlaybackRate, rate);
+  }
+  audio.dispatchEvent(new Event("timeupdate"));
+  assert.equal(document.querySelector("[data-time]").value, "0:30 / 0:45");
+  click("[data-play]");
+  assert.equal(localStorage.getItem("narration:new-audio"), "30.07");
+  reject = true;
+  click("[data-play]");
+  await tick();
+  assert.equal(document.querySelector("[data-error]").hidden, false);
+  reject = false;
+  click("[data-retry]");
+  await tick();
+  assert.equal(loads, 1);
+  assert.equal(audio.playbackRate, 1.5);
+  assert.equal(document.querySelector("[data-error]").hidden, true);
+  audio.ended = true;
+  audio.dispatchEvent(new Event("ended"));
+  assert.equal(localStorage.getItem("narration:new-audio"), "0");
+  window.dispatchEvent(new Event("pagehide"));
+  assert.equal(audio.paused, true);
+});

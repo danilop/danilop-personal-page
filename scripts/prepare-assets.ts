@@ -11,9 +11,27 @@ import {
   digestAsset,
 } from "../core/asset-manifest";
 import { AuthorImageCleanup } from "../core/author-image-cleanup";
+import { Narrations } from "../core/narration";
+import { narrationUnits } from "../core/narration-speech";
+import { loadLibrary } from "../core/model";
+import { narrationPolicy } from "../core/narration-store";
 
+async function prepareNarrations(root: string) {
+  if ((await narrationPolicy(root)).required) {
+    const narrator = new Narrations(root);
+    try {
+      for (const { piece, title } of narrationUnits(
+        await loadLibrary(),
+      ).values())
+        await narrator.prepareSaved(piece.id, title);
+    } finally {
+      narrator.close();
+    }
+  }
+}
 async function main() {
   const root = process.cwd();
+  await prepareNarrations(root);
   const cleanup = new AuthorImageCleanup(root);
   await fs.mkdir(cleanup.state, { recursive: true });
   const lock = await fs.open(path.join(cleanup.state, "write.lock"), "wx");

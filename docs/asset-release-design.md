@@ -177,3 +177,16 @@ migration deployed. Existing binary history is intentionally retained.
 See [media operations](media-storage.md), [publishing](publishing-workflow.md),
 [image authoring](image-authoring-workflow.md), [social previews](social-previews.md)
 and [verification evidence](verification.md).
+
+## Article narration integration
+
+[Article narration](article-narration.md) reuses the immutable byte inventory,
+hydration and upload-before-push workflow. MP3s are prepared on the Mac before
+commit and stay out of Git. `publishing/narrations.json` adds speech/review/profile
+identities, measured duration and timing coverage. Production builds include only
+verified public renditions; private draft audio and proposals are not enrolled.
+
+Cleanup traverses saved private rendition receipts as well as the public index and
+existing retention roots. Replacements retain old bytes under the established
+retention policy. Local range serving is tested; new narration CDN headers and
+playback still require verification after the first release.

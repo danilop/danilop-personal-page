@@ -5,6 +5,7 @@ import { dateLabel } from "../../site/data";
 import type { ArticleData } from "../../core/site-data";
 import TagList from "../../site/components/TagList.astro";
 import ArticleSharing from "../../site/components/ArticleSharing.astro";
+import NarrationPlayer from "../../site/components/NarrationPlayer.astro";
 interface Props {
   article: ArticleData;
 }
@@ -54,6 +55,7 @@ const { article } = Astro.props;
           position="top"
         />
       </div>
+      <NarrationPlayer narration={article.narration} title={article.title} />
     </header>
     <div class="prose" set:html={article.html} />
     <TagList tags={article.tags} />

@@ -73,3 +73,12 @@ the production build and verification of 185 output files and 897 local links.
 After correcting editor handling of server-added metadata, both browser tests
 (including the new publication test) and focused lint checks passed. No live
 publication or deployment was performed.
+
+## Narration prerequisite
+
+[Article narration](article-narration.md#local-publication-transaction) now holds
+a new article's local publication transition and timestamp until required audio
+is ready. Generation is outside the write lock; promotion checks captured revisions
+and uses a recoverable source/manifest journal. Failure or cancellation preserves
+the draft. Updates and republication preserve the original timestamp. Tests cover
+these transitions; deployed narration delivery remains pending.

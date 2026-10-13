@@ -9,6 +9,7 @@ import {
 } from "../core/preview-cli.mjs";
 import { siteOutput, sitePath } from "../core/deployment.mjs";
 import { openBrowser, openWhenReady } from "../core/preview-browser.mjs";
+import { audioResponse } from "../core/audio-response.mjs";
 
 let options;
 try {
@@ -61,6 +62,7 @@ const types = {
   ".woff2": "font/woff2",
   ".wasm": "application/wasm",
   ".pdf": "application/pdf",
+  ".mp3": "audio/mpeg",
 };
 const server = http.createServer(async (req, res) => {
   try {
@@ -93,6 +95,11 @@ const server = http.createServer(async (req, res) => {
       status = 404;
       file = authoring ? path.join(root, "404.html") : siteOutput + "/404.html";
       body = await fs.readFile(file);
+    }
+    if (status === 200 && path.extname(file) === ".mp3") {
+      res.setHeader("Cache-Control", "no-store");
+      audioResponse(req, res, body);
+      return;
     }
     res.writeHead(status, {
       "content-type": types[path.extname(file)] ?? "application/octet-stream",

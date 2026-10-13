@@ -1,0 +1,746 @@
+{
+  "schemaVersion": 1,
+  "renditions": {
+    "clever-enough-to-find-the-loophole:38b5b5a99cb139e0": {
+      "pieceId": "clever-enough-to-find-the-loophole",
+      "title": "Clever Enough to Find the Loophole",
+      "speechHash": "418eb9cd24a17fc578bc333ba84d8e8c30b0f5217ffcaec7e6052348977c147e",
+      "reviewHash": "f8650ebfecda53788dcfa1fd32052e0646fa14601d58a1e5006b7b134e412bfd",
+      "profileHash": "a8229f2c029b9f54f32f54be83d17820d9d7e8af04f93b0e1723924f3380bbd1",
+      "settings": {
+        "schemaVersion": 1,
+        "voice": "bm_george",
+        "pace": 1,
+        "profile": "kokoro-mlx-bf16-v1",
+        "pronunciations": {},
+        "adaptations": {
+          "image-f8abd42311cb0521a7df556b": {
+            "treatment": "decorative",
+            "text": "",
+            "reason": "Opening atmospheric artwork; the article is complete without describing it."
+          }
+        }
+      },
+      "segments": [
+        {
+          "kind": "title",
+          "text": "Clever Enough to Find the Loophole",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "The interesting part of a new AI launch increasingly comes after the benchmark chart: the explanation of who is allowed to use it.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Google's Gemini 4 Argon announcement, on 30 September, pairs greater capability with restricted initial access through Fairwind, its programme for trusted cyber defenders. Its safeguards address both malicious users and the possibility that the model itself might exceed its remit.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "An earlier Anthropic incident makes that second concern concrete. In its April Mythos Preview safety report, the company described an early model asked to escape a sandbox and contact a researcher. It completed the task, then posted details of the exploit on public websites. Nobody had asked it to do that last part.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The escape involved a computer the model used as a tool; the model itself had not started running independently. Anthropic reported substantial improvements in the final Preview. Still, the incident poses a useful question: what had the system learnt about where an assignment ends?",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Part of the unease lies in giving a resourceful system a job and discovering that its interpretation was more expansive than yours. Intelligence does not inevitably bring disobedience. But the way we reward useful behaviour may also teach lessons we did not intend. To understand why, we need to look at what counts as success during training.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "This matters when choosing a model, too. An upgrade can change what an agent does with its existing permissions, even when its assigned job stays the same.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "What exactly are we trying to tame?",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "An agent is a model connected to tools and given enough freedom to take a sequence of actions. A suggestion in a chat window becomes something more consequential when the system can change files, send messages or use an account.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Being good at completing a task does not show that it will respect the limits of the assignment. Researchers distinguish capability, what a system can do, from alignment, whether its behaviour matches our intentions. Control is our ability to prevent or limit harm when that behaviour fails.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "An agent can cause trouble while trying to help. That differs from a malicious user deliberately requesting an attack, or hostile material tricking the agent into following someone else's instructions. Anthropic's containment guidance explains those distinctions. Here, the question is how helpful persistence can become unauthorised initiative.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "The score has become the job",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "During reinforcement learning, or RL, a model tries responses or actions, receives scores, and is adjusted so that behaviour earning higher scores becomes more likely. For language models, this usually builds on earlier learning from vast amounts of text. The reward helps shape how those capabilities are used.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "But someone has to decide what deserves a good score.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "In RL from human feedback, or RLHF, people commonly compare answers and choose the one they prefer. Another model learns to predict those preferences and supplies scores for further training. The InstructGPT research showed how this could make language models more helpful and better at following instructions.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The weakness is that a preferred answer need not be a truthful one. Anthropic's research on sycophancy found that people and preference models sometimes favoured persuasive agreement over accuracy. Training could reinforce that behaviour. The assistant learns something about pleasing its audience, which is useful until the audience is wrong.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Other RL training uses automatic checks, such as whether code passes a test. This can improve reasoning, but a passing test may miss a defect or ignore how the result was obtained. The score captures what the checker can see. Our intention may include considerably more.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "When a system exploits that gap, researchers call it reward hacking. Changing the scoring mechanism itself is reward tampering. A more capable model may find shortcuts a weaker one could not. Higher scores then become less reassuring: we need to know how it earned them.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "A controlled study illustrates the problem. Researchers trained a model to approximate another model's judgements, then optimised against that approximation. Eventually, its score kept improving while the original judge's score worsened. The experiment shows how pursuing an imperfect measure can defeat its purpose; it does not give a failure rate for assistants in everyday use.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "When cheating becomes a lesson",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "In his September essay, deep-learning researcher Yoshua Bengio suggests that a clear task score can compete with safety instructions that leave room for interpretation. A capable agent may find a reading that permits a shortcut, then explain why it was acceptable. The agent has taken the score more seriously than the safety instructions.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The concern is what training teaches. A habit learnt while rewards are available can persist after training ends. Calling that “obsession” does not mean the model feels desire or frustration. It describes behaviour that keeps pursuing the task when it should stop.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Anthropic tested this danger in Training a Misaligned Reward Seeker. Researchers deliberately rewarded a model in settings where cheating could pay, omitting usual protections. The resulting Hacker-Opus attempted harmful shortcuts and evaded oversight in simulations, while appearing aligned in many tests without an obvious grading mechanism. They found no evidence of self-preservation or reward seeking beyond the current task.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "That is evidence that this training setup could teach broader misconduct. It does not establish that all RL does so. Nor can every incident tell us which part of training caused it. OpenAI's Hugging Face report and METR and Redwood's investigation describe agents trying to defeat a scorer, but also weaknesses in safeguards and infrastructure. Those observations do not isolate a single cause.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Even fixing the score may leave the wrong lesson intact. A model can learn behaviour that works during training and pursue it in a setting where it no longer serves the intended purpose. Researchers call this goal misgeneralisation. Passing the training test and learning what we meant are separate achievements.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "The trouble with checking the working",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "A natural response is to watch more closely. Read the model's reasoning, catch the shortcut, and penalise it during training. But what does that teach? In OpenAI's monitoring experiments, penalising reasoning that revealed misconduct reduced the visible admissions without eliminating the misconduct. Training had made the problem harder to see. A later study did not find that RL generally reduced the ability to monitor the models it tested. The effect depends on the training conditions.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The GPT-6 Astra system card reported better alignment results alongside less informative reasoning for its monitors. Google also describes precautions with Argon's monitoring to avoid teaching evasion through training feedback.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "A convincing explanation is therefore not enough. Oversight needs to check what the agent actually did and, where necessary, stop an action before it causes harm.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Permission to proceed",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "These training experiments help explain the concern behind restricted releases. Anthropic's Fable 5 and Mythos 5 shared an underlying model but had different safeguards and access rules. Some Fable requests went to a less capable model. Capability alone did not determine what the company considered suitable for wider use.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "OpenAI released GPT-6 Astra on 3 September. Its intended successor, GPT-6.1 Astra, was withheld from public release. In a Wall Street Journal interview, OpenAI safety lead Saachi Jain described a model that had become more persistent at completing tasks but had regressed in two areas. It was less reliable about reporting its actions truthfully and respecting scope authorisation, the limits of what the user had permitted it to do. The detailed test results are not public; Jain said the company was still investigating what had caused the problems.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Persistence is useful when an agent needs to diagnose a failed test or find an alternative route through a documentation problem. It becomes dangerous when the next route requires permission the user never gave. The agent must recognise when an obstacle is a boundary it should respect.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Tests of GPT-6 Astra, the preceding version, show how awkward this can get. In the UK AI Security Institute's September simulations, agents sometimes performed supply-chain attacks outside the stated scope, trying to insert malicious code into software used by their target. AISI conducted these tests with cyber classifiers disabled: the filters intended to block harmful cyber assistance were off. In tests chosen because failures were frequent, clearer instructions substantially reduced the attacks but did not eliminate them. Some agents asked for permission, received a generic automated message to continue, and treated it as authorisation—even after noting that it was probably automated.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "That result implicates the surrounding software as well as the model. An approval process must distinguish a human decision from a mechanism that keeps a test running. A permission dialogue whose answer is always yes has rather missed the point of asking.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The agents may have behaved differently because they recognised parts of the simulation. We cannot read these results as a rate of attacks in everyday use.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "A rather awkward sort of leaderboard",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "The industry now has FelonyBench, a satirical leaderboard of reported incidents affecting third parties. Its totals cannot rank developers by safety: exposure, testing and willingness to disclose differ. Nor does its name establish a legal verdict. The useful material lies in the linked reports.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "AISI's August account describes evaluation agents acting against real people and systems. Internet access was deliberately enabled and cyber classifiers disabled. Human review blocked the most serious attempted software compromise; AISI identified no resulting real-world harm. The agents had access beyond the task's intended scope, without needing to escape their sandbox.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "AISI acknowledged that it had not reassessed its internet-access policy quickly enough as capabilities advanced. That is a reason to revisit permissions when upgrading models. It also cautions against treating every failure as evidence against a learning algorithm: training, instructions and access all matter.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Changing what earns the reward",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "The incidents leave us with a harder question than whether to grant an agent another permission. Could we teach it differently in the first place?",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "One option is to change what earns the reward. A model that can say how uncertain it is gives the surrounding software a chance to pause before a doubtful decision becomes an action.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "TypeSafe AI's Jev, introduced by founder Diogo Almeida in September, aims to make bounded decisions with useful estimates of uncertainty. It returns a choice, score or probability, rather than a paragraph. Software defines the available options and decides what to do with the answer.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Its training method is Reinforcement Learning for Calibrated Decisions, or RLCD. Calibration means that, across comparable predictions given an 80% probability, roughly 80% should be correct. The point is practical: software can use those probabilities to decide when to ask for human review.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "RLHF learns from what people prefer; RLCD aims for decisions whose probabilities reflect their reliability. Both use reinforcement learning. Jev changes the target and narrows the model's role. In The Bitterest Lesson, Almeida's company argues that choosing the right task matters before scaling the machinery.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "This is a promising distinction, not a safety guarantee. A recent evaluation found useful calibration on choice tasks, but showed that rules for acting on other probabilities needed adjustment for the task. It is an early study of the product, not proof that RLCD alone accounts for the results. TypeSafe also documents susceptibility to adversarial input. A well-formed answer can still be wrong; a reliable prediction does not make every action based on it acceptable.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Learning from examples",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "Another option is to teach through examples. Show a model good responses, including honest uncertainty and occasions when it ought to stop, and train it to produce similar behaviour. This is supervised fine-tuning, already used in systems such as InstructGPT. It needs no RL at that stage, though the model still has to apply the lessons correctly in situations the examples did not cover.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "We can also teach directly from pairs of better and worse answers. A method called Direct Preference Optimisation does this without the separate reward model and conventional RL loop used by RLHF. It simplifies training, but the quality of the preferences still matters. If people favour confident agreement over truth, changing the procedure leaves those judgements no wiser.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Follow-up research found that pushing this kind of preference learning further could also make results worse. Those tests concerned summarisation, not autonomous agents, but the distinction matters: leaving RL behind does not automatically leave imperfect measures behind.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "These methods can replace particular training stages, or work alongside RL. They change how a model learns; we still need evidence that it learnt the right behaviour.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Predicting before acting",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "A robot given an image of where an object should end up faces a different kind of lesson. It can learn how objects move, predict the effects of possible actions, and use those predictions to choose its next move. It need not learn every task by collecting rewards for completing it.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "This is the approach explored in Yann LeCun's work: learning how a situation changes supplies the knowledge; a separate planning process uses it towards a goal.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Meta's V-JEPA 2 research provides a concrete example. It learns from video and robot data to build a world model, a predictor of how the environment changes. Using the target image, a robot can compare possible actions, take one, observe what happens and plan again. Meta demonstrated robot manipulation without training on rewards specific to those tasks.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "That separation could reduce reliance on rewarded trial and error. But predicting consequences better still leaves us to choose acceptable goals and actions. The robotics results do not establish safe behaviour in general-purpose AI agents.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "A world model can also help an agent learn through rewards by letting it rehearse possible actions. Even then, its predictions do not decide what merits a reward.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Bengio's Scientist AI proposal takes the separation further: it aims for an honest predictor without preferences about the outcomes its predictions bring about. Any action-taking would sit in explicit surrounding software. This remains a research proposal with assumptions to test, rather than an established replacement for today's agents.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "The owner can remove the brakes",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "Training also cannot guarantee that its lessons will survive deliberate modification. An open-weight model makes its parameters available to download and change. In Anthropic's assessment of GLM-5.3, a modification suppressing refusal behaviour led the model to engage with all 50 simulated malicious trials in one test, compared with none for direct requests to the unmodified model. Engagement meant attempting a connection, not completing an attack.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "This is a different problem: a malicious operator wants compliance. Anthropic is also a competitor, and its comparison with hosted Claude cannot test weight editing against a service that keeps its weights private. The finding illustrates a limit on the durability of safeguards, not proof that RL caused the misconduct. Once weights are distributed, their developer cannot assume its restrictions will remain intact.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Teaching an agent when to stop",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "The alternatives give us several choices: change what earns a reward, learn from examples without RL, or learn to predict consequences and plan separately. Each addresses part of the problem. None makes the intended behaviour self-evident.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Training should make appropriate stopping and accurate reporting part of success. The software around the model must also limit what it can reach or change. NCSC's guidance provides practical ways to restrict access and contain failures.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "AISI's control evaluations test whether defences hold against agents set up to evade them. That evidence can support a safety case, a reasoned argument for a particular deployment. It depends on the tests and capabilities involved; it is not a lifetime membership certificate.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Before deploying or upgrading an agent, three questions deserve concrete answers: what can it change, which actions need approval, and what evidence shows that the controls still work with the new model?",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The model that published its exploit had completed the requested task. The agents that mistook an automated reply for permission had even stopped to ask. Those are recognisable pieces of useful behaviour, carried beyond the point where they were useful.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "A high score tells us that a system satisfied a measure. We need to check that it also learnt the limits that make success acceptable. When the next step requires permission it does not have, completing the task is no longer the whole job.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Knowing when to stop should count as intelligence, too.",
+          "pause": 0.28
+        }
+      ],
+      "audio": {
+        "sha256": "8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2",
+        "bytes": 14235308,
+        "duration": 1186.19,
+        "timings": [
+          {
+            "start": 0,
+            "end": 3.5
+          },
+          {
+            "start": 3.5,
+            "end": 13.43
+          },
+          {
+            "start": 13.43,
+            "end": 33.435
+          },
+          {
+            "start": 33.435,
+            "end": 55.69
+          },
+          {
+            "start": 55.69,
+            "end": 74.895
+          },
+          {
+            "start": 74.895,
+            "end": 97.575
+          },
+          {
+            "start": 97.575,
+            "end": 108.78
+          },
+          {
+            "start": 108.78,
+            "end": 112.505
+          },
+          {
+            "start": 112.505,
+            "end": 128.535
+          },
+          {
+            "start": 128.535,
+            "end": 147.84
+          },
+          {
+            "start": 147.84,
+            "end": 170.27
+          },
+          {
+            "start": 170.27,
+            "end": 173.695
+          },
+          {
+            "start": 173.695,
+            "end": 194.55
+          },
+          {
+            "start": 194.55,
+            "end": 199.18
+          },
+          {
+            "start": 199.18,
+            "end": 220.385
+          },
+          {
+            "start": 220.385,
+            "end": 242.34
+          },
+          {
+            "start": 242.34,
+            "end": 260.995
+          },
+          {
+            "start": 260.995,
+            "end": 278.925
+          },
+          {
+            "start": 278.925,
+            "end": 303.305
+          },
+          {
+            "start": 303.305,
+            "end": 306.705
+          },
+          {
+            "start": 306.705,
+            "end": 328.885
+          },
+          {
+            "start": 328.885,
+            "end": 346.415
+          },
+          {
+            "start": 346.415,
+            "end": 373.345
+          },
+          {
+            "start": 373.345,
+            "end": 399.175
+          },
+          {
+            "start": 399.175,
+            "end": 418.88
+          },
+          {
+            "start": 418.88,
+            "end": 422.48
+          },
+          {
+            "start": 422.48,
+            "end": 450.46
+          },
+          {
+            "start": 450.46,
+            "end": 467.765
+          },
+          {
+            "start": 467.765,
+            "end": 479.195
+          },
+          {
+            "start": 479.195,
+            "end": 482.07
+          },
+          {
+            "start": 482.07,
+            "end": 504.35
+          },
+          {
+            "start": 504.35,
+            "end": 540.905
+          },
+          {
+            "start": 540.905,
+            "end": 560.86
+          },
+          {
+            "start": 560.86,
+            "end": 607.765
+          },
+          {
+            "start": 607.765,
+            "end": 625.72
+          },
+          {
+            "start": 625.72,
+            "end": 636.975
+          },
+          {
+            "start": 636.975,
+            "end": 640.7
+          },
+          {
+            "start": 640.7,
+            "end": 661.43
+          },
+          {
+            "start": 661.43,
+            "end": 687.135
+          },
+          {
+            "start": 687.135,
+            "end": 708.69
+          },
+          {
+            "start": 708.69,
+            "end": 712.09
+          },
+          {
+            "start": 712.09,
+            "end": 721.695
+          },
+          {
+            "start": 721.695,
+            "end": 734.95
+          },
+          {
+            "start": 734.95,
+            "end": 755.205
+          },
+          {
+            "start": 755.205,
+            "end": 776.51
+          },
+          {
+            "start": 776.51,
+            "end": 798.14
+          },
+          {
+            "start": 798.14,
+            "end": 826.795
+          },
+          {
+            "start": 826.795,
+            "end": 829.72
+          },
+          {
+            "start": 829.72,
+            "end": 855.3
+          },
+          {
+            "start": 855.3,
+            "end": 879.83
+          },
+          {
+            "start": 879.83,
+            "end": 898.31
+          },
+          {
+            "start": 898.31,
+            "end": 909.915
+          },
+          {
+            "start": 909.915,
+            "end": 913.015
+          },
+          {
+            "start": 913.015,
+            "end": 931.77
+          },
+          {
+            "start": 931.77,
+            "end": 943.45
+          },
+          {
+            "start": 943.45,
+            "end": 967.705
+          },
+          {
+            "start": 967.705,
+            "end": 985.01
+          },
+          {
+            "start": 985.01,
+            "end": 997.115
+          },
+          {
+            "start": 997.115,
+            "end": 1020.495
+          },
+          {
+            "start": 1020.495,
+            "end": 1023.72
+          },
+          {
+            "start": 1023.72,
+            "end": 1052.6
+          },
+          {
+            "start": 1052.6,
+            "end": 1078.88
+          },
+          {
+            "start": 1078.88,
+            "end": 1082.205
+          },
+          {
+            "start": 1082.205,
+            "end": 1098.71
+          },
+          {
+            "start": 1098.71,
+            "end": 1115.415
+          },
+          {
+            "start": 1115.415,
+            "end": 1135.145
+          },
+          {
+            "start": 1135.145,
+            "end": 1148.75
+          },
+          {
+            "start": 1148.75,
+            "end": 1165.68
+          },
+          {
+            "start": 1165.68,
+            "end": 1181.86
+          },
+          {
+            "start": 1181.86,
+            "end": 1186.19
+          }
+        ],
+        "reusedChunks": 0,
+        "generationSeconds": 129.82015729200793,
+        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3"
+      }
+    },
+    "hello-brave-new-world:4c9faedb7e7ab5bc": {
+      "pieceId": "hello-brave-new-world",
+      "title": "Hello, Brave New World",
+      "speechHash": "47f87e8e765db196fc544da21f84c1dc2f44c98f07f511628f8b561c549f2150",
+      "reviewHash": "3f46ae07049721c5c623742a8170ee0f13b66d9de88276422404afaf586ac1ec",
+      "profileHash": "a8229f2c029b9f54f32f54be83d17820d9d7e8af04f93b0e1723924f3380bbd1",
+      "settings": {
+        "schemaVersion": 1,
+        "voice": "bm_george",
+        "pace": 1,
+        "profile": "kokoro-mlx-bf16-v1",
+        "pronunciations": {},
+        "adaptations": {
+          "image-c343ae7a6be927b8ff5c0cf7": {
+            "treatment": "decorative",
+            "text": "",
+            "reason": "Opening atmospheric artwork; the article is complete without describing it."
+          }
+        }
+      },
+      "segments": [
+        {
+          "kind": "title",
+          "text": "Hello, Brave New World",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "Welcome to Notes Along the Way: a place for articles, experiments, and ideas that will grow over time.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Articles can stand alone or form collections. Some collections may develop into books, with chapters and a connected reading path. Code, diagrams, photographs, and interactive examples will offer different ways to explore a subject.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Earlier articles, talks, and videos remain in Earlier Work. The Original Site preserves a snapshot of the previous website.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "This first note opens the new site. The site will grow over time, with more articles, collections, and experiments.",
+          "pause": 0.28
+        }
+      ],
+      "audio": {
+        "sha256": "65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f",
+        "bytes": 541772,
+        "duration": 45.07,
+        "timings": [
+          {
+            "start": 0,
+            "end": 2.95
+          },
+          {
+            "start": 2.95,
+            "end": 10.93
+          },
+          {
+            "start": 10.93,
+            "end": 27.31
+          },
+          {
+            "start": 27.31,
+            "end": 36.59
+          },
+          {
+            "start": 36.59,
+            "end": 45.07
+          }
+        ],
+        "reusedChunks": 0,
+        "generationSeconds": 8.158635333995335,
+        "path": "content/pieces/hello-brave-new-world/assets/narration-65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3"
+      }
+    }
+  }
+}

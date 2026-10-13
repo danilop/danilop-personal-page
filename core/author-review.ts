@@ -194,6 +194,7 @@ export function agentArgs(agent: Agent, output: string, model = "") {
       "text",
       "--no-tools",
       "--no-extensions",
+      "--no-mcp",
       "--no-skills",
       "--no-prompt-templates",
       "--no-context-files",

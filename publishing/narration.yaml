@@ -1,0 +1,4 @@
+schemaVersion: 1
+required: true
+profiles:
+  kokoro-mlx-bf16-v1: a8229f2c029b9f54f32f54be83d17820d9d7e8af04f93b0e1723924f3380bbd1

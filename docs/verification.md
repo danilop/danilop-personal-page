@@ -1260,3 +1260,134 @@ still acquired/released); deletion uses a conditional delete marker and records
 the retained version ID. Tests cover ownership, manual-file preservation, immutable
 shared downloads, directly linked managed files and committed-inventory recording
 even when the working manifest changes during deployment.
+
+## Dependency refresh and cache boundary check — 2026-10-13
+
+Status: implemented and verified locally; not committed or deployed. Existing
+book-format and reading-navigation edits were preserved. See
+[dependency versions, holds, and security status](dependencies-and-hosting.md).
+
+The root and prototype npm manifests/lockfiles, both Python hash lockfiles, CI
+uv version and GitHub Action pins were refreshed. The new KaTeX override replaces
+vulnerable npm copies with 0.19.0; Mermaid's prebuilt browser bundle independently
+contains patched 0.18.11. TypeScript, Node types, spaCy/model, Thinc and Mando
+compatibility constraints are recorded in the dependency guide.
+
+Validation was performed in this order:
+
+1. Inspected Astro's actual remote-image loader and cache-policy methods. Executed
+   the reported trigger against installed `http-cache-semantics` 4.3.0: both bare
+   `max-stale` and `max-stale=999999` still return a cached Set-Cookie response
+   without revalidation even when `maxAge()` is zero. The upstream issue is **not
+   verified fixed**, despite the advisory's affected range ending at 4.2.0.
+2. `node --test test/astro-cache-boundary.test.mjs` passed all three tests against
+   the installed Astro module. Guarded request-evaluation methods were never
+   called; public image bytes and their 600-second lifetime were preserved,
+   Set-Cookie images received zero reusable lifetime, and conditional 304 responses
+   retained the ETag and cached bytes through the `data: null` contract.
+3. `npm run verify:ci` passed 25 of 27 checks on an isolated snapshot of the full
+   current working tree: 290 JavaScript/TypeScript tests, 16 Python tests, both
+   coverage gates, type checks, prototype build, release preparation and packaged
+   production build all passed. JavaScript line coverage was 81.85%, branches
+   79.15%, and functions 90.54%.
+4. The full working-tree lint check reported 11 errors in existing unfinished book
+   changes: `core/book-format.ts`, `core/books.ts`, `core/model.ts`,
+   `core/reading-structure.ts` and the chapter route. Formatting flagged
+   `test/book-format.test.ts`. These unrelated files were not changed by this
+   refresh. An isolated index snapshot with only the dependency changes, workflow
+   changes and new cache test passed all 18 static checks using
+   `node tools/code-analysis/run.mjs static`.
+5. Final `npm outdated --json` showed only the two documented root compatibility
+   holds; the prototype had no outdated direct packages. `uv pip list --outdated`
+   showed only the documented Thinc and Mando transitive constraints.
+6. Final root `npm audit` reported 11 affected entries (seven high, four moderate)
+   arising from the unpatched Braces and sprintf-js advisories. The prototype
+   audit reported zero. These counts do not include the still-reproducible
+   cache-policy issue in 4.3.0, so a clean entry for that package is not proof of
+   remediation. No alerts were dismissed.
+
+An independent read-only review found no concrete reachable cache bypass or
+regression in this change and reran the publishing integration test covering
+maths, diagrams, charts, tables, references and edition freezing successfully.
+This was a targeted dependency/cache review, not a complete security audit.
+The GitHub-hosted workflow and deployment have not been run for this change.
+
+## Article narration — 13 October 2026
+
+Implemented locally: semantic speech extraction and source-bound adaptations;
+pinned offline Kokoro/MLX generation; private auditions; managed MP3 publication;
+voice, preview and reviewed provider controls; progressive public player; exact
+listening durations; publication journal and mandatory staged/build readiness.
+
+Both currently eligible public articles pass the narration gate: the welcome note
+is 45.07 seconds (5 spoken segments, 541,772 bytes); the longer article is 1,186.19
+seconds (70 segments, 14,235,308 bytes). Known atmospheric illustrations are silent.
+There are no currently published collections to backfill. The generation profile
+is pinned; byte receipts, decode checks and frame-duration verification pass.
+The author approved MLX George by listening. [Numerical and performance results](narration-runtime-comparison.md)
+are separate from subjective quality approval.
+
+Tests exercise formatting-only reuse, source/voice/pace changes, decorative versus
+informative images, rich-block review, ambiguous selectors, byte corruption,
+duration/coverage, draft isolation, stale acceptance, cancellation/restart,
+concurrent edits, partial-journal recovery, staged-versus-unstaged prose, canonical
+import preservation, and publication waiting for every public title variant.
+Browser tests exercise explicit voice auditions, cancellation, source/proposal
+comparison and acceptance. DOM playback tests cover measured duration, bounds,
+speed, resume identity, exclusive playback and retry. Production verification also
+checks rendered players and transcripts, catching dropped Astro schema fields.
+
+Actual in-app browser checks at 390 and 1280 pixels verified the George player,
+no initial media loading, playback, ±15-second seeking, speed changes, pause,
+transcript and resume after reload. No console warnings/errors were observed.
+Local byte-range/HEAD/suffix/416 handling has dedicated tests. Native no-JavaScript
+controls are checked in emitted HTML; Safari/iPhone and VoiceOver have not been
+manually tested. This is not a complete accessibility audit.
+
+Claude and Codex returned valid live structured explanation proposals from a small
+synthetic example. Pi's configured provider hit an output-token limit; no proposal
+was applied. Its parser/failure paths are covered but a successful live Pi response
+with that service configuration remains unverified. No article text was submitted
+in these provider smoke tests.
+
+Production build verification passes for 190 files, 919 local links and 307 legacy
+records. The final automated-check result is recorded below. No narration commit,
+CDN upload, production deployment or exact deployed-revision verification has been
+performed. Those are the remaining stage-7 delivery checks, along with manual
+Safari/iPhone/VoiceOver testing. The feature must be described as local until then.
+
+Final isolated `npm run verify:ci`: **28/28 checks passed**, including **309/309
+JavaScript/TypeScript/browser tests**, Python checks, type checks, lint/security
+checks, production build and narration readiness. JavaScript line coverage is
+81.19%; branch and function coverage remain above their enforced thresholds.
+The check uses non-ignored source plus identity-verified managed bytes, not private
+model caches. Local documentation targets were checked; the only unresolved token
+was the existing illustrative `CANONICAL_ARTICLE_URL` in cross-posting examples.
+
+After that full run, the piece-ID CLI selector was tightened to include every
+public title variant (falling back to the canonical title for private drafts).
+The 14 focused narration tests, including a real CLI invocation over a two-title
+fixture, passed; CLI lint, core type checking, cached preparation and the complete
+public narration check also passed. No worker/audio profile changed.
+
+A subsequent listening-progress fix preserves the stored position when a reader
+visits and leaves without loading audio. All six runtime DOM tests passed with
+`node --experimental-test-module-mocks --import tsx --test test/runtime-dom.test.js`,
+including the regression and existing restore, pause, completion and hash-isolation
+assertions. README and narration behaviour documentation were synchronised; this
+small player change has not been deployed.
+
+Playback now defaults to 1.1× with choices of 0.8×, 1×, 1.1×, 1.2×, 1.5× and 2×.
+All six runtime DOM tests passed again, checking the initial rate, each selectable
+rate and preservation of the selected rate when retry reloads audio. Recordings
+and their measured 1× durations are unchanged; this change is local only.
+
+## Narration release candidate — 13 October 2026
+
+An isolated release copy includes narration and the dependency refresh while
+excluding the unpublished book changes and newly imported drafts. Its full
+`npm run verify:ci` passed all 28 checks, including 297 JavaScript/TypeScript tests,
+Python tests, production build and both narration receipts. The preview-watch
+fixture now installs its shutdown handler before announcing readiness, eliminating
+a race exposed during the first release check. Local documentation links passed.
+Upload, deployed-revision and CDN verification follow through `npm run release`.

@@ -657,3 +657,34 @@ and explicit social-image metadata. Those proposed fields and commands are not
 part of this implemented format yet. Preserve existing codes and immutable edition
 snapshots during migration. Planned Trash restoration recovers reservations for
 the same content identity; it does not make removed codes available for reuse.
+
+## Narration source format
+
+`content/pieces/<id>/narration.yaml` is separate from canonical Markdown and web
+alt text. The importer preserves an existing destination sidecar. Missing settings
+resolve to George, pace 1, the pinned profile, and empty pronunciations/adaptations.
+
+```yaml
+schemaVersion: 1
+voice: bm_george
+pace: 1
+profile: kokoro-mlx-bf16-v1
+pronunciations:
+  API: A P I
+adaptations: {}
+```
+
+The Narration pane adds adaptation entries keyed by semantic block IDs or generated
+source/context selectors. Each has `treatment` (`decorative`, `skip`, `caption`,
+`explanation`, `literal`), optional `sourceHash`, `text` and `reason`. All meaningful
+adaptations require the exact inspected source hash; decorative image classification
+is independent of bytes. Use the pane to inspect and accept instead of inventing
+hashes. An omission needs a reason; a caption must exist; explanation/literal needs
+spoken text. Stale or ambiguous choices fail closed. Supported voices are
+`bf_alice`, `bf_emma`, `bf_isabella`, `bf_lily`, `bm_daniel`, `bm_fable`, `bm_george`
+and `bm_lewis`; pace is 0.8–1.2.
+
+`publishing/narration.yaml` records `schemaVersion: 1`, `required: true` and a
+`profiles` map from profile IDs to SHA-256 values. The generated rendition index
+belongs in `publishing/narrations.json`; audio binaries remain ignored managed
+assets. See [narration](article-narration.md#source-and-artifact-layout).

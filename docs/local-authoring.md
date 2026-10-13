@@ -359,3 +359,22 @@ Local cleanup protects shared-file pins and retained history/edition identities,
 and preparation/release share its write lock. Fresh local checkouts can restore
 private draft sources with AWS credentials. Public builds use selected CDN bytes
 without those credentials. See [asset release](asset-release-design.md).
+
+## Narration
+
+Run `npm run narration:setup` once on an Apple Silicon Mac, then use the editor's
+**Narration** pane. George is the default of eight British voices. **Test first
+paragraph** explicitly auditions current text/settings; changing voice does not
+start generation. **Prepare narration** reuses unchanged speech and shows progress
+and cancellation. Saved draft recordings remain private in the full-site preview.
+
+Review source-bound treatments for code, maths and meaningful images. Decorative
+art is silent. Claude, Codex and Pi can propose explanations after an explicit
+request; compare, edit, audition and accept each choice. The provider may send the
+shown source to its configured service; no image bytes are sent.
+
+**Publish locally when audio is ready** holds a new article in draft until verified
+audio is ready. Save on an existing public article queues preparation or reports
+needed review. Run `npm run assets:prepare` before committing manual edits or newly
+enabled collections. See [article narration](article-narration.md) for commands,
+freshness, recovery and remaining deployment/platform checks.

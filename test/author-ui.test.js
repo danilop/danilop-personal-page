@@ -20,6 +20,7 @@ async function fixture(
     fixError = "",
     withRepetitions = false,
     findingExcerpt = "One phrase",
+    narrationHandlers = {},
   } = {},
 ) {
   let saved = initialText;
@@ -337,7 +338,8 @@ async function fixture(
         const chunks = [];
         for await (const chunk of req) chunks.push(chunk);
         const data = JSON.parse(Buffer.concat(chunks).toString() || "{}");
-        assert(handlers[action], `Unexpected API call ${action}`);
+        const handler = narrationHandlers[action] ?? handlers[action];
+        assert(handler, `Unexpected API call ${action}`);
         if (action === "image-list")
           assert(
             url.searchParams.get("file"),
@@ -349,7 +351,7 @@ async function fixture(
           return;
         }
         res.setHeader("Content-Type", "application/json");
-        const result = handlers[action](data);
+        const result = handler(data);
         if (result.error) res.statusCode = 409;
         res.end(JSON.stringify(result));
         return;
@@ -1120,4 +1122,134 @@ test("external copies preview current edits, download assets/bundles and invalid
     () => !document.querySelector("#export-download").disabled,
   );
   assert.equal(f.getExportRequest().destination, "medium");
+});
+
+test("narration preview keeps auditions explicit and proposals unaccepted until reviewed", async (t) => {
+  let settings = {
+    voice: "bm_george",
+    pace: 1,
+    profile: "kokoro-mlx-bf16-v1",
+    pronunciations: {},
+    adaptations: {},
+  };
+  let job,
+    started = 0,
+    accepted = 0;
+  const inspect = () => ({
+    doc: {
+      settings,
+      firstParagraph: "One phrase.",
+      segments: [{ kind: "paragraph", text: "One phrase." }],
+      issues: [
+        {
+          id: "code-1",
+          kind: "code",
+          sourceHash: "hash",
+          source: "fetch(url)",
+          resolved: !!settings.adaptations["code-1"],
+        },
+      ],
+    },
+    status: "Needs explanation",
+    reason: "Review code",
+    previewOnly: true,
+    voices: { bm_george: "George", bf_emma: "Emma" },
+    agents: [{ id: "codex", label: "Codex", installed: true }],
+    settingsRevision: "settings",
+  });
+  const { page } = await fixture(t, {
+    narrationHandlers: {
+      "narration-inspect": inspect,
+      "narration-start": (data) => {
+        started++;
+        assert.equal(data.request.settings.voice, "bf_emma");
+        assert.equal(data.audition, true);
+        return (job = {
+          id: "audition",
+          status: "preparing",
+          progress: 0,
+          total: 1,
+        });
+      },
+      "narration-job": () => job,
+      "narration-cancel": () => {
+        job.status = "cancelled";
+        return {};
+      },
+      "narration-prompt": () => ({
+        prompt: "Only the selected source is supplied.",
+      }),
+      "narration-propose": () => ({
+        id: "proposal",
+        status: "ready",
+        proposals: [
+          {
+            id: "code-1",
+            sourceHash: "hash",
+            text: "The example requests data.",
+            rationale: "Describes the operation.",
+            uncertainty: "The response may fail.",
+          },
+        ],
+      }),
+      "narration-settings": (data) => {
+        accepted++;
+        settings = data.request.settings;
+        return inspect();
+      },
+    },
+  });
+  await page.locator("#show-narration").click();
+  await page.waitForFunction(
+    () => document.querySelector("#narration-voice").value === "bm_george",
+  );
+  await page.locator("#narration-voice").selectOption("bf_emma");
+  assert.equal(started, 0, "Selecting a voice must not run synthesis");
+  await page.locator("#narration-test").click();
+  await page.locator("#narration-cancel").click();
+  await page.waitForFunction(() =>
+    /cancelled/i.test(document.querySelector("#narration-status").textContent),
+  );
+  await page
+    .getByText("Draft explanations with an agent", { exact: true })
+    .click();
+  await page.locator("#narration-prompt").click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#narration-prompt-text")
+      .textContent.includes("selected source"),
+  );
+  await page.locator("#narration-propose").click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#narration-status")
+      .textContent.includes("Proposals ready"),
+  );
+  assert.equal(accepted, 0);
+  await page
+    .getByRole("textbox", {
+      name: "Spoken explanation for code-1",
+      exact: true,
+    })
+    .fill("The example requests data; success is not guaranteed.");
+  await page
+    .getByRole("button", { name: "Accept this choice", exact: true })
+    .click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#narration-blocks h3")
+      .textContent.includes("Reviewed"),
+  );
+  assert.equal(accepted, 1);
+  assert.equal(
+    settings.adaptations["code-1"].text,
+    "The example requests data; success is not guaranteed.",
+  );
+  assert.equal(settings.adaptations["code-1"].sourceHash, "hash");
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  );
 });

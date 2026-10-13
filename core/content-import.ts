@@ -395,16 +395,8 @@ export async function prepareImport(options: ImportOptions) {
           const relative = main
             ? targetRelative
             : path.join(path.dirname(targetRelative), local);
-          if (
-            before.has(relative) &&
-            ((!previous && (main || !before.get(relative)!.equals(bytes))) ||
-              (e.kind === "collection" &&
-                !main &&
-                !before.get(relative)!.equals(bytes)))
-          )
-            throw Error(
-              `Destination path belongs to other content: ${relative}`,
-            );
+          if (retainNarration(local, relative)) continue;
+          checkDestination(relative, main, bytes);
           let output = main
             ? metadata(
                 bytes,
@@ -424,6 +416,35 @@ export async function prepareImport(options: ImportOptions) {
               `Existing ${e.id} differs; review again with --update to allow changes`,
             );
           incoming.set(relative, output);
+        }
+
+        function checkDestination(
+          relative: string,
+          main: boolean,
+          bytes: Buffer,
+        ) {
+          if (
+            before.has(relative) &&
+            ((!previous && (main || !before.get(relative)!.equals(bytes))) ||
+              (e.kind === "collection" &&
+                !main &&
+                !before.get(relative)!.equals(bytes)))
+          )
+            throw Error(
+              `Destination path belongs to other content: ${relative}`,
+            );
+        }
+
+        function retainNarration(local: string, relative: string) {
+          if (
+            e.kind !== "piece" ||
+            local !== "narration.yaml" ||
+            !previous ||
+            !before.has(relative)
+          )
+            return false;
+          incoming.set(relative, before.get(relative)!);
+          return true;
         }
 
         function retainExistingFormatting(

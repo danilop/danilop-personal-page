@@ -1,63 +1,77 @@
 # Dependencies and deployment
 
-## Dependency refresh — 2026-10-01
+## Dependency refresh — 2026-10-13
 
-The [analysis guide](code-analysis.md) documents the new dev-only toolchain and
-setup. ESLint 10.11.0, typescript-eslint 8.71.0, Knip 6.39.0, dependency-cruiser
-18.5.0, c8 12.0.0 and the
-Astro/React/HTML/CSS/configuration adapters are pinned in npm. The existing
-TypeScript 6.0.3 and Node pin are retained for compatible typed analysis. Python
-Ruff 0.16.9, ty 0.0.84, Vulture 2.16, Coverage.py 7.16.2, Bandit 1.9.4 and Radon
-6.0.1 are installed in a separate hash-locked `.venv-analysis` environment.
-Gitleaks 8.30.1, actionlint 1.7.12 and ShellCheck 0.11.0 are verified before runs.
-The tools do not become public browser dependencies or run inference.
-
-Reviewed 2026-10-01. The new site uses `/`; its original-site snapshot remains at `/original-site/`.
+The root application and isolated prototype manifests and npm lockfiles were
+refreshed against stable registry releases, including compatible transitive
+updates. Python requirements were re-resolved with `uv pip compile --upgrade
+--generate-hashes` and installed with hash verification in both project virtual
+environments. This refresh is local; it has not been committed or deployed.
 
 ## Supported stack
 
-| Component | Version | Update policy |
-| --- | --- | --- |
-| Node.js | 24.21.0 LTS | Pin `.nvmrc`; stay on the supported LTS major |
-| npm | 12.2.0 | Pin `packageManager`; enforce engines |
-| Astro | 7.3.5 | Current stable; validate renderer and route compatibility |
-| TypeScript | 6.0.3 | Astro checker supports 5.x/6.x, not 7.x |
-| Node types | 24.19.0 | Match the runtime major; do not follow an unrelated latest tag |
-| Prettier | 3.9.9 | Compatible patch applied in this review |
+| Component  | Version     | Update policy                                                   |
+| ---------- | ----------- | --------------------------------------------------------------- |
+| Node.js    | 24.21.0 LTS | Pin `.nvmrc`; stay on the supported LTS major                   |
+| npm        | 12.2.0      | Pin `packageManager`; enforce engines                           |
+| Astro      | 7.3.8       | Current stable; validate renderer and route compatibility       |
+| TypeScript | 6.0.3       | Astro checker supports 5.x/6.x; typescript-eslint requires <6.1 |
+| Node types | 24.19.2     | Match the runtime major                                         |
+| Prettier   | 3.9.10      | Current stable                                                  |
 
-The root application and isolated prototype manifests and npm lockfiles were
-refreshed against the stable registry releases, including compatible transitive
-updates. This includes Mermaid CLI 12.0.0, Citation.js 0.9.0, KaTeX 0.19.0,
-Puppeteer 25.12.0 and prototype Vite 8.3.2. Python hash-locked requirements were
-re-resolved with `uv pip compile --upgrade --generate-hashes` and installed in both
-project virtual environments.
+Direct upgrades include AWS SDK clients 3.1150.0, WebLLM 0.2.86, PostHog 1.438.9,
+Vega-Lite 6.5.0, Zod 4.6.7, Puppeteer 25.13.0 and Playwright 1.64.0. The prototype
+uses Vite 8.3.4 and its React plugin 6.1.2. The dev-only analysis tools include
+ESLint 10.12.0, typescript-eslint 8.71.2, Knip 6.41.0, dependency-cruiser 18.6.0,
+Ruff 0.17.0 and ty 0.0.86. See the [analysis guide](code-analysis.md) for setup.
 
-Two intentional exceptions remain: TypeScript 7.0.2 is outside both Astro checker's
-and typescript-eslint's supported peer ranges, and Node 26 type definitions would
-not match the Node 24 runtime. Node 24.21.0 remains the latest release on the
-project's supported LTS line. These are compatibility decisions, not missed updates.
+The only newer direct npm releases intentionally held back are TypeScript 7.0.2,
+which is outside both Astro checker's and typescript-eslint's peer ranges, and
+Node 26 type definitions, which do not match the Node 24 runtime. Node 24.21.0
+and npm 12.2.0 remain current on the supported lines. The spaCy 3.8 family is
+retained to match the pinned English model. Python transitives `thinc` 8.3.13
+and `mando` 0.7.1 remain constrained by spaCy (`<8.4`) and Radon (`<0.8`)
+respectively. Native analysis pins remain Gitleaks
+8.30.1, actionlint 1.7.12 and ShellCheck 0.11.0; official releases were checked.
 
-Mermaid 12's parser pins a vulnerable `lodash-es` version. A root `overrides` entry
-selects the patched 4.18.1 release without overriding the parser's major version.
-Retain this override until upstream resolves the advisory and a fresh audit confirms
-it is unnecessary. Native analysis tools and the spaCy 3.8 English model are retained;
-the native pins already match their current stable releases and the NLP model must
-match the installed spaCy family.
+CI uses uv 0.13.0 and immutable commit pins for checkout 7.0.1, setup-node 7.1.0,
+upload-artifact 7.0.2 and configure-aws-credentials 6.3.0. Keep committed lockfiles;
+production builds must not perform dependency upgrades. The separate design
+prototype is not part of the deployed bundle.
 
-Registry review found no other compatible direct upgrades. The dependency audit
-reports zero known vulnerabilities. This is an advisory database result, not a
-full security assessment. Keep the committed lockfile; never upgrade during a
-production build. The separate design prototype is not part of the deployed bundle.
+## Security status — 2026-10-13
 
-Local verification on 1 October passed all 27 analysis/test/build checks, including
-197 JavaScript/TypeScript and 16 Python tests. The isolated prototype also rendered
-with a clean browser console. This refresh has not been committed or deployed;
-see [verification evidence](verification.md#dependency-and-shared-helper-refresh--2026-10-01).
+The root `overrides` retain patched `lodash-es` 4.18.1 and make all npm KaTeX dependency edges
+resolve to the root KaTeX 0.19.0 declaration (`"katex": "$katex"`). This replaces vulnerable
+0.16.x copies used by Mermaid CLI and Markdown maths rendering, addressing
+[GHSA-238p-pmpm-9mq7](https://github.com/advisories/GHSA-238p-pmpm-9mq7).
+Mermaid's prebuilt browser bundle separately embeds patched KaTeX 0.18.11;
+the override does not rewrite prebuilt bundles. Retain the overrides until upstream
+constraints and a fresh audit make them unnecessary.
 
-All action pins match their current official releases: checkout 7.0.1, setup-node
-7.0.0, upload-artifact 7.0.1, and configure-aws-credentials 6.3.0. Pins use immutable
-commit IDs. TypeScript's newer major and Node's newer majors are not automatic
-upgrade targets.
+Astro now resolves `http-cache-semantics` 4.3.0. Although the published affected
+range for [GHSA-ch52-4w7c-c8xp](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)
+ends at 4.2.0, **4.3.0 still reproduces the reported behaviour**: bare or numeric
+`max-stale` can reuse a shared Set-Cookie response whose freshness was zeroed.
+The advisory lists no patched release. An audit no longer flagging this package
+must not be treated as proof of a fix.
+
+The current static site has no demonstrated path to that vulnerable operation.
+Astro's build-time remote-image loader calls `storable()` and `timeToLive()`, not
+`evaluateRequest()` or `satisfiesWithoutRevalidation()`, and does not forward
+visitor request headers. `test/astro-cache-boundary.test.mjs` exercises the installed
+Astro loader with both vulnerable methods guarded, covering public images,
+Set-Cookie responses with zero reusable lifetime, and conditional 304 responses.
+Reassess this conclusion before adding a server/shared response cache or changing
+Astro's cache usage. No custom fork or dependency patch was introduced.
+
+The root npm audit still reports 11 affected package entries: seven high and four
+moderate, arising from two underlying advisories in `braces` 3.0.3 (Stylelint's glob
+chain) and `sprintf-js` 1.1.3 (gray-matter's YAML/argument-parser chain). Both are
+current releases with no patched version available. The audit's suggested old
+major downgrades are not applied. This is a dependency status report, not a full
+assessment of those additional findings. The prototype audit reports zero known
+vulnerabilities. See [verification evidence](verification.md#dependency-refresh-and-cache-boundary-check--2026-10-13).
 
 ## One validation command
 
@@ -139,3 +153,11 @@ Sources checked during this review: [Node releases](https://nodejs.org/en/blog/r
 [npm registry](https://www.npmjs.com/package/@astrojs/check),
 [Amplify build settings](https://docs.aws.amazon.com/amplify/latest/userguide/build-settings.html),
 [GitHub workflow permissions](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions).
+
+## Local speech runtime
+
+Kokoro uses a separate hash-locked Python 3.12.13 environment, MLX-Audio 0.5.8,
+Misaki 0.9.4 and pinned model/voice/encoder checksums. `npm run narration:setup`
+installs it explicitly on Apple Silicon. CI and reader browsers use prepared
+MP3 assets and never download models or run inference. See [runtime comparison](narration-runtime-comparison.md)
+and [article narration](article-narration.md) for provenance and licence boundaries.

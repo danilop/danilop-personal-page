@@ -151,3 +151,16 @@ remain in place. Reading pages reconnect after server restarts; the editor keeps
 its state and requires an explicit refresh for browser-code changes. Release and
 snapshot modes reject this flag. See [preview modes](authoring-preview.md#watch-application-code)
 for job/session limits and [verification](verification.md) for the restart tests.
+
+## Article narration — local implementation, 2026-10-13
+
+The [narration implementation](article-narration.md) follows the seven-stage plan:
+runtime comparison, semantic speech, local generation/assets, preview/review,
+public player, publication gates, and backfill/delivery. Stages 1–6 are implemented
+locally. Both current public articles are backfilled and the required policy is
+enabled. George's MLX sample was approved; numerical comparison is documented.
+
+Stage 7's local backfill is complete; committing/releasing and exact deployed
+revision/CDN verification remain pending. Safari/iPhone and VoiceOver checks are
+also outstanding. Do not describe the feature as deployed or every original
+acceptance check as passed. Current test evidence is in [verification](verification.md).

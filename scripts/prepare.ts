@@ -31,6 +31,7 @@ import { collectionCover } from "../core/collection-cover";
 import { authoringContext } from "../core/authoring-preview";
 import { prepareSocialPreviews } from "../core/social-preview";
 import { finishAssetBuild } from "../core/asset-build";
+import { publicNarration } from "../core/narration-public";
 async function main() {
   const authoring = await authoringContext();
   const lib = await loadLibrary(),
@@ -298,18 +299,28 @@ async function main() {
         ordered: c.ordered,
         book: c.book,
         html: d.html,
-        nodes: d.nodes.map((n) => ({
-          ...n,
-          ...(n.pieceId
-            ? {
-                tags: lib.pieces.get(n.pieceId)!.tags,
-                language: lib.pieces.get(n.pieceId)!.language,
-                summary: lib.pieces.get(n.pieceId)!.summary,
-                publishedAt: lib.pieces.get(n.pieceId)!.publishedAt,
-                updatedAt: lib.pieces.get(n.pieceId)!.updatedAt,
-              }
-            : {}),
-        })),
+        nodes: await Promise.all(
+          d.nodes.map(async (n) => ({
+            ...n,
+            ...(n.pieceId
+              ? {
+                  tags: lib.pieces.get(n.pieceId)!.tags,
+                  language: lib.pieces.get(n.pieceId)!.language,
+                  summary: lib.pieces.get(n.pieceId)!.summary,
+                  publishedAt: lib.pieces.get(n.pieceId)!.publishedAt,
+                  updatedAt: lib.pieces.get(n.pieceId)!.updatedAt,
+                  narration: await publicNarration(
+                    process.cwd(),
+                    lib.pieces.get(n.pieceId)!,
+                    lib,
+                    assets,
+                    Boolean(authoring),
+                    n.title,
+                  ),
+                }
+              : {}),
+          })),
+        ),
       });
     }
     for (const p of [...lib.pieces.values()].filter((p) =>
@@ -317,6 +328,13 @@ async function main() {
     )) {
       const d = await renderDocument(standalone(p), lib, defaults, assets);
       site.articles.push({
+        narration: await publicNarration(
+          process.cwd(),
+          p,
+          lib,
+          assets,
+          Boolean(authoring),
+        ),
         id: p.id,
         title: p.title,
         summary: p.summary,

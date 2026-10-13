@@ -1,6 +1,7 @@
 ---
 import DraftBadge from "../../../../components/DraftBadge.astro";
 import { readingLinks } from "../../../../../core/reading-links";
+import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
@@ -61,6 +62,7 @@ const original = site.articles.find((p) => p.id === n.pieceId);
         position="top"
       />
     </header>
+    <NarrationPlayer narration={n.narration} title={n.title} />
     <div
       id={n.id}
       class="prose"

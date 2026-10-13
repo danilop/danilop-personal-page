@@ -1,0 +1,23 @@
+{
+  "id": "kokoro-mlx-bf16-v1",
+  "model": "mlx-community/Kokoro-82M-bf16",
+  "revision": "a71e4d38b236d968966a2002c4c895dbd12b1c3c",
+  "files": {
+    "config.json": "5abb01e2403b072bf03d04fde160443e209d7a0dad49a423be15196b9b43c17f",
+    "kokoro-v1_0.safetensors": "4e9ecdf03b8b6cf906070390237feda473dc13327cb8d56a43deaa374c02acd8",
+    "voices/bm_george.safetensors": "a3d9b8995cbbe5536f954b6be2a0f1f312f077118ba0d4d2178fc41dc8306672",
+    "voices/bf_emma.safetensors": "8878a75a6661305849eeb1d6293a7177250193616e161b4c3100636434dfe69f",
+    "voices/bf_alice.safetensors": "9c77e390d93d9db7c4a7526c3b1f393290a2be46f233b89a00b8188e850c20a8",
+    "voices/bf_isabella.safetensors": "f7b6076f025649699fcfed1a6debf13049a87afdc7aafc8c72b7d81246db6ead",
+    "voices/bf_lily.safetensors": "ee77a419046a765420ac82cb46e8b8cf5754a0b9d20c340fece1d4b18be7ecdb",
+    "voices/bm_daniel.safetensors": "b195dec592ee024f57ddc5bf481464596082ba60998a2a295eba90bfc1064f4b",
+    "voices/bm_fable.safetensors": "9fa80184e96d016a744bc13b0b2e7695e55d6b855556fa003325cb1e5ebf2c2b",
+    "voices/bm_lewis.safetensors": "e1e68013c21a141efe527aaec561e1174c2f5a6951b3bcecc8396adab315b247"
+  },
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "language": "b",
+  "engine": "mlx-audio==0.5.8",
+  "chunkVersion": 1,
+  "encoderSha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617"
+}

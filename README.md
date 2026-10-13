@@ -68,7 +68,7 @@ ChatGPT-signed-in Codex CLI. Search and a site-wide AI assistant remain future w
 ## Develop
 
 Use the pinned Node.js 24.21.0 LTS and npm 12.2.0. Dependencies were refreshed on
-1 October 2026; [compatibility exceptions and the transitive security override](docs/dependencies-and-hosting.md)
+13 October 2026; [compatibility holds, security overrides, and unresolved advisories](docs/dependencies-and-hosting.md)
 are documented. With nvm installed:
 
 ```sh
@@ -292,6 +292,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Content import](docs/content-import.md): selection, dry runs, dependencies, draft staging, and controlled updates.
 - [Authoring preview](docs/authoring-preview.md): full-site draft review at `/`, isolation, and release preview.
 - [Product design](docs/product-design.md): reader and author experience.
+- [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations, browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; implemented locally, deployment pending.
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.

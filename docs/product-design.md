@@ -558,3 +558,22 @@ draft** and separately confirmed **Delete permanently**, with no automatic
 expiration. Restoration preserves identity and resolves dependency conflicts
 without overwriting newer work. Published articles must first be unpublished.
 These controls are not yet implemented; the current recovery copy remains manual.
+
+## Article narration — implemented locally, 2026-10-13
+
+A quiet **Listen to this article** row below metadata preserves Ink & Paper's
+reading hierarchy. Measured `mm:ss listen` complements estimated `min read`.
+Playback is explicit, with inline seek/speed controls, ±15 seconds, an exact
+transcript and download. The public label is **AI narration**, without a voice
+name. Voice names appear only in the authoring preview; George is the default.
+Playback starts at 1.1×; readers can choose 0.8×, 1×, 1.1×, 1.2×, 1.5× or 2×.
+The displayed recording duration remains measured at 1×.
+Native controls remain without JavaScript; missing audio does not obscure prose.
+
+The author selects a voice and auditions the first paragraph in Narration. Full
+preparation reports freshness/progress and supports cancellation. Decorative
+illustrations are silent; meaningful visuals/code have reviewed treatments.
+Claude/Codex/Pi proposals require explicit acceptance. Publication waits for ready
+audio; unchanged speech reuses existing work. See [narration](article-narration.md)
+for scope and checks. Safari/iPhone/VoiceOver and hosted delivery remain to verify;
+continuous or sticky playback and Media Session are outside this delivery.

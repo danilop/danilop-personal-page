@@ -323,3 +323,20 @@ plugin/target compatibility.
 Resolve contextual headings, numbering, citations, and references before export.
 Stable placement IDs determine anchors; output position determines visible
 numbering. Excessively deep headings must produce an actionable error.
+
+## Article narration
+
+A narration is a derived spoken rendition of a piece, not another publication
+surface or release group. The piece owns its voice and reviewed adaptations;
+placements with distinct spoken titles have separate rendition identities.
+Chapter views offer each piece's player rather than inventing whole-book audio.
+Speech freshness, source approval and byte integrity are checked independently.
+
+Decorative images have no spoken representation. Meaningful material needs a
+source-bound explanation, suitable caption or deliberate reviewed omission.
+Alt text remains independent. Canonical imports retain destination narration
+settings while changed sources invalidate their approvals. Measured listening
+duration describes the audio; silent-reading duration remains an estimate.
+
+This model is implemented locally. See [narration](article-narration.md) and
+[authoring syntax](authoring-format.md#narration-source-format).

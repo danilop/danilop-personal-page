@@ -1,0 +1,246 @@
+---
+import type { PublicNarration } from "../../core/narration-store";
+interface Props {
+  narration?: PublicNarration;
+  title: string;
+}
+const { narration: n, title } = Astro.props;
+const clock = (seconds: number) =>
+  `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+---
+
+{n && (
+  <section
+    class="narration"
+    aria-label="Article narration"
+    data-narration
+    data-hash={n.sha256}
+    data-title={title}
+    data-duration={n.duration}
+  >
+    <div class="narration-heading">
+      <button type="button" data-play hidden aria-label={`Listen to ${title}`}>
+        <span data-play-icon aria-hidden="true">
+          ▶
+        </span>
+        <span data-play-label>Listen to this article</span>
+      </button>
+      <span data-native-label>Listen to this article</span>
+      <span class="narration-duration">{clock(n.duration)} listen</span>
+      <span class="narration-credit">AI narration</span>
+    </div>
+    <!-- Audio-only narration has the exact spoken transcript immediately below. -->
+    {/* eslint-disable-next-line astro/jsx-a11y/media-has-caption -- Exact adjacent transcript is the text alternative for this audio-only content. */}
+    <audio
+      controls
+      preload="none"
+      src={n.url}
+      aria-label={`Narration of ${title}`}
+    />
+    <div class="narration-controls" data-controls hidden>
+      <button type="button" data-back aria-label="Back 15 seconds">
+        −15s
+      </button>
+      <label class="narration-seek">
+        <span class="sr-only">Playback position</span>
+        <input
+          data-seek
+          type="range"
+          min="0"
+          max={n.duration}
+          step="0.1"
+          value="0"
+          aria-valuetext={`0:00 of ${clock(n.duration)}`}
+        />
+      </label>
+      <button type="button" data-forward aria-label="Forward 15 seconds">
+        +15s
+      </button>
+      <output data-time>0:00 / {clock(n.duration)}</output>
+      <label class="narration-speed">
+        <span class="sr-only">Playback speed</span>
+        <select data-speed aria-label="Playback speed">
+          <option value="0.8">0.8×</option>
+          <option value="1">1×</option>
+          <option value="1.1" selected>
+            1.1×
+          </option>
+          <option value="1.2">1.2×</option>
+          <option value="1.5">1.5×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+    </div>
+    <p data-error role="status" hidden>
+      Audio could not be loaded.{" "}
+      <button type="button" data-retry>
+        Retry
+      </button>{" "}
+      or use the download link below.
+    </p>
+    <details class="narration-more">
+      <summary>More listening options</summary>
+      <a href={n.url} download>
+        Download audio (MP3)
+      </a>
+      <details class="narration-transcript">
+        <summary>Narration transcript</summary>
+        {n.segments.map((s) =>
+          s.kind === "title" || s.kind === "heading" ? (
+            <p class="transcript-heading">{s.text}</p>
+          ) : (
+            <p>{s.text}</p>
+          ),
+        )}
+      </details>
+    </details>
+  </section>
+)}
+<script>
+  import "../../runtime/narration-player";
+</script>
+<style>
+  .narration {
+    margin: 1.25rem 0 1.5rem;
+    padding: 1rem 0 0.7rem;
+    border-block: 1px solid color-mix(in srgb, currentcolor 18%, transparent);
+    font: 0.85rem/1.5 var(--font-sans, Inter, sans-serif);
+  }
+
+  .narration-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.8rem;
+  }
+
+  button,
+  select {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, currentcolor 25%, transparent);
+    border-radius: 4px;
+    min-height: 44px;
+    padding: 0.35rem 0.65rem;
+    cursor: pointer;
+  }
+
+  [data-play] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    border: none;
+    padding-left: 0;
+    color: var(--accent, #164b88);
+    font-weight: 600;
+  }
+
+  [data-play-icon] {
+    width: 1.25rem;
+    text-align: center;
+  }
+
+  .narration-credit {
+    margin-left: auto;
+    font-size: 0.75rem;
+  }
+
+  audio {
+    display: block;
+    width: 100%;
+    margin-top: 0.6rem;
+  }
+
+  .narration-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.6rem;
+  }
+
+  .narration-seek {
+    flex: 1;
+    min-width: 70px;
+  }
+
+  input {
+    width: 100%;
+    min-height: 44px;
+    accent-color: var(--accent, #164b88);
+    cursor: pointer;
+  }
+
+  output {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    font-size: 0.75rem;
+  }
+
+  summary {
+    cursor: pointer;
+    padding: 0.5rem 0;
+    min-height: 32px;
+  }
+
+  .narration-more {
+    font-size: 0.75rem;
+  }
+
+  .narration-more > a {
+    display: inline-block;
+    padding: 0.4rem 0;
+  }
+
+  .narration-transcript {
+    max-height: 24rem;
+    overflow: auto;
+    font-size: 0.9rem;
+  }
+
+  .transcript-heading {
+    font-weight: 600;
+  }
+
+  [data-error] {
+    color: #9b2424;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent, #164b88);
+    outline-offset: 3px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (width <= 520px) {
+    .narration-credit {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .narration-controls {
+      flex-wrap: wrap;
+    }
+
+    .narration-seek {
+      flex-basis: calc(100% - 120px);
+    }
+
+    output {
+      margin-right: auto;
+    }
+  }
+</style>

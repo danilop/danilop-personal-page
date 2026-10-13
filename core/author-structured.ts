@@ -103,6 +103,7 @@ function piAssistantMessage(raw: unknown) {
     .object({
       role: z.string(),
       stopReason: z.string().optional(),
+      errorMessage: z.string().optional(),
       content: z.unknown(),
     })
     .parse(raw);
@@ -110,6 +111,7 @@ function piAssistantMessage(raw: unknown) {
   return z
     .object({
       stopReason: z.string(),
+      errorMessage: z.string().optional(),
       content: z.array(
         z.object({ type: z.string(), text: z.string().optional() }),
       ),
@@ -151,6 +153,12 @@ export function piFinalAnswer(stdout: string) {
   for (const line of stdout.split("\n"))
     if (line.trim()) updatePiState(state, piEvent(line));
   const { settled, final } = state;
+  if (final?.stopReason === "error")
+    throw Error(
+      /429|rate.limit|tokens per minute/i.test(final.errorMessage ?? "")
+        ? "Pi's configured provider rejected the request because of a rate or token limit. Check its model and service limits. Nothing was applied."
+        : "Pi's configured provider could not complete the request. Check the model and provider configuration. Nothing was applied.",
+    );
   if (!settled || !final || final.stopReason !== "stop")
     throw Error(
       "Pi did not return a complete final answer. Nothing was applied; retry with a current Pi CLI.",

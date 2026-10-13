@@ -222,6 +222,15 @@ export function main({ workspace = root, run = execute } = {}) {
     task("release-prepare", bin("tsx"), ["scripts/prepare.ts"]);
     task("release-build", "npm", ["run", "build:prepared"]);
   }
+  if (
+    mode !== "coverage" &&
+    fs.existsSync(path.join(root, "publishing/narration.yaml"))
+  )
+    task("narration", bin("tsx"), [
+      "scripts/narration.ts",
+      "check",
+      ...(mode === "ci" ? ["--hydrate"] : []),
+    ]);
   const summary = {
     schemaVersion: 1,
     mode,

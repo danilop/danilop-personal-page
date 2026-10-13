@@ -91,3 +91,10 @@ The Astro rebuild now lives at the repository root. This prototype remains a
 record of the selected visual exploration; its sample articles and books are not
 production content. The validated theme system is implemented in `themes/` and
 `publishing/site.yaml`. See [the root README](../../README.md).
+
+## Dependency refresh — 13 October 2026
+
+Vite is updated to 8.3.4 and `@vitejs/plugin-react` to 6.1.2, with compatible
+transitive updates in the lockfile. Use the root repository's pinned Node 24.21.0
+and npm 12.2.0. This local refresh does not publish the prototype. See
+[dependency status](../../docs/dependencies-and-hosting.md).

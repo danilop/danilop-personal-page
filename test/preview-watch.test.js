@@ -56,6 +56,7 @@ test(
       "core/preview-cli.mjs",
       "core/preview-browser.mjs",
       "core/deployment.mjs",
+      "core/audio-response.mjs",
     ])
       await fs.copyFile(file, path.join(root, file));
     await fs.writeFile(path.join(root, "package.json"), '{"type":"module"}');
@@ -79,9 +80,9 @@ test(
       path.join(root, "scripts/author.ts"),
       `
     import { value } from "../core/watched.ts";
-    console.log("START " + value + " " + process.argv.slice(2).join(" "));
     const timer = setInterval(() => {}, 1000);
     process.on("SIGTERM", () => { clearInterval(timer); console.log("STOP " + value); });
+    console.log("START " + value + " " + process.argv.slice(2).join(" "));
   `,
     );
     const child = spawn(

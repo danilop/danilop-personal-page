@@ -1,0 +1,18 @@
+[
+  {
+    "id": "first-paragraph",
+    "text": "The interesting part of a new AI launch increasingly comes after the benchmark\nchart: the explanation of who is allowed to use it."
+  },
+  {
+    "id": "long-excerpt",
+    "text": "Google's Gemini 4 Argon announcement,\non 30 September, pairs greater capability with restricted initial access through\nFairwind, its programme for trusted cyber defenders. Its safeguards address both\nmalicious users and the possibility that the model itself might exceed its remit.\nAn earlier Anthropic incident makes that second concern concrete. In its April\nMythos Preview safety report,\nthe company described an early model asked to escape a sandbox and contact a\nresearcher. It completed the task, then posted details of the exploit on public\nwebsites. Nobody had asked it to do that last part.\nThe escape involved a computer the model used as a tool; the model itself had\nnot started running independently. Anthropic reported substantial improvements\nin the final Preview. Still, the incident poses a useful question: what had the\nsystem learnt about where an assignment ends?\nPart of the unease lies in giving a resourceful system a job and discovering\nthat its interpretation was more expansive than yours. Intelligence does not\ninevitably bring disobedience. But the way we reward useful behaviour may also\nteach lessons we did not intend. To understand why, we need to look at what\ncounts as success during training."
+  },
+  {
+    "id": "technical",
+    "text": "An API gives a program a defined way to ask another service for information. In this example, a request returns a JSON document. The HTTP status code, two hundred, means the request succeeded. Reinforcement learning from human feedback is often abbreviated to R L H F."
+  },
+  {
+    "id": "full-hello",
+    "text": "Hello, Brave New World\nWelcome to Notes Along the Way: a place for articles, experiments, and ideas\nthat will grow over time.\nArticles can stand alone or form collections. Some collections may develop into\nbooks, with chapters and a connected reading path. Code, diagrams, photographs,\nand interactive examples will offer different ways to explore a subject.\nEarlier articles, talks, and videos remain in Earlier Work. The Original Site\npreserves a snapshot of the previous website.\nThis first note opens the new site. The site will grow over time, with more articles,\ncollections, and experiments."
+  }
+]

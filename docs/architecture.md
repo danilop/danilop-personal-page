@@ -39,7 +39,7 @@ Resolved versions are installed and recorded in package-lock.json. See
 [implementation status](implementation-plan.md) and [operations](operations.md)
 for actual module locations, commands and account-dependent limits.
 
-The rebuild pins Node 24.21.0 LTS and npm 12.2.0 and uses Astro 7.3.5.
+The rebuild pins Node 24.21.0 LTS and npm 12.2.0 and uses Astro 7.3.8.
 TypeScript remains at 6.0.3 because Astro's checker does not support TypeScript 7's
 compiler API. See [dependencies and hosting](dependencies-and-hosting.md) for
 version exceptions, install-script policy, and hosted verification.
@@ -809,3 +809,17 @@ prototype dialogs. Real local server tests use disposable repositories; publicat
 analytics and model tests substitute external boundaries. Verified Chromium source
 coverage joins Node V8 coverage. The same unified JS/TS command runs locally and
 in release validation, with prototype dependencies installed in both CI and Amplify.
+
+## Article narration
+
+The [narration implementation](article-narration.md) compiles semantic speech in
+`core/narration-speech.ts`, checks source-bound approvals and immutable artifacts
+in `core/narration-store.ts`, and coordinates local preparation/publication in
+`core/narration.ts`. The serial Python worker uses pinned MLX-Audio/Kokoro BF16
+on Apple Silicon; CI and public browsers never run inference.
+
+The existing managed-media pipeline stores MP3 bytes. Prepared duration and the
+exact spoken transcript feed a shared progressive player on standalone and
+collection reading routes. Staged/build checks independently validate the public
+graph. Draft receipts/proposals remain private. This is implemented locally;
+first hosted narration delivery remains pending.

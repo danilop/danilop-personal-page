@@ -16,6 +16,38 @@ import sharp from "sharp";
 import { mediaSettings } from "../core/media";
 import { readAssetManifest, verifyAsset } from "../core/asset-manifest";
 import { verifyPublicAsset } from "../core/asset-release";
+async function verifyNarrationMarkup(site: CompiledSite) {
+  const pages = [
+    ...site.articles,
+    ...site.collections.flatMap((c) =>
+      c.nodes.map((n) => ({ ...n, url: `${c.url}read/${n.id}/` })),
+    ),
+  ];
+  for (const page of pages) {
+    if (!page.narration) continue;
+    const html = load(
+      await fs.readFile(path.join(siteOutput, page.url, "index.html"), "utf8"),
+    );
+    const player = html(
+      `[data-narration][data-hash="${page.narration.sha256}"]`,
+    );
+    assert.equal(
+      player.length,
+      1,
+      `${page.url}: narration was lost during rendering`,
+    );
+    assert.equal(Number(player.attr("data-duration")), page.narration.duration);
+    assert.equal(player.find("audio").attr("preload"), "none");
+    assert(
+      player.find("audio").is("[controls]"),
+      "Native audio fallback is required",
+    );
+    assert.equal(
+      player.find(".narration-transcript p").length,
+      page.narration.segments.length,
+    );
+  }
+}
 async function walk(dir: string): Promise<string[]> {
   const files: string[] = [];
   for (const d of await fs.readdir(dir, { withFileTypes: true })) {
@@ -49,6 +81,7 @@ async function main() {
   const site = JSON.parse(
     await fs.readFile(".generated/site.json", "utf8"),
   ) as CompiledSite;
+  await verifyNarrationMarkup(site);
   let expected = 0;
   for (const kind of ["posts", "decks", "videos"])
     expected += JSON.parse(
@@ -134,7 +167,9 @@ async function main() {
         if (ids.has(id)) errors.push(`${file}: duplicate ID ${id}`);
         ids.add(id);
       });
-      for (const el of $("a[href],img[src],script[src],link[href]").toArray()) {
+      for (const el of $(
+        "a[href],img[src],script[src],link[href],audio[src]",
+      ).toArray()) {
         const url = $(el).attr("href") ?? $(el).attr("src")!;
         if (!url.startsWith("/") || url.startsWith("//")) continue;
         const p = url.split(/[?#]/)[0];

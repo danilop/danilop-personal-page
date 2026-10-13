@@ -1,5 +1,6 @@
 ---
 import { readingLinks } from "../../../../../core/reading-links";
+import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
@@ -43,6 +44,7 @@ const { children } = readingContext(c, n.id);
             </a>
           </p>
         )}
+        <NarrationPlayer narration={child.narration} title={child.title} />
         <div
           class="prose"
           set:html={readingLinks(

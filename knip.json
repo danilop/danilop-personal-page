@@ -50,7 +50,10 @@
         "cloudfront"
       ],
       "ignoreBinaries": ["uv"],
-      "ignoreUnresolved": [".venv-quality/bin/python"]
+      "ignoreUnresolved": [
+        ".venv-quality/bin/python",
+        ".venv-narration/bin/python"
+      ]
     },
     "prototypes/ink-and-paper": {
       "entry": [

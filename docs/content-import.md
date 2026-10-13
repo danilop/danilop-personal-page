@@ -168,3 +168,7 @@ appendix/index references and review the book/component presentation before rele
 The private pilot preview renderer is not imported into the production templates.
 Only then follow the normal commit/push/deployment process. Draft status does not
 hide source committed to the public GitHub repository.
+
+Narration sidecars are local adaptations: imports preserve an existing destination
+`narration.yaml`, even when the incoming manuscript supplies one. Changed source
+invalidates affected spoken approvals; import does not publish or synthesise.

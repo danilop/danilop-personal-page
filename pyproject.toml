@@ -39,3 +39,10 @@ directory = "coverage/python/html"
 
 [tool.coverage.xml]
 output = "coverage/python/coverage.xml"
+
+# Apple Silicon speech dependencies are installed and version-checked separately
+# in .venv-narration; CI validates the portable coordinator without MLX/Metal.
+[[tool.ty.overrides]]
+include = ["tools/narration/**"]
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"

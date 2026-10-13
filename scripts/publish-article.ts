@@ -3,6 +3,8 @@ import YAML from "yaml";
 import matter from "gray-matter";
 import { AuthorStore } from "../core/author-store";
 import { id as pieceId, loadLibrary, pieceSchema } from "../core/model";
+import { Narrations } from "../core/narration";
+import { narrationPolicy } from "../core/narration-store";
 
 async function main() {
   // This edits local source only. Commit and push are separate operator actions.
@@ -23,18 +25,19 @@ async function main() {
   const doc = YAML.parseDocument(match[2]);
   doc.delete("status");
   doc.set("draft", false);
-  const saved = await store.save(
-    file,
-    match[1] + doc.toString().trimEnd() + match[3] + match[4],
-    old.revision,
-    async (text) => {
-      pieceSchema.parse(
-        matter(text, {
-          engines: { yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }) },
-        }).data,
-      );
-    },
-  );
+  const next = match[1] + doc.toString().trimEnd() + match[3] + match[4];
+  const narrator = new Narrations(root);
+  const saved = (await narrationPolicy(root)).required
+    ? await narrator
+        .publish({ file, text: next, revision: old.revision })
+        .finally(() => narrator.close())
+    : await store.save(file, next, old.revision, async (text) => {
+        pieceSchema.parse(
+          matter(text, {
+            engines: { yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }) },
+          }).data,
+        );
+      });
   const data = matter(saved.text, {
     engines: { yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }) },
   }).data;

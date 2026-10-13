@@ -10,6 +10,7 @@ export type HomeEntry = {
   url: string;
   publishedAt?: string;
   minutes?: number;
+  narration?: Pick<import("./narration-store").PublicNarration, "duration">;
   context?: string;
   kind: "piece" | "collection";
   draft?: boolean;
@@ -75,6 +76,7 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
         publishedAt:
           p.publishedAt ?? (draft ? site.authoring?.date : undefined),
         minutes: Math.max(1, Math.ceil(p.body.split(/\s+/).length / 220)),
+        narration: n.narration,
         context,
         kind: "piece",
         draft,

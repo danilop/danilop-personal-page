@@ -38,6 +38,20 @@
       "contentType": "image/png",
       "key": "originals/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png",
       "publicKey": "media/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png"
+    },
+    "content/pieces/clever-enough-to-find-the-loophole/assets/narration-8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3": {
+      "sha256": "8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2",
+      "bytes": 14235308,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3",
+      "publicKey": "media/8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3"
+    },
+    "content/pieces/hello-brave-new-world/assets/narration-65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3": {
+      "sha256": "65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f",
+      "bytes": 541772,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3",
+      "publicKey": "media/65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3"
     }
   },
   "outputs": {
@@ -88,6 +102,18 @@
       "bytes": 2266881,
       "contentType": "image/png",
       "key": "media/wind-up-beetle-rope-centred-bell-clapper-26b08d77c1f26abe1c4b486daea403cbb1a71f13212a9ba6fc3eda25a04a6a41.png"
+    },
+    "65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3": {
+      "sha256": "65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f",
+      "bytes": 541772,
+      "contentType": "audio/mpeg",
+      "key": "media/65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3"
+    },
+    "8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3": {
+      "sha256": "8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2",
+      "bytes": 14235308,
+      "contentType": "audio/mpeg",
+      "key": "media/8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3"
     }
   },
   "recipes": {

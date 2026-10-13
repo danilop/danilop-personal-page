@@ -210,6 +210,7 @@ export class AuthorImageCleanup {
       ...(await filesIn(path.join(this.state, "history"))),
       ...(await filesIn(path.join(this.state, "trash"))),
       ...(await filesIn(path.join(this.state, "image-recovery"))),
+      ...(await filesIn(path.join(this.state, "narration/renditions"))),
       ...(await filesIn(path.join(this.root, "exports"))).filter(
         (file) => path.basename(file) === "edition.json",
       ),

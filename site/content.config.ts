@@ -11,6 +11,21 @@ const pieces = defineCollection({
     publishedAt: z.string().optional(),
     html: z.string(),
     minutes: z.number(),
+    narration: z
+      .object({
+        url: z.string(),
+        sha256: z.string(),
+        duration: z.number().positive(),
+        voice: z.string(),
+        segments: z.array(
+          z.object({
+            kind: z.enum(["title", "heading", "paragraph", "adaptation"]),
+            text: z.string(),
+            pause: z.number(),
+          }),
+        ),
+      })
+      .optional(),
     tags: z.array(z.string()),
     updatedAt: z.string().optional(),
     collections: z.array(z.object({ title: z.string(), url: z.string() })),

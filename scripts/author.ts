@@ -45,6 +45,10 @@ import { Assets, escape } from "../core/assets";
 import { homeSchema } from "../core/config";
 import { compileLinks } from "../core/shortlinks";
 import { stageAuthoring } from "../core/authoring-preview";
+import { Narrations, explanationPrompt } from "../core/narration";
+import { narrationPolicy, verifyNarration } from "../core/narration-store";
+import { speechDocument } from "../core/narration-speech";
+import { audioResponse } from "../core/audio-response.mjs";
 import { parseTagRegistry } from "../core/tags";
 import { readingLinks } from "../core/reading-links";
 async function main() {
@@ -72,6 +76,8 @@ async function main() {
   const reviews = new Reviews(root);
   const images = new AuthorImages(root);
   const fixes = new AuthorFixes(root);
+  const narrations = new Narrations(root);
+  const narrationBuilds = new Set<string>();
   const output = path.join(root, "exports/author-live"),
     media = path.join(output, "media");
   await fs.mkdir(output, { recursive: true });
@@ -264,6 +270,15 @@ async function main() {
     if (template) {
       const $ = load(template);
       $("script").remove();
+      const narration = await verifyNarration(
+        root,
+        await speechDocument(root, p, lib, undefined, node.title),
+      ).catch(() => undefined);
+      if (
+        !narration ||
+        $("[data-narration]").attr("data-hash") !== narration.audio.sha256
+      )
+        $("[data-narration]").remove();
       $(".authoring-notice small").text(
         "Saved changes refresh the full site automatically. Missing dates are provisional.",
       );
@@ -380,11 +395,41 @@ async function main() {
           return;
         }
         if (await serveExportDownload(u)) return;
+        if (await serveNarrationAudio(u)) return;
         const body = await readRequestBody(u);
         const data = body ? JSON.parse(body) : {},
           action = u.pathname.split("/").pop();
         const result = await exclusive(async () => {
           const routes: Record<string, () => Promise<unknown>> = {
+            "POST narration-inspect": async () => narrations.inspect(data),
+            "POST narration-start": async () =>
+              narrations.start(data.request, data.audition, data.spokenText),
+            "GET narration-job": async () => {
+              const job = narrations.get(u.searchParams.get("id") ?? "");
+              if (
+                job.status === "ready" &&
+                job.result &&
+                !job.audition &&
+                !narrationBuilds.has(job.id)
+              ) {
+                narrationBuilds.add(job.id);
+                void rebuild();
+              }
+              return job;
+            },
+            "POST narration-cancel": async () => {
+              narrations.cancel(data.id);
+              return { ok: true };
+            },
+            "POST narration-settings": async () =>
+              narrations.saveSettings(data.request, data.settingsRevision),
+            "POST narration-prompt": async () => ({
+              prompt: explanationPrompt((await narrations.capture(data)).doc),
+            }),
+            "POST narration-propose": async () =>
+              narrations.propose(data.request, data.agent, data.model),
+            "POST narration-publish": async () =>
+              narrations.startPublication(data),
             "GET export-settings": async () =>
               exports.settings(u.searchParams.get("file")!),
             "POST export-generate": async () => exports.generate(data),
@@ -581,6 +626,21 @@ async function main() {
               return preview(data.file, data.text, data.context);
             },
             save: async () => {
+              const narrationRequired =
+                (await narrationPolicy(root)).required &&
+                data.file.endsWith("/index.md");
+              if (narrationRequired) {
+                const previous = await store.read(data.file);
+                const oldData = matter(previous.text).data,
+                  newData = matter(data.text).data;
+                const published = (v: Record<string, unknown>) =>
+                  (v.status ?? (v.draft ? "draft" : "published")) ===
+                  "published";
+                if (!published(oldData) && published(newData))
+                  throw Error(
+                    "Use Publish locally in the Narration panel. Publication waits for ready audio.",
+                  );
+              }
               const result = await store.save(
                 data.file,
                 data.text,
@@ -590,6 +650,27 @@ async function main() {
                 },
               );
               queueImageCleanup();
+              if (narrationRequired) {
+                const value = matter(result.text).data;
+                if (
+                  (value.status ?? (value.draft ? "draft" : "published")) ===
+                  "published"
+                ) {
+                  try {
+                    await narrations.start({ file: data.file, ...result });
+                    return {
+                      ...result,
+                      narrationNotice:
+                        "Saved locally. Narration is preparing; open Narration to check readiness before committing.",
+                    };
+                  } catch (error) {
+                    return {
+                      ...result,
+                      narrationNotice: `Saved locally. Narration needs review: ${(error as Error).message}`,
+                    };
+                  }
+                }
+              }
               return result;
             },
           };
@@ -621,6 +702,28 @@ async function main() {
       res.end(JSON.stringify({ error: e.message }));
     }
 
+    async function serveNarrationAudio(u: URL) {
+      if (
+        u.pathname === "/_author/api/narration-audio" &&
+        req.method === "GET"
+      ) {
+        const job = narrations.get(u.searchParams.get("id") ?? "");
+        if (!job.result) throw Error("Narration audio is not ready");
+        res.setHeader("Content-Type", "audio/mpeg");
+        res.end(
+          await fs.readFile(
+            path.join(
+              root,
+              ".authoring-state/narration/jobs",
+              job.result.id,
+              "audio.mp3",
+            ),
+          ),
+        );
+        return true;
+      }
+      return false;
+    }
     async function serveAuthorModule(u: URL) {
       if (
         [
@@ -636,6 +739,7 @@ async function main() {
           "/_author/preview.js",
           "/_author/links.js",
           "/_author/exports.js",
+          "/_author/narration.js",
         ].includes(u.pathname) &&
         req.method === "GET"
       ) {
@@ -720,11 +824,16 @@ async function main() {
         ".woff2": "font/woff2",
         ".jpg": "image/jpeg",
         ".pdf": "application/pdf",
+        ".mp3": "audio/mpeg",
       };
       res.setHeader(
         "Content-Type",
         type[path.extname(file)] ?? "application/octet-stream",
       );
+      if (path.extname(file) === ".mp3") {
+        audioResponse(req, res, data);
+        return;
+      }
       if (path.extname(file) === ".html")
         data = Buffer.from(
           injectPreviewMode(
@@ -770,6 +879,7 @@ async function main() {
       reviews.close();
       images.close();
       fixes.close();
+      narrations.close();
       stopping = true;
       queued = false;
       clearTimeout(refreshTimer);

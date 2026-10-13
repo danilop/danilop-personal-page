@@ -143,3 +143,25 @@ test("a final answer still needs one valid JSON value", () => {
   ])
     assert.throws(() => parseStructuredJSON(text));
 });
+
+test("Pi provider limits are actionable without exposing account diagnostics", () => {
+  const stream = eventStream(
+    {
+      type: "message_end",
+      message: {
+        role: "assistant",
+        stopReason: "error",
+        content: [],
+        errorMessage: "429 tokens per minute: private-account-id",
+      },
+    },
+    settled,
+  );
+  assert.throws(
+    () => piFinalAnswer(stream),
+    (error) =>
+      error instanceof Error &&
+      /rate or token limit/.test(error.message) &&
+      !error.message.includes("private-account-id"),
+  );
+});

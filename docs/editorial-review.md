@@ -306,3 +306,16 @@ other exact quotations relocate only when unique or supported by unchanged nearb
 text. Missing or ambiguous quotations are disabled individually. For another piece,
 the match is checked when it opens. The report still warns that its coverage and
 suggestions predate the edits; navigation does not certify the finding is current.
+
+## Spoken explanations
+
+The [Narration pane](article-narration.md#explanations-with-claude-codex-or-pi)
+reuses Claude Code, Codex and Pi for short, structured spoken explanations. It
+shows the source, outgoing prompt, rationale and uncertainty. Explicit acceptance
+binds the edited explanation to its source hash. Proposals may be auditioned but
+cannot satisfy publication until accepted; source changes invalidate approval.
+Canonical prose and ordinary alt text are not rewritten. Decorative images need
+no spoken explanation. Image bytes are not supplied to providers in this version.
+
+Live Claude/Codex proposal checks passed. Pi's configured provider hit a token
+limit; its failure is reported without applying content or switching providers.

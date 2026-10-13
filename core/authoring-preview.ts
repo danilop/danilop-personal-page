@@ -11,6 +11,7 @@ import {
 } from "./content-import";
 import { Library, loadLibrary } from "./model";
 import { readAssetManifest, verifyAsset } from "./asset-manifest";
+import { generatedSchema } from "./narration-runtime";
 export type AuthoringContext = {
   workspace: string;
   pieces: string[];
@@ -53,6 +54,7 @@ export async function stageAuthoring(
   try {
     // Only versionable source files, never ignored drafts, reports or credentials.
     await copyWorkspace();
+    await copyNarrationPreviews(repository, workspace);
     const context: AuthoringContext = {
       workspace,
       pieces: [],
@@ -206,5 +208,35 @@ export async function stageAuthoring(
       .catch((e: NodeJS.ErrnoException) => {
         if (e.code !== "ENOENT") throw e;
       });
+  }
+}
+async function copyNarrationPreviews(repository: string, workspace: string) {
+  const relative = ".authoring-state/narration/renditions";
+  const names = await fs
+    .readdir(path.join(repository, relative))
+    .catch(() => []);
+  for (const name of names.filter((name) =>
+    /^[a-f0-9]{64}\.json$/.test(name),
+  )) {
+    const source = path.join(repository, relative, name);
+    if ((await fs.realpath(source)) !== source)
+      throw Error("Symbolic-link narration preview");
+    const receipt = await fs.readFile(source, "utf8");
+    const result = generatedSchema.parse(JSON.parse(receipt).result);
+    const audio = path.join(
+      ".authoring-state/narration/jobs",
+      result.id,
+      "audio.mp3",
+    );
+    const bytes = await fs
+      .readFile(path.join(repository, audio))
+      .catch(() => undefined);
+    if (!bytes) continue;
+    await fs.mkdir(path.join(workspace, relative), { recursive: true });
+    await fs.mkdir(path.dirname(path.join(workspace, audio)), {
+      recursive: true,
+    });
+    await fs.writeFile(path.join(workspace, relative, name), receipt);
+    await fs.writeFile(path.join(workspace, audio), bytes);
   }
 }

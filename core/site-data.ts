@@ -1,4 +1,5 @@
 export type ArticleData = {
+  narration?: import("./narration-store").PublicNarration;
   id: string;
   title: string;
   summary: string;
@@ -22,6 +23,7 @@ export type CollectionData = {
   book: boolean;
   html: string;
   nodes: {
+    narration?: import("./narration-store").PublicNarration;
     id: string;
     title: string;
     kind: string;

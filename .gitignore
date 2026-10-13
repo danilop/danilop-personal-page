@@ -164,6 +164,7 @@ vite.config.ts.timestamp-*
 
 # Local content-quality runtime
 /.venv-quality/
+/.venv-narration*/
 **/__pycache__/
 
 # Private local editor recovery and revision history

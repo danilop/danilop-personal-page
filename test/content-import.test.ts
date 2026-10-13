@@ -377,3 +377,24 @@ test("collection import includes its cover and rejects replacement of a conflict
     /belongs to other content/,
   );
 });
+
+test("canonical imports preserve local narration choices even when source supplies a sidecar", async (t) => {
+  const f = await fixture(t);
+  const source = await f.piece("intro");
+  await applyImport(await prepareImport({ ...f, pieces: ["intro"] }));
+  const target = path.join(f.to, "pieces/intro/narration.yaml");
+  const local = "schemaVersion: 1\nvoice: bm_george\n";
+  await fs.writeFile(target, local);
+  await fs.writeFile(
+    path.join(source, "narration.yaml"),
+    "schemaVersion: 1\nvoice: bf_emma\n",
+  );
+  await f.piece("intro", "The canonical prose changed.\n");
+  const plan = await prepareImport({ ...f, pieces: ["intro"], update: true });
+  await applyImport(plan, plan.plan.fingerprint);
+  assert.equal(await fs.readFile(target, "utf8"), local);
+  assert.match(
+    await fs.readFile(path.join(f.to, "pieces/intro/index.md"), "utf8"),
+    /canonical prose changed/,
+  );
+});

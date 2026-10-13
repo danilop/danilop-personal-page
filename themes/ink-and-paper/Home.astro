@@ -46,6 +46,14 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
             {lead.minutes} min read
           </span>
         )}
+        {lead.narration && (
+          <span>
+            {" "}
+            · {Math.floor(lead.narration.duration / 60)}:
+            {String(Math.floor(lead.narration.duration % 60)).padStart(2, "0")}{" "}
+            listen
+          </span>
+        )}
       </p>
       {lead.image && (
         <a

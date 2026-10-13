@@ -360,3 +360,20 @@ to inspect all current source before staging. Review and address failures; neith
 the hook nor the CI configuration automatically suppresses initial findings.
 These engineering checks complement editorial review and release validation.
 They do not publish content or change the existing approval/deployment workflow.
+
+## Narration gate
+
+[Article narration](article-narration.md#publication-and-commit-behaviour) is
+required for the public reading graph. Prepare on the Mac before commit with
+`npm run assets:prepare`; this covers changed articles and newly enabled
+collections. Review unresolved spoken adaptations in the Narration pane.
+
+A new article's **Publish locally when audio is ready** action and `article:publish`
+wait for audio before assigning publication state/date. Existing public edits can
+be saved, but stale narration blocks the staged check and production build.
+Unpublishing does not require synthesis. `npm run narration:check` is an offline
+readiness check; `-- --hydrate` explicitly restores known public bytes.
+
+The hook never generates or stages. Release uploads immutable bytes before push;
+CI verifies exact pinned artifacts without Kokoro. Both current public articles
+are backfilled and the policy is enabled locally. Narration is not yet deployed.
