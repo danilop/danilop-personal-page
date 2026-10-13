@@ -1,3 +1,5 @@
+import { Audiobooks } from "../core/audiobooks";
+import { bookBytes } from "../core/audiobook-store";
 import { asError } from "../core/errors";
 import fs from "node:fs/promises";
 import { watch } from "node:fs";
@@ -77,6 +79,7 @@ async function main() {
   const images = new AuthorImages(root);
   const fixes = new AuthorFixes(root);
   const narrations = new Narrations(root);
+  const audiobooks = new Audiobooks(root);
   const narrationBuilds = new Set<string>();
   const output = path.join(root, "exports/author-live"),
     media = path.join(output, "media");
@@ -401,6 +404,36 @@ async function main() {
           action = u.pathname.split("/").pop();
         const result = await exclusive(async () => {
           const routes: Record<string, () => Promise<unknown>> = {
+            "POST audiobook-inspect": async () => audiobooks.inspect(data),
+            "POST audiobook-start": async () =>
+              audiobooks.start(data.request, data.mode),
+            "GET audiobook-job": async () => {
+              const job = audiobooks.get(u.searchParams.get("id") ?? "");
+              if (
+                job.status === "ready" &&
+                job.record &&
+                !narrationBuilds.has(job.id)
+              ) {
+                narrationBuilds.add(job.id);
+                void rebuild();
+              }
+              return job;
+            },
+            "POST audiobook-cancel": async () => {
+              audiobooks.cancel(data.id);
+              return { cancelled: true };
+            },
+            "POST audiobook-settings": async () => {
+              const captured = await audiobooks.capture(data.request);
+              const doc = YAML.parseDocument(captured.request.text);
+              doc.set("audiobook", {
+                voice: data.voice,
+                pace: Number(data.pace),
+                profile: captured.plan.doc.settings.profile,
+              });
+              collectionSchema.parse(doc.toJS({ maxAliasCount: 0 }));
+              return { text: doc.toString() };
+            },
             "POST narration-inspect": async () => narrations.inspect(data),
             "POST narration-start": async () =>
               narrations.start(data.request, data.audition, data.spokenText),
@@ -626,6 +659,7 @@ async function main() {
               return preview(data.file, data.text, data.context);
             },
             save: async () => {
+              requireBookPublicationPanel(data.file, data.text);
               const narrationRequired =
                 (await narrationPolicy(root)).required &&
                 data.file.endsWith("/index.md");
@@ -704,6 +738,28 @@ async function main() {
 
     async function serveNarrationAudio(u: URL) {
       if (
+        u.pathname === "/_author/api/audiobook-audio" &&
+        req.method === "GET"
+      ) {
+        const job = audiobooks.get(u.searchParams.get("id") ?? "");
+        const bytes = job.record
+          ? await bookBytes(root, job.record)
+          : job.audioId
+            ? await fs.readFile(
+                path.join(
+                  root,
+                  ".authoring-state/narration/jobs",
+                  job.audioId,
+                  "audio.mp3",
+                ),
+              )
+            : undefined;
+        if (!bytes) throw Error("Audiobook preview is not ready");
+        res.setHeader("Content-Type", "audio/mpeg");
+        res.end(bytes);
+        return true;
+      }
+      if (
         u.pathname === "/_author/api/narration-audio" &&
         req.method === "GET"
       ) {
@@ -740,6 +796,7 @@ async function main() {
           "/_author/links.js",
           "/_author/exports.js",
           "/_author/narration.js",
+          "/_author/audiobook.js",
         ].includes(u.pathname) &&
         req.method === "GET"
       ) {
@@ -880,6 +937,7 @@ async function main() {
       images.close();
       fixes.close();
       narrations.close();
+      audiobooks.close();
       stopping = true;
       queued = false;
       clearTimeout(refreshTimer);
@@ -894,3 +952,15 @@ main().catch((e) => {
   console.error(e);
   process.exitCode = 1;
 });
+
+function requireBookPublicationPanel(file: string, text: string) {
+  if (file.startsWith("content/collections/")) {
+    const value = collectionSchema.parse(
+      YAML.parse(text, { maxAliasCount: 0 }),
+    );
+    if (value.book && value.status === "published")
+      throw Error(
+        "Use Publish locally in the Audiobook panel. Book publication waits for its audio.",
+      );
+  }
+}

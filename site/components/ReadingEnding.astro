@@ -1,0 +1,18 @@
+---
+import type { CollectionData } from "../../core/site-data";
+import { bookProgress } from "../../core/reading-navigation";
+interface Props {
+  collection: CollectionData;
+}
+const progress = bookProgress(Astro.props.collection);
+---
+
+<p class="meta reading-complete">
+  {progress?.title && (
+    <>
+      <strong>{progress.title}</strong>
+      <br />
+    </>
+  )}
+  {progress?.message ?? "You've reached the end of this collection."}
+</p>

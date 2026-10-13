@@ -56,11 +56,11 @@ are exploration history, not competing active recommendations.
 Keep Danilo's personal identity visible across writing, technical experiments,
 books, and photography. A publication title may be secondary to his name.
 
-| Direction | Name possibilities | Portrait | Visual language | Tradeoff |
-| --- | --- | --- | --- | --- |
-| Editorial notebook | Danilo Poccia; Fieldnotes by Danilo Poccia; In the Margins | Loose ink interpretation, with a photo on the biography page | Warm off-white, charcoal, deep blue, serif reading text, restrained annotations | Fits writing/books; needs room for strong photography and interactive work |
-| Workshop | Danilo Poccia; Danilo's Workshop; Working Notes | Photo or simplified manga illustration | Clean pale surfaces, strong sans-serif headings, diagrams, selective bright accents | Fits building and experiments; can overemphasize technology |
-| Visual journal | Danilo Poccia; Open Horizons; Notes Along the Way | Natural photographic portrait | Generous spacing, large photographs, quiet captions, alternating visual and written features | Fits personal breadth; must keep articles easy to discover |
+| Direction          | Name possibilities                                         | Portrait                                                     | Visual language                                                                              | Tradeoff                                                                   |
+| ------------------ | ---------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Editorial notebook | Danilo Poccia; Fieldnotes by Danilo Poccia; In the Margins | Loose ink interpretation, with a photo on the biography page | Warm off-white, charcoal, deep blue, serif reading text, restrained annotations              | Fits writing/books; needs room for strong photography and interactive work |
+| Workshop           | Danilo Poccia; Danilo's Workshop; Working Notes            | Photo or simplified manga illustration                       | Clean pale surfaces, strong sans-serif headings, diagrams, selective bright accents          | Fits building and experiments; can overemphasize technology                |
+| Visual journal     | Danilo Poccia; Open Horizons; Notes Along the Way          | Natural photographic portrait                                | Generous spacing, large photographs, quiet captions, alternating visual and written features | Fits personal breadth; must keep articles easy to discover                 |
 
 Selected starting direction: use the name-first
 hierarchy and an editorial foundation with blue accents, an ink
@@ -84,6 +84,15 @@ references; new layout structures may require new template code. A theme change
 must preserve articles, collection/book structure, publication rules, and URLs,
 with readable, accessible, responsive output. Website themes and book typography
 are independently chosen.
+
+Reading headings must remain visually distinct from the prose at every nesting
+level. On an individual article page, source H2 sections sit below the page H1,
+regardless of the article's depth in a book. Chapter and part pages rebase their
+descendants to the current page; continuous reading retains the full hierarchy.
+No prose heading is smaller than body text. The deepest levels use weight and
+spacing as well as size. Captions, code, tables and metadata keep their own
+reading scales. This web presentation does not change the manuscript hierarchy
+or the separately formatted book export.
 
 1. Writing has an identity independent of URL, placement, and renderer.
 2. Articles are grouped in collections. Ordering uses the same model; there is
@@ -203,6 +212,16 @@ An ordered collection should have a table of contents and previous/next
 navigation. A growing book may show deliberately public planned sections,
 clearly distinguished from readable sections. Draft text must remain private.
 
+Book contents show **More to come** while the book is in progress, without
+promising a whole chapter or a date. The last available reading page and the
+continuous book view show **You’re up to date** / **This book will continue here.**
+This follows the available reading order automatically. An explicitly complete
+book shows **Complete book** in contents and **End of the book** /
+**You’ve reached the end of this book.** after reading. Unspecified completion
+gets a neutral last-available-part message; it must not imply a finished book.
+These are interface messages, excluded from authored prose and book exports.
+Implemented locally; not deployed.
+
 ### Archive
 
 Preserve old posts, decks, videos, and relevant biographical material, retaining
@@ -219,22 +238,22 @@ are not automatically assigned to the archive.
 
 ## 5. Rich content
 
-| Element | Required capability |
-| --- | --- |
-| Code | Highlighting, source-file inclusion, captions/references, optional annotations |
-| Images | Original assets, captions, accessible descriptions, suitable output sizing |
-| Photo galleries | Curated albums, external hosting, captions, accessible viewing, and source links |
-| Tables | Structured values, header semantics, captions, and references |
-| Charts | Data and visualization specification, with units, scales, and annotations |
-| Diagrams | Editable definitions, configurable rendering, captions, and references |
-| Mathematics | Inline/display equations and optional numbering/references |
-| Citations | Reusable sources and contextual bibliographies |
-| Callouts | Definitions, observations, examples, and practical advice |
-| Exercises | Prompts and separately addressable solutions |
-| Audio/video | Playback with transcripts or equivalent written explanation |
+| Element                     | Required capability                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| Code                        | Highlighting, source-file inclusion, captions/references, optional annotations                |
+| Images                      | Original assets, captions, accessible descriptions, suitable output sizing                    |
+| Photo galleries             | Curated albums, external hosting, captions, accessible viewing, and source links              |
+| Tables                      | Structured values, header semantics, captions, and references                                 |
+| Charts                      | Data and visualization specification, with units, scales, and annotations                     |
+| Diagrams                    | Editable definitions, configurable rendering, captions, and references                        |
+| Mathematics                 | Inline/display equations and optional numbering/references                                    |
+| Citations                   | Reusable sources and contextual bibliographies                                                |
+| Callouts                    | Definitions, observations, examples, and practical advice                                     |
+| Exercises                   | Prompts and separately addressable solutions                                                  |
+| Audio/video                 | Playback with transcripts or equivalent written explanation                                   |
 | Documents and presentations | Read-only PDF/document/deck embeds, accessible summaries, direct links, and book alternatives |
-| Simulations | Controls, named scenarios, reproducible inputs, book alternatives |
-| Model experiments | Explicit activation, compatibility/download information, recorded examples |
+| Simulations                 | Controls, named scenarios, reproducible inputs, book alternatives                             |
+| Model experiments           | Explicit activation, compatibility/download information, recorded examples                    |
 
 A figure is a publishing role for an image, chart, diagram, or simulation
 snapshot. Tables, equations, and listings may use separate numbering. All
@@ -527,7 +546,6 @@ return through View on site. The separate author command and compatibility alias
 are removed. `--release` serves built public output; `--snapshot` is an explicit
 advanced read-only mode. All modes use port 4322 by default, with `--port` available.
 
-
 ## Article publication controls
 
 Implemented in the local editor: **Unpublish to draft** preserves the article for
@@ -578,3 +596,15 @@ audio; unchanged speech reuses existing work. See [narration](article-narration.
 for scope and checks. Hosted delivery is verified; Safari/iPhone/VoiceOver remain
 to verify;
 continuous or sticky playback and Media Session are outside this delivery.
+
+## Growing audiobook listening — implemented, 2026-10-13
+
+A compact player on the book main page sits below the summary. It offers explicit
+playback, chapter navigation, seek, ±15 seconds, the shared speed choices and a
+full current-edition MP3 download. It distinguishes Published so far from Complete,
+identifies partial chapters, and keeps the detailed transcript behind More options.
+Stable browser progress follows unchanged passages when the book grows; revised
+or removed passages produce an explained reading-boundary fallback. Downloaded
+files are snapshots and do not update themselves. Draft editions are private.
+See [growing audiobooks](book-audiobooks.md) for the implemented scope and
+[verification](verification.md) for release and platform status.

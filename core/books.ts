@@ -1,3 +1,4 @@
+import { sourceHeadingLevel } from "./reading-structure";
 import { asError } from "./errors";
 import { selectCode } from "./code-source";
 import { visit } from "unist-util-visit";
@@ -7,6 +8,7 @@ import { execFileSync } from "node:child_process";
 import {
   assemble,
   readYaml,
+  parser,
   type Library,
   type Collection,
   type AssemblyNode,
@@ -15,6 +17,12 @@ import {
 import { renderDocument } from "./render";
 import { Assets, hash } from "./assets";
 import { bookMatter } from "./book-matter";
+import {
+  bookLayout,
+  bookSourceNotes,
+  bookHeadingSlug,
+  type TextEdit,
+} from "./book-format";
 type BookExporter = {
   id: string;
   version: string;
@@ -28,9 +36,11 @@ type BookExporter = {
 };
 const markua: BookExporter = {
   id: "markua",
-  version: "1",
+  version: "3",
   async export({ collection, lib, output, excludePlanned, preview }) {
     const doc = assemble(collection, lib, "book", { excludePlanned, preview });
+    const layout = bookLayout(doc.nodes);
+    const notes = bookSourceNotes(doc.nodes, layout);
     const matter = await bookMatter(doc);
     const assets = new Assets(path.join(output, "manuscript", "resources"));
     const defaults = await readYaml("publishing/renderers.yaml");
@@ -42,30 +52,74 @@ const markua: BookExporter = {
     let part: "front" | "body" | "back" | undefined;
     const frontIds = new Set(collection.frontMatter.map((n) => n.id)),
       backIds = new Set(collection.backMatter.map((n) => n.id));
-    const partDepths: number[] = [];
+    let emittedPart: typeof part;
     for (let i = 0; i < doc.nodes.length; i++) {
       const n = doc.nodes[i];
-      const bookDepth = bookDepthFor(n);
+      const format = layout.get(n.id)!;
+      const bookDepth = format.depth;
       let body = "";
       if (frontIds.has(n.id)) part = "front";
       else if (backIds.has(n.id)) part = "back";
       else if (collection.body.some((x) => x.id === n.id)) part = "body";
-      const marker = matterMarker(i, n);
+      const marker = matterMarker();
       if (n.kind === "generated") {
         body = generatedMatter(n, body);
       } else if (n.piece) {
         body = await renderPiece(body, n, bookDepth);
       }
-      const title =
-        n.kind === "generated"
-          ? ""
-          : `${n.kind === "part" ? "{part}\n\n" : ""}{#${n.id}}\n${"#".repeat(Math.max(1, Math.min(6, bookDepth)))} ${n.title}\n\n`;
+      const title = titleFor(n, bookDepth, format);
+
+      if (format.attachAnchor) body = `{#${n.id}}\n${body.trimStart()}`;
       const filename = `${String(i + 1).padStart(3, "0")}-${n.id}.md`;
       await fs.writeFile(
         path.join(output, "manuscript", filename),
         marker + title + body + "\n",
       );
       files.push(filename);
+      await appendSourceNotes(n, i);
+    }
+    function titleFor(
+      n: AssemblyNode,
+      bookDepth: number,
+      format: { sample: boolean; omit: boolean },
+    ) {
+      const attributes = [`id: ${n.id}`];
+      if (n.kind === "part") attributes.push("class: part");
+      if (bookDepth === 1) attributes.push(`sample: ${format.sample}`);
+      return n.kind === "generated" || format.omit
+        ? ""
+        : `{${attributes.join(", ")}}\n${"#".repeat(bookDepth)} ${n.title}\n\n`;
+    }
+    async function appendSourceNotes(n: AssemblyNode, i: number) {
+      let sourceNotes = notes.after.get(n.id);
+      if (sourceNotes) {
+        for (const note of notes.entries.get(n.id)!) {
+          const source = note.source;
+          const renderedNote = await renderPiece(
+            "",
+            {
+              ...source,
+              piece: {
+                ...source.piece!,
+                body: note.text,
+                ast: parser().parse(note.text),
+              },
+            },
+            1,
+            false,
+          );
+          sourceNotes = sourceNotes.replace(
+            `**${note.number}.** ${note.text}`,
+            `**${note.number}.** ${renderedNote}`,
+          );
+        }
+        const notesFile = `${String(i + 1).padStart(3, "0")}-${n.id}-source-notes.md`;
+        await fs.writeFile(
+          path.join(output, "manuscript", notesFile),
+          sourceNotes,
+        );
+        files.push(notesFile);
+      }
     }
     await appendBackMatter();
     await fs.writeFile(
@@ -73,22 +127,10 @@ const markua: BookExporter = {
       files.join("\n") + "\n",
     );
     await fs.writeFile(
-      path.join(output, "manuscript", "Sample.txt"),
-      files.slice(0, Math.min(2, files.length)).join("\n") + "\n",
-    );
-    await fs.writeFile(
       path.join(output, "manuscript", "Preview.txt"),
       files.join("\n") + "\n",
     );
     return files;
-
-    function bookDepthFor(n: AssemblyNode) {
-      while (partDepths.length && partDepths.at(-1)! >= n.depth)
-        partDepths.pop();
-      const bookDepth = Math.max(1, n.depth - partDepths.length);
-      if (n.kind === "part") partDepths.push(n.depth);
-      return bookDepth;
-    }
 
     function indexPiecePlacements() {
       for (const n of doc.nodes)
@@ -105,7 +147,7 @@ const markua: BookExporter = {
           const filename = role + ".md";
           await fs.writeFile(
             path.join(output, "manuscript", filename),
-            "{backmatter}\n\n" + body + "\n",
+            "{backmatter}\n\n" + remapAnchors(body) + "\n",
           );
           files.push(filename);
         }
@@ -123,36 +165,46 @@ const markua: BookExporter = {
       else if (["glossary", "index", "bibliography"].includes(n.role ?? "")) {
         body = matter.sections[n.role as keyof typeof matter.sections];
       } else throw Error(`Unsupported generated book material ${n.role}`);
-      return body;
+      return remapAnchors(body);
     }
 
-    function matterMarker(i: number, n: AssemblyNode) {
-      return i === 0 ||
-        frontIds.has(n.id) ||
-        backIds.has(n.id) ||
-        collection.body.some((x) => x.id === n.id)
-        ? part === "front"
-          ? "{frontmatter}\n\n"
-          : part === "back"
-            ? "{backmatter}\n\n"
-            : "{mainmatter}\n\n"
-        : "";
+    function remapAnchors(body: string) {
+      return body.replace(
+        /\]\(#([^)]*)\)/g,
+        (_, id) => `](#${layout.get(id)?.anchor ?? id})`,
+      );
+    }
+
+    function matterMarker() {
+      if (part === emittedPart) return "";
+      emittedPart = part;
+      return part === "body"
+        ? "{mainmatter}\n\n"
+        : part === "back"
+          ? "{backmatter}\n\n"
+          : "";
     }
 
     async function renderPiece(
       body: string,
       n: AssemblyNode,
       bookDepth: number,
+      includeNotes = true,
     ) {
       body = n.piece!.body;
       let protectedCode;
-      ({ protectedCode, body } = prepareHeadingsAndCode(n, bookDepth, body));
+      ({ protectedCode, body } = prepareHeadingsAndCode(
+        n,
+        bookDepth,
+        body,
+        includeNotes ? notes.edits.get(n.id) : [],
+      ));
 
       body = body.replace(
         /\]\(#([^)]*)\)/g,
-        (_, target) => `](#${n.id}-${target})`,
+        (_, target) =>
+          `](#${notes.anchors.has(target) ? target : `${n.id}-${target}`})`,
       );
-      body = body.replace(/\[\^([^\]]+)\]/g, (_, id) => `[^${n.id}-${id}]`);
       // Source stays Markdown; contextual block renditions replace directives only.
       body = await renderBlocks(n, body, protectedCode);
       body = await freezeImages(body, n);
@@ -172,7 +224,10 @@ const markua: BookExporter = {
         const selected = placement ?? occurrences[0];
         if (!selected || !occurrences.includes(selected))
           throw Error(`Unresolved book reference ${target}`);
-        return `[${blockId ?? lib.pieces.get(pieceId)!.title}](#${selected}${blockId ? "-" + blockId : ""})`;
+        const anchor = blockId
+          ? `${selected}-${blockId}`
+          : layout.get(selected)!.anchor;
+        return `[${blockId ?? lib.pieces.get(pieceId)!.title}](#${anchor})`;
       });
       body = body
         .replace(/\[@([^\]]+)\]|:cite\{key="([^"]+)"\}/g, (_, a, b) =>
@@ -295,22 +350,23 @@ const markua: BookExporter = {
       n: AssemblyNode,
       bookDepth: number,
       body: string,
+      noteEdits: TextEdit[] = [],
     ) {
-      const headingEdits: { start: number; end: number; value: string }[] = [];
+      const headingEdits: TextEdit[] = [...noteEdits];
       const headings = new Set<string>();
-      visit(n.piece!.ast, "heading", (v) => {
-        const depth = v.depth + Math.max(0, bookDepth - 1);
-        if (depth > 6) throw Error("Book heading too deep");
+      visit(n.piece!.ast, (v) => {
+        if (v.type === "footnoteDefinition") return "skip";
+        if (v.type !== "heading") return;
+        const depth = sourceHeadingLevel(
+          v.depth,
+          Math.max(0, bookDepth - 1),
+          n.id,
+        );
         const start = v.position!.start.offset!;
         const text = (v.children ?? [])
           .map((c) => ("value" in c ? c.value : ""))
           .join("");
-        const slug =
-          text
-            .toLowerCase()
-            .normalize("NFKD")
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-|-$/g, "") || "section";
+        const slug = bookHeadingSlug(text);
         let unique = slug,
           index = 2;
         while (headings.has(unique)) unique = slug + "-" + index++;
@@ -318,11 +374,12 @@ const markua: BookExporter = {
         headingEdits.push({
           start,
           end: start + v.depth,
-          value: `{#${n.id}-${unique}}\n\n` + "#".repeat(depth),
+          value: `{#${n.id}-${unique}}\n` + "#".repeat(depth),
         });
       });
       const protectedCode = new Map<string, string>();
       visit(n.piece!.ast, (v) => {
+        if (v.type === "footnoteDefinition") return "skip";
         if (v.type !== "code" && v.type !== "inlineCode") return;
         const token = `NOTESBOOKCODE${protectedCode.size}END`;
         const start = v.position!.start.offset!,

@@ -1,3 +1,6 @@
+import { Audiobooks, checkAllAudiobooks } from "./audiobooks";
+import { audiobookPlan, publicBooks } from "./audiobook-plan";
+import { bookUpdates, type BookRecord } from "./audiobook-store";
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
@@ -414,6 +417,22 @@ export class Narrations {
         result: await this.generate(capture.doc, signal, progress),
       });
     if (signal.aborted) throw Error("Narration cancelled");
+    const bookManager = new Audiobooks(this.root);
+    const books: {
+      plan: Awaited<ReturnType<typeof audiobookPlan>>;
+      record: BookRecord;
+    }[] = [];
+    try {
+      for (const book of publicBooks(c.lib)) {
+        const plan = await audiobookPlan(this.root, book, c.lib);
+        books.push({
+          plan,
+          record: await bookManager.generate(plan, signal, progress),
+        });
+      }
+    } finally {
+      bookManager.close();
+    }
     const text = stampPublication(c.saved.text, c.request.text);
     await narrationLock(this.root, async () => {
       if (signal.aborted) throw Error("Narration cancelled");
@@ -429,6 +448,19 @@ export class Narrations {
           );
       }
       if (signal.aborted) throw Error("Narration cancelled");
+      const freshLibrary = (await this.capture(c.request)).lib;
+      for (const { plan } of books) {
+        const book = freshLibrary.collections.find(
+          (v) => v.id === plan.bookId,
+        )!;
+        if (
+          (await audiobookPlan(this.root, book, freshLibrary)).hash !==
+          plan.hash
+        )
+          throw Error(
+            "Book changed during generation; publication remains held",
+          );
+      }
       // Once journal writes begin, complete them; interruption recovery must not
       // leave a source transition half-applied.
       for (const [index, { capture, result }] of prepared.entries())
@@ -438,6 +470,12 @@ export class Narrations {
           result,
           index === prepared.length - 1
             ? { file: c.request.file, text }
+            : undefined,
+          index === prepared.length - 1 && books.length
+            ? await bookUpdates(
+                this.root,
+                books.map((b) => b.record),
+              )
             : undefined,
         );
     });
@@ -622,5 +660,6 @@ export async function checkAllNarrations(root: string, hydrate = false) {
       await speechDocument(root, piece, lib, undefined, title),
       hydrate,
     );
+  await checkAllAudiobooks(root, hydrate);
   return narrationUnits(lib).size;
 }

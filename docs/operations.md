@@ -105,11 +105,22 @@ npm run book -- verify exports/guide/local-review
 ```
 
 Use your own collection ID for actual work. Exports contain `manuscript/Book.txt`,
-`Sample.txt`, `Preview.txt`, ordered Markdown/Markua sections and resources, plus
+`Preview.txt`, ordered Markdown/Markua sections and resources, plus
 `edition.json` with source revision, content/configuration and file hashes.
 An existing edition directory cannot be overwritten. Corrections need a new ID.
 `--preview` explicitly includes eligible draft material; never publish a preview
 artifact. `--exclude-planned` explicitly omits public outline placeholders.
+
+Exporter version 3 targets Markua 0.30. It marks the front matter, preceding parts
+and complete first chapter with `sample: true` heading attributes; without a
+chapter node it selects through the first piece. It no longer emits `Sample.txt`.
+Part headings use `class: part`. Heading inclusion follows the
+[shared reading structure](reading-structure.md); older frozen editions are retained. These follow Leanpub's
+[part syntax](https://help.leanpub.com/en/articles/9261803-creating-a-part-in-a-leanpub-book)
+and [sample directives](https://help.leanpub.com/en/articles/9889159-detailed-example-of-how-the-sample-book-directive-works-in-markua).
+Repeated Markdown footnotes become chapter source-note links because Markua
+requires each footnote identifier to be used once; see the
+[Markua span specification](https://leanpub.com/read/markua/leanpub-auto-span-elements).
 
 The Markua adapter is implemented and locally tested. Remote Leanpub rendering
 has not been verified for a real book. Sync the reviewed manuscript through the

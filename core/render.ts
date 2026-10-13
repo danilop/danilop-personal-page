@@ -1,3 +1,4 @@
+import { readingPlan, sourceHeadingLevel } from "./reading-structure";
 import type { Cite } from "@citation-js/core";
 import type { Nodes } from "mdast";
 import fs from "node:fs/promises";
@@ -30,6 +31,7 @@ type RenderedNode = {
   html: string;
   pieceId?: string;
   planned?: boolean;
+  integration?: "body" | "section";
 };
 export type RenderedDocument = {
   id: string;
@@ -62,6 +64,7 @@ export async function renderDocument(
   assets = new Assets(),
   plugins: Registry = registry(),
 ): Promise<RenderedDocument> {
+  const plan = readingPlan(doc.nodes, { target: doc.target });
   const refs = new Map<
     string,
     {
@@ -185,13 +188,14 @@ export async function renderDocument(
       html,
       pieceId: node.piece?.id,
       planned: node.planned,
+      integration: node.integration,
     });
   }
   let html = rendered
     .map((n) =>
       n.planned
         ? `<p class="planned">${e(n.title)} <span>Planned</span></p>`
-        : `<section id="${e(n.id)}">${n.depth ? `<h${Math.min(n.depth + 1, 6)}>${n.number ? e(n.number) + ". " : ""}${e(n.title)}</h${Math.min(n.depth + 1, 6)}>` : ""}${n.html}</section>`,
+        : `<section id="${e(n.id)}">${plan.get(n.id)!.headingLevel ? `<h${plan.get(n.id)!.headingLevel}>${n.number ? e(n.number) + ". " : ""}${e(n.title)}</h${plan.get(n.id)!.headingLevel}>` : ""}${n.html}</section>`,
     )
     .join("\n");
   if (citationEntries.size) {
@@ -238,10 +242,34 @@ export async function renderDocument(
     }
     const out = await unified()
       .use(remarkRehype, { clobberPrefix: `${node.id}-fn-` })
-      .use(rehypeSanitize, { ...defaultSchema, clobberPrefix: "" })
+      .use(rehypeSanitize, {
+        ...defaultSchema,
+        clobberPrefix: "",
+        attributes: {
+          ...defaultSchema.attributes,
+          ...Object.fromEntries(
+            ["h2", "h3", "h4", "h5", "h6"].map((tag) => [
+              tag,
+              [...(defaultSchema.attributes?.[tag] ?? []), "dataSourceHeading"],
+            ]),
+          ),
+        },
+      })
       .use(rehypeKatex, { throwOnError: true, trust: false })
       .use(rehypeStringify)
       .run(tree);
+    // Generated source-note labels belong under the same parent as the piece's
+    // authored sections. Keep citation bodies and destinations unchanged.
+    visit(out, (element) => {
+      if (
+        element.type === "element" &&
+        element.tagName === "h2" &&
+        element.properties.id === "footnote-label"
+      ) {
+        element.tagName = `h${sourceHeadingLevel(2, plan.get(node.id)!.bodyOffset, node.id)}`;
+        element.properties.dataSourceHeading = 2;
+      }
+    });
     html = unified()
       .use(rehypeStringify)
       .stringify(out)
@@ -396,10 +424,17 @@ export async function renderDocument(
         i = 2;
       while (headings.has(unique)) unique = slug + "-" + i++;
       headings.add(unique);
-      v.data = { hProperties: { id: `${node.id}-${unique}` } };
-      const depth = v.depth + node.depth;
-      if (depth > 6) throw Error(`Heading depth exceeds six in ${piece.id}`);
-      v.depth = depth as 1 | 2 | 3 | 4 | 5 | 6;
+      v.data = {
+        hProperties: {
+          id: `${node.id}-${unique}`,
+          dataSourceHeading: v.depth,
+        },
+      };
+      v.depth = sourceHeadingLevel(
+        v.depth,
+        plan.get(node.id)!.bodyOffset,
+        piece.id,
+      );
     }
   }
 }

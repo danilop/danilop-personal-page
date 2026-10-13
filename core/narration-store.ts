@@ -265,7 +265,7 @@ export async function recoverNarration(root: string) {
           file: z
             .string()
             .regex(
-              /^(publishing\/(?:narrations\.json|media-assets\.json)|content\/pieces\/[a-z0-9-]+\/(?:index\.md|narration\.yaml))$/,
+              /^(publishing\/(?:narrations\.json|audiobooks\.json|media-assets\.json)|content\/pieces\/[a-z0-9-]+\/(?:index\.md|narration\.yaml)|content\/collections\/[a-z0-9-]+\.yaml)$/,
             ),
           before: z.string().nullable(),
           after: z.string(),
@@ -288,6 +288,10 @@ export async function commitNarration(
   doc: SpeechDocument,
   generated: GeneratedNarration,
   source?: { file: string; text: string },
+  extra?: {
+    sources: Record<string, import("./asset-manifest").AssetRecord>;
+    updates: { file: string; text: string }[];
+  },
 ) {
   const bytes = await fs.readFile(
     path.join(
@@ -312,6 +316,7 @@ export async function commitNarration(
     bytes,
   );
   const manifest = (await readAssetManifest(root)) ?? emptyAssetManifest();
+  Object.assign(manifest.sources, extra?.sources);
   manifest.sources[logical] = sourceRecord(logical, bytes);
   const index = await narrationIndex(root);
   const { id: _id, done: _done, ...audio } = generated;
@@ -339,8 +344,16 @@ export async function commitNarration(
       file: `content/pieces/${doc.pieceId}/narration.yaml`,
       text: YAML.stringify(doc.settings),
     },
+    ...(extra?.updates ?? []),
     ...(source ? [source] : []),
   ];
+  await commitNarrationChanges(root, updates);
+  return record;
+}
+export async function commitNarrationChanges(
+  root: string,
+  updates: { file: string; text: string }[],
+) {
   const changes: Change[] = await Promise.all(
     updates.map(async (u) => ({
       file: u.file,
@@ -354,7 +367,6 @@ export async function commitNarration(
     JSON.stringify(changes),
   );
   await recoverNarration(root);
-  return record;
 }
 export type PublicNarration = {
   url: string;

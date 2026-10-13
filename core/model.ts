@@ -158,6 +158,8 @@ export type Node = {
   after?: Node[];
   children?: Node[];
   publicOutline?: boolean;
+  bookHeading?: "include" | "omit";
+  integration?: "body" | "section";
   render?: Preferences;
 };
 export const nodeSchema: z.ZodType<Node> = z.lazy(() =>
@@ -180,10 +182,31 @@ export const nodeSchema: z.ZodType<Node> = z.lazy(() =>
       after: z.array(nodeSchema).optional(),
       children: z.array(nodeSchema).optional(),
       publicOutline: z.boolean().optional(),
+      bookHeading: z.enum(["include", "omit"]).optional(),
+      integration: z.enum(["body", "section"]).optional(),
       render: preferences,
     })
     .strict()
     .superRefine((v, c) => {
+      if (v.integration && v.kind !== "piece")
+        c.addIssue({
+          code: "custom",
+          message: "integration belongs to piece placements",
+        });
+      if (
+        v.integration &&
+        v.bookHeading &&
+        (v.integration === "body") !== (v.bookHeading === "omit")
+      )
+        c.addIssue({
+          code: "custom",
+          message: "Conflicting integration and bookHeading",
+        });
+      if (v.bookHeading && v.kind !== "piece")
+        c.addIssue({
+          code: "custom",
+          message: "bookHeading belongs to piece placements",
+        });
       if (v.kind === "piece" && !v.ref)
         c.addIssue({ code: "custom", message: "Piece placement requires ref" });
       if (v.kind !== "piece" && !v.title && v.kind !== "generated")
@@ -233,6 +256,31 @@ export const collectionSchema = z
     slug: id,
     ordered: z.boolean().default(false),
     book: z.boolean().default(false),
+    completion: z.enum(["in-progress", "complete"]).optional(),
+    audioSubtitle: z.string().min(1).max(500).optional(),
+    audioAuthor: z.string().min(1).max(200).optional(),
+    audiobook: z
+      .object({
+        voice: z
+          .enum([
+            "bm_george",
+            "bf_emma",
+            "bf_alice",
+            "bf_isabella",
+            "bf_lily",
+            "bm_daniel",
+            "bm_fable",
+            "bm_lewis",
+          ])
+          .default("bm_george"),
+        pace: z.number().min(0.8).max(1.2).default(1),
+        profile: z
+          .string()
+          .regex(/^[a-z0-9-]+$/)
+          .default("kokoro-mlx-bf16-v1"),
+      })
+      .strict()
+      .optional(),
     shortCode: id.optional(),
     subjects: z.array(z.string()).default([]),
     render: preferences,
@@ -242,6 +290,14 @@ export const collectionSchema = z
   })
   .strict()
   .superRefine(checkPublication)
+  .superRefine((collection, ctx) => {
+    if (collection.completion && !collection.book)
+      ctx.addIssue({
+        code: "custom",
+        path: ["completion"],
+        message: "Completion applies only to book collections",
+      });
+  })
   .transform(normalizePublication);
 export type Collection = z.infer<typeof collectionSchema>;
 export type Library = { pieces: Map<string, Piece>; collections: Collection[] };
@@ -255,6 +311,8 @@ export type AssemblyNode = {
   preferences: Preferences[];
   planned?: boolean;
   role?: string;
+  bookHeading?: "include" | "omit";
+  integration?: "body" | "section";
 };
 export type PublicationDocument = {
   id: string;
@@ -352,23 +410,38 @@ export async function loadLibrary(root = "content"): Promise<Library> {
 }
 export function validateCollection(c: Collection, pieces: Map<string, Piece>) {
   const ids = new Set<string>();
-  function walk(nodes: Node[], ancestors: Set<Node>, depth: number) {
+  function walk(
+    nodes: Node[],
+    ancestors: Set<Node>,
+    depth: number,
+    parent?: Node,
+  ) {
     if (depth > 12) throw Error(`Collection ${c.id} is too deep`);
     for (const n of nodes) {
       if (ancestors.has(n)) throw Error(`Cycle at ${n.id}`);
       if (ids.has(n.id)) throw Error(`Duplicate placement ${n.id}`);
       ids.add(n.id);
-      if (n.ref && !pieces.has(n.ref)) throw Error(`Missing piece ${n.ref}`);
-      if (
-        n.kind === "part" &&
-        (n.children ?? []).some((x) => !["chapter", "planned"].includes(x.kind))
-      )
-        throw Error("Parts group chapters");
+      validatePlacement(n, parent);
       const next = new Set(ancestors).add(n);
-      walk(n.before ?? [], next, depth + 1);
-      walk(n.children ?? [], next, depth + 1);
-      walk(n.after ?? [], next, depth + 1);
+      walk(n.before ?? [], next, depth + 1, n.kind === "piece" ? parent : n);
+      walk(n.children ?? [], next, depth + 1, n);
+      walk(n.after ?? [], next, depth + 1, n.kind === "piece" ? parent : n);
     }
+  }
+  function validatePlacement(n: Node, parent?: Node) {
+    if (n.ref && !pieces.has(n.ref)) throw Error(`Missing piece ${n.ref}`);
+    if (
+      n.kind === "part" &&
+      (n.children ?? []).some((x) => !["chapter", "planned"].includes(x.kind))
+    )
+      throw Error("Parts group chapters");
+    if (
+      n.integration === "body" &&
+      (!parent || !["chapter", "appendix"].includes(parent.kind))
+    )
+      throw Error(
+        `Body integration requires a piece directly inside a chapter or appendix: ${n.id}`,
+      );
   }
   walk([...c.frontMatter, ...c.body, ...c.backMatter], new Set(), 0);
 }
@@ -419,7 +492,8 @@ export function assemble(
       if (n.kind === "chapter") number = String(++chapter);
       else if (n.kind === "appendix")
         number = String.fromCharCode(65 + appendix++);
-      else if (piece && sectionPrefix) number = `${sectionPrefix}.${++section}`;
+      else if (piece && sectionPrefix && n.integration !== "body")
+        number = `${sectionPrefix}.${++section}`;
       return number;
     }
 
@@ -520,10 +594,13 @@ export function assemble(
         nodes.push({
           id: n.id,
           kind: "piece",
+          role: n.role,
           title: n.title ?? piece.title,
           depth,
           number,
           piece,
+          bookHeading: n.bookHeading,
+          integration: n.integration,
           preferences: [...prefs, piece.render ?? {}, n.render ?? {}],
         });
         walk(n.after ?? [], depth, visible, inherited);

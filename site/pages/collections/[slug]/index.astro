@@ -1,4 +1,8 @@
 ---
+import AudiobookPlayer from "../../../components/AudiobookPlayer.astro";
+import { readingPlan } from "../../../../core/reading-structure";
+import { bookProgress } from "../../../../core/reading-navigation";
+import ReadingEnding from "../../../components/ReadingEnding.astro";
 import DraftBadge from "../../../components/DraftBadge.astro";
 import { loadEditions, editionUrl } from "../../../../core/editions";
 import Layout from "../../../components/Layout.astro";
@@ -10,6 +14,8 @@ export function getStaticPaths() {
   }));
 }
 const { collection: c } = Astro.props;
+const plan = readingPlan(c.nodes);
+const progress = bookProgress(c);
 const editions = (await loadEditions()).filter(
   (e) => e.collection === c.id && e.status === "published",
 );
@@ -27,6 +33,7 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
     </h1>
     <p>{c.summary}</p>
   </header>
+  <AudiobookPlayer audiobook={c.audiobook} />
   {c.cover && (
     <div class="article-art cover-art">
       <img
@@ -52,29 +59,36 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
   )}
   <nav class="contents" aria-label="Table of contents">
     <ol>
-      {c.nodes.map((n) => (
-        <li
-          style={`--depth:${Math.max(0, n.depth - 1)}`}
-          class:list={{ planned: n.planned }}
-        >
-          {n.planned ? (
-            <span>{n.title} — Planned</span>
-          ) : (
-            <a
-              href={
-                n.kind === "piece"
-                  ? `${c.url}read/${n.id}/`
-                  : `${c.url}chapters/${n.id}/`
-              }
-            >
-              {n.number && `${n.number}. `}
-              {n.title}
-            </a>
-          )}
-          <DraftBadge pieceId={n.pieceId} />
-        </li>
-      ))}
+      {c.nodes
+        .filter((n) => plan.get(n.id)!.inContents)
+        .map((n) => (
+          <li
+            style={`--depth:${Math.max(0, n.depth - 1)}`}
+            class:list={{ planned: n.planned }}
+          >
+            {n.planned ? (
+              <span>{n.title} — Planned</span>
+            ) : (
+              <a
+                href={
+                  n.kind === "piece"
+                    ? `${c.url}read/${n.id}/`
+                    : `${c.url}chapters/${n.id}/`
+                }
+              >
+                {n.integration === "body" &&
+                  `Reading part ${plan.get(n.id)!.readingPart!.position} of ${plan.get(n.id)!.readingPart!.total}: `}
+                {n.number && `${n.number}. `}
+                {n.title}
+              </a>
+            )}
+            <DraftBadge pieceId={n.pieceId} />
+          </li>
+        ))}
     </ol>
+    {progress?.contents && (
+      <p class="meta book-progress">{progress.contents}</p>
+    )}
   </nav>
   {editions.length > 0 && (
     <section>
@@ -91,6 +105,7 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
   <details open class="continuous-reading">
     <summary>Read the whole collection</summary>
     <div class="prose" set:html={c.html} />
+    {c.book && first && <ReadingEnding collection={c} />}
   </details>
   <a class="back-link" href="/collections/">
     All collections & books

@@ -74,6 +74,7 @@ export type SpeechDocument = {
   speechHash: string;
   reviewHash: string;
   firstParagraph?: string;
+  audioMetadata?: { title: string; author: string; cover?: string };
 };
 type SpeechNode = {
   type: string;

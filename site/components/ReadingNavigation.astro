@@ -1,6 +1,7 @@
 ---
 import type { CollectionData } from "../../core/site-data";
 import { readingContext } from "../../core/reading-navigation";
+import ReadingEnding from "./ReadingEnding.astro";
 interface Props {
   collection: CollectionData;
   nodeId: string;
@@ -9,11 +10,7 @@ const { collection, nodeId } = Astro.props;
 const { previous, next, finished } = readingContext(collection, nodeId);
 ---
 
-{finished && (
-  <p class="meta reading-complete">
-    You've reached the end of this collection.
-  </p>
-)}
+{finished && <ReadingEnding collection={collection} />}
 <nav
   class="reading-navigation"
   aria-label="Collection reading"

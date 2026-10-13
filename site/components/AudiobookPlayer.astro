@@ -1,0 +1,310 @@
+---
+import type { PublicAudiobook } from "../../core/audiobook-store";
+import { audioClock } from "../../runtime/audiobook-progress";
+interface Props {
+  audiobook?: PublicAudiobook;
+}
+const { audiobook: b } = Astro.props;
+const map = b && {
+  bookId: b.bookId,
+  title: b.title,
+  author: b.author,
+  hash: b.hash,
+  segments: b.segments.map(({ id, placement, contentHash, label }) => ({
+    id,
+    placement,
+    contentHash,
+    label,
+  })),
+  audio: { duration: b.audio.duration, timings: b.audio.timings },
+};
+---
+
+{b && (
+  <section
+    class="audiobook"
+    id="audiobook"
+    data-audiobook
+    aria-label="Book audiobook"
+  >
+    <script
+      type="application/json"
+      data-book-map
+      set:html={JSON.stringify(map).replace(/</g, "\\u003c")}
+    />
+    <div class="book-audio-heading">
+      <button type="button" data-book-play hidden>
+        Listen to this book
+      </button>
+      <span data-book-native>Listen to this book</span>
+      <span class="audio-credit">AI narration</span>
+    </div>
+    <p class="audio-edition">
+      {b.preview
+        ? "Private draft preview"
+        : b.complete
+          ? "Complete book"
+          : "Published so far"}{" "}
+      · {b.createdAt.slice(0, 10)} · {audioClock(b.audio.duration)} at 1×
+    </p>
+    {b.partial.length > 0 && <p>Includes a partially published chapter.</p>}
+    {/* eslint-disable-next-line astro/jsx-a11y/media-has-caption -- Exact spoken transcript and text reading links are provided below. */}
+    <audio
+      controls
+      preload="none"
+      src={b.url}
+      aria-label={`Audiobook of ${b.title}`}
+    />
+    <div data-book-controls hidden>
+      <p data-book-position class="audio-position"></p>
+      <label class="audio-seek">
+        <span class="sr-only">Audiobook position</span>
+        <input
+          type="range"
+          min="0"
+          max={b.audio.duration}
+          step="0.1"
+          value="0"
+          data-book-seek
+        />
+      </label>
+      <div class="audio-buttons">
+        <button
+          type="button"
+          data-book-previous
+          aria-label="Previous chapter or section"
+        >
+          Previous
+        </button>
+        <button type="button" data-book-back aria-label="Back 15 seconds">
+          −15s
+        </button>
+        <button type="button" data-book-forward aria-label="Forward 15 seconds">
+          +15s
+        </button>
+        <button
+          type="button"
+          data-book-next
+          aria-label="Next chapter or section"
+        >
+          Next
+        </button>
+        <label>
+          <span class="sr-only">Playback speed</span>
+          <select data-book-speed aria-label="Playback speed">
+            {[0.8, 1, 1.1, 1.2, 1.5, 2].map((v) => (
+              <option value={v} selected={v === 1.1}>
+                {v}×
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <p data-book-time class="audio-edition"></p>
+    </div>
+    <p data-book-notice role="status"></p>
+    <p data-book-error role="status" hidden>
+      Audio could not be loaded.{" "}
+      <button type="button" data-book-retry>
+        Retry
+      </button>{" "}
+      or download the MP3 below.
+    </p>
+    <details data-book-chapters hidden>
+      <summary>Chapters</summary>
+      <ol class="audio-contents">
+        {b.segments.map(
+          (s, i) =>
+            s.navigation && (
+              <li style={`--audio-depth:${Math.min(s.depth, 3)}`}>
+                <button type="button" data-book-chapter={i}>
+                  {s.label}
+                  {b.partial.includes(s.placement) ? " — published so far" : ""}
+                </button>
+                <span>{audioClock(b.audio.timings[i].start)}</span>
+              </li>
+            ),
+        )}
+      </ol>
+    </details>
+    <p class="audio-download">
+      <a href={b.url} download={b.filename}>
+        Download audiobook (MP3)
+      </a>{" "}
+      <span>· {(b.audio.bytes / 1024 / 1024).toFixed(1)} MB</span>
+    </p>
+    <details>
+      <summary>More listening options</summary>
+      <p>
+        {b.preview
+          ? "This private download includes draft material listed in Chapters."
+          : "This download contains the published material listed in Chapters."}{" "}
+        Saved browser progress stays on this device; downloaded files do not
+        update automatically.
+      </p>
+      <details class="audio-transcript">
+        <summary>Spoken transcript</summary>
+        {b.segments.map((s) => (
+          <p
+            class:list={{
+              "audio-heading": s.kind === "heading" || s.kind === "title",
+            }}
+          >
+            {s.text}
+          </p>
+        ))}
+      </details>
+    </details>
+  </section>
+)}
+<script>
+  import "../../runtime/audiobook-player";
+</script>
+<style>
+  .audiobook {
+    margin: 1.5rem 0 2rem;
+    padding: 1.2rem 0;
+    border-block: 1px solid var(--hairline, #c9c9c3);
+    font: 0.85rem/1.5 var(--font-sans, Inter, sans-serif);
+  }
+
+  .book-audio-heading,
+  .audio-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .audio-credit {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--muted, #586371);
+  }
+
+  button,
+  select {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid var(--hairline, #c9c9c3);
+    border-radius: 4px;
+    min-height: 44px;
+    padding: 0.35rem 0.65rem;
+    cursor: pointer;
+  }
+
+  [data-book-play] {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent, #164b88);
+    border: 0;
+    padding-left: 0;
+  }
+
+  .audio-edition,
+  .audio-position {
+    margin: 0.3rem 0;
+    color: var(--muted, #586371);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .audio-position {
+    margin-top: 1rem;
+  }
+
+  .audio-seek input,
+  audio {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .audio-seek input {
+    accent-color: var(--accent, #164b88);
+  }
+
+  summary {
+    cursor: pointer;
+    padding: 0.65rem 0;
+    min-height: 44px;
+  }
+
+  .audio-contents {
+    list-style: none;
+    padding: 0;
+    max-height: 24rem;
+    overflow: auto;
+  }
+
+  .audio-contents li {
+    padding-left: calc(var(--audio-depth) * 0.7rem);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .audio-contents button {
+    border: 0;
+    text-align: left;
+    flex: 1;
+  }
+
+  .audio-contents span {
+    font-size: 0.75rem;
+  }
+
+  .audio-contents [aria-current="true"] {
+    color: var(--accent, #164b88);
+    font-weight: 600;
+  }
+
+  .audio-download {
+    margin: 0.8rem 0;
+  }
+
+  .audio-download span {
+    font-size: 0.75rem;
+  }
+
+  .audio-transcript {
+    max-height: 24rem;
+    overflow: auto;
+  }
+
+  .audio-heading {
+    font-weight: 600;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent, #164b88);
+    outline-offset: 3px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (width<=520px) {
+    .audio-buttons {
+      gap: 0.25rem;
+    }
+
+    .audio-buttons button {
+      padding: 0.35rem 0.5rem;
+    }
+
+    .audio-credit {
+      width: 100%;
+      margin: 0;
+    }
+  }
+</style>

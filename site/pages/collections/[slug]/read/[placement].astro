@@ -1,13 +1,17 @@
 ---
+import { readingPlan } from "../../../../../core/reading-structure";
 import DraftBadge from "../../../../components/DraftBadge.astro";
-import { readingLinks } from "../../../../../core/reading-links";
-import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
+import {
+  readingLinks,
+  readingHeadings,
+} from "../../../../../core/reading-links";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
 import { readingContext } from "../../../../../core/reading-navigation";
 import TagList from "../../../../components/TagList.astro";
 import ArticleSharing from "../../../../components/ArticleSharing.astro";
+import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
     c.nodes
@@ -19,6 +23,7 @@ export function getStaticPaths() {
   );
 }
 const { c, n } = Astro.props;
+const format = readingPlan(c.nodes, { rootId: n.id }).get(n.id)!;
 const { parent, position, total } = readingContext(c, n.id);
 const original = site.articles.find((p) => p.id === n.pieceId);
 ---
@@ -49,9 +54,15 @@ const original = site.articles.find((p) => p.id === n.pieceId);
           In <a href={`${c.url}chapters/${parent.id}/`}>{parent.title}</a>
         </p>
       )}
+      {format.readingPart && format.readingPart.total > 1 && (
+        <p class="meta">
+          Reading part {format.readingPart.position} of{" "}
+          {format.readingPart.total} in this chapter
+        </p>
+      )}
       {c.ordered && (
         <p class="meta">
-          Section {position} of {total}
+          Article {position} of {total}
         </p>
       )}
       <ArticleSharing
@@ -62,11 +73,22 @@ const original = site.articles.find((p) => p.id === n.pieceId);
         position="top"
       />
     </header>
+    {c.audiobook && (
+      <p>
+        <a href={`${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`}>
+          Listen from here in the audiobook
+        </a>
+      </p>
+    )}
     <NarrationPlayer narration={n.narration} title={n.title} />
     <div
       id={n.id}
       class="prose"
-      set:html={readingLinks(n.html, c.url, [n.id])}
+      set:html={readingLinks(
+        readingHeadings(n.html, format.bodyOffset),
+        c.url,
+        [n.id],
+      )}
     />
     <TagList tags={n.tags ?? []} />
     <ArticleSharing

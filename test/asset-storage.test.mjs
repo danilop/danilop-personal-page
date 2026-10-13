@@ -173,6 +173,14 @@ test("CLI sync verifies stored objects, preserves ownership tags and rejects cor
   });
   await syncStoredAssets([{ ...group, publicFile: true }], run);
   assert(commands.at(-1).includes("s3://fixture/published/"));
+  await syncStoredAssets(
+    [{ ...group, publicFile: true, disposition: "attachment" }],
+    run,
+  );
+  assert.equal(
+    commands.at(-1)[commands.at(-1).indexOf("--content-disposition") + 1],
+    "attachment",
+  );
   assert(
     commands
       .at(-1)

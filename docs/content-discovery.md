@@ -18,6 +18,11 @@ For the Chronicles opening, the implemented tag assignments are:
 | Introduction | history, computing, programming, python |
 | Before Written Arithmetic | history, computing, python, data-representation |
 
+The three Good Enough opening draft articles use
+`decision-making` and `systems-thinking`. These registered labels cover choices,
+constraints and interactions across institutions; they do not imply that every
+chapter inherits the same tags. See its [opening plan](local-minimum-serialization.md).
+
 `counting` is accessible but ambiguous across mathematics, programming, and
 analytics; defer it until there is a useful body of related reading.
 `data-representation` names a reusable concept spanning tallies, number systems,

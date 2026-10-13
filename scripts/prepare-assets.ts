@@ -1,3 +1,5 @@
+import { Audiobooks } from "../core/audiobooks";
+import { publicBooks } from "../core/audiobook-plan";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
@@ -32,6 +34,7 @@ async function prepareNarrations(root: string) {
 async function main() {
   const root = process.cwd();
   await prepareNarrations(root);
+  await prepareBooks(root);
   const cleanup = new AuthorImageCleanup(root);
   await fs.mkdir(cleanup.state, { recursive: true });
   const lock = await fs.open(path.join(cleanup.state, "write.lock"), "wx");
@@ -129,3 +132,14 @@ main().catch((error) => {
   console.error(error.message);
   process.exitCode = 1;
 });
+
+async function prepareBooks(root: string) {
+  const books = new Audiobooks(root);
+  try {
+    if ((await narrationPolicy(root)).required)
+      for (const c of publicBooks(await loadLibrary()))
+        await books.prepare(c.id);
+  } finally {
+    books.close();
+  }
+}

@@ -471,3 +471,28 @@ test("staging isolates draft and public bytes, groups MIME types, verifies all i
   );
   await assert.rejects(fs.stat(staged), /ENOENT/);
 });
+
+test("audiobook download outputs get their own attachment transfer group", async (t) => {
+  const { root } = await repository(t),
+    bytes = Buffer.from("fixture MP3 bytes"),
+    name = "audiobook-example-2026-10-13-abc.mp3";
+  const manifest = emptyAssetManifest();
+  manifest.outputs[name] = {
+    ...sourceRecord(name, bytes),
+    key: "media/" + name,
+  };
+  await fs.mkdir(path.join(root, ".asset-cache"), { recursive: true });
+  await fs.writeFile(
+    path.join(root, ".asset-cache", manifest.outputs[name].sha256 + ".mp3"),
+    bytes,
+  );
+  await writeAssetManifest(root, manifest);
+  await uploadReleaseAssets(
+    root,
+    async (groups) => {
+      assert.equal(groups[0].disposition, "attachment");
+      assert.equal(groups[0].publicFile, true);
+    },
+    async () => {},
+  );
+});

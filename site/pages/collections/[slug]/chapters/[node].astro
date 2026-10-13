@@ -1,9 +1,13 @@
 ---
-import { readingLinks } from "../../../../../core/reading-links";
-import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
+import { readingPlan } from "../../../../../core/reading-structure";
+import {
+  readingLinks,
+  readingHeadings,
+} from "../../../../../core/reading-links";
 import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
+import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
 import { readingContext } from "../../../../../core/reading-navigation";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
@@ -16,6 +20,7 @@ export function getStaticPaths() {
   );
 }
 const { c, n } = Astro.props;
+const plan = readingPlan(c.nodes, { rootId: n.id });
 const { children } = readingContext(c, n.id);
 ---
 
@@ -30,31 +35,49 @@ const { children } = readingContext(c, n.id);
         {n.title}
       </h1>
     </header>
-    {children.map((child) => (
-      <section id={child.id}>
-        <h2>
-          {child.number && `${child.number}. `}
-          {child.title}
-          {child.planned && " — Planned"}
-        </h2>
-        {child.kind === "piece" && (
-          <p class="meta">
-            <a href={`${c.url}read/${child.id}/`}>
-              Read this section separately
-            </a>
-          </p>
-        )}
-        <NarrationPlayer narration={child.narration} title={child.title} />
-        <div
-          class="prose"
-          set:html={readingLinks(
-            child.html,
-            c.url,
-            children.map((x) => x.id),
+    {c.audiobook && (
+      <p>
+        <a href={`${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`}>
+          Listen from here in the audiobook
+        </a>
+      </p>
+    )}
+    {children.map((child) => {
+      const format = plan.get(child.id)!;
+      const Heading = `h${format.headingLevel ?? 2}` as
+        "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+      return (
+        <section
+          id={child.id}
+          class:list={["prose", { "reading-section": !format.omit }]}
+        >
+          {format.headingLevel && (
+            <Heading>
+              {child.number && `${child.number}. `}
+              {child.title}
+              {child.planned && " — Planned"}
+            </Heading>
           )}
-        />
-      </section>
-    ))}
+          {child.kind === "piece" && !format.omit && (
+            <p class="meta">
+              <a href={`${c.url}read/${child.id}/`}>
+                Read this section separately
+              </a>
+            </p>
+          )}
+          <div class="narration-container">
+            <NarrationPlayer narration={child.narration} title={child.title} />
+          </div>
+          <div
+            set:html={readingLinks(
+              readingHeadings(child.html, format.bodyOffset),
+              c.url,
+              children.map((x) => x.id),
+            )}
+          />
+        </section>
+      );
+    })}
     <ReadingNavigation collection={c} nodeId={n.id} />
   </article>
 </Layout>

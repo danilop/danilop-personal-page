@@ -6,6 +6,17 @@ No instalment, collection, edition or recurring publication job has been deploye
 
 ## Reader experience
 
+The [growing audiobook implementation](book-audiobooks.md) follows this same reading order
+as content is published, with spoken structural transitions, listening/resume on
+the book main page and a full MP3 snapshot of the currently published material.
+It is implemented with release verification through the shared deployment gate. Draft books remain unpublished.
+
+Book-specific starting points are documented separately. The
+[Good Enough opening](local-minimum-serialization.md) is prepared as a local draft:
+Part I and Chapters 1 and 2, without the old preface excluded by its book build.
+The Introduction → Chapter 1 examples below describe Chronicles specifically;
+preserve each book's own reading sequence rather than requiring identical openings.
+
 See the [content discovery review](content-discovery.md) for implemented opening tags,
 proposed page summaries, and search treatment of individual and continuous reading views.
 The implemented [content review](content-quality.md) adapts the book's checks with
@@ -23,9 +34,51 @@ book view. See [reading units and release groups](#reading-units-and-release-gro
 
 The requested workflow preserves manuscript prose through direct file/line
 extraction, adds article formatting, and retains the original reading sequence.
-Leanpub is outside the current scope. The website can already present a growing
-book without an external book service. A downloadable edition is a separate
-release; the existing local exporter produces Markua, not a finished PDF or EPUB.
+The intended workflow includes formatting a book from the blog's collection and
+eventually delivering it to Leanpub, clarified on 7 October 2026. The initial
+website pilot does not require a live Leanpub connection. A downloadable edition
+is a separate release; the existing local exporter produces Markua, not a finished
+PDF or EPUB. Live manuscript synchronisation and Leanpub rendering remain unverified.
+
+### Articles within book chapters
+
+An article is a reading unit, not necessarily a whole chapter. Several articles
+may be ordered beneath one chapter node; exporting that collection retains one
+chapter with those articles as sections. Splitting a chapter for web reading must
+not create extra book chapters, change their numbers, duplicate prose or make
+release groups part of the book structure. The original manuscript remains the
+editorial source during the current import workflow; moving authoring ownership
+into this repository would require a separate decision.
+
+Both existing Chapter 1 placements currently contain one full-chapter article.
+Chronicles also has an Introduction in front matter. No current Chronicles article
+covers only part of a chapter, although the proposed Chapter 2 grouping does.
+
+The Good Enough draft now splits Chapter 2 into two consecutive articles. Both
+placements use `integration: body`, as do the full Chapter 1 articles in both
+books. The exporter emits the chapter title once and retains the original body
+section levels. Web titles and navigation remain independent. This requires no
+second editable copy of the prose; see [authoring syntax](authoring-format.md).
+
+The [shared reading structure](reading-structure.md) applies these relationships
+to continuous web reading and chapter/part pages as well. Body articles do not
+create numbered subsections. A whole-chapter article has no redundant contents
+row; split chapters provide labelled reading-part links. Genuine titled sections
+retain their own headings, even when their titles match a parent.
+
+Exporter version 3 targets Markua 0.30. It uses adjacent heading attributes,
+`class: part` for part headings and `sample: true` for the opening material and
+complete first chapter, including every article within it. Repeated footnotes
+become linked, numbered source notes grouped once per chapter. Identical labels
+with different note text remain distinct; local note links retain their source
+article context. Code, tables, figures and cross-references have local regression
+and browser proof coverage. Local HTML proofs help inspect flow but are not
+Leanpub-rendered PDFs or EPUBs.
+
+The Leanpub adapter requests preview/status/publication for an existing book
+after its manuscript has been synced; it does not upload the manuscript itself.
+A real Leanpub preview is still required before distribution. See
+[book operations](operations.md#books-and-editions).
 
 ## Proposed article length
 
@@ -34,13 +87,17 @@ natural ending or code example warrants it. These are editorial working targets,
 not a measured optimum. Count code, figures and exercises as additional reader
 effort; never split an explanation from its example or pad a short, complete idea.
 
-The inspected *Chronicles of Computation* manuscript contains 82,731 prose words
+The September 2026 planning snapshot of _Chronicles of Computation_ contains 82,731 prose words
 under its own counting rules, excluding code, citation labels, bibliography and
 index. Its 21 main chapters contain 215 second-level sections, with a median of
 340 words; 201 are below 500 words. One such section per week would usually be
 too slight for this proposed cadence. Most instalments will combine several
 adjacent sections. At an average of 1,500 words, the manuscript suggests roughly
 55 weekly instalments; this is a scale estimate, not a fixed release calendar.
+The source count after the 7 October editorial follow-up is 82,874 words; the
+section statistics above describe the September snapshot. The existing blog
+opening was [refreshed from that source](content-import.md#source-refresh-on-7-october-2026)
+and remains draft-only.
 
 ### Opening sequence for review
 
@@ -48,15 +105,15 @@ Counts use the manuscript's rules and include headings. Code and copied endnotes
 add to the reading material. Lines refer to the inspected working files, not a
 promise that future revisions will retain those line numbers.
 
-| Week | Proposed material | Source selection | Prose words |
-| --- | --- | --- | ---: |
-| 1 | Book introduction + all of Before Written Arithmetic | `00-front-matter.md` 1–36; `ch01.md` 1–43 | 2,021 |
-| 2 | Chapter 2 opening, Numbers in clay, A scribe's mathematics | `ch02.md` 1–48 | 1,297 |
-| 3 | Areas, approximations and a problem about seven; Euclid's common measure | `ch02.md` 49–85 | 1,032 |
-| 4 | Chapter 3 opening, astronomical gears, movable counters, Roman arithmetic | `ch03.md` 1–56 | 1,409 |
-| 5 | Maya calendars, Zu Chongzhi, Brahmagupta | `ch03.md` 57–103 | 1,143 |
-| 6 | Chapter 4 opening, completing a square, translated texts, Al-Battani | `ch04.md` 1–48 | 1,218 |
-| 7 | Astrolabes, Madhava, accounting with cords | `ch04.md` 49–95 | 1,295 |
+| Week | Proposed material                                                         | Source selection                          | Prose words |
+| ---- | ------------------------------------------------------------------------- | ----------------------------------------- | ----------: |
+| 1    | Book introduction + all of Before Written Arithmetic                      | `00-front-matter.md` 1–36; `ch01.md` 1–43 |       2,021 |
+| 2    | Chapter 2 opening, Numbers in clay, A scribe's mathematics                | `ch02.md` 1–48                            |       1,297 |
+| 3    | Areas, approximations and a problem about seven; Euclid's common measure  | `ch02.md` 49–85                           |       1,032 |
+| 4    | Chapter 3 opening, astronomical gears, movable counters, Roman arithmetic | `ch03.md` 1–56                            |       1,409 |
+| 5    | Maya calendars, Zu Chongzhi, Brahmagupta                                  | `ch03.md` 57–103                          |       1,143 |
+| 6    | Chapter 4 opening, completing a square, translated texts, Al-Battani      | `ch04.md` 1–48                            |       1,218 |
+| 7    | Astrolabes, Madhava, accounting with cords                                | `ch04.md` 49–95                           |       1,295 |
 
 These selections cover Chapters 1–4 in order without gaps or overlap. Review
 each opening and ending as an article before fixing the grouping. Later splits
@@ -109,14 +166,21 @@ Provide Contents and Start from the beginning near the top, plus Previous,
 Contents and Next at the end. A desktop contents sidebar may supplement this;
 neither a sidebar nor bottom-only membership should be the only source of book
 context on mobile. Link only published destinations. At the current end of a
-growing book, say “You're up to date” rather than implying the whole book is complete.
+growing book, say **You’re up to date** / **This book will continue here.**
+Contents say **More to come**: the next addition may extend the same chapter.
+This is implemented locally through explicit collection
+[`completion` metadata](authoring-format.md#book-completion), independent of
+publication status and external manuscript completion. The message follows the
+last available reading step and also appears after continuous reading. Completed
+books receive an end-of-book message; unspecified status stays neutral. All of
+these messages remain outside manuscript/export content. Not deployed.
 
-| Treatment | Benefit | Cost |
-| --- | --- | --- |
-| Book/chapter prefix in the article headline | Context survives plain-title feeds and copying | Long, repetitive titles; weak subject prominence; awkward for reuse and combined instalments |
-| Separate context above the headline | Immediate orientation with a clear subject title; works on mobile | Requires explicit placement/bundle metadata and separate share/search-title handling |
-| Sidebar | Useful persistent contents on a wide screen | Consumes reading space and needs a mobile alternative |
-| Bottom-only annotation | Quiet opening and useful onward navigation | Arriving readers may miss the book relationship entirely |
+| Treatment                                   | Benefit                                                           | Cost                                                                                         |
+| ------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Book/chapter prefix in the article headline | Context survives plain-title feeds and copying                    | Long, repetitive titles; weak subject prominence; awkward for reuse and combined instalments |
+| Separate context above the headline         | Immediate orientation with a clear subject title; works on mobile | Requires explicit placement/bundle metadata and separate share/search-title handling         |
+| Sidebar                                     | Useful persistent contents on a wide screen                       | Consumes reading space and needs a mobile alternative                                        |
+| Bottom-only annotation                      | Quiet opening and useful onward navigation                        | Arriving readers may miss the book relationship entirely                                     |
 
 Component roles and positions belong to collection placements/structure, not
 ordinary topic tags or manually prefixed article titles. An article can be reused
@@ -155,10 +219,10 @@ instalment has been replaced by an optional **Read continuously** book view.
 Book-context labels and navigation are retained. The comparison below records
 the tradeoff; combined weekly articles are not the selected approach.
 
-| Choice | Advantages | Costs |
-| --- | --- | --- |
-| Separate reading pages released together | Clear titles, direct links to each component, natural book order, independent corrections and flexible release grouping | Another click between components; tiny fragments can feel insubstantial; onward navigation must be prominent |
-| Combined weekly article | Continuous reading; one link per weekly release; short openings travel with substantive material | Release boundaries become reading boundaries; combined and separate versions introduce competing destinations; requires bundle mapping and navigation rules |
+| Choice                                   | Advantages                                                                                                              | Costs                                                                                                                                                       |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Separate reading pages released together | Clear titles, direct links to each component, natural book order, independent corrections and flexible release grouping | Another click between components; tiny fragments can feel insubstantial; onward navigation must be prominent                                                |
+| Combined weekly article                  | Continuous reading; one link per weekly release; short openings travel with substantive material                        | Release boundaries become reading boundaries; combined and separate versions introduce competing destinations; requires bundle mapping and navigation rules |
 
 For the opening, prefer Introduction → Chapter 1, released on the same day.
 Use one main homepage/feed announcement for the substantive article, while making

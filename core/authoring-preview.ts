@@ -1,3 +1,4 @@
+import { bookIndex, bookBytes } from "./audiobook-store";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
@@ -55,6 +56,24 @@ export async function stageAuthoring(
     // Only versionable source files, never ignored drafts, reports or credentials.
     await copyWorkspace();
     await copyNarrationPreviews(repository, workspace);
+    const audioBooks = await bookIndex(repository, true);
+    if (Object.keys(audioBooks.books).length) {
+      await fs.mkdir(path.join(workspace, ".authoring-state/audiobooks"), {
+        recursive: true,
+      });
+      await fs.mkdir(path.join(workspace, ".asset-cache"), { recursive: true });
+      for (const record of Object.values(audioBooks.books)) {
+        const bytes = await bookBytes(repository, record);
+        await fs.writeFile(
+          path.join(workspace, ".asset-cache", record.audio.sha256 + ".mp3"),
+          bytes,
+        );
+      }
+      await fs.writeFile(
+        path.join(workspace, ".authoring-state/audiobooks/index.json"),
+        JSON.stringify(audioBooks),
+      );
+    }
     const context: AuthoringContext = {
       workspace,
       pieces: [],

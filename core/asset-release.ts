@@ -92,13 +92,18 @@ export async function uploadReleaseAssets(
       return;
     }
     identities.set(key, record);
-    const groupKey = `${publicFile}:${record.contentType}`;
+    const disposition =
+      publicFile && /^media\/audiobook-[a-z0-9-]+\.mp3$/.test(record.key)
+        ? "attachment"
+        : undefined;
+    const groupKey = `${publicFile}:${record.contentType}:${disposition ?? "default"}`;
     let group = groups.get(groupKey);
     if (!group) {
       group = {
         directory: path.join(directory, String(groups.size)),
         publicFile,
         contentType: record.contentType,
+        ...(disposition ? { disposition } : {}),
         records: [],
       };
       groups.set(groupKey, group);

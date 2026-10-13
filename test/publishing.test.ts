@@ -492,7 +492,7 @@ test("contextual fragments, article references and heading transformations prese
     );
     assert.match(body, /```text\n## code, not a heading\n```/);
     assert.match(body, /### Details/);
-    assert.match(body, new RegExp(`\\[\\^${occurrence.id}-one\\]`));
+    assert.match(body, /\[1\]\(#chapter-two-source-note-1\)/);
   } finally {
     await fs.rm(tmp, { recursive: true, force: true });
   }

@@ -1,3 +1,4 @@
+import { publicAudiobook } from "../core/audiobook-public";
 import { publicationOrder } from "../core/publication-time.mjs";
 import { asError } from "../core/errors";
 import { deployment, siteUrl } from "../core/deployment.mjs";
@@ -286,6 +287,13 @@ async function main() {
         assets,
       );
       site.collections.push({
+        audiobook: await publicAudiobook(
+          process.cwd(),
+          c,
+          lib,
+          assets,
+          Boolean(authoring),
+        ),
         cover: await collectionCover(
           c.cover,
           path.resolve("content/collections"),
@@ -298,6 +306,7 @@ async function main() {
         url: collectionUrl(c),
         ordered: c.ordered,
         book: c.book,
+        completion: c.completion,
         html: d.html,
         nodes: await Promise.all(
           d.nodes.map(async (n) => ({

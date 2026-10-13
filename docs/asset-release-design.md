@@ -93,8 +93,9 @@ Amplify: immutable objects and upload-before-push make partial failures recovera
 
 ## AWS CLI dependency and transfer boundary
 
-The CLI adapter is implemented locally and covered by automated tests; this change
-has not yet been released. Earlier asset storage/deployment remains operational.
+The CLI adapter was deployed and verified on 13 October 2026. Automated local
+and Linux CI checks passed, followed by production S3/CDN verification and an
+exact-revision website check; see [verification](verification.md).
 
 Install AWS CLI **v2 2.37.12 or newer (v2 only)** on the release machine using the
 [official installer](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).

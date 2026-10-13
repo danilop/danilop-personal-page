@@ -16,6 +16,11 @@ The Ink & Paper theme puts reading first: a name-first masthead, blue ink,
 serif headlines, and generous space. Its masthead pairs medium-weight Newsreader
 for the name with a smaller, lightly spaced Inter publication title. Fonts, colors,
 images, CSS, and templates live apart from the content and publishing system.
+Reading headings adapt to the current article or chapter page, and all six
+heading levels have an explicit scale that never falls below the prose size.
+The [shared reading structure](docs/reading-structure.md) distinguishes chapter
+body articles from titled sections, keeping headings consistent across web and
+book views without duplicating chapter titles.
 The configurable SVG favicon generates browser and iPhone home-screen icons;
 see [branding assets](docs/authoring-format.md#browser-icons).
 
@@ -178,7 +183,30 @@ mechanisms for readers interested in AI, with detailed method comparisons kept
 in the research notes. Sources were checked on 1 October 2026.
 The article is published at its canonical writing URL. Its `clever-loophole`
 short code is active and resolves to the same verified social preview.
-The Chronicles pieces remain drafts.
+The Chronicles pieces remain drafts. Their Introduction and Chapter 1 were
+[checked against the book source on 7 October 2026](docs/content-import.md#source-refresh-on-7-october-2026);
+the Introduction was refreshed and Chapter 1 was unchanged.
+
+**Good Enough: The Local Minimum Trap** also has a
+[local opening draft](docs/local-minimum-serialization.md): Part I and Chapters 1
+and 2. Chapter 1 is one article; Chapter 2 uses two consecutive articles while
+remaining one book chapter. Original prose, the table, figure and source notes
+are preserved. Later chapters and publication remain pending.
+
+Book YAML now supports `completion: in-progress` or `completion: complete`,
+independently of draft/published status. Both opening serializations are marked
+`in-progress`: contents say **More to come**, and the last available reading page
+and continuous view end with **You’re up to date. This book will continue here.**
+These interface messages do not enter the manuscript or Leanpub export. See
+[completion authoring](docs/authoring-format.md#book-completion). Implemented locally;
+not deployed.
+
+These growing-book collections are also intended to supply formatted Leanpub
+editions. Articles may cover a whole chapter or sections within one chapter;
+the collection preserves the book hierarchy. Local Markua export now supports
+[continuous chapters across articles](docs/book-serialization.md#articles-within-book-chapters),
+chapter source notes and a complete opening-chapter sample. Live Leanpub delivery
+and rendering remain unverified.
 
 Keep [content structure separate from publishing](docs/content-model.md#content-structure-and-publication-are-independent):
 pieces and book order remain independent of weekly release groups and announcements.
@@ -293,6 +321,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Authoring preview](docs/authoring-preview.md): full-site draft review at `/`, isolation, and release preview.
 - [Product design](docs/product-design.md): reader and author experience.
 - [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations, browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; deployed on 13 October 2026.
+- [Growing audiobooks](docs/book-audiobooks.md): book-page listening, passage-based browser progress, spoken book structure and full current-edition MP3 downloads; implemented with publication and release verification gates.
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
@@ -333,7 +362,7 @@ recursive copies; the SDK retains integrity checks, tags and release coordinatio
 Run `npm run assets:doctor` to check the native dependency and `npm run test:aws-cli`
 to test the real CLI against a local fixture. CI pins and checks the CLI; publishing
 never installs or upgrades it automatically. Fresh public builds need neither AWS
-credentials nor the CLI. This transfer adapter is locally implemented, not yet released.
+credentials nor the CLI. This transfer adapter was deployed and verified on 13 October 2026.
 
 The [asset release workflow](docs/asset-release-design.md) preserves local cleanup,
 book/export resolution and existing `/media/` URLs. The remote collector protects

@@ -43,18 +43,24 @@ external archive links and the preserved original site do not require backfill.
 
 ## Spoken content
 
+[Growing audiobooks](book-audiobooks.md) extend this foundation with
+book-level composition, resumable listening and complete current-edition MP3
+downloads. The book implementation uses the shared publication and release gates. Article title/subtitle improvements discussed
+alongside it are also proposals: titles already play, while including a true
+subtitle and an exact body-start skip would require new speech metadata and audio.
+
 The speech compiler reads the semantic source before HTML rendering. It speaks
 the title once, headings, prose, lists, quotations and substantive footnotes.
 It omits the summary/dek, citation markers and raw link URLs; link text remains.
 Simple inline identifiers can be spoken directly; ambiguous notation needs review.
 No article code or interactive block is executed to generate narration.
 
-| Material | Treatment |
-| --- | --- |
-| Decorative illustrations | Silent. The existing atmospheric artwork is explicitly classified decorative. Replacing it or changing its alt text does not change speech. |
-| Informative images | Explicitly choose Skip, Read caption or Spoken explanation. Alt text is not an automatic narration fallback. |
-| Code, diagrams, charts, tables, maths | A source-bound reviewed explanation, deliberate literal reading, or omission with a reason. |
-| Exercises, callouts, interactive blocks and embedded media | Explicit adaptation; no automatic execution, transcription or soundtrack mixing. |
+| Material                                                   | Treatment                                                                                                                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Decorative illustrations                                   | Silent. The existing atmospheric artwork is explicitly classified decorative. Replacing it or changing its alt text does not change speech. |
+| Informative images                                         | Explicitly choose Skip, Read caption or Spoken explanation. Alt text is not an automatic narration fallback.                                |
+| Code, diagrams, charts, tables, maths                      | A source-bound reviewed explanation, deliberate literal reading, or omission with a reason.                                                 |
+| Exercises, callouts, interactive blocks and embedded media | Explicit adaptation; no automatic execution, transcription or soundtrack mixing.                                                            |
 
 Unresolved material blocks full generation and publication. Unknown source kinds,
 ambiguous selectors and unsupported languages fail with an actionable error.
@@ -124,15 +130,15 @@ access; normal synthesis uses verified local files offline.
 
 ## Source and artifact layout
 
-| Location | Role |
-| --- | --- |
-| `content/pieces/<id>/narration.yaml` | Voice, pace, pronunciations and reviewed adaptations; retained through canonical imports. |
-| `publishing/narration.yaml` | Mandatory gate and accepted immutable runtime-profile hashes. |
-| `publishing/narrations.json` | Public rendition records, exact spoken segments, provenance, timing, duration and audio identity. |
-| `publishing/media-assets.json` | Existing authoritative byte/storage inventory, including immutable MP3 assets. |
-| `tools/narration/profile.json` and `requirements.txt` | Pinned model, voice and encoder hashes and hash-locked Python environment. |
-| `.authoring-state/narration/` | Ignored private auditions, proposals, worker jobs and reusable PCM chunks. |
-| `.asset-cache/` and piece `assets/` | Ignored managed audio bytes; no model or audio binaries are committed. |
+| Location                                              | Role                                                                                              |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `content/pieces/<id>/narration.yaml`                  | Voice, pace, pronunciations and reviewed adaptations; retained through canonical imports.         |
+| `publishing/narration.yaml`                           | Mandatory gate and accepted immutable runtime-profile hashes.                                     |
+| `publishing/narrations.json`                          | Public rendition records, exact spoken segments, provenance, timing, duration and audio identity. |
+| `publishing/media-assets.json`                        | Existing authoritative byte/storage inventory, including immutable MP3 assets.                    |
+| `tools/narration/profile.json` and `requirements.txt` | Pinned model, voice and encoder hashes and hash-locked Python environment.                        |
+| `.authoring-state/narration/`                         | Ignored private auditions, proposals, worker jobs and reusable PCM chunks.                        |
+| `.asset-cache/` and piece `assets/`                   | Ignored managed audio bytes; no model or audio binaries are committed.                            |
 
 See [authoring format](authoring-format.md#narration-source-format) for the exact
 sidecar shape. Rich blocks use semantic IDs; ordinary Markdown uses deterministic
@@ -213,15 +219,15 @@ must still be verified after the first narration release.
 
 ## Implementation stages and remaining delivery checks
 
-| Stage | Local implementation |
-| --- | --- |
-| 1. Runtime comparison | MLX and reference samples measured; George MLX accepted. |
-| 2. Speech document | Semantic extraction, source-bound review, freshness and import preservation implemented. |
-| 3. Generation/assets | Offline pinned worker, cache, validation and managed MP3s implemented. |
-| 4. Preview | Voice/audition, progress/cancel, transcript and reviewed CLI proposals implemented. |
-| 5. Reader | Progressive player, measured time, transcript, seek/speed/resume and failure handling implemented. |
-| 6. Gates | Coordinated article publication, recovery and staged/build/CI checks implemented. |
-| 7. Backfill/delivery | Both current public articles backfilled and deployed; mandatory gate enabled. Exact revision, hosted audio and browser playback verified. |
+| Stage                 | Local implementation                                                                                                                      |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Runtime comparison | MLX and reference samples measured; George MLX accepted.                                                                                  |
+| 2. Speech document    | Semantic extraction, source-bound review, freshness and import preservation implemented.                                                  |
+| 3. Generation/assets  | Offline pinned worker, cache, validation and managed MP3s implemented.                                                                    |
+| 4. Preview            | Voice/audition, progress/cancel, transcript and reviewed CLI proposals implemented.                                                       |
+| 5. Reader             | Progressive player, measured time, transcript, seek/speed/resume and failure handling implemented.                                        |
+| 6. Gates              | Coordinated article publication, recovery and staged/build/CI checks implemented.                                                         |
+| 7. Backfill/delivery  | Both current public articles backfilled and deployed; mandatory gate enabled. Exact revision, hosted audio and browser playback verified. |
 
 Automated Chromium and DOM checks do not establish VoiceOver, Safari/iPhone or
 physical-device lock-screen behaviour. Manual testing on those platforms remains a

@@ -1,5 +1,32 @@
 import type { CollectionData } from "./site-data";
 
+/** Reader-facing book status is independent of publication and manuscript prose. */
+export function bookProgress(
+  collection: Pick<CollectionData, "book" | "completion">,
+) {
+  if (!collection.book) return undefined;
+  switch (collection.completion) {
+    case "in-progress":
+      return {
+        contents: "More to come",
+        title: "You’re up to date",
+        message: "This book will continue here.",
+      };
+    case "complete":
+      return {
+        contents: "Complete book",
+        title: "End of the book",
+        message: "You’ve reached the end of this book.",
+      };
+    default:
+      return {
+        contents: undefined,
+        title: undefined,
+        message: "You’ve reached the last available part of this book.",
+      };
+  }
+}
+
 /** Reading order follows visible placements, including contextual openings. */
 export function readingContext(collection: CollectionData, nodeId: string) {
   const { nodes } = collection;

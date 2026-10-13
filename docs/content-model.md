@@ -14,21 +14,30 @@ Legacy status values remain supported, including retirement.
 
 ## 1. Entities
 
-| Entity | Meaning |
-| --- | --- |
-| Piece | Reusable writing; shown as an article when independently published |
-| Collection | Editorial grouping with an optional ordered/book structure |
-| Placement | One use of a piece in a collection or as supporting material |
-| Structural node | A part, chapter, appendix, or front/back-matter group |
-| Content block | Code, image, table, chart, diagram, equation, media, or experiment |
-| Asset | Source file, dataset, media, or generated rendition |
-| Edition | Frozen publication of a collection at a particular revision |
-| Short link | Durable alias for a public entity or edition resource |
-| Archive record | Metadata and destination for externally hosted legacy work |
+| Entity          | Meaning                                                            |
+| --------------- | ------------------------------------------------------------------ |
+| Piece           | Reusable writing; shown as an article when independently published |
+| Collection      | Editorial grouping with an optional ordered/book structure         |
+| Placement       | One use of a piece in a collection or as supporting material       |
+| Structural node | A part, chapter, appendix, or front/back-matter group              |
+| Content block   | Code, image, table, chart, diagram, equation, media, or experiment |
+| Asset           | Source file, dataset, media, or generated rendition                |
+| Edition         | Frozen publication of a collection at a particular revision        |
+| Short link      | Durable alias for a public entity or edition resource              |
+| Archive record  | Metadata and destination for externally hosted legacy work         |
 
 Tags classify subjects. Collections select and contextualize material. “Series,”
 “guide,” and “growing book” may describe a collection to readers; they are not
 separate entity types.
+
+Book completion is explicit collection metadata, independent of publication
+status and the completeness of an external source manuscript. A book presented
+here is either in progress or complete; omission means unspecified, never an
+inferred end. Continuation can be another section of the same chapter. Reading
+endings and contents status are interface text derived from this metadata, not
+pieces, structural nodes or exportable manuscript prose. See
+[the authoring values and compatibility rules](authoring-format.md#book-completion).
+Implemented locally; not deployed.
 
 An extensible tag vocabulary defines stable keys, display labels, scope descriptions,
 and aliases. Piece assignments remain independent of book placements and releases.
@@ -94,11 +103,11 @@ minimal alias-ownership tombstones to prevent code reuse. The recovery UI and
 permanent-delete operation are not implemented yet; see the
 [Trash plan](social-publishing-plan.md#9-trash-restore-and-permanent-deletion).
 
-| Publication surface | Effect |
-| --- | --- |
-| `standalone` | Own article page, article feed eligibility, and sitemap entry |
-| `collection` | Inclusion in a public web collection |
-| `book` | Inclusion in a book assembly/export |
+| Publication surface | Effect                                                        |
+| ------------------- | ------------------------------------------------------------- |
+| `standalone`        | Own article page, article feed eligibility, and sitemap entry |
+| `collection`        | Inclusion in a public web collection                          |
+| `book`              | Inclusion in a book assembly/export                           |
 
 A preface may allow only `book`. An article can allow all three. A contextual
 opening can allow `collection` and `book`. Private preview is a separate mode.
@@ -324,12 +333,29 @@ Resolve contextual headings, numbering, citations, and references before export.
 Stable placement IDs determine anchors; output position determines visible
 numbering. Excessively deep headings must produce an actionable error.
 
+An article can contain an entire chapter or a consecutive portion of it. Book
+formatting can omit a placement's article title while preserving the parent
+chapter and original body sections; web reading remains unchanged. Repeated
+article footnotes can become shared chapter source notes in the book, preserving
+reference identity. Samples include all articles in the first chapter. These
+formatting choices do not change release groups or authoring ownership.
+
+## Shared reading composition
+
+A piece placement can supply the body of its parent chapter/appendix or introduce
+a titled section. Body placements retain reading identity and order without
+creating an extra assembled heading or consuming a section number. Sections are
+the default. An individual article page always retains its own title.
+The [shared reading structure](reading-structure.md) provides consistent headings
+and contents choices for web and book views, preserving source prose and links.
+This is implemented locally; deployment remains pending.
+
 ## Article narration
 
 A narration is a derived spoken rendition of a piece, not another publication
 surface or release group. The piece owns its voice and reviewed adaptations;
 placements with distinct spoken titles have separate rendition identities.
-Chapter views offer each piece's player rather than inventing whole-book audio.
+Article narration and the assembled audiobook have separate rendition identities.
 Speech freshness, source approval and byte integrity are checked independently.
 
 Decorative images have no spoken representation. Meaningful material needs a
@@ -340,3 +366,15 @@ duration describes the audio; silent-reading duration remains an estimate.
 
 This model is implemented locally. See [narration](article-narration.md) and
 [authoring syntax](authoring-format.md#narration-source-format).
+
+## Growing audiobooks
+
+A book audiobook derives from the eligible collection reading plan, preserving
+placement identity, authored order, structural headings and completion state. It
+uses one book voice and reviewed article adaptations, suppressing article headings
+for body placements. Its immutable edition contains a full MP3 and passage timing
+map. Browser bookmarks belong to the book and passage, independent of edition
+length. Internal unpublished or planned gaps block publication; trailing unfinished
+content yields a Published so far edition. Private draft receipts never enter the
+public inventory. This is implemented; see [audiobooks](book-audiobooks.md) and
+[verification](verification.md) for checks and deployment status.

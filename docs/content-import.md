@@ -4,6 +4,9 @@ Status: implemented locally, 2026-09-20. Importing prepares source content for t
 normal publishing workflow; it does not publish, deploy, commit, or remove sources.
 The Chronicles Introduction, Chapter 1 and collection are now imported under
 `content/` as drafts. Run `npm run preview` to see them; no repeated import is needed.
+The [Good Enough opening](local-minimum-serialization.md), now Chapters 1 and 2, was imported as a
+draft on 7 October 2026, using the separate private library at
+`exports/local-minimum-pilot/content` and collection ID `good-enough`.
 
 ## Selection and defaults
 
@@ -93,6 +96,26 @@ npm run content:import -- --from path/to/library \
 npm run content:import -- --from path/to/library \
   --collection book-id --to path/to/rehearsal-content --apply
 ```
+
+## Source refresh on 7 October 2026
+
+The existing Chronicles Introduction and Chapter 1 drafts were checked against
+the canonical book manuscript. The Introduction now records Python 3.14.8 and
+distinguishes selected source checks on 7 October from the AI coverage cutoff of
+19 September. Chapter 1, its two code examples and its four cited notes were
+unchanged. The private raw extract, source manifest and quality baselines were
+refreshed after checking the source ranges and article bodies.
+
+The book's Chapter 2 paperwork/refreshments aside was removed at the author's
+request; its original opening and corrected Euclidean explanation remain.
+Chapter 2 is not yet part of the blog collection, so that edit affects the book
+source only. No pieces were added or published.
+
+For this prose refresh, the importer selected the two existing pieces with
+`--piece chronicles-introduction --piece chronicles-ch01 --update`, then applied
+the reviewed fingerprint with `--apply --expect HASH`. Selecting the pieces
+preserved the current collection outline, summary and cover: the older pilot
+collection is not a source for those later presentation edits.
 
 ## What is copied and preserved
 

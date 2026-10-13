@@ -14,26 +14,27 @@ Danilo selected **all planned publishing capabilities before deployment**.
 The former release 1 / later releases split is superseded. Search, a site-wide
 assistant, browser editing, and subscriptions remain separate future decisions.
 
-| Capability                                        | Implementation                                                                                                                  | Verification / remaining gate                                                                                                                                    |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Markdown, collections, contextual sections        | `core/model.ts`, `core/render.ts`                                                                                               | Fixture assembly, reuse, visibility and reference tests                                                                                                          |
-| Book-only openings/closings and front/back matter | Collection placements and surface permissions                                                                                   | Private fixture; public-output exclusion checks                                                                                                                  |
-| Code, charts, tables, diagrams, math              | Renderer registry; Shiki, Vega-Lite, Mermaid, D2, KaTeX                                                                         | Real local renders and source/cache tests                                                                                                                        |
-| PDF, Google Docs/Slides, iCloud albums            | Activation viewers and album-link adapter                                                                                       | URL/fallback tests; author-owned public URLs not supplied                                                                                                        |
-| Configurable Ink & Paper                          | Theme registry, Shell/Home/Article templates, tokens and assets                                                                 | Desktop/mobile browser review; second theme contract                                                                                                             |
-| Earlier Work + The Original Site                  | Integrated catalogue and preserved dated snapshot                                                                               | 307 historical records; route/link parity checks                                                                                                                 |
-| JS/WASM simulations                               | Experiment registry, Worker, controls, scenarios and result capture                                                             | JS/WASM parity; real browser runs/reset                                                                                                                          |
-| Local browser models                              | Replaceable runtime, WebLLM worker, pinned model manifest                                                                       | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified                                                                 |
-| Frozen editions                                   | Markua exporter, hashed manifest, immutable output directory, public edition routes                                             | Real fixture export and tamper detection; no public edition created                                                                                              |
-| Leanpub                                           | Preview/status/publication adapter for an existing book                                                                         | API contract tests; live account/source/preview not configured                                                                                                   |
-| DEV / Medium                                      | Manual-only adapters, durable state, local editor/CLI bundles and CDN media preparation                                          | Local contract/media/bundle and browser tests; no real provider delivery. See [export readiness](cross-posting.md#local-export-and-readiness) |
-| `danilop.link`                                    | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback                                                       | S3/OAC and Free active; live resolver test passed; CI access unconfigured                                                                                        |
-| Main deployment                                   | Existing Amplify integration; build/check/test configuration and console fallback updated                                       | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md)                                    |
-| Tag vocabulary and private inventory              | Registry, aliases, unique-piece usage counts, review guidance, public topic labels                                              | Public labels deployed; private desktop/mobile reports tested locally; public topic pages remain unimplemented                                                          |
-| Chronicles book pilot                             | Separate Introduction and Chapter 1 pages, next/previous navigation, contents and continuous view                               | Imported as drafts; full-site preview tested; publication pending                                                                                                |
-| Pre-publication content review                    | Local spaCy analysis, Snowball sequence counts, references, optional source baselines and declared Python examples              | Current three-article corpus tested; private report and full validation evidence in [verification](verification.md); NLP is not a CI gate                        |
-| Content import                                    | Canonical source selection, dependency expansion, dry-run/apply, draft defaults and controlled updates                          | Twelve focused tests, full validation and a real Chronicles rehearsal passed; opening imported as drafts; see [usage](content-import.md)                         |
-| Full-site authoring preview                       | Single preview command for live site/editor with all local drafts; explicit snapshot and release modes; private output isolated | Local build and selection/isolation tests; release output remains separate; see [usage](authoring-preview.md) and [verification](verification.md)                |
+| Capability                                        | Implementation                                                                                                                  | Verification / remaining gate                                                                                                                                       |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Markdown, collections, contextual sections        | `core/model.ts`, `core/render.ts`                                                                                               | Fixture assembly, reuse, visibility and reference tests                                                                                                             |
+| Book-only openings/closings and front/back matter | Collection placements and surface permissions                                                                                   | Private fixture; public-output exclusion checks                                                                                                                     |
+| Code, charts, tables, diagrams, math              | Renderer registry; Shiki, Vega-Lite, Mermaid, D2, KaTeX                                                                         | Real local renders and source/cache tests                                                                                                                           |
+| PDF, Google Docs/Slides, iCloud albums            | Activation viewers and album-link adapter                                                                                       | URL/fallback tests; author-owned public URLs not supplied                                                                                                           |
+| Configurable Ink & Paper                          | Theme registry, Shell/Home/Article templates, tokens and assets                                                                 | Desktop/mobile browser review; second theme contract                                                                                                                |
+| Earlier Work + The Original Site                  | Integrated catalogue and preserved dated snapshot                                                                               | 307 historical records; route/link parity checks                                                                                                                    |
+| JS/WASM simulations                               | Experiment registry, Worker, controls, scenarios and result capture                                                             | JS/WASM parity; real browser runs/reset                                                                                                                             |
+| Local browser models                              | Replaceable runtime, WebLLM worker, pinned model manifest                                                                       | Real model download/generation/reset/unload/clear; final integrity-enabled version also verified                                                                    |
+| Frozen editions                                   | Markua v3, continuous chapters across articles, chapter source notes, complete chapter sample, immutable editions               | Real fixture export and tamper detection; no public edition created                                                                                                 |
+| Leanpub                                           | Preview/status/publication adapter for an existing book                                                                         | API contract tests; live account/source/preview not configured                                                                                                      |
+| DEV / Medium                                      | Manual-only adapters, durable state, local editor/CLI bundles and CDN media preparation                                         | Local contract/media/bundle and browser tests; no real provider delivery. See [export readiness](cross-posting.md#local-export-and-readiness)                       |
+| `danilop.link`                                    | Compiler, edge resolver setup, deployment coordinator, snapshots/rollback                                                       | S3/OAC and Free active; live resolver test passed; CI access unconfigured                                                                                           |
+| Main deployment                                   | Existing Amplify integration; build/check/test configuration and console fallback updated                                       | Root cutover uses the validated shared base configuration; see the latest release evidence in [verification](verification.md)                                       |
+| Tag vocabulary and private inventory              | Registry, aliases, unique-piece usage counts, review guidance, public topic labels                                              | Public labels deployed; private desktop/mobile reports tested locally; public topic pages remain unimplemented                                                      |
+| Chronicles book pilot                             | Separate Introduction and Chapter 1 pages, next/previous navigation, contents and continuous view                               | Imported as drafts; full-site preview tested; publication pending                                                                                                   |
+| Good Enough book pilot                            | Part I and Chapters 1–2; Chapter 2 split across two articles with original figure and notes                                     | Imported as three local draft pieces; source, export and browser checks recorded in [verification](verification.md); live Leanpub rendering and publication pending |
+| Pre-publication content review                    | Local spaCy analysis, Snowball sequence counts, references, optional source baselines and declared Python examples              | Current three-article corpus tested; private report and full validation evidence in [verification](verification.md); NLP is not a CI gate                           |
+| Content import                                    | Canonical source selection, dependency expansion, dry-run/apply, draft defaults and controlled updates                          | Twelve focused tests, full validation and a real Chronicles rehearsal passed; opening imported as drafts; see [usage](content-import.md)                            |
+| Full-site authoring preview                       | Single preview command for live site/editor with all local drafts; explicit snapshot and release modes; private output isolated | Local build and selection/isolation tests; release output remains separate; see [usage](authoring-preview.md) and [verification](verification.md)                   |
 
 ## Remaining release work
 
@@ -152,6 +153,28 @@ its state and requires an explicit refresh for browser-code changes. Release and
 snapshot modes reject this flag. See [preview modes](authoring-preview.md#watch-application-code)
 for job/session limits and [verification](verification.md) for the restart tests.
 
+## Shared reading composition — 8 October 2026
+
+Implemented an optional body/section placement relationship, shared heading plan,
+body-aware section numbering and contents presentation. Continuous HTML,
+chapter/part templates, individual reading pages and Markua use the shared rules.
+The reviewed books are migrated; default/legacy behaviour is preserved for other
+collections. Existing prose, anchors and citation systems remain in use. See the
+[implementation and regression scope](reading-structure.md) and
+[verification record](verification.md). Deployment and live Leanpub rendering
+remain pending.
+
+## Explicit book completion — 8 October 2026
+
+Implemented optional book-only `completion: in-progress | complete` collection
+metadata, separate from publication status. Both opening serializations use
+`in-progress`. Shared web endings follow the last available reading step, and
+contents/continuous views show the matching status. Omitted completion stays
+neutral; normal articles and manuscript exports are unaffected. Validation and
+responsive local preview checks passed; deployment remains pending. See
+[authoring semantics](authoring-format.md#book-completion) and
+[verification](verification.md).
+
 ## Article narration — deployed, 2026-10-13
 
 The [narration implementation](article-narration.md) follows the seven-stage plan:
@@ -164,3 +187,15 @@ Stage 7's backfill and release are complete. The exact deployed revision, hosted
 audio headers/ranges and public browser playback were verified. Safari/iPhone and
 VoiceOver checks remain outstanding, so deployment does not imply that every
 original platform acceptance check has passed. See [verification](verification.md).
+
+## Growing audiobooks — implementation complete, 13 October 2026
+
+The five [audiobook stages](book-audiobooks.md#implementation-sequence-and-evidence-required)
+are implemented: semantic composition, cached local synthesis, verified full MP3
+and timing map, public/authoring players with stable progress, and atomic
+publication plus asset/release gates. Private recordings of both draft books
+exercise the actual MLX runtime. Automated and Chromium desktop/mobile checks
+are recorded in [verification](verification.md). The release command verifies the
+exact production revision before reporting success.
+Book publication remains separate from feature deployment and requires listening
+review. Physical Safari/iPhone and VoiceOver checks remain manual.

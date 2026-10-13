@@ -13,6 +13,7 @@ export type ArticleData = {
   collections: { title: string; url: string }[];
 };
 export type CollectionData = {
+  audiobook?: import("./audiobook-store").PublicAudiobook;
   cover?: { src: string; alt: string; width: number; height: number };
   id: string;
   title: string;
@@ -21,6 +22,7 @@ export type CollectionData = {
   url: string;
   ordered: boolean;
   book: boolean;
+  completion?: import("./model").Collection["completion"];
   html: string;
   nodes: {
     narration?: import("./narration-store").PublicNarration;
@@ -37,6 +39,7 @@ export type CollectionData = {
     publishedAt?: string;
     updatedAt?: string;
     depth: number;
+    integration?: "body" | "section";
   }[];
 };
 export type ArchiveRecord = {

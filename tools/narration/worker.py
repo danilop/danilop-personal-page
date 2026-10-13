@@ -71,6 +71,45 @@ def cached_audio(cache, receipt):
     return None
 
 
+def metadata_args(metadata):
+    if not metadata:
+        return []
+    args = []
+    cover = metadata.get("cover")
+    if cover:
+        candidate = Path(cover).resolve()
+        owner = Path("content/collections").resolve()
+        if not candidate.is_relative_to(owner) or candidate.suffix.lower() not in {
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+        }:
+            raise ValueError("Invalid audiobook cover path")
+        args += [
+            "-i",
+            str(candidate),
+            "-map",
+            "0:a",
+            "-map",
+            "1:v",
+            "-c:v",
+            "mjpeg",
+            "-disposition:v",
+            "attached_pic",
+        ]
+    for key, value in [
+        ("title", metadata["title"]),
+        ("artist", metadata["author"]),
+        ("album", metadata["title"]),
+        ("genre", "Audiobook"),
+    ]:
+        if not isinstance(value, str) or len(value) > 1000:
+            raise ValueError("Invalid audiobook metadata")
+        args += ["-metadata", f"{key}={value}"]
+    return args
+
+
 def synthesize(request):
     started = time.monotonic()
     job = request["id"]
@@ -85,7 +124,11 @@ def synthesize(request):
     voice_file = str(model_dir / "voices" / f"{voice}.safetensors")
     chunks_dir = state / "chunks"
     chunks_dir.mkdir(exist_ok=True)
-    audio_parts, timings = [], []
+    timings = []
+    output = state / "jobs" / job
+    output.mkdir(parents=True, exist_ok=True)
+    wav = output / "audio.wav"
+    pcm = sf.SoundFile(wav, "w", samplerate=24000, channels=1, subtype="FLOAT")
     samples = 0
     reused = 0
     for index, segment in enumerate(request["segments"]):
@@ -121,19 +164,16 @@ def synthesize(request):
                 sf.write(temp, audio, 24000, subtype="FLOAT")
                 temp.replace(cache)
                 receipt.write_text(json.dumps({"sha256": sha(cache.read_bytes())}))
-            audio_parts.append(audio)
+            pcm.write(audio)
             samples += len(audio)
         pause = np.zeros(round(24000 * min(max(segment["pause"], 0), 2)), dtype=np.float32)
-        audio_parts.append(pause)
+        pcm.write(pause)
         samples += len(pause)
         timings.append({"start": begin, "end": samples / 24000})
         emit({"id": job, "progress": index + 1, "total": len(request["segments"])})
     if not timings:
         raise ValueError("Empty narration")
-    output = state / "jobs" / job
-    output.mkdir(parents=True, exist_ok=True)
-    wav = output / "audio.wav"
-    sf.write(wav, np.concatenate(audio_parts), 24000, subtype="FLOAT")
+    pcm.close()
     mp3 = output / "audio.mp3"
     subprocess.run(  # nosec B603 - checksum-verified encoder, fixed argv, no shell
         [
@@ -143,6 +183,7 @@ def synthesize(request):
             "-y",
             "-i",
             str(wav),
+            *metadata_args(request.get("metadata")),
             "-map_metadata",
             "-1",
             "-codec:a",
@@ -153,12 +194,16 @@ def synthesize(request):
         ],
         check=True,
     )
-    decoded = subprocess.run(  # nosec B603 - checksum-verified encoder, fixed argv, no shell
-        [encoder, "-v", "error", "-i", str(mp3), "-f", "f32le", "-"],
+    decoded_file = (output / "decoded.pcm").open("wb")
+    subprocess.run(  # nosec B603 - checksum-verified encoder, fixed argv, no shell
+        [encoder, "-v", "error", "-i", str(mp3), "-map", "0:a", "-f", "f32le", "-"],
         check=True,
-        capture_output=True,
-    ).stdout
-    if abs(len(decoded) / 4 / 24000 - samples / 24000) > 0.15:
+        stdout=decoded_file,
+    )
+    decoded_file.close()
+    decoded_size = (output / "decoded.pcm").stat().st_size
+    (output / "decoded.pcm").unlink()
+    if abs(decoded_size / 4 / 24000 - samples / 24000) > 0.15:
         raise ValueError("Encoded narration duration/coverage mismatch")
     data = mp3.read_bytes()
     wav.unlink()

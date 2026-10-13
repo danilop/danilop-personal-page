@@ -51,6 +51,7 @@ export async function privateAssetBytes(record: AssetRecord) {
   return bytes;
 }
 export type AssetSyncGroup = {
+  disposition?: "inline" | "attachment";
   directory: string;
   publicFile: boolean;
   contentType: string;
@@ -159,7 +160,8 @@ export async function syncStoredAssets(
           "--content-type",
           group.contentType,
           "--content-disposition",
-          group.contentType === "application/zip" ? "attachment" : "inline",
+          group.disposition ??
+            (group.contentType === "application/zip" ? "attachment" : "inline"),
           "--cache-control",
           group.publicFile
             ? "public, max-age=0, s-maxage=300, must-revalidate"

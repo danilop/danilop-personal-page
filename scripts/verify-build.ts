@@ -17,6 +17,25 @@ import { mediaSettings } from "../core/media";
 import { readAssetManifest, verifyAsset } from "../core/asset-manifest";
 import { verifyPublicAsset } from "../core/asset-release";
 async function verifyNarrationMarkup(site: CompiledSite) {
+  for (const c of site.collections) {
+    if (!c.audiobook) continue;
+    const html = load(
+      await fs.readFile(path.join(siteOutput, c.url, "index.html"), "utf8"),
+    );
+    const player = html("[data-audiobook]");
+    assert.equal(player.length, 1, `${c.id}: audiobook player missing`);
+    assert.equal(player.find("audio").attr("preload"), "none");
+    assert.equal(player.find("audio[autoplay]").length, 0);
+    assert.equal(player.find("audio").attr("src"), c.audiobook.url);
+    const map = JSON.parse(player.find("[data-book-map]").text());
+    assert.equal(map.hash, c.audiobook.hash);
+    assert.equal(map.segments.length, c.audiobook.segments.length);
+    assert.equal(player.find("a[download]").attr("href"), c.audiobook.url);
+    assert.equal(
+      player.find("[data-book-chapter]").length,
+      c.audiobook.segments.filter((s) => s.navigation).length,
+    );
+  }
   const pages = [
     ...site.articles,
     ...site.collections.flatMap((c) =>

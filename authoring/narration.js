@@ -347,6 +347,13 @@
     if (audition || playCurrent) await audio.play();
   }
   function show() {
+    if (file.startsWith("content/collections/")) {
+      panel.hidden = true;
+      window.showAudiobook();
+      return;
+    }
+    $("audiobook-panel").hidden = true;
+    $("context").closest("label").hidden = false;
     window.authorPane("narration");
     panel.hidden = false;
     for (const id of [

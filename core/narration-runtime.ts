@@ -107,6 +107,7 @@ export class NarrationRuntime {
             voice: doc.settings.voice,
             pace: doc.settings.pace,
             profileHash,
+            metadata: doc.audioMetadata,
           }) + "\n",
         );
       this.receiver = (raw) => {

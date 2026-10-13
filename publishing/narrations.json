@@ -6,7 +6,7 @@
       "title": "Clever Enough to Find the Loophole",
       "speechHash": "418eb9cd24a17fc578bc333ba84d8e8c30b0f5217ffcaec7e6052348977c147e",
       "reviewHash": "f8650ebfecda53788dcfa1fd32052e0646fa14601d58a1e5006b7b134e412bfd",
-      "profileHash": "a8229f2c029b9f54f32f54be83d17820d9d7e8af04f93b0e1723924f3380bbd1",
+      "profileHash": "cf6ff558a033cab90b53e3aac2c7926571903d9afd1cfdbda145cfaf7791b048",
       "settings": {
         "schemaVersion": 1,
         "voice": "bm_george",
@@ -374,7 +374,7 @@
         }
       ],
       "audio": {
-        "sha256": "8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2",
+        "sha256": "0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc",
         "bytes": 14235308,
         "duration": 1186.19,
         "timings": [
@@ -660,8 +660,8 @@
           }
         ],
         "reusedChunks": 0,
-        "generationSeconds": 129.82015729200793,
-        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3"
+        "generationSeconds": 127.64450166694587,
+        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3"
       }
     },
     "hello-brave-new-world:4c9faedb7e7ab5bc": {
@@ -669,7 +669,7 @@
       "title": "Hello, Brave New World",
       "speechHash": "47f87e8e765db196fc544da21f84c1dc2f44c98f07f511628f8b561c549f2150",
       "reviewHash": "3f46ae07049721c5c623742a8170ee0f13b66d9de88276422404afaf586ac1ec",
-      "profileHash": "a8229f2c029b9f54f32f54be83d17820d9d7e8af04f93b0e1723924f3380bbd1",
+      "profileHash": "cf6ff558a033cab90b53e3aac2c7926571903d9afd1cfdbda145cfaf7791b048",
       "settings": {
         "schemaVersion": 1,
         "voice": "bm_george",
@@ -712,7 +712,7 @@
         }
       ],
       "audio": {
-        "sha256": "65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f",
+        "sha256": "8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b",
         "bytes": 541772,
         "duration": 45.07,
         "timings": [
@@ -738,8 +738,8 @@
           }
         ],
         "reusedChunks": 0,
-        "generationSeconds": 8.158635333995335,
-        "path": "content/pieces/hello-brave-new-world/assets/narration-65ec6fc4df0fe9f59b0cd1fb678ce5a13fb5d8254bd5f5ec5280d9774fbd128f.mp3"
+        "generationSeconds": 6.9078575420426205,
+        "path": "content/pieces/hello-brave-new-world/assets/narration-8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3"
       }
     }
   }

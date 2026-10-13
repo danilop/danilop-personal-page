@@ -631,7 +631,24 @@ button:disabled {
 }
 
 .prose h4 {
-  font-size: 24px;
+  font-size: 1.18em;
+  margin: 1.3em 0 0.5em;
+}
+
+.prose h5 {
+  font-size: 1.09em;
+  font-weight: 600;
+  margin: 1.3em 0 0.5em;
+}
+
+.prose h6 {
+  font-size: 1em;
+  font-weight: 600;
+  margin: 1.3em 0 0.5em;
+}
+
+.reading-section + .reading-section {
+  margin-top: 2em;
 }
 
 .prose a {

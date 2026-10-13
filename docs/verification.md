@@ -1261,6 +1261,209 @@ the retained version ID. Tests cover ownership, manual-file preservation, immuta
 shared downloads, directly linked managed files and committed-inventory recording
 even when the working manifest changes during deployment.
 
+## Chronicles source refresh — 7 October 2026
+
+The existing Introduction and Chapter 1 drafts were compared with the canonical
+book source. Only the Introduction required an article update: Python 3.14.8 and
+the distinction between the 7 October selective evidence check and 19 September
+AI coverage cutoff. Chapter 1, its two examples and four cited notes were unchanged.
+The rejected Chapter 2 aside was removed in the original manuscript; Chapter 2
+has not been imported into this collection.
+
+The importer applied the reviewed two-piece plan and preserved publication
+metadata. Raw extraction ranges, file hashes and article-body baselines were
+checked and refreshed in the ignored pilot directory. The scoped quality check
+completed with zero technical errors, zero incomplete checks and 29 editorial
+review targets; both Python examples passed. The pilot reading pages passed their
+navigation, footnote, code and draft-visibility assertions. A full-site authoring
+snapshot built 35 pages and verified 197 output files and 1,089 local links.
+The changed documentation links and `git diff --check` passed. This was a local
+source sync and preview build; no publication or deployment was performed.
+
+## Good Enough opening draft — 7 October 2026
+
+Imported the `good-enough` collection with Part I and the complete
+`good-enough-ch01` piece. Both remain drafts with collection/book surfaces.
+The chapter's prose round-trips to the canonical source after reversing the
+numeric-citation conversion; its two note bodies are preserved. The obsolete
+preface excluded by the book's build was not imported. Source extracts, hashes,
+the transformation record and baseline profile are kept in the ignored pilot.
+
+The scoped content check completed with zero technical errors, zero incomplete
+checks and 20 editorial review targets. These are advisory prose findings, not
+rewrites or publication approval. The combined Good Enough/Chronicles authoring
+snapshot built 39 pages and verified 204 output files and 1,266 local links,
+including private-content sentinels. The new tags are registered as Decision
+making and Systems thinking. No source-book files, publication dates or release
+output were changed; nothing was committed or deployed.
+
+## Opening book-export inspection — 7 October 2026
+
+Generated private `structure-review-2026-10-07` Markua preview editions from both
+current draft collections. Chronicles exports Introduction, Chapter 1 and its
+single article in that order. Good Enough exports Part I, Chapter 1 and its single
+article. `Book.txt` orders these files; internal article subheadings are nested
+beneath the article heading. Both exports currently repeat the chapter title at
+the article level. This is a known formatting task before publication, not a
+reason to require one article per chapter. No live Leanpub request or manuscript
+upload was made, and neither preview is a released edition.
+
+## Split Chapter 2 and continuous book formatting — 7 October 2026
+
+Good Enough now has three draft articles covering Chapters 1 and 2. Reversing
+Chapter 2's named citations and image-path rewrite exactly reconstructs its
+canonical source body: all seven H2 sections, the four-row table and paragraph
+order are preserved. The copied figure matches its source bytes. Source notes
+retain identities 1, 3 and 4, including repeated citations across both articles.
+The scoped quality check passed with zero technical errors, zero incomplete
+checks and 58 advisory editorial targets; these were not automatic prose edits.
+The figure is registered in the managed asset manifest; this fixed the isolated
+author-server fixture's missing-image error without changing the fixture or
+uploading draft assets.
+
+Exporter version 2 resolves the repeated-heading issue recorded above. Both
+Chapter 1 placements and the two Chapter 2 placements omit article-level book
+headings. Chapter 2 exports as one H1 with the original H2 sections, followed by
+one group of three linked source notes. Chapter 1 remains the complete sample.
+Regression tests cover repeated references, distinct evidence with equal labels,
+notes with local links/images, generated index links, code preservation, part
+attributes, sample selection and invalid heading-omission placements.
+
+Validation passed:
+
+- `npm run validate`: 278 tests passed, no failures; Astro/core checks had zero
+  errors; the production build verified 190 output files and 919 local links.
+- Focused exporter/publishing suite: 20 tests passed; TypeScript check passed.
+- Combined draft preview: 42 pages, 210 output files and 1,443 local links.
+- Frozen previews `good-enough/split-chapter-final-2026-10-07` and
+  `chronicles-of-computation/heading-final-2026-10-07`: edition integrity passed;
+  all internal anchors and local resources resolve. The final manuscript files
+  match the bytes used for the visual proofs.
+- Playwright Chromium at 1280 × 900 and 390 × 844: correct page identity,
+  meaningful content, no error overlay or console warnings/errors. Chapter 1 →
+  Chapter 2 first article → second article navigation, footnote/return links and
+  mobile previous navigation all worked. The table and figure fit the layout.
+  Browser plugin was unavailable, so regular Playwright was used.
+- Local HTML proofs made from the actual Markua files showed a continuous
+  Chapter 2 join, single chapter titles, intact table/figure and working chapter
+  source-note links. Chronicles retained both Python code blocks. Screenshots
+  and the temporary QA script are outside the repository.
+
+README and the content, authoring, serialization and operations specifications
+were updated together. This is local draft preparation: no release date, public
+edition, source-book rewrite, remote upload or deployment. The HTML proof is not
+a Leanpub renderer. A real Leanpub PDF/EPUB preview and manuscript synchronisation
+remain unverified and required before distribution.
+
+## Reading typography correction — 8 October 2026
+
+The reported Good Enough heading rendered as H5 at 18.26px beside 22px prose.
+Its inherited collection depth was also retained on the individual reading page.
+The renderer now preserves the authored heading level in sanitised metadata;
+article and chapter templates rebase only those headings, keeping anchors, code
+and footnotes intact. Chapter/part descendant titles use the same prose scale.
+H4–H6 have explicit relative sizes and spacing, with stronger weight at H5/H6;
+no prose heading falls below the surrounding body size. The reported heading is
+now 35px on desktop article pages and 30px on mobile; continuous-reading H5 is
+23.98px beside 22px prose.
+
+Validation: 22 focused tests and the full 279-test suite passed. Astro/core checks
+and the production build passed; the draft snapshot verified 210 files and 1,443
+local links. The regression test covers H5/H6 in continuous output becoming H2/H3
+on article pages and H3/H4 on chapter pages, with identical anchors, code and
+footnotes.
+
+In-app Browser checks covered 16 routes at 1280×844 and 390×844: both collections,
+all imported articles, chapter/part pages, two standalone posts, home, Writing
+and Earlier Work. Computed sizes found no undersized prose headings; no page
+overflow, missing images or console warnings/errors were found. Visual checks
+covered heading spacing/wrapping, table and figure sizing, and scrolling code.
+The Browser API was available through computer use, superseding the earlier
+assumption that only external Playwright was available. Safari's existing local
+preview was refreshed and its accessibility hierarchy inspected; its screenshot
+API returned an unusable window thumbnail, so Safari visual parity is not claimed.
+The live authoring preview on port 4322 also showed the corrected continuous
+heading size. Contents → article → next article → footnote → return navigation
+passed with no console warnings/errors. Screenshots of the corrected continuous,
+desktop and mobile reading views are outside the repository.
+
+This correction is local and has not been deployed. Book source prose and the
+Markua formatting rules are unchanged.
+
+## Shared chapter composition — 8 October 2026
+
+Implemented `integration: body | section` on piece placements. The existing
+assembler omits body articles from section numbering; a shared reading plan
+controls heading inclusion, contextual levels and contents visibility in HTML
+and Markua. Whole-chapter articles no longer repeat the chapter title or its
+contents row. Split chapters keep labelled article links without manufacturing
+book sections. Genuine section titles are retained, including intentionally equal
+parent/section titles. Both books were explicitly migrated. Unspecified placements
+and legacy book-only heading settings retain their prior behaviour.
+
+The change preserves the existing source, URL, anchor and citation systems.
+Generated web footnote labels now use contextual heading levels, while note
+bodies and links remain intact. Chapter-body boundaries do not insert extra
+reading links or spacing into the chapter prose.
+
+Verification passed:
+
+- `npm run validate`: 285 tests passed, zero failures; Astro/core checks had zero
+  errors/warnings. Production output verified 190 files and 919 local links.
+- Focused checks cover whole/split/mixed chapters, equal and different titles,
+  reused articles, introductions, multiple parts, appendices, contextual before/
+  after placement, draft filtering, planned placeholders, invalid integration,
+  legacy compatibility and excessive nesting.
+- Combined draft snapshot: 42 pages, 210 files, 1,434 local links. Source-quality
+  checks: zero technical errors and zero incomplete checks; 58 advisory editorial
+  targets remain unchanged.
+- Exporter v3 preview editions `shared-structure-2026-10-08` for both books passed
+  integrity verification. Every article hash and manuscript/resource file hash
+  matches its previously verified 7 October final edition. This includes original
+  prose, headings, figures, code and note content; frozen editions were not altered.
+- In-app Browser checks covered 16 routes at 1280×844 and 390×844: no duplicated
+  Chapter 1 heading, artificial body-section numbers, undersized prose headings,
+  page overflow or console errors. Desktop/mobile screenshots of the corrected
+  part → chapter → prose sequence are stored outside the repository.
+- Live authoring preview: contents → Chapter 1 → Chapter 2 first article → second
+  article → footnote → return all worked. Chapter 1 appears once; Chapter 2 shows
+  its two reading-part links and correct article context. Existing URLs/fragments
+  remain available.
+
+README, content model, authoring syntax, serialization, operations and the shared
+reading-structure document describe the implemented scope. No book-specific
+title matching, CSS hiding, new manuscript tree or citation rewrite was added.
+Changes remain local and undeployed; live Leanpub PDF/EPUB rendering is still
+unverified. Safari visual parity remains outside this run's browser evidence.
+
+## Book completion and continuation notices — 8 October 2026
+
+Implemented optional, validated book-only completion metadata, independent of
+publication status. Both imported books and their private staged collection YAML
+copies are marked `in-progress`. Contents say **More to come** and the last
+available reading page and continuous view say **You’re up to date** /
+**This book will continue here.** Completed and unspecified books have distinct
+endings; no status is inferred from missing Next. No prose was changed.
+
+Validation:
+
+- All 287 tests passed. New cases cover completion/publication independence,
+  invalid and non-book values, unspecified status, empty/planned reading and
+  automatic movement to a new piece within the same structural group. The book
+  export regression checks that continuation copy never enters Markua prose.
+- Astro/core checks passed with zero errors/warnings. Production built 31 pages;
+  verification checked 190 files and 919 local links. The draft snapshot built
+  42 pages and verified 210 files and 1,434 local links.
+- Live in-app browser checks covered both books' contents, continuous endings,
+  early and last reading pages and Good Enough's last chapter page. Earlier pages
+  retain Next and omit the ending. Notices sit outside `.prose`. Desktop (1280px)
+  and mobile (390px) inspection found no horizontal overflow or error overlays.
+  Mobile Back to contents worked; standalone Hello, Brave New World has no book
+  status or ending. Checked browser logs contained no warnings/errors.
+- 129 local document targets resolved, and `git diff --check` passed.
+
+These checks are local. Deployment and live Leanpub rendering were not performed.
+
 ## Dependency refresh and cache boundary check — 2026-10-13
 
 Status: implemented and verified locally; not committed or deployed. Existing
@@ -1432,8 +1635,17 @@ CLI results: initial upload and existing-object reuse returned 0 with empty outp
 a forced transfer failure returned 1; a service denial returned 254 with JSON
 `Code: AccessDenied`. TypeScript, targeted ESLint, Knip, workflow/shell lint and
 changed documentation links passed. The Linux installer archive's AWS signature
-and pinned checksum were verified on Mac; Linux installation/execution awaits CI.
-This adapter has not yet been deployed or exercised against the production bucket.
+and pinned checksum were verified on Mac. The pinned Linux installation and actual
+CLI contract test subsequently passed in GitHub CI.
+
+Release `d35ea3115be4ab75a7ae90138c17f4c81f84f597` deployed this adapter on
+13 October 2026. All 26 commit checks, release validation, Amplify build and both
+GitHub workflows passed. Five production transfer batches verified 18 source/output
+objects; every CLI invocation returned 0 with empty stdout and stderr. S3 identity
+and public CDN byte checks passed before push. Exact-revision live verification
+then passed for the website, feed, resource links and missing-page behaviour. The
+private local transfer receipt records the per-batch results. Unpublished book
+work was excluded from this release.
 
 Release validation also exposed a fixed 100 ms wait in the existing multi-agent
 editing test. It now waits for all jobs to finish, with a five-second deadline,
@@ -1442,3 +1654,38 @@ and closes the service even on failure. Production job behaviour is unchanged.
 The preview watcher fixture also retries its initial edit until Node's watch
 parent observes it, addressing the race between child startup output and parent
 watch registration. Restart, syntax-error recovery and shutdown assertions remain.
+
+## Growing audiobook implementation — 13 October 2026
+
+Local implementation now covers semantic book speech, incremental lossless chunk
+reuse and full MP3 encoding, the book-page player, stable browser progress,
+authoring preparation and atomic publication gates. Model and encoder pins are
+unchanged. Existing public articles regenerated with matching durations, timing
+maps and sizes, but different byte identities. Decoded-sample comparisons also
+differ (RMS difference approximately 0.006 full scale); they are not bit-identical.
+Focused tests cover hierarchy/title suppression, draft isolation, partial chapters,
+publication gaps, byte/timing verification, unchanged build reuse, editor jobs,
+transactional publication, progress after appends/insertions/edits/removals and
+player interactions. Cancellation, concurrent edits, private planned gaps and
+empty planned chapters have explicit regression tests.
+
+Chromium headless on this Mac passed real MP3 playback, no autoplay, saved position
+after reload, chapter seek, speed-adjusted remaining time and HTTP range download.
+The 1280 × 900 and 390 × 844 views had no overflow or page errors. The private
+book authoring panel showed the approved voice and an up-to-date recording.
+The two private draft recordings measured 1,008.905 and 2,114.3 seconds; both
+passed complete decoding and timing coverage verification. An unchanged repeat
+preparation reused the existing recordings. They remain private, with human
+whole-book listening review still required before publication. Safari/iPhone
+hardware and VoiceOver are not verified. The release command verifies asset identities and CDN bytes before pushing,
+then waits for the exact production build marker and live site checks.
+
+All 26 worktree verification checks passed: 323 JavaScript tests passed, with the
+opt-in native AWS CLI contract test skipped in that suite; coverage thresholds,
+Python tests, types, lint, architecture, build and narration gates passed.
+
+Both private books passed the same rendered Chromium checks. Independent full
+MP3 decoding found no full-scale samples (peaks 0.448 and 0.433). Title and author
+metadata were present in both, and the available Chronicles cover was embedded.
+The native AWS CLI contract test also passed separately, including conditional
+uploads, existing-object reuse and structured failure handling.

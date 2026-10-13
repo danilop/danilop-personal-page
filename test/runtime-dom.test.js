@@ -505,3 +505,117 @@ test("narration player uses measured time, explicit playback, bounded seeking an
   window.dispatchEvent(new Event("pagehide"));
   assert.equal(audio.paused, true);
 });
+
+test("audiobook player resumes locally, navigates chapters, adjusts remaining time and keeps progress without autoplay", async (t) => {
+  const map = {
+    bookId: "book",
+    title: "A book",
+    author: "Author",
+    hash: "edition",
+    segments: [
+      { id: "one", placement: "one", contentHash: "one", label: "First" },
+      { id: "two", placement: "two", contentHash: "two", label: "Second" },
+      { id: "end", placement: "$closing", contentHash: "end", label: "End" },
+    ],
+    audio: {
+      duration: 60,
+      timings: [
+        { start: 0, end: 20 },
+        { start: 20, end: 50 },
+        { start: 50, end: 60 },
+      ],
+    },
+  };
+  const { document, window, click } = dom(
+    t,
+    `<section data-audiobook><script data-book-map type="application/json">${JSON.stringify(map)}</script><audio controls preload="none"></audio><button data-book-play hidden></button><input data-book-seek><select data-book-speed><option value="1.1" selected>1.1</option><option value="2">2</option></select><p data-book-notice></p><p data-book-position></p><p data-book-time></p><p data-book-error hidden></p><div data-book-controls hidden></div><button data-book-retry></button><button data-book-back></button><button data-book-forward></button><button data-book-next></button><button data-book-previous></button><span data-book-native></span><div data-book-chapters><button data-book-chapter="0"></button><button data-book-chapter="1"></button><button data-book-chapter="2"></button></div></section><video></video>`,
+  );
+  location.href = "https://fixture.invalid/collections/book/";
+  let plays = 0,
+    reject = false;
+  const audio = document.querySelector("audio");
+  audio.paused = true;
+  audio.currentTime = 0;
+  audio.duration = 60;
+  audio.play = async () => {
+    if (reject) throw Error("Network");
+    plays++;
+    audio.paused = false;
+    audio.dispatchEvent(new Event("play"));
+  };
+  audio.pause = () => {
+    audio.paused = true;
+    audio.dispatchEvent(new Event("pause"));
+  };
+  audio.load = () => {};
+  document.querySelector("video").pause = () => {};
+  localStorage.setItem(
+    "audiobook:v1:book",
+    JSON.stringify({
+      version: 1,
+      edition: "older",
+      segment: "two",
+      placement: "two",
+      contentHash: "two",
+      offset: 7,
+      finished: false,
+      order: ["one", "two"],
+    }),
+  );
+  await import("../runtime/audiobook-player.ts");
+  assert.equal(plays, 0);
+  assert.equal(audio.playbackRate, 1.1);
+  assert.match(
+    document.querySelector("[data-book-play]").textContent,
+    /Continue/,
+  );
+  window.dispatchEvent(new Event("pagehide"));
+  assert.equal(JSON.parse(localStorage.getItem("audiobook:v1:book")).offset, 7);
+  audio.dispatchEvent(new Event("loadedmetadata"));
+  assert.equal(audio.currentTime, 27);
+  click("[data-book-play]");
+  await tick();
+  assert.equal(plays, 1);
+  click("[data-book-back]");
+  assert.equal(audio.currentTime, 12);
+  click("[data-book-next]");
+  assert.equal(audio.currentTime, 20);
+  click('[data-book-chapter="1"]');
+  await tick();
+  assert.equal(audio.currentTime, 20);
+  const speed = document.querySelector("[data-book-speed]");
+  speed.querySelector('[value="2"]').selected = true;
+  speed.dispatchEvent(new Event("change"));
+  assert.equal(audio.playbackRate, 2);
+  assert.match(
+    document.querySelector("[data-book-time]").textContent,
+    /0:20 remaining/,
+  );
+  audio.currentTime = 25;
+  audio.dispatchEvent(new Event("timeupdate"));
+  click("[data-book-play]");
+  assert.equal(JSON.parse(localStorage.getItem("audiobook:v1:book")).offset, 5);
+  reject = true;
+  click("[data-book-play]");
+  await tick();
+  assert.equal(document.querySelector("[data-book-error]").hidden, false);
+  click("[data-book-retry]");
+  await tick();
+  audio.dispatchEvent(new Event("error"));
+  reject = false;
+  audio.dispatchEvent(new Event("loadedmetadata"));
+  click("[data-book-previous]");
+  assert.equal(audio.currentTime, 20);
+  click("[data-book-forward]");
+  assert.equal(audio.currentTime, 35);
+  const seek = document.querySelector("[data-book-seek]");
+  seek.value = "58";
+  seek.dispatchEvent(new Event("input"));
+  assert.equal(audio.currentTime, 58);
+  audio.ended = true;
+  audio.dispatchEvent(new Event("ended"));
+  assert.equal(
+    JSON.parse(localStorage.getItem("audiobook:v1:book")).finished,
+    true,
+  );
+});

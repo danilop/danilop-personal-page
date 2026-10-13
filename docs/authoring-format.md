@@ -106,8 +106,49 @@ piece eligible only on its declared surfaces. When editing files directly,
 assign `publishedAt` at publication too; a release build rejects a visible article
 without it. `shortCode` is optional; drafts may reserve a code without activating it.
 
-Bodies omit H1 because the title comes from metadata. During book assembly, a
-piece title becomes a section heading and body headings are shifted beneath it.
+Bodies omit H1 because the title comes from metadata. Individual web reading
+pages preserve the source H2–H6 levels beneath their own H1; chapter and part
+views rebase levels relative to that page. The continuous collection view keeps
+the logical collection hierarchy. Heading IDs and links remain stable across views.
+During book assembly, a
+piece title becomes a section heading and body headings are shifted beneath it
+by default. A piece placement directly inside a chapter or appendix can set
+`integration: body` to contribute its prose without adding an article-title
+heading in continuous web reading, chapter/part views or book output. Source
+sections sit directly beneath the parent chapter. `integration: section` is the
+default and introduces a titled section. Structural nodes cannot use this field.
+
+```yaml
+- id: chapter-two
+  kind: chapter
+  title: What a local minimum means
+  children:
+    - {
+        id: foundations,
+        kind: piece,
+        ref: good-enough-ch02-foundations,
+        integration: body,
+      }
+    - {
+        id: searching,
+        kind: piece,
+        ref: good-enough-ch02-search,
+        integration: body,
+      }
+```
+
+Individual article pages keep their own titles. Body placements do not consume
+section numbers; multiple body articles have labelled reading-part links in the
+contents. A single body article does not duplicate its parent contents entry.
+Placement IDs and article URLs remain stable. The legacy `bookHeading: include`
+or `omit` remains supported for book-only formatting; conflicting legacy and
+integration declarations are rejected. Use `integration` for shared web/book
+behaviour. See [shared reading structure](reading-structure.md).
+
+Book source notes are numbered in first-citation order within each chapter and
+shared across articles when their identifiers and bodies match. Web footnotes
+stay article-local, with generated note-label levels adapted to the reading view.
+See [book operations](operations.md#books-and-editions) for samples.
 References, captions, and titles are never manually numbered in the source.
 
 ### External media
@@ -144,7 +185,7 @@ schemaVersion: 1
 blocks:
   energy:
     kind: math
-    source: {format: tex, text: 'E = mc^2'}
+    source: { format: tex, text: "E = mc^2" }
     caption: Mass–energy equivalence.
 ```
 
@@ -242,6 +283,39 @@ names illustrate the relationship; this document does not create those pieces.
 
 Collections remain data and editorial structure; they do not contain JavaScript.
 
+### Book completion
+
+For a book collection, set:
+
+```yaml
+book: true
+completion: in-progress # Change to complete when the blog book is complete.
+```
+
+`completion` accepts `in-progress` or `complete` and is valid only with `book: true`.
+It describes the book presented in this collection, not whether an external source
+manuscript has been finished. A complete source being serialised here is still
+`in-progress` until the intended reading material is available. This field is
+independent of `status`/`draft`, release dates and chapter/article boundaries.
+It can be edited in the collection YAML in the local editor and survives import.
+
+With `in-progress`, contents show **More to come** and the last available ordered
+reading page (including a chapter/group page containing the end) shows
+**You’re up to date** followed by **This book will continue here.** The continuous
+book view uses the same ending. A new visible article automatically moves that
+ending forward. Only readable pieces in the selected public/preview view count;
+private drafts stay out of public reading order, and planned entries are not steps.
+With `complete`, contents show **Complete book** and the ending reads
+**End of the book** / **You’ve reached the end of this book.**
+
+Omitting the field preserves compatibility without guessing: no contents status,
+and a neutral **You’ve reached the last available part of this book.** ending.
+An empty book has no reading ending. Unordered books show the ending only in the
+continuous view. Standalone articles and ordinary collections are unaffected.
+These messages belong to the web interface, outside authored prose, and are not
+included in Markua/Leanpub manuscript files or frozen edition reading content.
+Implemented locally; not deployed.
+
 ## 4. Rich-block descriptors
 
 Use inline code fences and Markdown image/table syntax for simple cases.
@@ -273,8 +347,9 @@ blocks:
       format: chart-v1
       data: ./latency.csv
       mark: line
-      x: {field: concurrent_users, type: quantitative, title: Concurrent users}
-      y: {field: latency_ms, type: quantitative, title: Latency (ms)}
+      x:
+        { field: concurrent_users, type: quantitative, title: Concurrent users }
+      y: { field: latency_ms, type: quantitative, title: Latency (ms) }
     caption: Latency as concurrency increases.
     description: A line chart comparing latency across concurrency levels.
   memory-example:
@@ -461,7 +536,7 @@ blocks:
       scenarios:
         steady:
           label: Steady growth
-          input: {initial: 100, rate: 5, steps: 20}
+          input: { initial: 100, rate: 5, steps: 20 }
       recordedResult: After 20 steps at 5 percent, 100 becomes about 265.33.
     description: Explore repeated percentage growth with a fixed rate.
     alternative:
@@ -563,7 +638,7 @@ Keep biography prose in `content/about.md`; configure the separate profile row i
 
 ```yaml
 socialLinks:
-  - {label: GitHub, url: 'https://github.com/danilop', icon: github}
+  - { label: GitHub, url: "https://github.com/danilop", icon: github }
 ```
 
 Icons currently support `github`, `linkedin`, `x`, and `facebook`. Labels, HTTPS
@@ -688,3 +763,13 @@ and `bm_lewis`; pace is 0.8–1.2.
 `profiles` map from profile IDs to SHA-256 values. The generated rendition index
 belongs in `publishing/narrations.json`; audio binaries remain ignored managed
 assets. See [narration](article-narration.md#source-and-artifact-layout).
+
+## Book audiobook settings
+
+Ordered book collections may set `audioSubtitle` (a real spoken subtitle),
+`audioAuthor` (defaults to the site author), and `audiobook: {voice: bm_george,
+pace: 1, profile: kokoro-mlx-bf16-v1}`. These settings apply consistently across
+book content; article voice overrides do not change the book voice. Do not use
+`summary` for a subtitle: landing-page summaries are not narrated. See
+[the audiobook workflow](book-audiobooks.md#authoring-and-operations) for preview,
+reviewed explanations, publication gating and current limitations.
