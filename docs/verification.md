@@ -1391,3 +1391,25 @@ Python tests, production build and both narration receipts. The preview-watch
 fixture now installs its shutdown handler before announcing readiness, eliminating
 a race exposed during the first release check. Local documentation links passed.
 Upload, deployed-revision and CDN verification follow through `npm run release`.
+
+## Narration production delivery — 13 October 2026
+
+Release `3ab9d303e11781bd36924fc708d0ee97384cbf2d` deployed narration and the
+compatible dependency refresh through the standard upload-before-push workflow.
+The isolated release passed all 28 CI checks and 297 JavaScript/TypeScript tests;
+the staged commit gate and release validation also passed. New unpublished book
+work and imported drafts were excluded from the release.
+
+Both public MP3s were uploaded to the existing managed S3/CDN store and verified
+against their exact hashes. Live HEAD responses expose the expected byte lengths,
+`audio/mpeg` and the established `max-age=0, s-maxage=300, must-revalidate`
+cache policy; initial and suffix byte ranges return 206 with
+matching bytes. Both public articles render the expected recording hash, six speed
+choices, 1.1× default and the label **AI narration** without the voice name.
+
+The live deployment marker matches the release revision. Site checks passed for
+pages, resources, RSS, 404 and preserved original-site routes. Public browser
+playback, speed changes and resumption after reload were checked. The exact spoken
+transcript remains folded inside More listening options; it may contain reviewed
+adaptations absent from the article text. Safari/iPhone and VoiceOver remain manual
+platform checks; no claim of verification on those platforms is made.

@@ -821,5 +821,5 @@ on Apple Silicon; CI and public browsers never run inference.
 The existing managed-media pipeline stores MP3 bytes. Prepared duration and the
 exact spoken transcript feed a shared progressive player on standalone and
 collection reading routes. Staged/build checks independently validate the public
-graph. Draft receipts/proposals remain private. This is implemented locally;
-first hosted narration delivery remains pending.
+graph. Draft receipts/proposals remain private. The public player and managed
+audio were deployed on 13 October 2026; synthesis and authoring remain local.

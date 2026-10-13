@@ -188,5 +188,6 @@ verified public renditions; private draft audio and proposals are not enrolled.
 
 Cleanup traverses saved private rendition receipts as well as the public index and
 existing retention roots. Replacements retain old bytes under the established
-retention policy. Local range serving is tested; new narration CDN headers and
-playback still require verification after the first release.
+retention policy. Local range serving and the first hosted narration release are
+verified: audio/mpeg, the existing revalidation policy, HEAD/range responses, exact
+bytes and browser playback. See [verification](verification.md).

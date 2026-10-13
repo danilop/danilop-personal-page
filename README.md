@@ -292,7 +292,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Content import](docs/content-import.md): selection, dry runs, dependencies, draft staging, and controlled updates.
 - [Authoring preview](docs/authoring-preview.md): full-site draft review at `/`, isolation, and release preview.
 - [Product design](docs/product-design.md): reader and author experience.
-- [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations, browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; implemented locally, deployment pending.
+- [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations, browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; deployed on 13 October 2026.
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.

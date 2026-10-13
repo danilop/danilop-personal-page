@@ -6,7 +6,8 @@ The root application and isolated prototype manifests and npm lockfiles were
 refreshed against stable registry releases, including compatible transitive
 updates. Python requirements were re-resolved with `uv pip compile --upgrade
 --generate-hashes` and installed with hash verification in both project virtual
-environments. This refresh is local; it has not been committed or deployed.
+environments. This refresh was committed and deployed on 13 October 2026 with
+the narration release; see [verification](verification.md).
 
 ## Supported stack
 

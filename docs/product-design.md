@@ -559,7 +559,7 @@ expiration. Restoration preserves identity and resolves dependency conflicts
 without overwriting newer work. Published articles must first be unpublished.
 These controls are not yet implemented; the current recovery copy remains manual.
 
-## Article narration — implemented locally, 2026-10-13
+## Article narration — deployed, 2026-10-13
 
 A quiet **Listen to this article** row below metadata preserves Ink & Paper's
 reading hierarchy. Measured `mm:ss listen` complements estimated `min read`.
@@ -575,5 +575,6 @@ preparation reports freshness/progress and supports cancellation. Decorative
 illustrations are silent; meaningful visuals/code have reviewed treatments.
 Claude/Codex/Pi proposals require explicit acceptance. Publication waits for ready
 audio; unchanged speech reuses existing work. See [narration](article-narration.md)
-for scope and checks. Safari/iPhone/VoiceOver and hosted delivery remain to verify;
+for scope and checks. Hosted delivery is verified; Safari/iPhone/VoiceOver remain
+to verify;
 continuous or sticky playback and Media Session are outside this delivery.

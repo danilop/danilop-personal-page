@@ -1,9 +1,10 @@
 # Article narration
 
-Status: implemented locally on 13 October 2026. MLX George was approved by
+Status: deployed on 13 October 2026. MLX George was approved by
 listening. Both eligible public articles have prepared audio and the mandatory
 readiness policy is enabled. Local automated and browser verification is recorded
-in [verification](verification.md). No narration release has been deployed yet.
+in [verification](verification.md), including the exact deployed revision and
+hosted audio checks. Authoring and synthesis continue to run only on the Mac.
 
 ## Product behaviour
 
@@ -220,7 +221,7 @@ must still be verified after the first narration release.
 | 4. Preview | Voice/audition, progress/cancel, transcript and reviewed CLI proposals implemented. |
 | 5. Reader | Progressive player, measured time, transcript, seek/speed/resume and failure handling implemented. |
 | 6. Gates | Coordinated article publication, recovery and staged/build/CI checks implemented. |
-| 7. Backfill/delivery | Both current public articles backfilled; mandatory gate enabled locally. Commit/release and hosted verification remain pending. |
+| 7. Backfill/delivery | Both current public articles backfilled and deployed; mandatory gate enabled. Exact revision, hosted audio and browser playback verified. |
 
 Automated Chromium and DOM checks do not establish VoiceOver, Safari/iPhone or
 physical-device lock-screen behaviour. Manual testing on those platforms remains a

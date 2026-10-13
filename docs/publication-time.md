@@ -81,4 +81,5 @@ a new article's local publication transition and timestamp until required audio
 is ready. Generation is outside the write lock; promotion checks captured revisions
 and uses a recoverable source/manifest journal. Failure or cancellation preserves
 the draft. Updates and republication preserve the original timestamp. Tests cover
-these transitions; deployed narration delivery remains pending.
+these transitions; narration delivery was deployed and verified on 13 October
+2026. See [verification](verification.md).

@@ -376,4 +376,5 @@ readiness check; `-- --hydrate` explicitly restores known public bytes.
 
 The hook never generates or stages. Release uploads immutable bytes before push;
 CI verifies exact pinned artifacts without Kokoro. Both current public articles
-are backfilled and the policy is enabled locally. Narration is not yet deployed.
+are backfilled and the policy is enabled. Narration was deployed and verified on
+13 October 2026; authoring and synthesis remain local.
