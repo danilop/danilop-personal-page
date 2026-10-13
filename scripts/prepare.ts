@@ -33,6 +33,7 @@ import { authoringContext } from "../core/authoring-preview";
 import { prepareSocialPreviews } from "../core/social-preview";
 import { finishAssetBuild } from "../core/asset-build";
 import { publicNarration } from "../core/narration-public";
+import { readingMinutes } from "../core/reading-time";
 async function main() {
   const authoring = await authoringContext();
   const lib = await loadLibrary(),
@@ -340,14 +341,15 @@ async function main() {
       allowed(p, "standalone"),
     )) {
       const d = await renderDocument(standalone(p), lib, defaults, assets);
+      const narration = await publicNarration(
+        process.cwd(),
+        p,
+        lib,
+        assets,
+        Boolean(authoring),
+      );
       site.articles.push({
-        narration: await publicNarration(
-          process.cwd(),
-          p,
-          lib,
-          assets,
-          Boolean(authoring),
-        ),
+        narration,
         id: p.id,
         title: p.title,
         summary: p.summary,
@@ -357,7 +359,7 @@ async function main() {
         updatedAt: p.updatedAt,
         tags: p.tags,
         html: d.html,
-        minutes: Math.max(1, Math.ceil(p.body.split(/\s+/).length / 220)),
+        minutes: readingMinutes(p.body, narration?.duration),
         collections: site.collections
           .filter((c) => c.nodes.some((n) => n.pieceId === p.id))
           .map((c) => ({ title: c.title, url: c.url })),

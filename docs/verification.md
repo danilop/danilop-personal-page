@@ -1701,3 +1701,30 @@ although the same revision passed GitHub CI. That intermediate build was stopped
 The server fixture now explicitly closes its output pipes after shutdown so an
 inherited descriptor cannot keep the test worker alive; its assertions are
 unchanged, and the targeted integration test passed after this cleanup change.
+
+### Audio-based reading and speed-adjusted listening labels — 13 October 2026
+
+Article listening labels now divide the verified audio duration by the selected
+playback speed, initially 1.1×. The homepage estimate uses 1.1×. Original recording
+timestamps remain on the seek bar. Following the accepted reading-time decision,
+“min read” uses available full 1× audio duration rounded up to whole minutes
+(minimum one), falling back to word count at 220 words per minute.
+The no-JavaScript player explicitly labels its native 1× duration. The release gate verifies the exact deployed revision before reporting
+this adjustment as deployed.
+
+Validation: all seven runtime DOM tests pass, including each supported speed,
+unchanged playback position, retry and saved-progress behaviour. Astro and core
+TypeScript checks report no errors; targeted ESLint and whitespace checks pass.
+Chromium interaction checks at 1280×900 and 390×844 cover actual playback, all six
+speed labels, no autoplay, stable paused position, native fallback, page identity,
+no framework overlay, no page/console errors and no horizontal overflow. Browser
+plugin unavailable; the existing Playwright/Puppeteer installation was used.
+Homepage rendering with a narrated lead and physical Safari/iPhone testing were
+not exercised in this check; the draft preview currently leads with a book.
+
+The subsequent reading-label change passed all 17 homepage and runtime DOM tests,
+including rounding boundaries, invalid/missing audio fallback and collection
+placement audio. Type checks and targeted ESLint passed again. Browser checks on
+“Clever Enough to Find the Loophole” confirm 20 min read from 1186.19 seconds at 1×,
+17:58 listen at 1.1×, and 9:53 listen at 2× without changing the reading label.
+Desktop and mobile checks found no overflow or page errors.

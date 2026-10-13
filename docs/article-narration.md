@@ -29,11 +29,21 @@ Only one media element plays at a time on
 an article page. Cross-page continuous playback is outside this delivery.
 
 Listening duration is measured from generated audio and verified against MP3 frame
-coverage. Display it as `19:46 listen`, alongside the word-based `13 min read`
-estimate. Speech rate, pauses and adaptations make listening and silent reading
-different activities: the audio must not replace the silent-reading estimate.
+coverage. Display it as `17:58 listen at 1.1×`, alongside `20 min read` for a
+19:46 recording. The reading estimate uses the full verified audio duration at 1×, rounded up to whole minutes with a minimum of one.
+It is a narration-paced estimate, including spoken pauses and adaptations, not
+a measurement of individual silent-reading speed. Without available narration,
+fall back to the existing raw word count at 220 words per minute. Reading estimates
+never change with playback speed; article pages and homepage writing entries use
+the same rule.
 Duration is available without fetching audio (`preload="none"`). The display is
-at 1×; the speed control changes playback without generating another file.
+the full recording duration divided by the selected speed, initially 1.1×, and
+updates immediately when speed changes. Homepage listening estimates also use
+1.1×. The seek bar and elapsed/total timestamps stay in original recording time
+to keep seeking and saved positions consistent. Without JavaScript, the article
+player displays the measured duration at the native 1× speed. Speed changes do
+not generate another file. The reading and listening label adjustments are implemented and tested.
+Release verification checks the exact deployed revision.
 
 Scope includes standalone articles and pieces exposed by public collection reading
 routes, including attached pieces. Each piece has its own player; this is not a

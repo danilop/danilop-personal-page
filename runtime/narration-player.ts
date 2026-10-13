@@ -115,6 +115,8 @@ for (const panel of document.querySelectorAll<HTMLElement>(
   const applySpeed = () => {
     audio.defaultPlaybackRate = Number(speed.value);
     audio.playbackRate = audio.defaultPlaybackRate;
+    get("[data-listening-duration]").textContent =
+      `${clock(duration / audio.playbackRate)} listen at ${audio.playbackRate}×`;
   };
   speed.onchange = applySpeed;
   applySpeed();

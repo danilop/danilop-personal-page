@@ -227,8 +227,10 @@ improvements for separate book reading pages.
 
 The [reading-time comparison](docs/reading-time-experiment.md) records a local
 experiment with parsed text and `reading-time`. It left all four current reading-time
-labels unchanged; the production calculation remains raw word count at 220 words
-per minute, rounded up. No new runtime dependency was adopted.
+labels unchanged at the time. The new local implementation uses available audio
+duration at 1× for “min read”, rounded up to whole minutes (minimum one), and
+falls back to raw word count at 220 words per minute when audio is unavailable.
+Listening labels follow playback speed independently. The release workflow verifies these labels against the deployed revision. No new runtime dependency was adopted.
 
 The [content review workflow](docs/content-quality.md) combines local NLP, stem-sequence
 counts, source/reference checks, tag reuse, and declared Python example tests.
@@ -320,7 +322,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Content import](docs/content-import.md): selection, dry runs, dependencies, draft staging, and controlled updates.
 - [Authoring preview](docs/authoring-preview.md): full-site draft review at `/`, isolation, and release preview.
 - [Product design](docs/product-design.md): reader and author experience.
-- [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations, browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; deployed on 13 October 2026.
+- [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations (adjusted to playback speed), browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; deployed on 13 October 2026.
 - [Growing audiobooks](docs/book-audiobooks.md): book-page listening, passage-based browser progress, spoken book structure and full current-edition MP3 downloads; implemented with publication and release verification gates.
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.

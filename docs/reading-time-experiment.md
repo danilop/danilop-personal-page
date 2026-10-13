@@ -2,7 +2,10 @@
 
 Status: local experiment completed on 1 October 2026. No production calculation,
 package dependency, article content or publication status changed. The author accepted retaining the existing calculation; no replacement
-implementation is planned from this experiment.
+implementation is planned from this experiment. A later decision on 13 October
+2026 uses available 1× narration duration for reading labels, with the existing
+word-count calculation retained as the fallback. That change is implemented
+and tested; see [article narration](article-narration.md).
 
 ## Question and method
 

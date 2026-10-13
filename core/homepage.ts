@@ -3,6 +3,7 @@ import { load } from "cheerio";
 import type { Library } from "./model";
 import type { CompiledSite } from "./site-data";
 import { readingContext } from "./reading-navigation";
+import { readingMinutes } from "./reading-time";
 export type HomeEntry = {
   id: string;
   title: string;
@@ -75,7 +76,7 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
         url: `${c.url}read/${n.id}/`,
         publishedAt:
           p.publishedAt ?? (draft ? site.authoring?.date : undefined),
-        minutes: Math.max(1, Math.ceil(p.body.split(/\s+/).length / 220)),
+        minutes: readingMinutes(p.body, n.narration?.duration),
         narration: n.narration,
         context,
         kind: "piece",

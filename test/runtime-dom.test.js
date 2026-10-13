@@ -429,7 +429,7 @@ test("progressive enhancement loads an embed only on request and handles clipboa
 test("narration player uses measured time, explicit playback, bounded seeking and hash-scoped resume", async (t) => {
   const { document, window, click } = dom(
     t,
-    `<section data-narration data-hash="new-audio" data-title="Article" data-duration="45.07"><audio controls preload="none"></audio><button data-play hidden><span data-play-icon></span><span data-play-label></span></button><div data-controls hidden></div><input data-seek><select data-speed><option value="0.8">0.8</option><option value="1">1</option><option value="1.1" selected>1.1</option><option value="1.2">1.2</option><option value="1.5">1.5</option><option value="2">2</option></select><span data-native-label></span><p data-error hidden></p><button data-retry></button><output data-time></output><button data-back></button><button data-forward></button></section><video></video>`,
+    `<section data-narration data-hash="new-audio" data-title="Article" data-duration="45.07"><audio controls preload="none"></audio><button data-play hidden><span data-play-icon></span><span data-play-label></span></button><div data-controls hidden></div><input data-seek><select data-speed><option value="0.8">0.8</option><option value="1">1</option><option value="1.1" selected>1.1</option><option value="1.2">1.2</option><option value="1.5">1.5</option><option value="2">2</option></select><span data-native-label></span><span data-listening-duration></span><p data-error hidden></p><button data-retry></button><output data-time></output><button data-back></button><button data-forward></button></section><video></video>`,
   );
   const audio = document.querySelector("audio"),
     video = document.querySelector("video");
@@ -461,6 +461,10 @@ test("narration player uses measured time, explicit playback, bounded seeking an
   assert.equal(plays, 0);
   assert.equal(audio.playbackRate, 1.1);
   assert.equal(audio.defaultPlaybackRate, 1.1);
+  assert.equal(
+    document.querySelector("[data-listening-duration]").textContent,
+    "0:40 listen at 1.1×",
+  );
   assert.equal(audio.getAttribute("preload"), "none");
   window.dispatchEvent(new Event("pagehide"));
   assert.equal(localStorage.getItem("narration:new-audio"), "12");
@@ -479,11 +483,23 @@ test("narration player uses measured time, explicit playback, bounded seeking an
   click("[data-back]");
   assert.equal(audio.currentTime, 30.07);
   const speed = document.querySelector("[data-speed]");
-  for (const rate of [0.8, 1, 1.1, 1.2, 2, 1.5]) {
+  for (const [rate, expected] of [
+    [0.8, "0:56"],
+    [1, "0:45"],
+    [1.1, "0:40"],
+    [1.2, "0:37"],
+    [2, "0:22"],
+    [1.5, "0:30"],
+  ]) {
     speed.querySelector(`[value="${rate}"]`).selected = true;
     speed.dispatchEvent(new Event("change"));
     assert.equal(audio.playbackRate, rate);
     assert.equal(audio.defaultPlaybackRate, rate);
+    assert.equal(
+      document.querySelector("[data-listening-duration]").textContent,
+      `${expected} listen at ${rate}×`,
+    );
+    assert.equal(audio.currentTime, 30.07);
   }
   audio.dispatchEvent(new Event("timeupdate"));
   assert.equal(document.querySelector("[data-time]").value, "0:30 / 0:45");

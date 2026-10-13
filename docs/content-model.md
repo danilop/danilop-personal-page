@@ -362,7 +362,11 @@ Decorative images have no spoken representation. Meaningful material needs a
 source-bound explanation, suitable caption or deliberate reviewed omission.
 Alt text remains independent. Canonical imports retain destination narration
 settings while changed sources invalidate their approvals. Measured listening
-duration describes the audio; silent-reading duration remains an estimate.
+duration describes the audio. The reading-time label uses that full duration
+at 1×, rounded up to whole minutes (minimum one), independently of playback
+speed. It is a narration-paced estimate; pieces without audio fall back to
+word count at 220 words per minute. This label change is implemented and tested; release verification checks
+the exact deployed revision.
 
 This model is implemented locally. See [narration](article-narration.md) and
 [authoring syntax](authoring-format.md#narration-source-format).

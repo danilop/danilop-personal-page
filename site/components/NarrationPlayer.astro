@@ -26,7 +26,9 @@ const clock = (seconds: number) =>
         <span data-play-label>Listen to this article</span>
       </button>
       <span data-native-label>Listen to this article</span>
-      <span class="narration-duration">{clock(n.duration)} listen</span>
+      <span class="narration-duration" data-listening-duration>
+        {clock(n.duration)} listen at 1×
+      </span>
       <span class="narration-credit">AI narration</span>
     </div>
     <!-- Audio-only narration has the exact spoken transcript immediately below. -->

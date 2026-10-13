@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readingMinutes } from "../core/reading-time";
 import { homepageWriting, homepageSelection } from "../core/homepage";
 import type { CompiledSite, CollectionData } from "../core/site-data";
 import type { Library, Piece } from "../core/model";
@@ -216,4 +217,25 @@ test("featured books use only their assigned cover, independent of first article
   assert.deepEqual(homepageSelection(site).lead?.image, cover);
   site.collections[0].nodes.reverse();
   assert.deepEqual(homepageSelection(site).lead?.image, cover);
+});
+
+test("reading minutes use full 1x audio, round up and fall back without valid audio", () => {
+  const body = Array(441).fill("word").join(" ");
+  assert.equal(readingMinutes(body, 660), 11);
+  assert.equal(readingMinutes(body, 660.01), 12);
+  assert.equal(readingMinutes(body, 0.5), 1);
+  for (const missing of [undefined, 0, -1, NaN, Infinity])
+    assert.equal(readingMinutes(body, missing), 3);
+  assert.equal(readingMinutes(""), 1);
+});
+
+test("collection writing uses its placement audio for reading minutes", () => {
+  const { lib, site } = fixture();
+  site.collections[0].nodes[1].narration = {
+    duration: 660,
+  } as NonNullable<CollectionData["nodes"][number]["narration"]>;
+  assert.equal(
+    homepageWriting(site, lib).find((entry) => entry.id === "section")?.minutes,
+    11,
+  );
 });

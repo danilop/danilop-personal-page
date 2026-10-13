@@ -580,12 +580,18 @@ These controls are not yet implemented; the current recovery copy remains manual
 ## Article narration — deployed, 2026-10-13
 
 A quiet **Listen to this article** row below metadata preserves Ink & Paper's
-reading hierarchy. Measured `mm:ss listen` complements estimated `min read`.
+reading hierarchy. Measured `mm:ss listen` complements `min read`, estimated
+from the full 1× audio duration rounded up to whole minutes (minimum one), with
+word count at 220 words per minute as the fallback when audio is unavailable.
+The reading estimate stays fixed when playback speed changes.
 Playback is explicit, with inline seek/speed controls, ±15 seconds, an exact
 transcript and download. The public label is **AI narration**, without a voice
 name. Voice names appear only in the authoring preview; George is the default.
 Playback starts at 1.1×; readers can choose 0.8×, 1×, 1.1×, 1.2×, 1.5× or 2×.
-The displayed recording duration remains measured at 1×.
+The listening label shows the full audio duration divided by the selected speed
+and updates immediately; homepage estimates use the default 1.1×. Seek-bar
+timestamps retain original recording time. The native player without JavaScript
+shows listening duration at 1×.
 Native controls remain without JavaScript; missing audio does not obscure prose.
 
 The author selects a voice and auditions the first paragraph in Narration. Full
