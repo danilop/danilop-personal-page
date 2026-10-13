@@ -4,6 +4,16 @@ import type { Assets } from "./assets";
 import type { Collection, Library } from "./model";
 import { audiobookPlan } from "./audiobook-plan";
 import { bookBytes, verifyBook, type PublicAudiobook } from "./audiobook-store";
+export function bookPreviewScope(
+  context: { collections: string[]; pieces: string[] } | undefined,
+  bookId: string,
+  pieceIds: (string | undefined)[],
+) {
+  return Boolean(
+    context?.collections.includes(bookId) ||
+    pieceIds.some((id) => id && context?.pieces.includes(id)),
+  );
+}
 export async function publicAudiobook(
   root: string,
   c: Collection,

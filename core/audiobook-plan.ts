@@ -46,7 +46,11 @@ export function publicBooks(lib: Library) {
 }
 function contentNodes(c: Collection, lib: Library, preview: boolean) {
   // Public eligibility is the book's web reading view, never the broader draft outline.
-  const nodes = assemble(c, lib, "web", { preview }).nodes;
+  // A draft book can preview its eventual public edition; only its pieces'
+  // publication state determines which content enters that edition.
+  const nodes = assemble({ ...c, status: "published" }, lib, "web", {
+    preview,
+  }).nodes;
   return nodes.filter((n, i) => {
     if (n.planned) return false;
     if (n.piece) return true;

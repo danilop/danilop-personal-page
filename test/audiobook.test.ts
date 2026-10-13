@@ -17,7 +17,7 @@ import {
 import { runtimeHash } from "../core/narration-runtime";
 import { mp3Duration, narrationLock } from "../core/narration-store";
 import { digestAsset } from "../core/asset-manifest";
-import { publicAudiobook } from "../core/audiobook-public";
+import { bookPreviewScope, publicAudiobook } from "../core/audiobook-public";
 import { Assets } from "../core/assets";
 import {
   captureProgress,
@@ -141,6 +141,12 @@ test("book speech preserves hierarchy, suppresses body article titles, excludes 
   assert.doesNotMatch(words, /Article one|Article two|from three|A summary/);
   assert.equal(p.partial[0], "chapter");
   assert.match(words, /You're up to date/);
+  const pendingBook = await audiobookPlan(root, { ...c, status: "draft" }, lib);
+  assert.equal(pendingBook.hash, p.hash);
+  assert.doesNotMatch(
+    pendingBook.segments.map((s) => s.text).join(" "),
+    /from three/,
+  );
   const preview = await audiobookPlan(root, c, lib, true);
   assert.match(preview.segments.map((s) => s.text).join(" "), /from three/);
   lib.pieces.get("one")!.status = "draft";
@@ -239,6 +245,23 @@ test("generation is reused, verified, inventoried and emitted; corruption and so
   );
 });
 test("private draft preparation never promotes sources or public records; it is renderable only in preview", async (t) => {
+  assert.equal(bookPreviewScope(undefined, "book", ["one"]), false);
+  assert.equal(
+    bookPreviewScope({ collections: [], pieces: [] }, "book", ["one"]),
+    false,
+  );
+  assert.equal(
+    bookPreviewScope({ collections: ["book"], pieces: [] }, "book", ["one"]),
+    true,
+  );
+  assert.equal(
+    bookPreviewScope({ collections: [], pieces: ["one"] }, "book", ["one"]),
+    true,
+  );
+  assert.equal(
+    bookPreviewScope({ collections: [], pieces: ["other"] }, "book", ["one"]),
+    false,
+  );
   const { root, manager, lib } = await fixture(t);
   const r = await manager.prepare("book", true);
   assert.equal(Object.keys((await bookIndex(root)).books).length, 0);

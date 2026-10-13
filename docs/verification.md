@@ -1689,3 +1689,15 @@ MP3 decoding found no full-scale samples (peaks 0.448 and 0.433). Title and auth
 metadata were present in both, and the available Chronicles cover was embedded.
 The native AWS CLI contract test also passed separately, including conditional
 uploads, existing-object reuse and structured failure handling.
+
+Public-scope planning is also tested for a still-draft book: it produces the same
+eligible edition as the published container while excluding unpublished pieces.
+This supports reviewing the first public edition before publishing the book.
+The published-only site preview selects public audiobook receipts; unrelated draft
+pieces elsewhere do not switch a book to its private edition.
+
+The first Amplify attempt stalled after the author-server test reported success,
+although the same revision passed GitHub CI. That intermediate build was stopped.
+The server fixture now explicitly closes its output pipes after shutdown so an
+inherited descriptor cannot keep the test worker alive; its assertions are
+unchanged, and the targeted integration test passed after this cleanup change.

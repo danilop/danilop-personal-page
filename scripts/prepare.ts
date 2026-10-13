@@ -1,4 +1,4 @@
-import { publicAudiobook } from "../core/audiobook-public";
+import { bookPreviewScope, publicAudiobook } from "../core/audiobook-public";
 import { publicationOrder } from "../core/publication-time.mjs";
 import { asError } from "../core/errors";
 import { deployment, siteUrl } from "../core/deployment.mjs";
@@ -292,7 +292,11 @@ async function main() {
           c,
           lib,
           assets,
-          Boolean(authoring),
+          bookPreviewScope(
+            authoring,
+            c.id,
+            d.nodes.map((n) => n.pieceId),
+          ),
         ),
         cover: await collectionCover(
           c.cover,

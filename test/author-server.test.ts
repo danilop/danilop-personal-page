@@ -121,6 +121,10 @@ test(
             resolve();
           }, 10000).unref();
         });
+        // A build descendant can inherit these pipes after the server exits.
+        // The fixture no longer consumes output once shutdown has completed.
+        child.stdout?.destroy();
+        child.stderr?.destroy();
         snapshot.cleanup();
       }
     });

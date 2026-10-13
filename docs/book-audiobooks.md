@@ -171,7 +171,8 @@ managed asset inventory. `assets:prepare` prepares public books automatically;
 
 In preview, select a book source and open **Narration**. Choose draft or public
 scope, inspect changes and unresolved explanations, apply voice settings to the
-editor, audition, prepare and listen. Save draft settings normally. **Publish
+editor, audition, prepare and listen. Public scope is available before the book
+itself is published and still excludes its unpublished pieces. Save draft settings normally. **Publish
 locally when audio is ready** verifies public-scope content and atomically saves
 its source, manifest and asset inventory. New article publication also prepares
 public books before saving the article transition. Cancelling or stale inputs
