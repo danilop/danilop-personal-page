@@ -7,7 +7,14 @@ const files = readdirSync("test")
 files.push("prototypes/ink-and-paper/tests/sites-worker.test.mjs");
 const result = spawnSync(
   process.execPath,
-  ["--experimental-test-module-mocks", "--import", "tsx", "--test", ...files],
+  [
+    "--experimental-test-module-mocks",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-concurrency=4",
+    ...files,
+  ],
   {
     stdio: "inherit",
     env: { ...process.env, NOTES_BASE_PATH: "/" },

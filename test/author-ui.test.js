@@ -388,7 +388,6 @@ async function fixture(
     });
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-  t.after(() => new Promise((resolve) => server.close(resolve)));
   const browser = await chromium.launch({
     executablePath: await executablePath({ headless: "shell" }),
   });
@@ -434,7 +433,14 @@ async function fixture(
       }
       assert.deepEqual(errors, [], "Editor must not throw browser errors");
     } finally {
-      await browser.close();
+      // Stop browser polling before closing its HTTP fixture; otherwise an active
+      // connection can hold server.close() and prevent later cleanup hooks.
+      try {
+        await browser.close();
+      } finally {
+        server.closeAllConnections();
+        await new Promise((resolve) => server.close(resolve));
+      }
     }
   });
   await page.goto(`http://127.0.0.1:${server.address().port}/_author/`);

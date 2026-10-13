@@ -108,7 +108,8 @@ for the current checkout. Fixes are never automatically applied by the hook. Exi
 
 `npm test` builds the prototype, then runs every `.test.js`, `.test.mjs` and
 `.test.ts` file, worker contracts and Chromium interaction
-tests. Install both npm workspaces first. Playwright drives the pinned Puppeteer
+tests, with at most four test files running concurrently to limit browser/build
+contention on local and hosted runners. Install both npm workspaces first. Playwright drives the pinned Puppeteer
 Chrome headless shell, reusing the renderer browser installation and Linux system
 libraries. Tests start disposable loopback authoring/Vite servers and temporary Git
 repositories. Cold prototype navigation has a bounded 30-second timeout, separate
@@ -116,7 +117,10 @@ from the five-second interaction timeout, because Vite compiles while other CI
 integration tests run. Model, analytics and cloud-publication tests mock external boundaries;
 they do not publish content, upload media, send analytics or download models. The
 server fixture explicitly flushes real V8 coverage before shutdown so renderer
-cleanup timing cannot silently discard its measurements.
+cleanup timing cannot silently discard its measurements. The authoring browser
+fixture captures coverage, closes the browser to stop polling, then force-closes
+remaining HTTP connections and closes the server; server shutdown must not wait
+on a browser that a later cleanup hook would close.
 
 ## Commit safety and failure behavior
 

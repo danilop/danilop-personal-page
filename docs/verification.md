@@ -1728,3 +1728,12 @@ placement audio. Type checks and targeted ESLint passed again. Browser checks on
 “Clever Enough to Find the Loophole” confirm 20 min read from 1186.19 seconds at 1×,
 17:58 listen at 1.1×, and 9:53 listen at 2× without changing the reading label.
 Desktop and mobile checks found no overflow or page errors.
+
+
+The first hosted attempt for the duration labels exceeded the test runner's
+ten-minute limit in the narration authoring browser fixture. Local runs also
+showed intermittent UI timeouts. The fixture now closes the browser before its
+HTTP server, force-closing remaining connections, so polling cannot hold server
+shutdown ahead of browser cleanup. All test files still run, with concurrency
+capped at four to reduce browser/build contention. The release remains gated on
+the complete suite and exact-revision deployment verification.

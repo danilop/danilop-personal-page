@@ -337,7 +337,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
-- [Code analysis](docs/code-analysis.md): installed commit checks, complexity limits, coverage thresholds and reports.
+- [Code analysis](docs/code-analysis.md): installed commit checks, complexity limits, coverage thresholds, bounded test concurrency and reports.
 - [Social publishing and Trash plan](docs/social-publishing-plan.md): researched next scope, migrations, milestones and acceptance tests.
 - [Navigation review](docs/navigation-review.md): tested visitor journeys, improvements, and hosting limitations.
 
