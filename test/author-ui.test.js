@@ -545,9 +545,17 @@ test("editor supports prose editing, review decisions, checked suggestions, and 
     .click();
   assert.match(await page.locator("#review-progress").textContent(), /1 kept/);
   await page.locator(".review-decisions summary").click();
+  // Refreshing review freshness must not collapse a group the author opened.
+  await page.locator("#source").dispatchEvent("author-reload");
+  assert.equal(
+    await page
+      .locator('.review-decisions[data-decision="kept"]')
+      .getAttribute("open"),
+    "",
+  );
   await page
     .getByRole("button", { name: "Reopen finding", exact: true })
-    .click({ force: true });
+    .click();
   await page.locator(".finding-group summary").click();
   await page
     .getByRole("button", { name: "Mark as addressed", exact: true })
@@ -559,7 +567,7 @@ test("editor supports prose editing, review decisions, checked suggestions, and 
   await page.locator(".review-decisions summary").click();
   await page
     .getByRole("button", { name: "Reopen finding", exact: true })
-    .click({ force: true });
+    .click();
   for (const value of ["metadata", "technical", "repetition", "style", "all"])
     await page.locator("#review-filter").selectOption(value);
   await page.locator(".finding-group summary").click();

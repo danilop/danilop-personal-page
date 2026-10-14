@@ -296,7 +296,8 @@ and stale generated suggestions require manual review or a fresh run. Addressed 
 author decision, not an automated pass, a save, or proof of factual correctness.
 Progress shows open, addressed, and kept counts for the entire current report;
 handled sections respect the selected filter. Reopen reverses the decision only,
-not the text edit. Editor Undo reverses text separately. Downloaded reports include
+not the text edit. Expanded decision groups remain open when review results
+refresh. Editor Undo reverses text separately. Downloaded reports include
 author decisions separately from the unchanged findings. Session decisions do not
 persist after reload or transfer to a new report.
 

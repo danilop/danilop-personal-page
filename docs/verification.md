@@ -15,6 +15,14 @@ marker and route checks. Its release receipt records that verified revision;
 GitHub CI independently checks the deployment. Earlier local-only entries below
 record the state at their test time.
 
+The first GitHub validation run exposed an editor refresh race: rebuilding review
+results could collapse an open decision group while the author was about to
+reopen a finding. Decision groups now preserve their expanded state across
+refreshes, as open finding groups already did. The browser regression triggers
+a refresh with a decision group open and completes the keep/address/reopen
+workflow using normal actionability waits instead of forced clicks. Validation
+thresholds are unchanged.
+
 ## Interactive tally and reusable Python runner — 14 October 2026
 
 Implemented and verified locally; not deployed. The draft Chronicles tally fence

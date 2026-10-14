@@ -8,7 +8,8 @@ The draft tally example now has [reusable interactive code activities](docs/code
 an editable Python runner with Stop/Reset code and a separate step-through visual
 demo. Included in the 14 October 2026 release after real Python execution and
 desktop/mobile browser checks. The tally chapter remains a draft; see
-[verification](docs/verification.md).
+[verification](docs/verification.md), including the editor decision-group refresh
+repair found during release validation.
 
 [Website](https://www.danilop.net) · [Publishing](docs/publishing-workflow.md) · [Design](docs/product-design.md) · [Operations](docs/operations.md)
 

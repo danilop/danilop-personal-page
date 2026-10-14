@@ -248,6 +248,11 @@
         (d) => d.dataset.rule,
       ),
     );
+    const openedDecisions = new Set(
+      Array.from(out.querySelectorAll(".review-decisions[open]")).map(
+        (d) => d.dataset.decision,
+      ),
+    );
     out.replaceChildren();
     $("review-progress").textContent = "";
     if (!active?.result) return;
@@ -448,6 +453,8 @@
           if (!handled.length) continue;
           const details = node("details");
           details.className = "review-decisions";
+          details.dataset.decision = decision;
+          details.open = openedDecisions.has(decision);
           details.append(node("summary", `${label} (${handled.length})`));
           details.append(
             node(
