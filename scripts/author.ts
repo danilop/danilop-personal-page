@@ -782,6 +782,8 @@ async function main() {
     }
     async function serveAuthorModule(u: URL) {
       const audioModules: Record<string, string> = {
+        "/_author/control-icons.js": "text/javascript",
+        "/_author/control-icons.css": "text/css",
         "/_author/audio-playback.js": "text/javascript",
         "/_author/audio-preview.js": "text/javascript",
         "/_author/audio-playback.css": "text/css",

@@ -1,6 +1,8 @@
 // Shared by public players and private voice auditions. SVGs are decorative;
 // the visible action is also the button's accessible name.
-export const playbackIcons = `<svg data-audio-play-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg data-audio-pause-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24" hidden><path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/></svg>`;
+import { controlIcon } from "./control-icons.js";
+
+export const playbackIcons = controlIcon("play") + controlIcon("pause", true);
 const listeningDocuments = new WeakSet();
 
 /**
@@ -9,11 +11,11 @@ const listeningDocuments = new WeakSet();
  * @param {{label: string, title: string, position?: () => number, start: () => void | Promise<void>}} options
  */
 export function bindPlaybackButton(button, audio, options) {
-  button.classList.add("audio-playback-button");
+  button.classList.add("audio-playback-button", "icon-label-button");
   button.innerHTML = playbackIcons + "<span data-play-label></span>";
   const label = button.querySelector("[data-play-label]");
-  const play = button.querySelector("[data-audio-play-icon]");
-  const pause = button.querySelector("[data-audio-pause-icon]");
+  const play = button.querySelector('[data-control-icon="play"]');
+  const pause = button.querySelector('[data-control-icon="pause"]');
   const update = () => {
     const playing = !audio.paused && !audio.ended;
     const action = playing

@@ -15,8 +15,8 @@ The [interactive Python pilot](code-activities.md) also pins Pyodide 314.0.7
 as an on-demand browser dependency from jsDelivr. It is outside npm lockfiles and
 audit coverage. Runtime upgrades require updating both its Worker import and
 sandbox CSP, then testing real browser execution; there is no floating CDN URL.
-The download happens only when a reader presses Run Python. Components are
-included in the 14 October 2026 release; the pilot chapter remains a draft.
+The download happens only when a reader presses Run or Step. The simplified runner is
+included in this release; the pilot chapter remains a draft.
 
 | Component  | Version     | Update policy                                                   |
 | ---------- | ----------- | --------------------------------------------------------------- |

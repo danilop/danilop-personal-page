@@ -1,5 +1,58 @@
 # Release verification
 
+## Shared code-control icons — 14 October 2026
+
+Included in this release. Run, Step and Reset retain their visible labels
+and now use a play triangle, triangle-to-bar step symbol and counterclockwise
+reset arrow. No rewind control was added. The SVG component and icon/label layout
+are shared with audio playback, including private authoring previews. SVGs are
+decorative and do not duplicate accessible names.
+
+Verification passed: 341 JavaScript tests, zero failures, one opt-in AWS test
+skipped, plus Python/coverage/narration checks. The first full run caught only a
+CSS import-notation rule; after correcting it, all static checks and the production
+build passed (31 pages, 194 output files, 921 local links). All 148 documentation
+paths checked resolve, and the unrelated 19-file content baseline is unchanged.
+
+In-app Chromium checks used the existing tally preview at normal panel width and
+390×844 through CUA Playwright (the separate Browser plugin is unavailable).
+Page identity, meaningful content, no framework overlay, clean console and visual
+layout passed. Step highlighted the source, Run produced ten bars and the count,
+and keyboard Reset restored the original code. All three buttons retain 44-pixel
+height with no mobile page overflow. A public-article preview also verified play,
+pause, resume labels and icon switching. Firefox, Safari and screen-reader testing
+remain outside this browser verification. Release acceptance requires the exact
+commit in the live `/build.json`, passing deployment checks, and unpublished book
+routes remaining unavailable. `npm run release` records that result separately.
+
+## Simplified Python example — 14 October 2026
+
+Included in this release. The separate tally demo and the subsequent
+local multi-panel prototype are replaced with one editable code area, Run, Step,
+Reset and one output. There are no visible line numbers, matching the book's code
+presentation. A background highlight follows the next Python line within the
+editable area, including internal scrolling for longer examples. Run shows the
+complete result; Step follows recorded execution. Editing invalidates the old
+recording; Reset cancels execution and restores the exact article source.
+
+Focused tests pass for real Python line events, progressive Unicode output,
+functions, errors and execution/output limits, plus DOM controls, cancellation,
+source restoration, message validation and scroll-aware highlighting. The complete
+**26/26 repository checks** passed: 341 JavaScript tests passed, none failed and
+one opt-in AWS test was skipped. The production build passed, verifying 31 pages,
+194 output files, 921 local links and 307 legacy records. All 144 local documentation
+paths checked resolve. The 19-file baseline of unrelated draft/content data is unchanged.
+
+Real Chromium checks verified the original ten-bar tally, edited three-x tally,
+progressive output, Unicode and a single exception display. A 32-line program
+scrolled the same editable field to the next line without changing its selection.
+Reset cancelled a deliberately busy program and restored source and scrolling.
+Keyboard stepping passed. At 390×844, the page has no horizontal overflow and all
+three buttons retain 44-pixel targets; long code lines scroll inside the editor.
+No browser warnings/errors were observed. Firefox, Safari and screen readers
+have not been exercised. Runtime version and opaque frame/CSP isolation remain
+unchanged. See [the component specification](code-activities.md).
+
 ## Audio controls and code activities release — 14 October 2026
 
 Release scope includes shared SVG play/pause controls for public narration and
@@ -30,6 +83,8 @@ locally with this repair; their assertions and the ten-minute suite limit remain
 unchanged.
 
 ## Interactive tally and reusable Python runner — 14 October 2026
+
+Historical checks of the initial interface, superseded by the simplified example above.
 
 Implemented and verified locally; not deployed. The draft Chronicles tally fence
 is selected by an exact source hash in `activities.yaml`. Its manuscript bytes,

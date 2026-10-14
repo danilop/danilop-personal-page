@@ -1,3 +1,5 @@
+@import url("./control-icons.css");
+
 .code-activity {
   margin: 2rem 0;
   padding: clamp(1rem, 3vw, 1.5rem);
@@ -87,30 +89,12 @@
   overflow-wrap: anywhere;
 }
 
-.step-demo {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border, #ccc);
-}
-
-.step-demo input {
-  width: 5rem;
-  margin-left: 0.5rem;
-}
-
-.tally-marks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  min-height: 3rem;
-  margin-top: 1rem;
-  color: var(--accent, #164b88);
-}
-
-.tally-marks span {
-  font: 2rem/1.3 monospace;
-}
-
-.tally-marks span:nth-child(5n) {
-  margin-right: 0.5rem;
+.code-activity textarea[data-current-line] {
+  background-image: linear-gradient(
+    to bottom,
+    transparent var(--python-line-top),
+    rgb(70 130 200 / 20%) var(--python-line-top),
+    rgb(70 130 200 / 20%) calc(var(--python-line-top) + 1.7em),
+    transparent calc(var(--python-line-top) + 1.7em)
+  );
 }

@@ -394,9 +394,13 @@ Sources: [Shiki](https://shiki.style/guide/),
 
 Opt-in Python fences can use the [code activity components](code-activities.md).
 A source-hashed sidecar attaches web controls without changing manuscript prose;
-book output stays static. Editable Python runs in an opaque-origin sandbox frame
-and a disposable Worker; visual step models use a separate reusable registry.
-The components are included in the 14 October 2026 release. The tally pilot
+book output stays static. Code and audio buttons reuse decorative SVGs and an
+icon/label layout from `runtime/control-icons.js` and `runtime/control-icons.css`.
+Editable Python runs in an opaque-origin sandbox frame
+and a disposable Worker. Python line-event snapshots drive reusable stepping and progressive output in
+one editable code area. Run completes the example; Reset cancels and restores it.
+The editor highlights the next line without a numbered gutter and scrolls to follow
+longer examples. The simplified runner is included in this release. The tally pilot
 chapter remains a draft and is available in local preview.
 
 Use custom elements or small framework-independent modules for experiment UI.

@@ -40,13 +40,17 @@ recording title. Buttons support native keyboard activation, visible focus and a
 started elsewhere, errors, completion and one-player-at-a-time changes.
 
 `site/components/AudioPlaybackButton.astro` supplies public markup, with shared
-icons, state/activation behaviour and styling in `runtime/audio-playback.js` and
-`runtime/audio-playback.css`. `runtime/audio-preview.js` reuses the same control
+state/activation behaviour and audio styling in `runtime/audio-playback.js` and
+`runtime/audio-playback.css`. The local icon refinement shares decorative SVGs
+and icon/label layout through `runtime/control-icons.js` and
+`runtime/control-icons.css` with Run/Step/Reset code controls. This refinement is
+included in this release; audio actions and accessible labels are unchanged. `runtime/audio-preview.js` reuses the same control
 for private article/book auditions and supplies seeking, ±15 seconds, time,
 speed and retry. Private preview enhancement preserves native audio as its
 fallback and does not persist auditions across source changes. This UI change
-does not regenerate narration or change public progress keys. Included in the
-14 October 2026 release; private auditions remain part of the local editor.
+does not regenerate narration or change public progress keys. The original audio
+interface shipped in the 14 October 2026 release; the shared-icon refinement above
+is included in this release. Private auditions remain part of the local editor.
 
 Listening duration is measured from generated audio and verified against MP3 frame
 coverage. Display it as `17:58 listen at 1.1×`, alongside `20 min read` for a

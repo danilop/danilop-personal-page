@@ -16,7 +16,6 @@ const activity = {
   title: "Make a tally",
   runtime: "python" as const,
   codeSha256: codeHash(code),
-  demo: { module: "tally" as const, count: 10 },
 };
 const config = { schemaVersion: 1, activities: [activity] };
 const body = `\n\n\`\`\`python\n${code}\n\`\`\`\n`;
@@ -49,7 +48,12 @@ test("activities require one exact Python source; drift, ambiguity and invalid c
     validateCodeActivities(
       {
         ...config,
-        activities: [{ ...activity, demo: { module: "tally", count: 51 } }],
+        activities: [
+          {
+            ...activity,
+            visualisation: { module: "tally", variable: "not-valid" },
+          },
+        ],
       },
       parser().parse(body),
     ),
@@ -66,6 +70,29 @@ test("interactive markup escapes source and labels; every placement has its own 
   );
   const $ = load(html);
   assert.equal($("textarea").val(), source);
+  assert.equal($("textarea").length, 1);
+  assert.equal($("textarea").attr("wrap"), "off");
+  assert.deepEqual(
+    $("button")
+      .map((_, button) => $(button).text())
+      .get(),
+    ["Run", "Step", "Reset"],
+  );
+  assert.equal($("[data-python-output]").length, 1);
+  assert.deepEqual(
+    $("button svg")
+      .map((_, svg) => $(svg).attr("data-control-icon"))
+      .get(),
+    ["play", "step", "reset"],
+  );
+  assert.equal($("button svg[aria-hidden=true][focusable=false]").length, 3);
+  assert.equal($("button.icon-label-button > span").length, 3);
+  assert.equal(
+    $(
+      "[data-python-trace], [data-python-lines], [data-python-variables], [data-python-marks]",
+    ).length,
+    0,
+  );
   assert.equal($("script,img").length, 0);
   assert.equal($("[data-python-controls][hidden]").length, 1);
   assert.equal(
@@ -73,22 +100,12 @@ test("interactive markup escapes source and labels; every placement has its own 
     "chapter-activity-tally",
   );
   assert.match(
-    renderCodeActivity(
-      { ...activity, demo: undefined },
-      code,
-      "static",
-      "elsewhere",
-    ),
+    renderCodeActivity(activity, code, "static", "elsewhere"),
     /elsewhere-activity-tally/,
   );
   assert.doesNotMatch(
-    renderCodeActivity(
-      { ...activity, demo: undefined },
-      code,
-      "static",
-      "elsewhere",
-    ),
-    /data-step-demo/,
+    renderCodeActivity(activity, code, "static", "elsewhere"),
+    /data-python-marks/,
   );
 });
 

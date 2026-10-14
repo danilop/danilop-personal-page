@@ -1,3 +1,4 @@
+import { pythonTrace } from "./python-trace";
 import workerSource from "./python-worker.js?raw";
 
 // No allow-same-origin: Python/JS interop cannot access the site's storage or DOM.
@@ -13,7 +14,7 @@ export function pythonSandbox() {
     worker = new Worker(url, { type: 'module' });
     worker.onmessage = ({data}) => parent.postMessage(data, '*');
     worker.onerror = (event) => parent.postMessage({phase: 'error', error: event.message || 'Python could not start. Check your connection and try again.'}, '*');
-    worker.postMessage({code: event.data.code});
+    worker.postMessage({code: event.data.code, tracer: ${JSON.stringify(pythonTrace).replaceAll("<", "\\u003c")}});
   });
   parent.postMessage({phase: 'ready'}, '*');
   </script>`;

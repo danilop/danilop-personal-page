@@ -9,13 +9,6 @@ const activitySchema = z
     title: z.string().min(1).max(120),
     codeSha256: z.string().regex(/^[a-f0-9]{64}$/),
     runtime: z.literal("python"),
-    demo: z
-      .object({
-        module: z.literal("tally"),
-        count: z.number().int().min(0).max(50),
-      })
-      .strict()
-      .optional(),
   })
   .strict();
 export type CodeActivity = z.infer<typeof activitySchema>;

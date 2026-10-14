@@ -519,6 +519,8 @@ test(
       "fix-checks.js",
       "ux.js",
       "preview.js",
+      "control-icons.js",
+      "control-icons.css",
       "audio-playback.js",
       "audio-preview.js",
       "audio-playback.css",

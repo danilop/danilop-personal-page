@@ -523,9 +523,9 @@ section, create a new piece and set `adaptedFrom: agent-memory`.
 
 For editable Python alongside an existing fence, use an `activities.yaml`
 companion file as described in [interactive code activities](code-activities.md).
-It selects the exact parsed code by SHA-256 and optionally adds a visual step
-model. No Markdown directive or duplicate source listing is needed. Source drift
-fails validation and requires review. The components are included in the 14 October 2026 release; the first tally
+It selects the exact parsed code by SHA-256 for one editable code area,
+Run/Step/Reset controls and one output. No Markdown directive or duplicate source listing is needed. Source drift
+fails validation and requires review. The simplified runner is included in this release; the first tally
 chapter remains a draft. Ordinary fences are not executable by default.
 
 A simulation block selects a registered module. Fields, validation and execution

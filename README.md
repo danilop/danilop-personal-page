@@ -4,12 +4,13 @@ _Notes Along the Way_
 
 Articles, experiments, and ideas that will grow over time.
 
-The draft tally example now has [reusable interactive code activities](docs/code-activities.md):
-an editable Python runner with Stop/Reset code and a separate step-through visual
-demo. Included in the 14 October 2026 release after real Python execution and
-desktop/mobile browser checks. The tally chapter remains a draft; see
-[verification](docs/verification.md), including the editor decision-group refresh
-repair found during release validation.
+The draft tally example has [reusable interactive Python activities](docs/code-activities.md):
+one editable code area, labelled Run/Step/Reset icon buttons and one output.
+Icons and their layout are shared with audio controls. Step highlights the next
+line in that same editor, without a numbered gutter, and follows longer examples
+by scrolling within the editor. The simplified runner passed all 26 repository checks, the production build and
+desktop/mobile browser checks. It is included in this release.
+The chapter remains a draft; see [verification](docs/verification.md).
 
 [Website](https://www.danilop.net) · [Publishing](docs/publishing-workflow.md) · [Design](docs/product-design.md) · [Operations](docs/operations.md)
 

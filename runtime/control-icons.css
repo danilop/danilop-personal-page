@@ -1,0 +1,17 @@
+.icon-label-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.control-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 1.25rem;
+}
+
+.control-icon[hidden] {
+  display: none !important;
+}

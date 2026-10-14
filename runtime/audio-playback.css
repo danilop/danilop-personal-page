@@ -1,9 +1,6 @@
+@import url("./control-icons.css");
+
 .audio-playback-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-width: 44px;
-  min-height: 44px;
   padding: 0.35rem 0.15rem;
   border: 0;
   border-radius: 4px;
@@ -12,12 +9,6 @@
   font: 600 0.9rem/1.5 var(--font-sans, Inter, sans-serif);
   text-align: left;
   cursor: pointer;
-}
-
-.audio-playback-button svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  flex: 0 0 1.25rem;
 }
 
 .audio-playback-button:focus-visible {

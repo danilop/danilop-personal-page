@@ -55,68 +55,27 @@ class MapStorage {
 }
 const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
 
-test("step demos validate counts, step in either direction, pause, replay and restore defaults", async (t) => {
-  const { document, click } = dom(
+function pythonFixture(t) {
+  const result = dom(
     t,
-    `<div data-step-demo="tally" data-count="10" hidden><input data-demo-count value="10"><div data-demo-marks></div><p data-demo-status></p><button data-demo-back></button><button data-demo-step></button><button data-demo-play></button><button data-demo-reset></button></div>`,
+    `<section data-code-activity><div data-code-static>Original</div><div data-python-controls hidden><textarea data-python-code>print(10)</textarea><button data-python-step></button><button data-python-run></button><button data-python-reset></button><p data-python-status></p><samp data-python-output></samp></div></section>`,
   );
-  let advance;
-  t.mock.method(globalThis, "setInterval", (fn) => {
-    advance = fn;
-    return 1;
+  const previous = globalThis.getComputedStyle;
+  globalThis.getComputedStyle = () => ({
+    paddingTop: "10px",
+    lineHeight: "20px",
   });
-  t.mock.method(globalThis, "clearInterval", () => {});
-  const { mountStepDemo } = await import("../runtime/step-demos.ts");
-  const root = document.querySelector("[data-step-demo]");
-  mountStepDemo(root);
-  assert.equal(root.hidden, false);
-  click("[data-demo-step]");
-  assert.equal(document.querySelector("[data-demo-marks]").textContent, "|");
-  click("[data-demo-back]");
-  assert.match(
-    document.querySelector("[data-demo-status]").textContent,
-    /Step 0 of 10/,
-  );
-  const count = document.querySelector("input");
-  for (const value of ["", "1.5", "-1", "51"]) {
-    count.value = value;
-    count.dispatchEvent(new Event("input"));
-    assert.equal(document.querySelector("[data-demo-play]").disabled, true);
-  }
-  count.value = "2";
-  count.dispatchEvent(new Event("input"));
-  click("[data-demo-play]");
-  advance();
-  click("[data-demo-play]");
-  assert.match(document.querySelector("[data-demo-play]").textContent, /Play/);
-  click("[data-demo-play]");
-  advance();
-  assert.match(
-    document.querySelector("[data-demo-status]").textContent,
-    /Step 2 of 2/,
-  );
-  click("[data-demo-play]");
-  advance();
-  assert.match(
-    document.querySelector("[data-demo-status]").textContent,
-    /Step 1 of 2/,
-  );
-  click("[data-demo-reset]");
-  assert.equal(count.value, "10");
-  assert.match(
-    document.querySelector("[data-demo-status]").textContent,
-    /Step 0 of 10/,
-  );
-  count.value = "0";
-  count.dispatchEvent(new Event("input"));
-  assert.equal(document.querySelector("[data-demo-step]").disabled, true);
-});
+  t.after(() => {
+    globalThis.getComputedStyle = previous;
+  });
+  const editor = result.document.querySelector("textarea");
+  editor.scrollTop = 0;
+  Object.defineProperty(editor, "clientHeight", { value: 100 });
+  return { ...result, editor };
+}
 
-test("Python runner isolates messages, stops and resets running code, handles errors and deadlines", async (t) => {
-  const { document, window, click } = dom(
-    t,
-    `<section data-code-activity><div data-code-static>Original</div><div data-python-controls hidden><textarea data-python-code>print(10)</textarea><button data-python-run></button><button data-python-stop></button><button data-python-reset></button><p data-python-status></p><samp data-python-output></samp></div></section>`,
-  );
+test("Python runner isolates messages, resets busy code, invalidates edits and handles deadlines", async (t) => {
+  const { document, window, click, editor } = pythonFixture(t);
   t.mock.module("../runtime/python-sandbox.ts", {
     namedExports: { pythonSandbox: () => "<!doctype html>fixture" },
   });
@@ -128,61 +87,144 @@ test("Python runner isolates messages, stops and resets running code, handles er
   t.mock.method(globalThis, "clearTimeout", () => {});
   const { mountPythonRunner } = await import("../runtime/python-runner.ts");
   mountPythonRunner(document.querySelector("section"));
-  const code = document.querySelector("textarea"),
-    status = document.querySelector("[data-python-status]");
+  const status = document.querySelector("[data-python-status]");
+  const output = document.querySelector("[data-python-output]");
   const send = (source, data) => {
     const event = new Event("message");
     Object.assign(event, { source, data });
     window.dispatchEvent(event);
   };
-  code.value = "print(7)";
-  click("[data-python-run]");
-  let frame = document.querySelector("iframe");
-  assert.equal(frame.getAttribute("sandbox"), "allow-scripts");
   const target = {
     postMessage(data) {
       assert.equal(data.code, "print(7)");
     },
   };
-  Object.defineProperty(frame, "contentWindow", { value: target });
+  const frameTarget = () => {
+    const frame = document.querySelector("iframe");
+    assert.equal(frame.getAttribute("sandbox"), "allow-scripts");
+    Object.defineProperty(frame, "contentWindow", { value: target });
+  };
+  editor.value = "print(7)";
+  click("[data-python-run]");
+  frameTarget();
   send({}, { phase: "done", output: "spoof" });
   assert.match(status.textContent, /Loading/);
   send(target, { phase: "ready" });
   send(target, { phase: "running" });
-  send(target, { phase: "done", output: "7\n" });
-  assert.equal(
-    document.querySelector("[data-python-output]").textContent,
-    "7\n",
-  );
+  send(target, {
+    phase: "done",
+    output: "7\n",
+    error: "",
+    steps: [
+      { line: 1, outputLength: 0 },
+      { line: null, outputLength: 2 },
+    ],
+  });
+  assert.equal(output.textContent, "7\n");
   assert.equal(document.querySelector("iframe"), null);
+  click("[data-python-step]");
+  assert.equal(editor.dataset.currentLine, "1");
+  assert.equal(output.textContent, "");
+  click("[data-python-step]");
+  assert.equal(output.textContent, "7\n");
+  editor.dispatchEvent(new Event("input"));
+  assert.equal(output.textContent, "");
+  assert.equal(editor.dataset.currentLine, undefined);
   click("[data-python-run]");
   click("[data-python-reset]");
-  assert.equal(code.value, "print(10)");
-  assert.equal(document.querySelector("[data-python-output]").textContent, "");
+  assert.equal(editor.value, "print(10)");
   assert.equal(document.querySelector("iframe"), null);
+  click("[data-python-step]");
+  frameTarget();
+  send(target, {
+    phase: "done",
+    output: "10\n",
+    error: "",
+    steps: [
+      { line: 1, outputLength: 0 },
+      { line: null, outputLength: 3 },
+    ],
+  });
+  assert.equal(output.textContent, "");
   click("[data-python-run]");
-  click("[data-python-stop]");
-  assert.match(status.textContent, /Stopped/);
+  assert.equal(output.textContent, "10\n");
+  click("[data-python-reset]");
+  click("[data-python-run]");
+  editor.dispatchEvent(new Event("input"));
+  assert.equal(document.querySelector("iframe"), null);
   click("[data-python-run]");
   timeout();
   assert.match(status.textContent, /too long/);
   click("[data-python-run]");
-  frame = document.querySelector("iframe");
-  Object.defineProperty(frame, "contentWindow", { value: target });
+  frameTarget();
   send(target, { phase: "running" });
   timeout();
   assert.match(status.textContent, /10 seconds/);
   click("[data-python-run]");
-  frame = document.querySelector("iframe");
-  Object.defineProperty(frame, "contentWindow", { value: target });
-  send(target, { phase: "error", error: "SyntaxError" });
-  assert.match(status.textContent, /SyntaxError/);
-  code.value = " ";
+  frameTarget();
+  send(target, { phase: "error", error: "Load failed" });
+  assert.match(status.textContent, /Load failed/);
+  click("[data-python-run]");
+  frameTarget();
+  send(target, {
+    phase: "done",
+    output: "spoof",
+    error: "",
+    steps: [{ line: 100, outputLength: 0 }],
+  });
+  assert.match(status.textContent, /invalid/);
+  editor.value = " ";
   click("[data-python-run]");
   assert.equal(document.querySelector("iframe"), null);
-  code.value = "x".repeat(16001);
+  editor.value = "x".repeat(16001);
   click("[data-python-run]");
   assert.match(status.textContent, /16,000/);
+});
+
+test("Python steps highlight the same editor, follow long programs and show output and errors once", async (t) => {
+  const { document, editor } = pythonFixture(t);
+  const { pythonTracePlayer } =
+    await import("../runtime/python-trace-player.ts");
+  const status = document.querySelector("[data-python-status]");
+  const output = document.querySelector("[data-python-output]");
+  const player = pythonTracePlayer(document.body, status);
+  editor.value = "print('first')\n" + "\n".repeat(19) + "print('last')";
+  const original = editor.value;
+  player.load({
+    output: "first\nlast\n",
+    error: "",
+    steps: [
+      { line: 1, outputLength: 0 },
+      { line: 21, outputLength: 6 },
+      { line: null, outputLength: 11 },
+    ],
+  });
+  assert(player.loaded());
+  assert.equal(editor.dataset.currentLine, "1");
+  player.step();
+  assert.equal(editor.dataset.currentLine, "21");
+  assert.equal(editor.scrollTop, 360);
+  assert.equal(editor.style.getPropertyValue("--python-line-top"), "50px");
+  editor.scrollTop = 380;
+  editor.dispatchEvent(new Event("scroll"));
+  assert.equal(editor.style.getPropertyValue("--python-line-top"), "30px");
+  assert.equal(output.textContent, "first\n");
+  assert.equal(editor.value, original);
+  player.run();
+  assert.equal(output.textContent, "first\nlast\n");
+  assert.equal(editor.dataset.currentLine, undefined);
+  player.step();
+  assert.equal(editor.dataset.currentLine, "1");
+  player.clear();
+  assert.equal(player.loaded(), false);
+  assert.equal(output.textContent, "");
+  player.load({
+    output: "before\n",
+    error: "ValueError: deliberate",
+    steps: [{ line: null, outputLength: 7 }],
+  });
+  assert.equal(output.textContent, "before\n\nValueError: deliberate");
+  assert.equal(status.textContent, "Stopped with an error.");
 });
 
 test("simulation controls validate inputs, render results, capture, stop and reset", async (t) => {
@@ -595,11 +637,11 @@ test("narration player uses measured time, explicit playback, bounded seeking an
     "Continue listening: Article",
   );
   assert.equal(
-    button.querySelector("[data-audio-play-icon]").hasAttribute("hidden"),
+    button.querySelector('[data-control-icon="play"]').hasAttribute("hidden"),
     false,
   );
   assert.equal(
-    button.querySelector("[data-audio-pause-icon]").hasAttribute("hidden"),
+    button.querySelector('[data-control-icon="pause"]').hasAttribute("hidden"),
     true,
   );
   assert.equal(plays, 0);
@@ -621,11 +663,11 @@ test("narration player uses measured time, explicit playback, bounded seeking an
   assert.equal(pauses, 1);
   assert.equal(button.getAttribute("aria-label"), "Pause: Article");
   assert.equal(
-    button.querySelector("[data-audio-play-icon]").hasAttribute("hidden"),
+    button.querySelector('[data-control-icon="play"]').hasAttribute("hidden"),
     true,
   );
   assert.equal(
-    button.querySelector("[data-audio-pause-icon]").hasAttribute("hidden"),
+    button.querySelector('[data-control-icon="pause"]').hasAttribute("hidden"),
     false,
   );
   click("[data-forward]");
