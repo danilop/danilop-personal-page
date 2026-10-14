@@ -23,6 +23,12 @@ a refresh with a decision group open and completes the keep/address/reopen
 workflow using normal actionability waits instead of forced clicks. Validation
 thresholds are unchanged.
 
+The first hosting build also timed out while closing the sharing browser fixture.
+Its HTTP-server teardown now closes remaining connections explicitly, so browser
+keep-alive connections cannot block later cleanup. The three sharing tests passed
+locally with this repair; their assertions and the ten-minute suite limit remain
+unchanged.
+
 ## Interactive tally and reusable Python runner — 14 October 2026
 
 Implemented and verified locally; not deployed. The draft Chronicles tally fence
