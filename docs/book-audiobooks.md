@@ -33,6 +33,13 @@ uses chapter navigation rather than another prominent button. Label the recordin
 **AI narration**; voice names remain internal. Use keyboard-operable controls,
 clear focus and labels, restrained status announcements, and text-reading links.
 
+The shared play/pause component now shows SVG symbols beside the action label
+in both book-page and private-preview playback, matching article narration.
+Pause keeps the current position; Stop/reset is not a separate action. The
+[shared control contract](article-narration.md#shared-playback-controls)
+is included in the 14 October 2026 release. Book pages still follow their
+collection publication settings.
+
 The book main page is the listening destination. Do not initially require a separate
 audio page, modal or floating player across the whole site. Playback across ordinary
 page navigation is not promised; returning and choosing Continue restores progress.

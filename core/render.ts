@@ -1,4 +1,6 @@
 import { readingPlan, sourceHeadingLevel } from "./reading-structure";
+import { codeHash } from "./code-activities";
+import { renderCodeActivity } from "../renderers/code-activity";
 import type { Cite } from "@citation-js/core";
 import type { Nodes } from "mdast";
 import fs from "node:fs/promises";
@@ -365,17 +367,21 @@ export async function renderDocument(
         },
       };
       const chosen = plugins.resolve(b, doc.target, defaults, node.preferences);
+      const rendition = await chosen.plugin.render({
+        block: b,
+        target: doc.target,
+        options: chosen.options,
+        owner: piece.dir,
+        assets,
+      });
+      const activity =
+        doc.target === "web" &&
+        piece.activities?.find((a) => a.codeSha256 === codeHash(v.value));
       put(
         v,
-        (
-          await chosen.plugin.render({
-            block: b,
-            target: doc.target,
-            options: chosen.options,
-            owner: piece.dir,
-            assets,
-          })
-        ).html,
+        activity
+          ? renderCodeActivity(activity, v.value, rendition.html, node.id)
+          : rendition.html,
       );
     }
   }

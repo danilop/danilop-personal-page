@@ -1,0 +1,9 @@
+schemaVersion: 1
+activities:
+  - id: tally
+    title: Make a tally
+    codeSha256: a6c19a5301c2eed99d5f54576e053b6b1432d95a5e11ee1f72e911f4c960f600
+    runtime: python
+    demo:
+      module: tally
+      count: 10

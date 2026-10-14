@@ -8,7 +8,7 @@
   <div class="narration-toolbar"><label>Scope <select id="book-scope"><option value="preview">All draft content (private preview)</option><option value="public">Published content only</option></select></label><label>Voice <select id="book-voice"></select></label><label>Pace <input id="book-pace" type="number" min="0.8" max="1.2" step="0.05" value="1"></label></div>
   <div class="narration-toolbar"><button type="button" id="book-refresh">Refresh status</button><button type="button" id="book-settings">Apply voice to editor</button><button type="button" id="book-audition">Test first paragraph</button><button type="button" id="book-prepare">Prepare audiobook</button><button type="button" id="book-publish">Publish locally when audio is ready</button><button type="button" id="book-cancel" hidden>Cancel</button></div>
   <p id="book-status" role="status">Refresh the book to see its narration plan.</p><progress id="book-progress" hidden></progress>
-  <audio id="book-audio" controls preload="none" hidden aria-label="Private audiobook preview"></audio><a id="book-download" hidden download="audiobook-preview.mp3">Download preview MP3</a>
+  <audio id="book-audio" data-voice-preview controls preload="none" hidden aria-label="Private audiobook preview"></audio><a id="book-download" hidden download="audiobook-preview.mp3">Download preview MP3</a>
   <details open><summary>Reading order and transitions</summary><ol id="book-outline"></ol></details>
   <details open><summary>Spoken explanations requiring review</summary><div id="book-issues"></div><p>Open the named article's Narration panel to draft explanations with Claude, Codex or Pi, audition and accept them. Then refresh this book.</p></details>`;
   $("narration-panel").after(panel);

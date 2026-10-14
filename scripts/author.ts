@@ -781,6 +781,18 @@ async function main() {
       return false;
     }
     async function serveAuthorModule(u: URL) {
+      const audioModules: Record<string, string> = {
+        "/_author/audio-playback.js": "text/javascript",
+        "/_author/audio-preview.js": "text/javascript",
+        "/_author/audio-playback.css": "text/css",
+      };
+      if (audioModules[u.pathname] && req.method === "GET") {
+        res.setHeader("Content-Type", audioModules[u.pathname]);
+        res.end(
+          await fs.readFile("runtime/" + path.basename(u.pathname), "utf8"),
+        );
+        return true;
+      }
       if (
         [
           "/_author/review.js",

@@ -521,6 +521,13 @@ section, create a new piece and set `adaptedFrom: agent-memory`.
 
 ## 7. Experiments, editions and distribution
 
+For editable Python alongside an existing fence, use an `activities.yaml`
+companion file as described in [interactive code activities](code-activities.md).
+It selects the exact parsed code by SHA-256 and optionally adds a visual step
+model. No Markdown directive or duplicate source listing is needed. Source drift
+fails validation and requires review. The components are included in the 14 October 2026 release; the first tally
+chapter remains a draft. Ordinary fences are not executable by default.
+
 A simulation block selects a registered module. Fields, validation and execution
 are defined in `runtime/experiment-registry.ts`; additional modules use that
 contract. Optional named scenarios supply validated input values:

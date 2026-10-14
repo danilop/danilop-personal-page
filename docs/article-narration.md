@@ -16,7 +16,7 @@ displayed in the public player. The compact player offers pause, seeking, ±15 s
 playback speed, download and the exact spoken transcript. Native audio controls
 remain available without JavaScript. With JavaScript, listening positions are saved
 in browser local storage about every five seconds, on pause and when leaving.
-Returning readers press Listen to resume; revisiting without playing preserves
+Returning readers press Continue listening to resume; revisiting without playing preserves
 their position. Progress belongs to the audio hash, so a different recording starts
 afresh. Completed recordings and positions within the final three seconds restart
 from the beginning. Progress stays in the same browser profile and site, without
@@ -26,7 +26,27 @@ storage prevents persistence. Playback defaults to 1.1×, with 0.8×, 1×, 1.1×
 retry, but is not persisted across page visits. The native fallback without
 JavaScript uses the browser's default speed.
 Only one media element plays at a time on
-an article page. Cross-page continuous playback is outside this delivery.
+the current page, including book players and private auditions. Cross-page continuous playback is outside this delivery.
+
+### Shared playback controls
+
+Article and book players, including private voice auditions, use the same
+play triangle and pause bars beside a visible action label. The label changes
+from Listen to Continue listening after pausing, and to Listen again at the end.
+Pause preserves the position; there is no Stop action that resets it. Icons are
+decorative SVGs; the accessible button name includes the visible action and the
+recording title. Buttons support native keyboard activation, visible focus and a
+44-pixel minimum target. State follows the audio element, including playback
+started elsewhere, errors, completion and one-player-at-a-time changes.
+
+`site/components/AudioPlaybackButton.astro` supplies public markup, with shared
+icons, state/activation behaviour and styling in `runtime/audio-playback.js` and
+`runtime/audio-playback.css`. `runtime/audio-preview.js` reuses the same control
+for private article/book auditions and supplies seeking, ±15 seconds, time,
+speed and retry. Private preview enhancement preserves native audio as its
+fallback and does not persist auditions across source changes. This UI change
+does not regenerate narration or change public progress keys. Included in the
+14 October 2026 release; private auditions remain part of the local editor.
 
 Listening duration is measured from generated audio and verified against MP3 frame
 coverage. Display it as `17:58 listen at 1.1×`, alongside `20 min read` for a

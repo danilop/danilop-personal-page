@@ -519,6 +519,9 @@ test(
       "fix-checks.js",
       "ux.js",
       "preview.js",
+      "audio-playback.js",
+      "audio-preview.js",
+      "audio-playback.css",
     ])
       assert.equal((await fetch(origin + "/_author/" + asset)).status, 200);
     const publishMetadata = await api("metadata", {

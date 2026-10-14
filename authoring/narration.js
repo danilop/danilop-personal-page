@@ -16,7 +16,7 @@
     </div>
     <p id="narration-status" role="status">Choose an article and refresh.</p>
     <progress id="narration-progress" hidden></progress>
-    <p id="narration-recording" hidden></p><audio id="narration-audio" controls preload="none" hidden aria-label="Narration preview"></audio>
+    <p id="narration-recording" hidden></p><audio id="narration-audio" data-voice-preview controls preload="none" hidden aria-label="Narration preview"></audio>
     <details><summary>Speaking pace and pronunciations</summary>
       <label>Production pace <input id="narration-pace" type="number" min="0.8" max="1.2" step="0.05" value="1"></label>
       <label>Pronunciations (one word = spoken form per line)<textarea id="narration-pronunciations" rows="4"></textarea></label>

@@ -1,5 +1,66 @@
 # Release verification
 
+## Audio controls and code activities release — 14 October 2026
+
+Release scope includes shared SVG play/pause controls for public narration and
+local voice previews, plus the reusable editable Python runner, visual step demo
+and tally companion file. The implementation passed the 26-check gate and
+desktop/mobile browser checks recorded below. Publication flags are unchanged:
+the book drafts and tally chapter are not public pages. Unrelated draft changes
+and private asset metadata are excluded from this release.
+
+The standard `npm run release` workflow validates the committed scope, verifies
+asset transfers, pushes the exact revision and waits for the live `build.json`
+marker and route checks. Its release receipt records that verified revision;
+GitHub CI independently checks the deployment. Earlier local-only entries below
+record the state at their test time.
+
+## Interactive tally and reusable Python runner — 14 October 2026
+
+Implemented and verified locally; not deployed. The draft Chronicles tally fence
+is selected by an exact source hash in `activities.yaml`. Its manuscript bytes,
+publication state and narration remain unchanged. The companion file supplies an
+editable Python runner and an independent visual step model; see
+[code activities](code-activities.md).
+
+The full `tools/code-analysis/pre-commit.mjs` gate passed **26/26 checks** in an
+isolated snapshot containing the code-activity changes and the already-tested
+shared audio controls, excluding unrelated draft edits. JavaScript results:
+**338 passed, 0 failed, 1 opt-in AWS CLI test skipped**. Coverage was 81.63% of
+statements/lines, 79.15% of branches and 90.60% of functions. Checks included Astro
+and core types, lint, dependency architecture, styles, formatting, generated-site
+and book/publication fixtures, Python analysis and narration validation.
+
+Added automated tests cover exact fence matching and drift, ambiguous/duplicate
+selection, invalid configuration, HTML escaping, library loading, web versus book
+output, visual stepping/count validation, runner message isolation, deadlines,
+Stop and Reset code during execution. The Chronicles preview verifier now counts
+`pre code` source listings separately from the runner's `pre samp` output panel.
+
+Browser plugin not available: used installed Playwright with Chromium against
+the authoring preview at `http://127.0.0.1:4342`, at 1280×900 and 390×844. Confirmed
+chapter and continuous-reading routes, meaningful content, no framework overlay,
+no horizontal overflow, 44px visible controls, keyboard activation and screenshots.
+Real Pyodide execution produced the ten-mark output, then seven after an edit;
+Reset code restored the original sample and cleared output. Also checked visual
+step/back/play/reset, invalid counts, syntax errors, escaped output, unsupported
+input, 64 KiB output limit, Stop, reset while running, the ten-second execution
+deadline, reload resetting edits, blocked-CDN recovery controls and JavaScript-off
+static code. No runtime download occurred before Run Python, including during
+visual-demo use. Four expected Pyodide console messages came from deliberately
+triggering unsupported stdin and the output cap; no unexpected app errors occurred.
+
+Isolation was verified in the real browser: the frame could access neither the
+parent document nor origin storage, Python reported a null origin, and a fetch to
+a controlled CORS-enabled loopback endpoint was blocked before any request reached
+it. A positive control from the article page reached the same endpoint. These
+checks exercise the actual frame/Worker boundary rather than treating a Worker as
+a sandbox by itself.
+
+Physical Safari/iPhone, Firefox and screen-reader interaction remain untested.
+The CDN is an explicit external runtime dependency; first-run offline execution
+is unavailable. No content was published and no deployment was performed.
+
 Earlier entries retain the commands/ports used at the time. The unified preview
 entry below supersedes the former default snapshot and separate author command;
 see [current preview usage](authoring-preview.md).
@@ -1764,3 +1825,30 @@ The final isolated staged-snapshot verification passed all 26 checks: 332
 JavaScript tests passed, with the opt-in AWS CLI contract test skipped; Python
 tests, coverage gates, types, lint, architecture and narration readiness passed.
 All 187 checked local documentation links resolve, and `git diff --check` passes.
+
+### Shared voice playback controls — 14 October 2026
+
+Implemented and tested locally; not committed or deployed. Article and book
+players share SVG play/pause symbols, visible action labels, accessible names,
+keyboard activation, focus styling and playback state handling with private
+article/book auditions. The public markup component and private preview adapter
+use the same browser control module and stylesheet. Native fallback remains
+available, and public saved-progress identities are unchanged.
+
+All 26 isolated repository checks passed, including 333 passing JavaScript tests
+and one skipped opt-in AWS CLI test. The eight runtime DOM tests cover symbol and
+label state, pause/resume, completion, shared-media exclusivity, preview visibility,
+seeking, speed, error/retry and source reset. The author-server test verifies the
+new shared module/style routes. Types, lint, architecture and coverage passed.
+
+Browser plugin not available; the installed Playwright and Chromium were used.
+At `http://127.0.0.1:4342`, the welcome article and Chronicles book page passed
+actual playback, Enter-to-play, Space-to-pause, retained position, reload without
+autoplay, and icon/accessible-name checks. Article and book authoring preview
+controls were exercised with an existing MP3 injected into browser state; no new
+synthesis or content save was required. Desktop 1280×900 and mobile 390×844 checks
+confirmed page identity, meaningful content, no framework overlay, no console/page
+errors, no horizontal overflow and minimum 44-pixel playback targets. Screenshots
+were inspected. Native article controls remain usable with JavaScript disabled.
+Physical Safari/iPhone and screen-reader testing remain unverified. Existing
+content and draft asset-manifest hashes were unchanged.

@@ -4,6 +4,12 @@ _Notes Along the Way_
 
 Articles, experiments, and ideas that will grow over time.
 
+The draft tally example now has [reusable interactive code activities](docs/code-activities.md):
+an editable Python runner with Stop/Reset code and a separate step-through visual
+demo. Included in the 14 October 2026 release after real Python execution and
+desktop/mobile browser checks. The tally chapter remains a draft; see
+[verification](docs/verification.md).
+
 [Website](https://www.danilop.net) · [Publishing](docs/publishing-workflow.md) · [Design](docs/product-design.md) · [Operations](docs/operations.md)
 
 ## One article. Many ways to read it.
@@ -324,6 +330,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Product design](docs/product-design.md): reader and author experience.
 - [Article narration](docs/article-narration.md): local Kokoro audio, public AI narration label with voice names kept in authoring, reviewed explanations, measured listening durations (adjusted to playback speed), browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; deployed on 13 October 2026.
 - [Growing audiobooks](docs/book-audiobooks.md): book-page listening, passage-based browser progress, spoken book structure and full current-edition MP3 downloads; implemented with publication and release verification gates.
+- Shared SVG play/pause controls with visible, accessible action labels now cover article narration, book players and private voice previews. Pause preserves progress. This interface update is included in the 14 October 2026 release; see the [control contract](docs/article-narration.md#shared-playback-controls).
 - [Content model](docs/content-model.md): pieces, collections, placements, editions.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.

@@ -1,0 +1,63 @@
+.audio-playback-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.35rem 0.15rem;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent, #164b88);
+  font: 600 0.9rem/1.5 var(--font-sans, Inter, sans-serif);
+  text-align: left;
+  cursor: pointer;
+}
+
+.audio-playback-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 1.25rem;
+}
+
+.audio-playback-button:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 3px;
+}
+
+.audio-playback-button[hidden],
+.audio-playback-button [hidden],
+.voice-preview[hidden],
+.voice-preview [hidden],
+audio[data-enhanced-preview] {
+  display: none !important;
+}
+
+.voice-preview {
+  margin-block: 0.5rem 1rem;
+}
+
+.voice-preview-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.voice-preview-controls input {
+  flex: 1;
+  min-width: 80px;
+  min-height: 44px;
+  accent-color: var(--accent, #164b88);
+}
+
+.voice-preview-controls button,
+.voice-preview-controls select {
+  min-height: 44px;
+  font: inherit;
+}
+
+.voice-preview-controls output {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

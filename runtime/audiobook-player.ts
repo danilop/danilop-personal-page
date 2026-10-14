@@ -1,3 +1,4 @@
+import { bindPlaybackButton } from "./audio-playback.js";
 import {
   audioClock,
   captureProgress,
@@ -28,6 +29,12 @@ function mount(panel: HTMLElement) {
     lastSaved = 0;
   get("[data-book-notice]").textContent = restored.message;
   const current = () => (loaded ? audio.currentTime : pending);
+  const updatePlayback = bindPlaybackButton(play, audio, {
+    label: "Listen to this book",
+    title: book.title,
+    position: current,
+    start,
+  });
   function save() {
     if (!engaged || !loaded) return;
     try {
@@ -46,11 +53,7 @@ function mount(panel: HTMLElement) {
       `${book.segments[i].label} · ${audioClock(time)}`;
     get("[data-book-time]").textContent =
       `${audioClock((book.audio.duration - time) / Number(speed.value))} remaining at ${speed.value}×`;
-    play.textContent = audio.paused
-      ? time > 0 || restored.resume
-        ? "Continue listening"
-        : "Listen to this book"
-      : "Pause audiobook";
+    updatePlayback();
     seek.value = String(time);
     seek.setAttribute(
       "aria-valuetext",
@@ -89,10 +92,6 @@ function mount(panel: HTMLElement) {
       get("[data-book-error]").hidden = false;
     }
   }
-  play.onclick = () => {
-    if (audio.paused) void start();
-    else audio.pause();
-  };
   audio.addEventListener("loadedmetadata", () => {
     loaded = true;
     audio.currentTime = pending;
@@ -106,10 +105,6 @@ function mount(panel: HTMLElement) {
     }
   });
   audio.addEventListener("play", () => {
-    for (const media of document.querySelectorAll<HTMLMediaElement>(
-      "audio,video",
-    ))
-      if (media !== audio) media.pause();
     render();
   });
   audio.addEventListener("pause", () => {

@@ -11,6 +11,7 @@ import remarkGfm from "remark-gfm";
 import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import type { Root } from "mdast";
+import { validateCodeActivities, type CodeActivity } from "./code-activities";
 
 export const id = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 export const surface = z.enum(["standalone", "collection", "book"]);
@@ -102,6 +103,7 @@ export type Piece = z.infer<typeof pieceSchema> & {
   ast: Root;
   dir: string;
   blocks: Record<string, Block>;
+  activities?: CodeActivity[];
 };
 export const kinds = [
   "code",
@@ -340,6 +342,20 @@ export function articleUrl(p: Piece) {
 export function collectionUrl(c: Collection) {
   return `/collections/${c.slug}/`;
 }
+async function loadActivities(
+  folder: string,
+  ast: Root,
+): Promise<CodeActivity[]> {
+  try {
+    return validateCodeActivities(
+      await readYaml(path.join(folder, "activities.yaml")),
+      ast,
+    );
+  } catch (caught) {
+    if (asError(caught).code !== "ENOENT") throw caught;
+    return [];
+  }
+}
 export async function loadLibrary(root = "content"): Promise<Library> {
   const pieces = new Map<string, Piece>();
   const dirs = await fs.readdir(path.join(root, "pieces"), {
@@ -367,12 +383,15 @@ export async function loadLibrary(root = "content"): Promise<Library> {
       const e = asError(caught);
       if (e.code !== "ENOENT") throw e;
     }
+    const ast = parser().parse(parsed.content);
+    const activities = await loadActivities(folder, ast);
     pieces.set(data.id, {
       ...data,
       body: parsed.content,
-      ast: parser().parse(parsed.content),
+      ast,
       dir: folder,
       blocks,
+      activities,
     });
   }
   const collections: Collection[] = [];

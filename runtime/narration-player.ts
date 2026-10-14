@@ -1,16 +1,6 @@
+import { bindPlaybackButton } from "./audio-playback.js";
 const clock = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
-// Capture native and enhanced players, including existing embedded media.
-document.addEventListener(
-  "play",
-  (event) => {
-    for (const media of document.querySelectorAll<HTMLMediaElement>(
-      "audio,video",
-    ))
-      if (media !== event.target) media.pause();
-  },
-  true,
-);
 for (const panel of document.querySelectorAll<HTMLElement>(
   "[data-narration]",
 )) {
@@ -30,6 +20,8 @@ for (const panel of document.querySelectorAll<HTMLElement>(
   } catch {
     /* Storage may be disabled. */
   }
+  if (!Number.isFinite(resume) || resume <= 0 || resume >= duration - 3)
+    resume = 0;
   const error = get("[data-error]");
   const start = async () => {
     get("[data-controls]").hidden = false;
@@ -40,10 +32,12 @@ for (const panel of document.querySelectorAll<HTMLElement>(
       error.hidden = false;
     }
   };
-  play.onclick = () => {
-    if (audio.paused) void start();
-    else audio.pause();
-  };
+  bindPlaybackButton(play, audio, {
+    label: "Listen to this article",
+    title: panel.dataset.title!,
+    position: () => (restored ? audio.currentTime : resume),
+    start,
+  });
   get<HTMLButtonElement>("[data-retry]").onclick = () => {
     audio.load();
     void start();
@@ -68,23 +62,10 @@ for (const panel of document.querySelectorAll<HTMLElement>(
       /* Reading remains available without storage. */
     }
   }
-  function state() {
-    get("[data-play-icon]").textContent = audio.paused ? "▶" : "Ⅱ";
-    get("[data-play-label]").textContent = audio.paused
-      ? "Listen to this article"
-      : "Pause narration";
-    play.setAttribute(
-      "aria-label",
-      audio.paused ? `Listen to ${panel.dataset.title}` : "Pause narration",
-    );
-  }
-  audio.addEventListener("play", state);
   audio.addEventListener("pause", () => {
-    state();
     savePosition();
   });
   audio.addEventListener("ended", () => {
-    state();
     savePosition();
   });
   audio.addEventListener("error", () => {

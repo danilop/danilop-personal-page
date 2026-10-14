@@ -1,0 +1,23 @@
+---
+import { playbackIcons } from "../../runtime/audio-playback.js";
+import "../../runtime/audio-playback.css";
+interface Props {
+  kind: "article" | "book";
+  title: string;
+}
+const { kind, title } = Astro.props;
+const label =
+  kind === "book" ? "Listen to this book" : "Listen to this article";
+---
+
+<button
+  type="button"
+  class="audio-playback-button"
+  data-play={kind === "article" ? "" : undefined}
+  data-book-play={kind === "book" ? "" : undefined}
+  aria-label={`${label}: ${title}`}
+  hidden
+>
+  <Fragment set:html={playbackIcons} />
+  <span data-play-label>{label}</span>
+</button>

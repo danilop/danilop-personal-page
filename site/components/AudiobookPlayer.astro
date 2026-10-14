@@ -1,5 +1,6 @@
 ---
 import type { PublicAudiobook } from "../../core/audiobook-store";
+import AudioPlaybackButton from "./AudioPlaybackButton.astro";
 import { audioClock } from "../../runtime/audiobook-progress";
 interface Props {
   audiobook?: PublicAudiobook;
@@ -33,9 +34,7 @@ const map = b && {
       set:html={JSON.stringify(map).replace(/</g, "\\u003c")}
     />
     <div class="book-audio-heading">
-      <button type="button" data-book-play hidden>
-        Listen to this book
-      </button>
+      <AudioPlaybackButton kind="book" title={b.title} />
       <span data-book-native>Listen to this book</span>
       <span class="audio-credit">AI narration</span>
     </div>
@@ -182,7 +181,7 @@ const map = b && {
     color: var(--muted, #586371);
   }
 
-  button,
+  button:not(.audio-playback-button),
   select {
     font: inherit;
     color: inherit;
@@ -192,14 +191,6 @@ const map = b && {
     min-height: 44px;
     padding: 0.35rem 0.65rem;
     cursor: pointer;
-  }
-
-  [data-book-play] {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--accent, #164b88);
-    border: 0;
-    padding-left: 0;
   }
 
   .audio-edition,

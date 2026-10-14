@@ -12,6 +12,7 @@
         "lib/finding-range.js",
         "lib/repetition-batch.js",
         "runtime/enhance.ts",
+        "runtime/audio-preview.js",
         "runtime/*.worker.ts",
         "infrastructure/shortlinks.js",
         "test/*.{test.ts,test.js}",
@@ -20,7 +21,7 @@
       "project": [
         "core/**/*.{ts,js,mjs}",
         "scripts/**/*.{ts,js,mjs}",
-        "runtime/**/*.ts",
+        "runtime/**/*.{ts,js}",
         "renderers/**/*.ts",
         "themes/**/*.{ts,astro}",
         "site/**/*.{ts,astro}",

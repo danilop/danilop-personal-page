@@ -19,6 +19,12 @@ external source edits rebuild the site in the background. The editor also offers
 live prose preview, undo/redo, saved versions, writing checks, editorial review
 and image tools. NLP runs on demand, not at startup. See [local authoring](local-authoring.md).
 
+Article and book voice auditions use the same SVG play/pause button and visible
+action labels as the reading pages, with seeking, ±15 seconds, playback speed and
+retry. The button appears only when a recording is available; pausing preserves
+its position. Auditions are private and their position is not saved across new
+recordings. See the [shared playback controls](article-narration.md#shared-playback-controls).
+
 Use **Preview content** in the local site banner to switch between **Show drafts**
 (the startup default) and **Published only**. Switching rebuilds the isolated
 preview and returns to the homepage. Published-only mode uses the source draft

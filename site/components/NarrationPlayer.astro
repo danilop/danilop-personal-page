@@ -1,5 +1,6 @@
 ---
 import type { PublicNarration } from "../../core/narration-store";
+import AudioPlaybackButton from "./AudioPlaybackButton.astro";
 interface Props {
   narration?: PublicNarration;
   title: string;
@@ -19,12 +20,7 @@ const clock = (seconds: number) =>
     data-duration={n.duration}
   >
     <div class="narration-heading">
-      <button type="button" data-play hidden aria-label={`Listen to ${title}`}>
-        <span data-play-icon aria-hidden="true">
-          ▶
-        </span>
-        <span data-play-label>Listen to this article</span>
-      </button>
+      <AudioPlaybackButton kind="article" title={title} />
       <span data-native-label>Listen to this article</span>
       <span class="narration-duration" data-listening-duration>
         {clock(n.duration)} listen at 1×
@@ -116,7 +112,7 @@ const clock = (seconds: number) =>
     gap: 0.3rem 0.8rem;
   }
 
-  button,
+  button:not(.audio-playback-button),
   select {
     font: inherit;
     color: inherit;
@@ -126,21 +122,6 @@ const clock = (seconds: number) =>
     min-height: 44px;
     padding: 0.35rem 0.65rem;
     cursor: pointer;
-  }
-
-  [data-play] {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    border: none;
-    padding-left: 0;
-    color: var(--accent, #164b88);
-    font-weight: 600;
-  }
-
-  [data-play-icon] {
-    width: 1.25rem;
-    text-align: center;
   }
 
   .narration-credit {

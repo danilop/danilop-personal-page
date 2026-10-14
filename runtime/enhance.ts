@@ -47,3 +47,9 @@ if (document.querySelector(".model-experiment"))
   import("./models")
     .then((m) => m.mountModels())
     .catch((error: unknown) => console.error("Could not load models", error));
+if (document.querySelector("[data-code-activity]"))
+  import("./code-activities")
+    .then((m) => m.mountCodeActivities())
+    .catch((error: unknown) =>
+      console.error("Could not load code activities", error),
+    );
