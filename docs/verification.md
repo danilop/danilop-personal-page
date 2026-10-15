@@ -2061,4 +2061,7 @@ Real Chromium browser checks in the local snapshot executed both opening example
 it, and stepped with the current line highlighted. Chapter audio played at its
 book offset, stopped at its end, replayed from the chapter start and offered
 Continue after reload. A 390-pixel mobile viewport showed no horizontal overflow.
-Release-gate and final visual results are recorded after completion below.
+All 26 staged-snapshot commit checks passed, including coverage, types, lint,
+architecture, formatting and narration freshness. The private preview build
+verified 42 pages, 218 output files and 1,466 local links. Deployment still uses
+the exact-revision live verification gate; private book routes remain excluded.
