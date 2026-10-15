@@ -91,3 +91,12 @@ skip buttons have been removed. Chapter and section pages offer bounded audio
 for the text on that page, reusing the verified full-book recording. Tinted,
 bordered listening panels with a headphones heading distinguish playback from
 reading in public pages and private auditions. Play/pause remains the action icon.
+
+## Homepage and Writing discovery — 16 October 2026
+
+The latest article leads; compact book summaries and independent articles have
+separate roles. The shared pager provides explicit Show more, real Previous/Next
+fallbacks, counts and linked All/Independent/Book filters. Drafts stay separate.
+All three newest-publication cases, duplicate identities and multi-book reuse are
+covered by selection tests. See [the discovery contract](homepage-discovery-plan.md)
+and [verification](verification.md) for the rendered checks.

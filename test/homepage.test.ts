@@ -88,18 +88,14 @@ test("collection-only articles enter latest writing with context and actual read
   site.homeWriting = items;
   assert.equal(homepageSelection(site).lead?.id, "section");
 });
-test("book feature starts reading and keeps its articles in recent writing; draft-hidden feature falls back", () => {
+test("an editorial lead never replaces the latest piece; book overview points to the lead", () => {
   const { lib, site } = fixture();
-  site.home.lead = "book";
+  site.home.lead = "welcome";
   site.homeWriting = homepageWriting(site, lib);
   const view = homepageSelection(site);
-  assert.equal(view.lead?.kind, "collection");
-  assert.equal(view.lead?.url, "/collections/book/read/section/");
-  assert(view.recent.some((p) => p.id === "section"));
-  site.collections = [];
-  site.homeWriting = homepageWriting(site, lib);
-  assert.equal(homepageSelection(site).lead?.id, "welcome");
-  assert.equal(homepageSelection(site).featured, false);
+  assert.equal(view.lead?.id, "section");
+  assert.equal(view.books[0].latest.id, "section");
+  assert.equal(view.books[0].featuredAbove, true);
 });
 test("reuse does not duplicate articles and standalone URL takes precedence", () => {
   const { lib, site } = fixture();
@@ -133,7 +129,7 @@ test("preview-only draft state supplies provisional dates; undated public pieces
   site.homeWriting = items;
   site.home.lead = "section";
   assert.equal(homepageSelection(site).lead?.id, "welcome");
-  assert(!homepageSelection(site).recent.some((p) => p.id === "section"));
+  assert(!homepageSelection(site).independent.some((p) => p.id === "section"));
   assert.deepEqual(
     writingGroups(site).drafts.map((p) => p.id),
     ["section"],
@@ -155,7 +151,8 @@ test("new-in-book is explicit, independent of collection membership and book fea
     "New in book",
   );
   site.home.lead = "book";
-  assert.equal(homepageSelection(site).lead?.context, "Book");
+  site.homeWriting = homepageWriting(site, lib);
+  assert.equal(homepageSelection(site).lead?.context, "New in book");
   site.collections = [];
   assert(
     !homepageWriting(site, lib).some((p) => p.context?.startsWith("New in")),
@@ -211,24 +208,6 @@ test("featured article artwork follows its first rendered image and clears for i
   assert.equal(homepageSelection(site).lead?.image, undefined);
 });
 
-test("featured books use only their assigned cover, independent of first article or reading order", () => {
-  const { site } = fixture();
-  site.home.lead = "book";
-  site.collections[0].nodes[1].html =
-    '<img src="/media/chapter.png" alt="Chapter">';
-  assert.equal(homepageSelection(site).lead?.image, undefined);
-  const cover = {
-    src: "/media/book.webp",
-    alt: "Book cover",
-    width: 100,
-    height: 150,
-  };
-  site.collections[0].cover = cover;
-  assert.deepEqual(homepageSelection(site).lead?.image, cover);
-  site.collections[0].nodes.reverse();
-  assert.deepEqual(homepageSelection(site).lead?.image, cover);
-});
-
 test("reading minutes use full 1x audio, round up and fall back without valid audio", () => {
   const body = Array(441).fill("word").join(" ");
   assert.equal(readingMinutes(body, 660), 11);
@@ -260,7 +239,7 @@ test("draft-only previews have no published lead; draft metadata also works with
   site.home.lead = "book";
   const result = homepageSelection(site);
   assert.equal(result.lead, undefined);
-  assert.deepEqual(result.recent, []);
+  assert.deepEqual(result.independent, []);
   assert.equal(result.drafts[0].id, "welcome");
 });
 
@@ -282,55 +261,6 @@ test("writing identifies book membership without duplicating shared or standalon
   );
 });
 
-test("six recent slots group a chapter batch into one book without losing standalone articles", () => {
-  const { site } = fixture();
-  const book = {
-    id: "book",
-    title: "A book",
-    url: "/collections/book/",
-    draft: false,
-  };
-  const entry = (id: string) => ({
-    id,
-    title: id,
-    summary: id,
-    url: `/writing/${id}/`,
-    kind: "piece" as const,
-  });
-  site.home.recentCount = 6;
-  site.home.lead = "lead";
-  site.homeWriting = [
-    entry("lead"),
-    ...Array.from({ length: 10 }, (_, i) => ({
-      ...entry(`chapter-${i}`),
-      books: [book],
-    })),
-    ...Array.from({ length: 7 }, (_, i) => entry(`article-${i}`)),
-    { ...entry("draft"), draft: true },
-  ];
-  const result = homepageSelection(site);
-  assert.equal(result.lead?.id, "lead");
-  assert.equal(result.recentGroups.length, 6);
-  assert.equal(result.recentGroups[0].book?.id, "book");
-  assert.equal(result.recentGroups[0].entries.length, 10);
-  assert.deepEqual(
-    result.recent.map((item) => item.id),
-    [
-      "chapter-0",
-      "article-0",
-      "article-1",
-      "article-2",
-      "article-3",
-      "article-4",
-    ],
-  );
-  assert.deepEqual(
-    result.drafts.map((item) => item.id),
-    ["draft"],
-  );
-  assert.equal(writingGroups(site).published.length, 18);
-});
-
 test("public articles reused in draft books stay independent and preview book-only pieces remain drafts", () => {
   const { site, lib } = fixture();
   site.authoring = { pieces: [], collections: ["book"], date: "2030-01-01" };
@@ -343,24 +273,6 @@ test("public articles reused in draft books stay independent and preview book-on
   site.homeWriting = homepageWriting(site, lib);
   const result = homepageSelection(site);
   assert.equal(result.drafts.length, 0);
-  assert(result.recentGroups.every((group) => !group.book));
-});
-
-test("a published featured book skips preview-only chapters when choosing its reading link", () => {
-  const { site } = fixture();
-  site.home.lead = "book";
-  site.authoring = {
-    pieces: ["draft-intro"],
-    collections: [],
-    date: "2030-01-01",
-  };
-  site.collections[0].nodes.unshift({
-    ...site.collections[0].nodes[1],
-    id: "draft-intro",
-    pieceId: "draft-intro",
-  });
-  assert.equal(
-    homepageSelection(site).lead?.url,
-    "/collections/book/read/section/",
-  );
+  assert.equal(result.books.length, 0);
+  assert.equal(result.independent.length, 2);
 });

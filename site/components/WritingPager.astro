@@ -1,0 +1,52 @@
+---
+import type { WritingPage } from "../../core/discovery";
+import WritingEntries from "./WritingEntries.astro";
+import { sitePath } from "../../core/deployment.mjs";
+import { site } from "../data";
+import "./discovery.css";
+interface Props {
+  page: WritingPage;
+}
+const { page } = Astro.props;
+---
+
+<div
+  data-writing-pager
+  data-base={sitePath(page.base)}
+  data-page={page.page}
+  data-revision={site.revision}
+  data-total={page.total}
+>
+  <div class="discovery-articles" data-writing-items>
+    <WritingEntries entries={page.entries} />
+  </div>
+  {page.total === 0 && (
+    <p class="empty-writing">No articles published here yet.</p>
+  )}
+  <div class="writing-pagination">
+    <p class="meta" data-writing-count>
+      {page.start}–{page.end} of {page.total}{" "}
+      {page.total === 1 ? "article" : "articles"}
+    </p>
+    <nav aria-label="Article pages" data-writing-navigation>
+      {page.previous && (
+        <a rel="prev" href={page.previous}>
+          Previous page
+        </a>
+      )}
+      {page.next && (
+        <a rel="next" href={page.next}>
+          Next page
+        </a>
+      )}
+    </nav>
+    <button type="button" data-writing-more hidden>
+      Show more articles
+    </button>
+    <p class="meta" role="status" aria-live="polite" data-writing-status></p>
+  </div>
+</div>
+<script>
+  import { mountWritingPages } from "../../runtime/writing-pages";
+  mountWritingPages();
+</script>

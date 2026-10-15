@@ -1,0 +1,54 @@
+---
+import WritingGroups from "../../components/WritingGroups.astro";
+import WritingPager from "../../components/WritingPager.astro";
+import { groupWriting } from "../../../core/homepage";
+import { discovery } from "../../../core/discovery";
+import Layout from "../../components/Layout.astro";
+import { site } from "../../data";
+export function getStaticPaths() {
+  return discovery(site).writingPages.map((page) => ({
+    params: {
+      path: page.url.slice("/writing/".length).replace(/\/$/, "") || undefined,
+    },
+    props: { page },
+  }));
+}
+const { page } = Astro.props;
+const { filters, drafts } = discovery(site);
+---
+
+<Layout
+  title={`${page.title}${page.page > 1 ? ` · Page ${page.page}` : ""}`}
+  description="Articles and notes by Danilo Poccia."
+>
+  <header class="page-heading">
+    <h1>Writing</h1>
+    <p>Articles, experiments, and ideas that can grow over time.</p>
+  </header>
+  <nav class="writing-filters" aria-label="Filter writing">
+    {filters.map((filter) => (
+      <a
+        href={filter.url}
+        aria-current={page.base === filter.url ? "page" : undefined}
+      >
+        {filter.title}
+      </a>
+    ))}
+  </nav>
+  <h2 class="writing-filter-title">{page.title}</h2>
+  <WritingPager page={page} />
+  {drafts.length > 0 && page.base === "/writing/" && page.page === 1 && (
+    <section class="preview-drafts" aria-labelledby="drafts-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="drafts-heading">Drafts in preview</h2>
+          <p>
+            Unpublished writing, grouped by book. Visible only in this local
+            preview.
+          </p>
+        </div>
+      </div>
+      <WritingGroups groups={groupWriting(drafts)} compact={false} />
+    </section>
+  )}
+</Layout>

@@ -138,63 +138,28 @@ records remaining scope, including incremental full-site preparation.
 
 ### Homepage — editorial front page
 
-The homepage should surface a pinned or latest article, several more posts, and
-collections/books in a structured editorial layout. Keep the personal masthead
-compact enough that writing is visible immediately. A large introductory portrait
-must not push the publication's contents out of the first view.
+The [homepage discovery design](homepage-discovery-plan.md) is implemented.
+The latest published article appears first, regardless of whether it belongs to a
+book. Desktop places compact book overviews beside it; mobile uses lead, books,
+then independent articles. Every readable public book remains discoverable. When
+its latest instalment is the lead, its overview links upwards without repeating
+the article or misleadingly calling an older chapter “latest”.
 
-The [16 October homepage discovery proposal](homepage-discovery-plan.md) defines
-the next revision: an automatic latest article, a stable Books area, independent
-articles and explicit loading of older entries. It covers each possible source
-of the latest article and avoids repeating that article in a book card. This is
-planned; the implemented behaviour below remains unchanged until that work lands.
+Independent articles show three entries initially and six more on explicit request.
+The All writing index provides chronological discovery with linked filters for
+independent articles and each public book. It includes each piece once, even when
+reused across books. Reading-order tables of contents remain on book pages.
+Both surfaces share article rows and an accessible Show more control with real
+paginated fallback links, result counts, failure recovery and history restoration.
+There is no automatic infinite scrolling, carousel or nested scroll area.
 
-Implemented composition (homepage discovery refinements included in this release):
-
-1. Masthead: Danilo Poccia, Notes Along the Way, compact navigation and optional
-   small portrait/one-line introduction.
-2. Lead story: one explicitly pinned public article, otherwise the latest eligible
-   article. Show a title, useful summary, publication date, and optional visual.
-3. Recent writing: up to six entries below the lead, with a prominent **All writing**
-   link. Group each book into one slot showing its title and latest instalment;
-   label standalone entries **Article**. Exclude the lead article.
-4. Collections and books: two or three curated entries, each explaining the topic,
-   identifying a collection/growing book/released edition as appropriate, and
-   offering a clear entry into its contents. Exact status labels remain open.
-5. Optional editorial feature: a gallery, experiment, or selected earlier article,
-   only when material exists to justify that section.
-6. Compact author introduction and links to the full catalogue/archive.
-
-The intent is a personal magazine with clear editorial hierarchy. Preserve
-publication dates when pinning; use Featured rather than Latest for an older
-pinned piece. Do not duplicate the lead in the recent list or manufacture dates,
-popularity rankings, empty sections, or book-completion percentages. A substantial
-update may be explicitly highlighted without pretending it is a new publication.
-
-The layout must work at launch with one article and one collection, then expand
-with available content. Keep collections easy to find on mobile and avoid a
-carousel as the only way to discover them. No image is required for every post;
-typography can carry the hierarchy. Recent cards use two columns on desktop and
-one on narrow screens.
-
-The automatic recent list includes eligible standalone and collection-only pieces,
-counted once per identity. Collection-only entries link directly to their reading
-page and carry book/chapter context. A piece or collection can be featured; a
-featured book links to its first readable piece while its latest instalment can
-still appear in one recent book slot. Preview drafts never compete with published
-entries for the lead or recent slots. They appear in a separate **Drafts in preview**
-section, grouped by book and without provisional publication dates. The Writing
-index retains all articles with book labels, followed by the same draft groups.
-No automatic infinite scrolling or pagination is introduced; the current index
-is small enough to display in full.
-In the implemented Ink & Paper theme, article artwork fills the available column
-at its natural aspect ratio. Dedicated covers use centred containers up to 320
-pixels wide on the homepage and collection overview, with height determined by
-the image. Fixed-height boxes must not reduce portrait artwork to a small image
-surrounded by empty horizontal space.
-Earlier Work shows pre-relaunch AWS/DEV publications and other historical material.
-Elsewhere is reserved for external publications after relaunch and remains hidden
-until populated. Identify publishers and external destinations clearly.
+Saved publication dates and stable identity determine ordering; edits do not move
+articles to the top. Legacy editorial lead settings cannot displace the newest
+publication. Preview-only books do not reclassify public independent articles,
+and drafts remain in their own labelled preview section without publication dates.
+Three article columns reduce to two and then one as width decreases. Lead artwork
+is limited to 180px high (130px on narrow phones) with its aspect ratio preserved.
+The personal masthead and restrained typography remain unchanged.
 
 ### Articles
 

@@ -252,7 +252,7 @@ The nonempty description is limited to 1,000 characters. The Images panel's
 **Use as cover** writes a content-descriptive asset name with a checksum suffix and updates this field in unsaved
 editor text. Save commits the local source change; it does not deploy. Remove
 the entire `cover` field to clear it. Import carries the referenced asset.
-The cover is used on the collection overview and featured homepage entry,
+The cover is used on the collection overview,
 independently of chapter order. It does not configure print/ebook or social covers.
 
 ```yaml
@@ -655,15 +655,20 @@ Plain heading links such as `[Details](#details)` are namespaced per placement.
 and portrait/biography assets; individual token values have defaults. Supported
 fonts are Newsreader/Georgia and Inter/system-ui. The HTTPS origin and deployment
 base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.yaml` contains
-optional lead, recentCount, elsewhereCount, and selected collection IDs.
-`recentCount` is currently six: it limits recent entries after grouping each book
-into one slot, with the lead article excluded. Standalone pieces each take one
-slot. **All writing** links to the complete unpaginated article index.
-`lead` accepts a piece or collection ID. An unavailable draft feature falls back to
-the newest published piece in both release and preview; unknown IDs fail validation. Saved publication timestamps
-determine latest order, including collection-only articles. Draft preview dates
-are provisional only and are not shown as publication dates in the separate
-homepage/Writing draft groups. See [publication timestamps](publication-time.md).
+`independentCount` (1–12, default 3), `pageSize` (1–24, default 6),
+`elsewhereCount`, and preferred book IDs in `collections`. All other eligible books
+follow in stable library order. The newest eligible article is always the lead;
+legacy `lead` and `recentCount` values remain accepted but no longer control this
+layout. Unknown referenced IDs still fail validation. The first home page excludes
+the lead from independent articles; subsequent pages contain batches of `pageSize`.
+The Writing index and each linked filter use `pageSize` throughout.
+The article slugs `independent`, `books` and `page` are reserved for discovery routes.
+
+Saved publication timestamps determine latest order, including collection-only
+articles. Ties use stable piece identity. Draft preview dates are provisional and
+are not shown as publication dates in the separate draft groups. Public pieces
+reused in draft-only books remain independent. See [publication timestamps](publication-time.md)
+and [homepage discovery](homepage-discovery-plan.md).
 
 ## Browser icons
 
@@ -737,8 +742,7 @@ The piece must belong to the named book. The label appears only when both are
 visible, including draft-inclusive authoring preview. Remove the entry when the
 announcement is no longer current; it has no automatic expiry and does not change
 publication dates, flags, ordering, topic tags, or book structure. Without it, the
-normal book/chapter context remains. The featured book itself remains labelled Book; its Introduction card introduces
-the book, while Chapter 1 is announced as new material.
+normal book/chapter context remains. The book overview remains labelled as a book, independently of these announcements.
 
 The chosen opening/announcement card can use `kind: introducing` in its `newIn`
 entry to show **Introducing [book title]**. Omitting `kind` retains **New in…**.

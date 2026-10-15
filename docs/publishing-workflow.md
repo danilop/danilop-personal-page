@@ -290,10 +290,12 @@ and synchronized with workflow changes.
 
 New visible articles enter homepage/ Writing discovery automatically, including
 collection-only pieces. Saved `publishedAt` timestamps determine latest ordering;
-release builds reject visible articles without dates. Set `lead` in `publishing/home.yaml` to a piece or
-collection ID only when an editorial feature is desired. A featured book starts
-at its first readable piece and keeps its articles in recent writing. A draft
-feature is ignored in release output until visible, with latest content as fallback.
+release builds reject visible articles without dates. The newest eligible piece
+always leads. `independentCount` and `pageSize` in `publishing/home.yaml` control
+browsing batches, and `collections` sets preferred book order. Legacy `lead` and
+`recentCount` settings are accepted but do not override this design. Book overviews
+remain visible beside the lead without duplicating its article; independent
+articles have their own list and All writing has linked book filters.
 Draft badges are preview-only status indicators, separate from topic tags.
 
 For newly published material in a book, optionally add a `newIn` announcement to

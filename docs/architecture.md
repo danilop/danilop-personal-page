@@ -847,3 +847,13 @@ exact spoken transcript feed a shared progressive player on standalone and
 collection reading routes. Staged/build checks independently validate the public
 graph. Draft receipts/proposals remain private. The public player and managed
 audio were deployed on 13 October 2026; synthesis and authoring remain local.
+
+## Published-writing discovery
+
+`core/discovery.ts` derives bounded home/index/filter pages from stable piece IDs
+and publication dates. Astro generates each route at build time. Shared
+`WritingEntries`, `BookSummaries` and `WritingPager` components separate discovery
+from book reading order. `runtime/writing-pages.ts` progressively appends the next
+same-origin document, validates build/filter identity, announces results, and
+restores addressable loaded ranges and browser-history scroll state. No dependency
+or server endpoint is required. See [homepage discovery](homepage-discovery-plan.md).

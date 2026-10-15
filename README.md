@@ -394,27 +394,18 @@ See [asset provenance](docs/assets.md) for fonts, artwork, and preserved materia
 
 ### Homepage discovery and draft labels
 
-The [next homepage discovery design](docs/homepage-discovery-plan.md) proposes a
-latest article alongside both books, a separate independent-article list and
-explicit Show more browsing. It is a planning document, not deployed behaviour.
+The [homepage discovery design](docs/homepage-discovery-plan.md) is implemented:
+the newest published article leads, with compact book overviews alongside it on
+desktop. Each book shows its latest instalment, or points to the lead when it is
+already featured above. Independent articles have their own list: three initially,
+then six per **Show more articles** action. **All writing** includes chronological
+articles and linked filters for independent writing and each published book.
 
-The homepage shows up to six recent entries below the lead, with a prominent
-**All writing** link. Each book occupies one slot linking to its overview and
-latest published instalment; standalone entries are labelled **Article**. The
-lead article is not repeated. The Writing index keeps every article and shows its
-book membership. Preview drafts appear separately under **Drafts in preview**,
-grouped by book without provisional publication dates. There is no infinite
-scroll or pagination: **All writing** is the complete current list.
-
-The featured article uses its first rendered body image, with the same alt text.
-Articles without images show no homepage artwork; the site-wide decorative hero
-is not used as an article fallback. Draft preview does not replace the published
-lead or its artwork.
-Featured books and collections use their explicitly assigned cover, also shown on
-their overview page. They never inherit the first chapter's illustration.
-Featured artwork keeps its natural aspect ratio. Article illustrations fill the
-available column; covers sit in centred containers up to 320 pixels wide, without
-a fixed height that shrinks portrait artwork into a wide empty band.
+Real paginated pages support sharing, JavaScript-free navigation and indexed links.
+The enhanced control appends articles, announces results and restores loaded batches
+and scroll on return. Drafts stay in a separate **Drafts in preview** section.
+The latest article uses its first body image when present, with a compact image
+height so artwork does not displace the books. Book covers remain on book pages.
 
 The homepage and Writing index include visible collection articles as well as
 standalone posts, without duplicate entries. Book articles show their collection
@@ -430,12 +421,12 @@ Preview and test builds keep Astro/Vite caches inside their own ignored `.astro/
 directories, even when installed dependencies are shared. Concurrent builds cannot
 replace each other's cached article inventory.
 
-Set `lead` in `publishing/home.yaml` to a piece or collection ID to feature it, or
-omit it for automatic latest selection. Chronicles of Computation is selected;
-Start reading opens its Introduction once published. While it is draft, both the
-release homepage and draft preview fall back to published writing. Draft badges appear only in authoring previews,
-on homepage/list entries, collection contents and article headers. They are
-publication-state labels, not topic tags or access controls.
+`publishing/home.yaml` configures `independentCount` (default 3), `pageSize`
+(default 6), and preferred book order through `collections`. Other eligible books
+follow in their stable library order. Legacy `lead` and `recentCount` settings
+remain readable for compatibility but do not override this discovery layout.
+Draft badges appear only in authoring previews, on draft lists, collection contents
+and article headers. They are publication-state labels, not topic tags or access controls.
 
 Book cards use **Book**. Optional `newIn` entries in `publishing/home.yaml` show
 **New in [book title]** for explicitly announced material. Adding existing writing

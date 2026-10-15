@@ -74,6 +74,8 @@ export type CompiledSite = {
       kind?: "new-in" | "introducing";
     }[];
     recentCount: number;
+    independentCount?: number;
+    pageSize?: number;
     elsewhereCount: number;
     collections: string[];
   };

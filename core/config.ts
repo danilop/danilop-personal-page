@@ -88,7 +88,9 @@ export const homeSchema = z
         (items) => new Set(items.map((i) => i.piece)).size === items.length,
         "Only one new-in announcement per piece",
       ),
-    recentCount: z.number().int().min(0).max(20),
+    recentCount: z.number().int().min(0).max(20).default(6), // Legacy setting; retained for compatibility.
+    independentCount: z.number().int().min(1).max(12).default(3),
+    pageSize: z.number().int().min(1).max(24).default(6),
     elsewhereCount: z.number().int().min(0).max(20),
     collections: z.array(z.string()),
   })

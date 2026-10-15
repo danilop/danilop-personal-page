@@ -1,41 +1,55 @@
 ---
 import DraftBadge from "../../site/components/DraftBadge.astro";
 import WritingGroups from "../../site/components/WritingGroups.astro";
-import { groupWriting, homepageSelection } from "../../core/homepage";
+import { groupWriting } from "../../core/homepage";
+import { discovery, type WritingPage } from "../../core/discovery";
+import BookSummaries from "../../site/components/BookSummaries.astro";
+import WritingPager from "../../site/components/WritingPager.astro";
 import { dateLabel } from "../../site/data";
 import type { CompiledSite } from "../../core/site-data";
 import type { SiteConfig } from "../../core/config";
 interface Props {
   site: CompiledSite;
   config: SiteConfig;
+  page?: WritingPage;
 }
 const { site, config } = Astro.props;
-const { lead, recentGroups, drafts, featured } = homepageSelection(site);
-const visibleCollections = site.collections.filter(
-  (c) => !site.authoring?.collections.includes(c.id),
-);
+const { lead, books, drafts, homePages } = discovery(site);
+const page = Astro.props.page ?? homePages[0];
 const draftGroups = groupWriting(drafts);
-const collections = site.home.collections.length
-  ? site.home.collections
-      .map((id) => visibleCollections.find((c) => c.id === id))
-      .filter((c) => c !== undefined)
-  : visibleCollections.slice(0, 3);
+const leadContext = [
+  lead?.readingLabel,
+  lead?.context?.startsWith("New in ")
+    ? "New instalment"
+    : lead?.context?.startsWith("Introducing ")
+      ? "Introducing the book"
+      : undefined,
+]
+  .filter(Boolean)
+  .join(" · ");
 const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
 ---
 
-<div class:list={["front-page", { linear: config.layout === "linear" }]}>
+<div
+  class:list={[
+    "discovery-top",
+    { "has-books": books.length > 0, linear: config.layout === "linear" },
+  ]}
+>
   {!lead && <h1>Writing</h1>}
   {lead && (
-    <article class:list={["lead", { "with-art": Boolean(lead.image) }]}>
+    <article class="discovery-lead">
       <div class="lead-copy">
-        <p class="eyebrow">
-          {featured ? "Featured" : "Latest"}
-          {lead.kind === "piece" && !lead.books?.some((book) => !book.draft)
-            ? " article"
-            : ""}
+        <p class="eyebrow">Latest</p>
+        <p class="lead-membership">
+          {lead.books?.some((book) => !book.draft)
+            ? lead.books
+                .filter((book) => !book.draft)
+                .map((book) => <a href={book.url}>From {book.title}</a>)
+            : "Independent article"}
         </p>
-        {lead.context && <p class="eyebrow">{lead.context}</p>}
-        <h1>
+        {leadContext && <p class="meta">{leadContext}</p>}
+        <h1 id="latest-heading">
           <a href={lead.url}>{lead.title}</a>
           <DraftBadge
             pieceId={lead.kind === "piece" ? lead.id : undefined}
@@ -92,23 +106,16 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
       )}
     </article>
   )}
+  <BookSummaries books={books} />
 </div>
 <section class="recent-writing" aria-labelledby="recent-heading">
   <div class="section-heading">
-    <h2 id="recent-heading">Recent writing</h2>
+    <h2 id="recent-heading">Independent articles</h2>
     <a href="/writing/">
       All writing <span aria-hidden="true">→</span>
     </a>
   </div>
-  {recentGroups.length > 0 ? (
-    <WritingGroups groups={recentGroups} />
-  ) : (
-    <p class="empty-writing">
-      {lead
-        ? "More writing will appear here as it is published."
-        : "No articles published yet."}
-    </p>
-  )}
+  <WritingPager page={page} />
 </section>
 {draftGroups.length > 0 && (
   <section class="preview-drafts" aria-labelledby="drafts-heading">
@@ -122,28 +129,6 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
       </div>
     </div>
     <WritingGroups groups={draftGroups} compact={false} />
-  </section>
-)}
-{collections.length > 0 && (
-  <section class="collections-section">
-    <div class="section-heading">
-      <h2>Collections & Books</h2>
-      <a href="/collections/">Browse all</a>
-    </div>
-    <div class="collection-grid">
-      {collections.map((c) => (
-        <article>
-          <p class="eyebrow">{c.book ? "Book" : "Collection"}</p>
-          <h3>
-            <a href={c.url}>{c.title}</a> <DraftBadge collectionId={c.id} />
-          </h3>
-          <p>{c.summary}</p>
-          <a class="read-link" href={c.url}>
-            Explore collection
-          </a>
-        </article>
-      ))}
-    </div>
   </section>
 )}
 {site.elsewhere.length > 0 && site.home.elsewhereCount > 0 && (

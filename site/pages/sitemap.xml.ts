@@ -2,12 +2,13 @@ import { siteUrl } from "../../core/deployment.mjs";
 import { loadEditions, editionUrl } from "../../core/editions";
 import { site } from "../data";
 import { siteConfig } from "../../core/config";
+import { discovery } from "../../core/discovery";
 import { escape } from "../../core/assets";
 export async function GET() {
   const config = await siteConfig();
   const paths = [
-    "/",
-    "/writing/",
+    ...discovery(site).homePages.map((page) => page.url),
+    ...discovery(site).writingPages.map((page) => page.url),
     "/about/",
     "/archive/",
     ...site.articles.map((p) => p.url),

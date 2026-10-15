@@ -1,0 +1,30 @@
+---
+import type { HomeEntry } from "../../core/homepage";
+import { dateLabel } from "../data";
+interface Props {
+  entries: HomeEntry[];
+}
+const { entries } = Astro.props;
+---
+
+{entries.map((entry) => (
+  <article data-writing-entry={entry.id}>
+    <p class="eyebrow">
+      {entry.books?.some((book) => !book.draft)
+        ? entry.books
+            .filter((book) => !book.draft)
+            .map((book) => <a href={book.url}>From {book.title}</a>)
+        : "Article"}
+    </p>
+    <h3>
+      <a href={entry.url}>{entry.title}</a>
+    </h3>
+    <p>{entry.summary}</p>
+    <p class="meta">
+      {entry.publishedAt && (
+        <time datetime={entry.publishedAt}>{dateLabel(entry.publishedAt)}</time>
+      )}
+      {entry.minutes && <span> · {entry.minutes} min read</span>}
+    </p>
+  </article>
+))}

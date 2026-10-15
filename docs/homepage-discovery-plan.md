@@ -1,6 +1,7 @@
 # Homepage discovery: books and independent articles
 
-Status: design proposal, 16 October 2026. Not implemented or deployed.
+Status: implemented and locally tested, 16 October 2026. Deployment is confirmed
+by the release workflow and exact live revision marker.
 
 ## Requirements
 
@@ -11,7 +12,7 @@ Book publication batches must not displace independent articles. Do not repeat t
 lead article as another card or describe an older chapter as the latest instalment.
 Preview drafts must remain separate from published discovery.
 
-## Proposed composition
+## Implemented composition
 
 1. **Latest**: the newest eligible published piece, with its title, summary, date,
    reading time and a direct reading link. Label independent pieces **Article**;
@@ -40,7 +41,7 @@ limits require visual validation at desktop and mobile widths and browser zoom.
 
 With both books available, the initial layout has six content blocks: one lead,
 two book overviews and three independent articles. These are different roles,
-not six chronological article slots. This proposal replaces the earlier shared
+not six chronological article slots. This layout replaces the earlier shared
 slot budget; it also keeps a lead book's overview visible, refining the earlier
 suggestion to exclude that book entirely. Fewer available items means fewer
 blocks, with no duplicated pieces or placeholder cards. Do not show a load-more
@@ -110,5 +111,25 @@ These findings inform a recommendation, not a claim of reader-tested superiority
    and screen-reader feedback, JavaScript-disabled navigation and loading failure.
 5. Update README, product design, authoring configuration, preview, navigation and
    verification documentation with the implemented contract. Run repository checks
-   and release verification when deployment is requested. This planning change
-   alone changes no runtime behaviour or publication status.
+   and release verification when deployment is requested. Implementation does not change content publication flags.
+
+## Implementation contract
+
+`core/homepage.ts` selects the latest article and stable book summaries;
+`core/discovery.ts` creates bounded pages and public filters. `WritingEntries`,
+`BookSummaries` and `WritingPager` provide shared rendering. The runtime fetches
+only the next static HTML page, validates its build revision and filter identity,
+and never combines lists from different deployments.
+
+Routes are `/page/2/` for older home-page independent articles,
+`/writing/page/2/`, `/writing/independent/`, and `/writing/books/<book-id>/`
+with `/page/2/` suffixes for filtered continuation. Only existing pages are built.
+Enhanced URLs add `?from=1` (or the directly opened starting page) so reload and
+copied links reconstruct the same loaded range. Back/Forward reloads the matching
+static route, reconstructs earlier batches, and restores saved scroll position.
+Storage is browser history state, not a full catalogue downloaded in advance.
+Failures preserve current articles and expose ordinary fallback links.
+
+The latest article may still carry an explicit new-in announcement, but `lead`
+can no longer override it. `independentCount` and `pageSize` replace `recentCount`
+for layout purposes; legacy configuration is accepted for compatibility.

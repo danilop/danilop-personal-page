@@ -1,0 +1,171 @@
+.discovery-top {
+  display: grid;
+  gap: 36px;
+  padding: 36px 0;
+}
+
+.discovery-top.has-books:not(.linear) {
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+}
+
+.discovery-lead h1 {
+  font-size: clamp(36px, 4.3vw, 60px);
+  letter-spacing: -1px;
+  margin: 12px 0 18px;
+}
+
+.discovery-lead .lead-summary {
+  font-size: 24px;
+}
+
+.lead-membership {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.lead-membership a {
+  color: var(--blue);
+}
+
+.lead-membership a + a::before,
+.discovery-articles .eyebrow a + a::before {
+  content: " · ";
+}
+
+.discovery-lead .article-art {
+  max-width: 480px;
+}
+
+.discovery-lead .article-art img {
+  max-height: 180px;
+  object-fit: contain;
+  object-position: left;
+}
+
+.discovery-books {
+  border-left: 1px solid var(--hairline);
+  padding-left: 30px;
+}
+
+.discovery-books h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.discovery-articles article {
+  border-top: 1px solid var(--hairline);
+  padding-top: 18px;
+  overflow-wrap: anywhere;
+}
+
+.discovery-books article + article {
+  border-top: 1px solid var(--hairline);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.discovery-books h3 {
+  font-size: 29px;
+  margin-bottom: 10px;
+}
+
+.discovery-books article > p {
+  font-size: 14px;
+}
+
+.book-latest {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.book-latest a {
+  color: var(--blue);
+}
+
+.book-latest .meta {
+  margin-top: 4px;
+}
+
+.discovery-articles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+}
+
+.discovery-articles h3 {
+  font-size: 30px;
+  margin: 10px 0;
+}
+
+.discovery-articles article > p:not(.eyebrow, .meta) {
+  font-size: 15px;
+}
+
+.writing-pagination {
+  padding: 22px 0 34px;
+}
+
+.writing-pagination nav {
+  display: flex;
+  gap: 24px;
+}
+
+.writing-pagination a,
+.writing-filters a {
+  color: var(--blue);
+  display: inline-block;
+  padding: 10px 0;
+}
+
+.writing-pagination button {
+  margin-top: 14px;
+}
+
+.writing-pagination [hidden] {
+  display: none;
+}
+
+.writing-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.writing-filters [aria-current="page"] {
+  border-bottom: 2px solid var(--blue);
+  font-weight: 500;
+}
+
+.writing-filter-title {
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+@media (width <= 850px) {
+  .discovery-top.has-books:not(.linear) {
+    grid-template-columns: 1fr;
+  }
+
+  .discovery-books {
+    border-left: 0;
+    border-top: 1px solid var(--hairline);
+    padding: 24px 0 0;
+  }
+
+  .discovery-articles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width <= 550px) {
+  .discovery-articles {
+    grid-template-columns: 1fr;
+  }
+
+  .discovery-lead .article-art img {
+    max-height: 130px;
+  }
+}

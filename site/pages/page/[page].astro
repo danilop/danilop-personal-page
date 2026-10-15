@@ -1,0 +1,19 @@
+---
+import Layout from "../../components/Layout.astro";
+import { site } from "../../data";
+import { siteConfig } from "../../../core/config";
+import { discovery } from "../../../core/discovery";
+import { themes } from "../../../themes/registry";
+export function getStaticPaths() {
+  return discovery(site)
+    .homePages.slice(1)
+    .map((page) => ({ params: { page: String(page.page) }, props: { page } }));
+}
+const config = await siteConfig();
+const Home = themes[config.theme].Home;
+const { page } = Astro.props;
+---
+
+<Layout title={`Articles · Page ${page.page}`}>
+  <Home site={site} config={config} page={page} />
+</Layout>

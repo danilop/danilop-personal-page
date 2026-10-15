@@ -67,7 +67,12 @@ export const pieceSchema = z
     status: z.enum(["draft", "published", "retired"]).optional(),
     draft: z.boolean().optional(),
     publication: z.object({ surfaces: z.array(surface).min(1) }).strict(),
-    slug: id.optional(),
+    slug: id
+      .refine(
+        (value) => !["independent", "books", "page"].includes(value),
+        "Slug is reserved for writing navigation",
+      )
+      .optional(),
     publishedAt: date.optional(),
     updatedAt: date.optional(),
     shortCode: id.optional(),

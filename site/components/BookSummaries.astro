@@ -1,0 +1,42 @@
+---
+import type { homepageSelection } from "../../core/homepage";
+import { dateLabel } from "../data";
+interface Props {
+  books: ReturnType<typeof homepageSelection>["books"];
+}
+const { books } = Astro.props;
+---
+
+{books.length > 0 && (
+  <section class="discovery-books" aria-labelledby="books-heading">
+    <h2 id="books-heading">Books</h2>
+    {books.map((book) => (
+      <article>
+        <h3>
+          <a href={book.url}>{book.title}</a>
+        </h3>
+        <p>{book.summary}</p>
+        {book.featuredAbove ? (
+          <p class="book-latest">
+            <a href="#latest-heading">Latest instalment featured above ↑</a>
+          </p>
+        ) : (
+          <div class="book-latest">
+            <p class="eyebrow">Latest instalment</p>
+            <a href={book.latest.url}>{book.latest.title}</a>
+            {book.latest.publishedAt && (
+              <p class="meta">
+                <time datetime={book.latest.publishedAt}>
+                  {dateLabel(book.latest.publishedAt)}
+                </time>
+              </p>
+            )}
+          </div>
+        )}
+        <a class="read-link" href={book.url}>
+          Book contents <span aria-hidden="true">→</span>
+        </a>
+      </article>
+    ))}
+  </section>
+)}

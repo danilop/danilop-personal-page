@@ -257,10 +257,12 @@ test(
     const page = await browser.newPage();
     await page.goto(origin);
     const previewLeadImage = await page
-      .locator(".lead .article-art img")
+      .locator(".discovery-lead .article-art img")
       .getAttribute("src");
     assert.notEqual(
-      await page.locator(".lead .article-art img").getAttribute("alt"),
+      await page
+        .locator(".discovery-lead .article-art img")
+        .getAttribute("alt"),
       "Draft fixture artwork",
     );
     assert.equal(
@@ -287,14 +289,16 @@ test(
     assert.equal((await api("files")).includeDrafts, false);
     assert.equal(await page.locator(".draft-badge").count(), 0);
     const publishedImage = await page.evaluate(async () => {
-      const url = document.querySelector<HTMLAnchorElement>(".lead h1 a")!.href;
+      const url = document.querySelector<HTMLAnchorElement>(
+        ".discovery-lead h1 a",
+      )!.href;
       const article = new DOMParser().parseFromString(
         await (await fetch(url)).text(),
         "text/html",
       );
       return article.querySelector(".prose img")?.getAttribute("src") ?? null;
     });
-    const leadImage = page.locator(".lead .article-art img");
+    const leadImage = page.locator(".discovery-lead .article-art img");
     assert.equal(
       (await leadImage.count()) ? await leadImage.getAttribute("src") : null,
       publishedImage,
@@ -320,7 +324,9 @@ test(
     );
     assert.equal((await api("files")).includeDrafts, true);
     assert.equal(
-      await page.locator(".lead .article-art img").getAttribute("src"),
+      await page
+        .locator(".discovery-lead .article-art img")
+        .getAttribute("src"),
       previewLeadImage,
     );
     assert(
@@ -422,7 +428,9 @@ test(
     }
     await page.goto(origin);
     assert.equal(
-      await page.locator(".lead .article-art img").getAttribute("src"),
+      await page
+        .locator(".discovery-lead .article-art img")
+        .getAttribute("src"),
       previewLeadImage,
     );
     assert.equal(

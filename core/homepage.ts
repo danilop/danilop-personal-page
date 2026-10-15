@@ -13,6 +13,7 @@ export type HomeEntry = {
   minutes?: number;
   narration?: Pick<import("./narration-store").PublicNarration, "duration">;
   context?: string;
+  readingLabel?: string;
   books?: { id: string; title: string; url: string; draft: boolean }[];
   kind: "piece" | "collection";
   draft?: boolean;
@@ -66,11 +67,15 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
       const p = lib.pieces.get(n.pieceId);
       if (!p || p.status !== "published") continue;
       const parent = readingContext(c, n.id).parent;
-      const context = `${c.title} · ${parent?.kind === "chapter" ? `Chapter ${parent.number ?? parent.title}` : n.title}`;
+      const readingLabel =
+        parent?.kind === "chapter"
+          ? `Chapter ${parent.number ?? parent.title}`
+          : undefined;
+      const context = `${c.title} · ${readingLabel ?? n.title}`;
       const book = collectionBook(c, site);
       const existing = entries.get(p.id);
       if (existing) {
-        addMembership(existing, c, site, context);
+        addMembership(existing, c, site, context, readingLabel);
         continue;
       }
       const draft = Boolean(
@@ -87,6 +92,7 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
         minutes: readingMinutes(p.body, n.narration?.duration),
         narration: n.narration,
         context,
+        readingLabel,
         books: book ? [book] : [],
         kind: "piece",
         draft,
@@ -113,11 +119,13 @@ function addMembership(
   c: CompiledSite["collections"][number],
   site: CompiledSite,
   context: string,
+  readingLabel?: string,
 ) {
   if (entry.draft || !site.authoring?.collections.includes(c.id))
     entry.context ??= context;
   const book = collectionBook(c, site);
   if (book) (entry.books ??= []).push(book);
+  if (!book?.draft) entry.readingLabel ??= readingLabel;
 }
 export function writingGroups(site: CompiledSite) {
   const writing: HomeEntry[] =
@@ -152,40 +160,24 @@ export function groupWriting(entries: HomeEntry[]): WritingGroup[] {
   return [...groups.values()];
 }
 export function homepageSelection(site: CompiledSite) {
-  const { published: writing, drafts } = writingGroups(site);
-  const featured = site.collections.find(
-    (c) =>
-      c.id === site.home.lead && !site.authoring?.collections.includes(c.id),
+  const { published, drafts } = writingGroups(site);
+  const writing = [...new Map(published.map((p) => [p.id, p])).values()].sort(
+    publicationOrder,
   );
-  const first = featured?.nodes.find(
-    (n) =>
-      n.kind === "piece" &&
-      !n.planned &&
-      !site.authoring?.pieces.includes(n.pieceId ?? ""),
-  );
-  const book: HomeEntry | undefined =
-    featured && first
-      ? {
-          id: featured.id,
-          title: featured.title,
-          summary: featured.summary,
-          url: `${featured.url}read/${first.id}/`,
-          context: featured.book ? "Book" : "Collection",
-          kind: "collection",
-          image: featured.cover,
-          draft: site.authoring?.collections.includes(featured.id),
-        }
-      : undefined;
-  const pinned = book ?? writing.find((p) => p.id === site.home.lead);
-  const lead = pinned ?? writing[0];
-  const recentGroups = groupWriting(
-    writing.filter((p) => p.id !== lead?.id),
-  ).slice(0, site.home.recentCount);
-  return {
-    lead,
-    drafts,
-    recentGroups,
-    featured: Boolean(pinned),
-    recent: recentGroups.map((group) => group.entries[0]),
-  };
+  const lead = writing[0];
+  const order = [
+    ...site.home.collections,
+    ...site.collections.map((c) => c.id),
+  ];
+  const books = [...new Set(order)].flatMap((id) => {
+    const book = site.collections.find((c) => c.id === id && c.book);
+    const latest = writing.find((p) =>
+      p.books?.some((b) => b.id === id && !b.draft),
+    );
+    return book && latest && !site.authoring?.collections.includes(id)
+      ? [{ ...book, latest, featuredAbove: latest.id === lead?.id }]
+      : [];
+  });
+  const independent = writing.filter((p) => !p.books?.some((b) => !b.draft));
+  return { lead, books, independent, writing, drafts };
 }

@@ -122,14 +122,13 @@ The author publishes locally, then commits and pushes to `main` for Amplify
 delivery. The first local publishing action establishes `publishedAt`, with a UTC
 time as well as a date. Public latest-content lists sort by that timestamp,
 newest first, irrespective of when the article was drafted. Draft creation and
-editing dates stay internal. Book reading order and explicit featured placement
-remain separate from chronological discovery.
+editing dates stay internal. Book reading order remains separate from chronological discovery.
 
 Homepage artwork follows the selected article: its first rendered body image is
 reused with its alt text, including for collection-only articles. An article with
 no image has no homepage artwork. This is derived presentation data, not a separate
 cover field in article metadata. Books and collections have an explicit optional
-cover independent of their members and reading order; a featured collection never
+cover independent of their members and reading order; the collection overview never
 inherits a member's illustration. Social previews now derive article artwork or
 the explicit collection cover, with title-card fallback. An explicit social-image
 override remains future work; see [social previews](social-previews.md).
@@ -148,8 +147,8 @@ an explicit tree of contents. A flat collection can contain piece placements
 directly. Ordering is owned by the collection.
 
 A book or collection may own one cover with an image asset and accessible
-description. It represents the whole work and appears when featured on the homepage
-and on its collection overview. No cover means no illustration in those positions.
+description. It represents the whole work and appears on its collection overview. The compact
+homepage book summary uses text. No cover means no illustration on the overview.
 Assigning, replacing or removing a cover does not modify any member article or
 publication flag. This web-cover capability is implemented; automatic print/ebook
 cover layout and social sharing images are separate, unimplemented concerns.

@@ -1,21 +1,39 @@
 # Release verification
 
-## Homepage discovery — 15 October 2026
+## Homepage and Writing discovery — 16 October 2026
 
-Included in this release: six recent entries with one slot per book, a clear
-**All writing** link, book/standalone labels and separate preview draft groups.
-Drafts cannot displace the published lead or use recent slots. The Writing index
-keeps all articles and shows book membership; draft dates are not presented as
-publication dates. No infinite scrolling or pagination is added. Fifteen focused
-homepage tests passed, including chapter-batch grouping, shared book membership,
-draft-only previews and draft book isolation. Astro and TypeScript checks passed.
-Browser checks at 1280×720 and 390×844 confirmed the published lead remains
-visible with five drafts present, drafts group into two book cards with no
-publication dates, and All writing opens the complete published list above
-drafts. No horizontal overflow or recorded console warnings/errors were found.
-The local-authoring browser integration test also passed after replacing its
-old draft-feature expectation: toggling preview visibility preserves the
-published lead and artwork, while draft links remain confined to preview groups.
+Implemented the latest article, stable public book summaries and independent
+articles as separate homepage sections. All writing now has linked public-book
+and independent filters. Bounded static pages underpin an explicit shared Show
+more control, including accessible counts/status, retry and browser-history
+restoration. Legacy lead pinning no longer hides the newest publication.
+
+Selection tests cover all three publication sources, multi-book reuse, identity
+deduplication, stable date ties, publication batches, zero/one/many entries and
+draft isolation. Runtime tests cover append/exhaustion, duplicate requests, failed
+fetch/retry, build revision mismatch, direct later pages, cumulative restoration
+and Back/Forward events. Navigation slugs are reserved against article collisions.
+
+In-app Chromium checks used actual current preview content and isolated generated
+fixtures containing both books and sixteen additional test articles. Fixture
+publication dates were synthetic; no real draft flags or timestamps changed.
+Desktop 1280px, narrow 640px reflow (equivalent layout width at 200% zoom),
+and mobile 390px checks verified all three lead sources, no repeated
+lead card, legible books and linked filters with no horizontal overflow. Actual
+interactions verified append-six, keyboard focus, filter selection, exhaustion,
+reload, article navigation and Back, and Back/Forward between loaded ranges.
+A script-free copy verified ordinary Next-page navigation. Temporarily removing a
+fixture page verified the error message, fallback link and successful retry.
+The intentional 404 was the only expected application error in that scenario.
+Safari, Firefox and assistive-technology speech output were not retested.
+
+The full JavaScript suite passed: 359 tests, one opt-in AWS test skipped, zero
+failures. The authoring integration test verifies draft/published toggling and
+artwork with the new lead component.
+
+The draft-inclusive snapshot built 43 pages and verified 219 files/1,496 local
+links. Full repository and release checks are recorded by the commit/release
+workflow; publication state remains unchanged by this interface change.
 
 ## Listening label simplification — 15 October 2026
 

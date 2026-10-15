@@ -80,15 +80,14 @@ every build; do not edit disposable cache entries to make a lasting correction.
 Edit `publishing/site.yaml` for theme (`ink-and-paper` or `plain`), layout
 (`editorial` or `linear`), design tokens, portrait/biography/hero assets, and an
 optional local `overrideCss` file. Token fields have defaults. `publishing/home.yaml`
-selects a lead article or collection, counts and collection IDs. If the selected
-lead is still a draft, the homepage falls back to the latest public writing.
+sets independent-article counts, page size and preferred book order.
+The newest published piece always leads; drafts cannot displace it.
 Empty homepage sections and empty navigation sections are hidden.
 The lead article's illustration comes from its first rendered body image, not
 `assets.hero`. Articles without images show no homepage illustration. The optional
 legacy hero asset remains accepted by configuration but is not an article fallback.
-For a featured book or collection, use its Images panel to assign an explicit cover
-and Save. Its optional YAML `cover` points to a local collection asset; the homepage
-and overview use it without inheriting an illustration from a chapter.
+For a book or collection, use its Images panel to assign an explicit cover
+and Save. Its optional YAML `cover` points to a local collection asset; the overview uses it without inheriting an illustration from a chapter.
 
 New page templates belong in the theme registry. Publishing rules remain in
 `core/`. Home, Article and Shell are theme components; collection/archive routes
