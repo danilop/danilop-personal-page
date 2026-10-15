@@ -8,7 +8,7 @@ and independent filters. Bounded static pages underpin an explicit shared Show
 more control, including accessible counts/status, retry and browser-history
 restoration. Legacy lead pinning no longer hides the newest publication.
 
-Selection tests cover all three publication sources, multi-book reuse, identity
+Selection tests cover all three publication sources, multi-book and same-book reuse, identity
 deduplication, stable date ties, publication batches, zero/one/many entries and
 draft isolation. Runtime tests cover append/exhaustion, duplicate requests, failed
 fetch/retry, build revision mismatch, direct later pages, cumulative restoration
@@ -28,7 +28,7 @@ The intentional 404 was the only expected application error in that scenario.
 Safari, Firefox and assistive-technology speech output were not retested.
 
 The full JavaScript suite passed: 359 tests, one opt-in AWS test skipped, zero
-failures. The authoring integration test verifies draft/published toggling and
+failures. All 26 repository commit checks passed, including coverage and build validation. The authoring integration test verifies draft/published toggling and
 artwork with the new lead component.
 
 The draft-inclusive snapshot built 43 pages and verified 219 files/1,496 local

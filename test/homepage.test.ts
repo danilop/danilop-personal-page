@@ -100,6 +100,16 @@ test("an editorial lead never replaces the latest piece; book overview points to
 test("reuse does not duplicate articles and standalone URL takes precedence", () => {
   const { lib, site } = fixture();
   site.collections.push(group("other"));
+  site.collections[0].nodes.push({
+    ...site.collections[0].nodes[1],
+    id: "reused-section",
+  });
+  assert.deepEqual(
+    homepageWriting(site, lib)
+      .find((p) => p.id === "section")
+      ?.books?.map((book) => book.id),
+    ["book", "other"],
+  );
   assert.equal(
     homepageWriting(site, lib).filter((p) => p.id === "section").length,
     1,

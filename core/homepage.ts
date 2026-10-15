@@ -124,7 +124,8 @@ function addMembership(
   if (entry.draft || !site.authoring?.collections.includes(c.id))
     entry.context ??= context;
   const book = collectionBook(c, site);
-  if (book) (entry.books ??= []).push(book);
+  if (book && !entry.books?.some((existing) => existing.id === book.id))
+    (entry.books ??= []).push(book);
   if (!book?.draft) entry.readingLabel ??= readingLabel;
 }
 export function writingGroups(site: CompiledSite) {
