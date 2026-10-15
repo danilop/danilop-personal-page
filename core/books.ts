@@ -353,6 +353,19 @@ const markua: BookExporter = {
       noteEdits: TextEdit[] = [],
     ) {
       const headingEdits: TextEdit[] = [...noteEdits];
+      visit(n.piece!.ast, (v) => {
+        if (v.type !== "containerDirective" || v.name !== "callout") return;
+        const start = v.position!.start.offset!;
+        const end = v.position!.end.offset!;
+        headingEdits.push(
+          { start, end: body.indexOf("\n", start), value: "{aside}" },
+          {
+            start: body.lastIndexOf("\n", end - 1) + 1,
+            end,
+            value: "{/aside}",
+          },
+        );
+      });
       const headings = new Set<string>();
       visit(n.piece!.ast, (v) => {
         if (v.type === "footnoteDefinition") return "skip";

@@ -43,7 +43,16 @@ collection publication settings.
 The book main page is the listening destination. Do not initially require a separate
 audio page, modal or floating player across the whole site. Playback across ordinary
 page navigation is not promised; returning and choosing Continue restores progress.
-Individual chapter pages can link to the book player at their chapter. Provide
+Individual chapter and section pages offer **Open audiobook from here**, a
+headphones-and-arrow link to the full book player positioned at that passage.
+Navigation does not start playback. The full player and current-edition MP3
+download remain on the book main page. The link uses the same listening-area
+typography, dividers and separation from prose as article and book players. When
+a section also has its own narration, the book link sits inside that listening
+area rather than creating another panel. This presentation refinement is
+included in this release.
+
+Provide
 native audio/download fallback when scripting is unavailable, without claiming
 automatic queueing or saved progress in that fallback.
 

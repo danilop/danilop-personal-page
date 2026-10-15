@@ -8,6 +8,7 @@ import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
 import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
+import BookAudioLink from "../../../../components/BookAudioLink.astro";
 import { readingContext } from "../../../../../core/reading-navigation";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
@@ -36,11 +37,9 @@ const { children } = readingContext(c, n.id);
       </h1>
     </header>
     {c.audiobook && (
-      <p>
-        <a href={`${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`}>
-          Listen from here in the audiobook
-        </a>
-      </p>
+      <BookAudioLink
+        href={`${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`}
+      />
     )}
     {children.map((child) => {
       const format = plan.get(child.id)!;

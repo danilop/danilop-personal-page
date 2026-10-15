@@ -96,6 +96,38 @@ through a Markdown extension. It is not a promise of compatibility with every
 Markdown viewer. Plain prose, headings, links, lists, and fences remain ordinary
 Markdown. Unsupported directives must produce a clear export error.
 
+### Quiet paragraph callouts
+
+The portable format also supports this explicit Pandoc/Quarto fenced-div subset:
+
+```markdown
+::: {.callout-note appearance="simple" icon="false"}
+A paragraph that deserves quiet emphasis, with ordinary **Markdown** and links.
+:::
+```
+
+Place fences at the start of a line with blank lines outside the block. The first
+supported profile is an untitled note with no icon, normal text and a subtle
+background/left rule. `appearance="simple"` and `icon="false"` may be omitted;
+other types, attributes and nested callouts are rejected. This does not claim
+general Quarto or Pandoc syntax support. Literal examples inside code fences
+remain code. Keep the wrapper in the canonical book source and imported copy.
+
+Web and book HTML retain the block; the Leanpub exporter translates it to native
+Markua `{aside}` / `{/aside}`. Original Pandoc book builds need matching CSS and
+a LaTeX filter/style for PDF. Narration reads the contents once, without a label
+or extra pause; wrapping unchanged prose preserves the speech hash. The
+implementation is included in this release; a remote Leanpub preview remains
+unverified.
+
+Use the [book emphasis conventions](book-emphasis.md) to choose paragraphs and
+judge spacing. In books and standalone articles, use `*italics*` for a term
+where it is first introduced or defined; leave subsequent mentions, acronyms and
+product/model names in ordinary text. Avoid emphasising every technical word.
+`**bold**` is available for a short critical warning, setup requirement or interface label,
+with no quota.
+Do not bold entire paragraphs or routinely add bold within a callout.
+
 Publishing a standalone piece requires a slug. The local editor's first published
 save (or `npm run article:publish -- <piece-id>`) assigns `publishedAt` automatically.
 This field is publication metadata, never a drafting date. Dates accept

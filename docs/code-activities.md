@@ -19,6 +19,13 @@ bars. There is no rewind control. Icons are hidden from assistive technology;
 native buttons retain their label as the accessible name, keyboard activation,
 focus outline, disabled state and 44-pixel minimum targets.
 
+A compact **About running Python** information disclosure beside the controls
+expands in place without a modal or moving keyboard focus. It explains local
+execution and links to the official Python and Pyodide project home pages, with
+WebAssembly linked separately as the underlying technology. A brief credit
+thanks the Python and Pyodide contributors. Opening it does not load the runtime
+or execute code. This addition is included in this release.
+
 **Run** shows the complete result. **Step** first records the actual editor source,
 then follows its execution one line event at a time. The highlighted line runs
 next; output appears after the corresponding print statement executes. Stepping

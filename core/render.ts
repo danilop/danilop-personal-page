@@ -249,6 +249,10 @@ export async function renderDocument(
         clobberPrefix: "",
         attributes: {
           ...defaultSchema.attributes,
+          div: [
+            ...(defaultSchema.attributes?.div ?? []),
+            ["className", "text-callout"],
+          ],
           ...Object.fromEntries(
             ["h2", "h3", "h4", "h5", "h6"].map((tag) => [
               tag,
@@ -287,7 +291,13 @@ export async function renderDocument(
     node: AssemblyNode,
     put: (v: Nodes, value: string) => void,
   ) {
-    if (v.type === "leafDirective" && v.name === "block") {
+    if (
+      v.type === "containerDirective" &&
+      v.name === "callout" &&
+      v.data?.hName === "div"
+    ) {
+      return;
+    } else if (v.type === "leafDirective" && v.name === "block") {
       await renderRichBlock(v);
     } else if (v.type === "textDirective") {
       await renderTextDirective(v);
@@ -448,7 +458,13 @@ export async function renderProse(body: string) {
   return String(
     await parser()
       .use(remarkRehype)
-      .use(rehypeSanitize)
+      .use(rehypeSanitize, {
+        ...defaultSchema,
+        attributes: {
+          ...defaultSchema.attributes,
+          div: [["className", "text-callout"]],
+        },
+      })
       .use(rehypeStringify)
       .process(body),
   );

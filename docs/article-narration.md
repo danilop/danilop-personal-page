@@ -8,6 +8,13 @@ hosted audio checks. Authoring and synthesis continue to run only on the Mac.
 
 ## Product behaviour
 
+Quiet paragraph callouts and inline emphasis remain in the normal reading order.
+Narration speaks their text once without announcing formatting or promising a
+change of vocal stress. Wrapping an unchanged paragraph preserves speech segments
+and their hash. Existing code explanations are separately bound to the full source
+context, so a formatting edit can still require their review approval to be renewed;
+the reviewed, identical speech can then reuse cached audio chunks.
+
 **Article narration** is a spoken rendition, preserving the article's claims,
 qualifications and sequence. **Listen to this article** appears below the article
 metadata. It is optional, never autoplays on page load, and is labelled
@@ -38,6 +45,15 @@ decorative SVGs; the accessible button name includes the visible action and the
 recording title. Buttons support native keyboard activation, visible focus and a
 44-pixel minimum target. State follows the audio element, including playback
 started elsewhere, errors, completion and one-player-at-a-time changes.
+
+Public listening areas share `site/components/audio-surface.css`: restrained
+dividers, one rem of internal vertical padding and two rem after the area before
+reading content. `BookAudioLink.astro` uses the shared icon-and-label styling for
+**Open audiobook from here**, with a headphones icon and navigation arrow. It
+opens the book-page player at the current passage without autoplay; play/pause
+symbols remain reserved for playback on the current page. A section with both
+its own narration and a book link groups them in one listening area. These
+layout refinements are included in this release.
 
 `site/components/AudioPlaybackButton.astro` supplies public markup, with shared
 state/activation behaviour and audio styling in `runtime/audio-playback.js` and

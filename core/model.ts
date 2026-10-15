@@ -10,6 +10,7 @@ import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
+import { remarkCallouts } from "./callouts";
 import type { Root } from "mdast";
 import { validateCodeActivities, type CodeActivity } from "./code-activities";
 
@@ -327,7 +328,8 @@ export const parser = () =>
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkDirective)
-    .use(remarkMath);
+    .use(remarkMath)
+    .use(remarkCallouts);
 export async function readYaml(file: string) {
   const doc = YAML.parseDocument(await fs.readFile(file, "utf8"));
   if (doc.errors.length) throw doc.errors[0];

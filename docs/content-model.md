@@ -240,6 +240,11 @@ not be copied wholesale into a public directory.
 Common fields: ID, kind, source, optional caption/description, renderer
 preferences, and target behavior. Sources are distinct from generated outputs.
 
+Paragraph emphasis is an in-flow text container, distinct from referenced rich
+blocks. It retains ordinary prose semantics, reading order, links and citations;
+it adds no title, icon or spoken label. The first supported presentation is a
+quiet note. See the [source notation](authoring-format.md#quiet-paragraph-callouts).
+
 Kinds: `code`, `image`, `table`, `chart`, `diagram`, `math`, `callout`, `exercise`,
 `audio`, `video`, `document`, `presentation`, `gallery`, `simulation`, and `model-experiment`.
 

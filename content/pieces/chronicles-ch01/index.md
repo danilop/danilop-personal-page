@@ -34,7 +34,9 @@ print("Number of notches:", len(notches))
 
 The stored marks are the program's *state*: information retained while it runs. The loop changes that state according to a rule. There is no need to understand the rest of Python to follow this example; each repetition has the same effect, and counting the resulting characters gives ten. Changing the number of repetitions to seven produces seven marks. The computer can repeat the procedure, but the meaning of those marks still comes from the person who chose the example.
 
+::: {.callout-note appearance="simple" icon="false"}
 A tally also makes the cost of a representation visible. A count of ten takes ten marks; a count of ten thousand takes ten thousand. Grouping the marks can make them easier to inspect, while replacing a group with a distinct sign can reduce the space needed. Either change introduces a convention that the reader must learn. The convenience of a shorter record depends on an agreement about how to interpret it.
+:::
 
 ## The Ishango bone
 

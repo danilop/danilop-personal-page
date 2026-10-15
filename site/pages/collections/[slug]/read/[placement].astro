@@ -73,14 +73,15 @@ const original = site.articles.find((p) => p.id === n.pieceId);
         position="top"
       />
     </header>
-    {c.audiobook && (
-      <p>
-        <a href={`${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`}>
-          Listen from here in the audiobook
-        </a>
-      </p>
-    )}
-    <NarrationPlayer narration={n.narration} title={n.title} />
+    <NarrationPlayer
+      narration={n.narration}
+      title={n.title}
+      audiobookHref={
+        c.audiobook
+          ? `${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`
+          : undefined
+      }
+    />
     <div
       id={n.id}
       class="prose"

@@ -476,6 +476,15 @@ determine asset URLs; review metadata and blocked-copy reports remain private.
 
 ## 8. Book exporter
 
+Canonical book prose retains Markdown with an explicit supported Pandoc/Quarto
+extension profile; it is not raw Markua. Quiet callout fences are parsed by the
+shared remark parser adapter (`core/callouts.ts`), retaining source positions for
+book edits. The website renders a safe classed container, while the book exporter
+converts the wrapper to native Markua asides. This preserves Leanpub compatibility
+at the export boundary without requiring a Quarto/MyST migration. Styling a
+paragraph does not change the narration transcript. See the
+[authoring contract](authoring-format.md#quiet-paragraph-callouts).
+
 Build a Markua adapter over the assembled document. It emits an ordered manuscript,
 resources, cross-references, and any Leanpub-specific manifest files required by
 the then-current integration. It never uses generated website HTML as the source.

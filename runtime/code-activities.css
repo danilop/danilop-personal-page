@@ -49,6 +49,60 @@
   gap: 0.5rem;
 }
 
+.activity-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.activity-about {
+  display: contents;
+}
+
+.activity-about summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 44px;
+  min-height: 44px;
+  border-radius: 4px;
+  color: var(--accent, #164b88);
+  cursor: pointer;
+  list-style: none;
+}
+
+.activity-about summary::-webkit-details-marker {
+  display: none;
+}
+
+.activity-about summary:hover,
+.activity-about[open] summary {
+  background: rgb(70 130 200 / 10%);
+}
+
+.activity-about svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.activity-about-content {
+  grid-column: 1 / -1;
+  padding: 0.75rem 1rem;
+  border-left: 2px solid var(--accent, #164b88);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.code-activity .activity-about-content p {
+  margin: 0;
+}
+
+.code-activity .activity-about-content p + p {
+  margin-top: 0.5rem;
+}
+
 .code-activity button,
 .code-activity input {
   min-height: 44px;
@@ -64,6 +118,10 @@
 
 .code-activity button {
   cursor: pointer;
+}
+
+.activity-controls button {
+  padding-inline: 0.5rem;
 }
 
 .code-activity button:disabled {

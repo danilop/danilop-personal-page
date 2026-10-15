@@ -1,0 +1,17 @@
+.prose .text-callout {
+  margin-block: 1.5em;
+  padding: 1em 1.2em;
+  border-left: 2px solid var(--blue, #27546b);
+  background: rgb(22 75 136 / 4%);
+  font: inherit;
+}
+
+.prose .text-callout > :last-child {
+  margin-bottom: 0;
+}
+
+@media (width <= 520px) {
+  .prose .text-callout {
+    padding: 0.85em;
+  }
+}

@@ -1,6 +1,7 @@
 @import url("./control-icons.css");
 
-.audio-playback-button {
+.audio-playback-button,
+.audio-action {
   padding: 0.35rem 0.15rem;
   border: 0;
   border-radius: 4px;
@@ -11,7 +12,17 @@
   cursor: pointer;
 }
 
-.audio-playback-button:focus-visible {
+.audio-action {
+  text-decoration: none;
+}
+
+.audio-action:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.audio-playback-button:focus-visible,
+.audio-action:focus-visible {
   outline: 2px solid currentcolor;
   outline-offset: 3px;
 }

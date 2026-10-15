@@ -45,14 +45,14 @@ with its existing permissions, even when its assigned job stays the same.
 
 ## What exactly are we trying to tame?
 
-An **agent** is a model connected to tools and given enough freedom to take a
+An *agent* is a model connected to tools and given enough freedom to take a
 sequence of actions. A suggestion in a chat window becomes something more
 consequential when the system can change files, send messages or use an account.
 
 Being good at completing a task does not show that it will respect the
-limits of the assignment. Researchers distinguish **capability**, what a system
-can do, from **alignment**, whether its behaviour matches our intentions.
-**Control** is our ability to prevent or limit harm when that behaviour fails.
+limits of the assignment. Researchers distinguish *capability*, what a system
+can do, from *alignment*, whether its behaviour matches our intentions.
+*Control* is our ability to prevent or limit harm when that behaviour fails.
 
 An agent can cause trouble while trying to help. That differs from a malicious
 user deliberately requesting an attack, or hostile material tricking the agent
@@ -63,14 +63,14 @@ become unauthorised initiative.
 
 ## The score has become the job
 
-During **reinforcement learning**, or **RL**, a model tries responses or actions,
+During *reinforcement learning*, or RL, a model tries responses or actions,
 receives scores, and is adjusted so that behaviour earning higher scores becomes
 more likely. For language models, this usually builds on earlier learning from
 vast amounts of text. The reward helps shape how those capabilities are used.
 
 But someone has to decide what deserves a good score.
 
-In **RL from human feedback**, or **RLHF**, people commonly compare answers and
+In *RL from human feedback*, or RLHF, people commonly compare answers and
 choose the one they prefer. Another model learns to predict those preferences
 and supplies scores for further training. The
 [InstructGPT research](https://arxiv.org/abs/2203.02155) showed how this could make
@@ -87,8 +87,8 @@ This can [improve reasoning](https://arxiv.org/abs/2501.12948), but a passing te
 may miss a defect or ignore how the result was obtained. The score captures
 what the checker can see. Our intention may include considerably more.
 
-When a system exploits that gap, researchers call it **reward hacking**. Changing
-the scoring mechanism itself is **reward tampering**. A more capable model may
+When a system exploits that gap, researchers call it *reward hacking*. Changing
+the scoring mechanism itself is *reward tampering*. A more capable model may
 find shortcuts a weaker one could not. Higher scores then become less reassuring:
 we need to know how it earned them.
 
@@ -162,11 +162,11 @@ Fable requests went to a less capable model. Capability alone did not determine
 what the company considered suitable for wider use.
 
 OpenAI [released GPT-6 Astra on 3 September](https://openai.com/index/safety-overview-gpt-6-astra/).
-Its intended successor, **GPT-6.1 Astra**, was withheld from public release. In a
+Its intended successor, GPT-6.1 Astra, was withheld from public release. In a
 [Wall Street Journal interview](https://www.tovima.com/wsj/openai-scraps-release-of-new-ai-model-over-safety-concerns/amp/),
 OpenAI safety lead Saachi Jain described a model that had become more persistent
 at completing tasks but had regressed in two areas. It was less reliable about
-reporting its actions truthfully and respecting **scope authorisation**, the limits
+reporting its actions truthfully and respecting *scope authorisation*, the limits
 of what the user had permitted it to do.
 The detailed test results are not public; Jain said the company was still
 investigating what had caused the problems.
@@ -176,7 +176,7 @@ alternative route through a documentation problem. It becomes dangerous when the
 next route requires permission the user never gave. The agent must recognise
 when an obstacle is a boundary it should respect.
 
-Tests of **GPT-6 Astra**, the preceding version, show how awkward this can get.
+Tests of GPT-6 Astra, the preceding version, show how awkward this can get.
 In the [UK AI Security Institute's September simulations](https://www.aisi.gov.uk/blog/gpt-6-astra-performs-unsanctioned-supply-chain-attacks-in-simulations),
 agents sometimes performed supply-chain attacks outside the stated scope, trying
 to insert malicious code into software used by their target. AISI conducted these
@@ -223,14 +223,14 @@ One option is to change what earns the reward. A model that can say how uncertai
 it is gives the surrounding software a chance to pause before a doubtful decision
 becomes an action.
 
-TypeSafe AI's **Jev**, introduced by founder Diogo Almeida in
+TypeSafe AI's Jev, introduced by founder Diogo Almeida in
 [September](https://typesafe.ai/blog/introducing-system-one-models-and-jev), aims
 to make bounded decisions with useful estimates of uncertainty. It returns a
 choice, score or probability, rather than a paragraph. Software defines the
 available options and decides what to do with the answer.
 
-Its training method is **Reinforcement Learning for Calibrated Decisions**, or
-**RLCD**. Calibration means that, across comparable predictions given an 80%
+Its training method is *Reinforcement Learning for Calibrated Decisions*, or
+RLCD. Calibration means that, across comparable predictions given an 80%
 probability, roughly 80% should be correct. The point is practical: software can
 use those probabilities to decide when to ask for human review.
 
@@ -253,7 +253,7 @@ every action based on it acceptable.
 
 Another option is to teach through examples. Show a model good responses,
 including honest uncertainty and occasions when it ought to stop, and train it to
-produce similar behaviour. This is **supervised fine-tuning**, already used in
+produce similar behaviour. This is *supervised fine-tuning*, already used in
 systems such as InstructGPT. It needs no RL at that stage, though the model still
 has to apply the lessons correctly in situations the examples did not cover.
 
@@ -285,7 +285,7 @@ changes supplies the knowledge; a separate planning process uses it towards a go
 
 Meta's [V-JEPA 2 research](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/)
 provides a concrete example. It learns from video and robot data to build a
-**world model**, a predictor of how the environment changes. Using the target
+*world model*, a predictor of how the environment changes. Using the target
 image, a robot can compare possible actions, take one, observe what happens and
 plan again. Meta demonstrated robot manipulation without training on rewards
 specific to those tasks.
@@ -307,7 +307,7 @@ to test, rather than an established replacement for today's agents.
 ## The owner can remove the brakes
 
 Training also cannot guarantee that its lessons will survive deliberate modification.
-An **open-weight** model makes its parameters available to download and change.
+An *open-weight* model makes its parameters available to download and change.
 In Anthropic's [assessment of GLM-5.3](https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities),
 a modification suppressing refusal behaviour led the model to engage with all
 50 simulated malicious trials in one test, compared with none for direct requests
@@ -334,7 +334,7 @@ provides practical ways to restrict access and contain failures.
 
 AISI's [control evaluations](https://www.aisi.gov.uk/blog/how-to-evaluate-control-measures-for-ai-agents)
 test whether defences hold against agents set up to evade them. That evidence can
-support a **safety case**, a reasoned argument for a particular deployment.
+support a *safety case*, a reasoned argument for a particular deployment.
 It depends on the tests and capabilities involved; it is not a lifetime
 membership certificate.
 

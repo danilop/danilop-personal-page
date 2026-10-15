@@ -55,8 +55,8 @@ const { article } = Astro.props;
           position="top"
         />
       </div>
-      <NarrationPlayer narration={article.narration} title={article.title} />
     </header>
+    <NarrationPlayer narration={article.narration} title={article.title} />
     <div class="prose" set:html={article.html} />
     <TagList tags={article.tags} />
     <ArticleSharing

@@ -1,18 +1,21 @@
 ---
 import type { PublicNarration } from "../../core/narration-store";
 import AudioPlaybackButton from "./AudioPlaybackButton.astro";
+import BookAudioLink from "./BookAudioLink.astro";
+import "./audio-surface.css";
 interface Props {
   narration?: PublicNarration;
   title: string;
+  audiobookHref?: string;
 }
-const { narration: n, title } = Astro.props;
+const { narration: n, title, audiobookHref } = Astro.props;
 const clock = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
 ---
 
 {n && (
   <section
-    class="narration"
+    class="narration audio-surface"
     aria-label="Article narration"
     data-narration
     data-hash={n.sha256}
@@ -92,19 +95,14 @@ const clock = (seconds: number) =>
         )}
       </details>
     </details>
+    {audiobookHref && <BookAudioLink href={audiobookHref} framed={false} />}
   </section>
 )}
+{!n && audiobookHref && <BookAudioLink href={audiobookHref} />}
 <script>
   import "../../runtime/narration-player";
 </script>
 <style>
-  .narration {
-    margin: 1.25rem 0 1.5rem;
-    padding: 1rem 0 0.7rem;
-    border-block: 1px solid color-mix(in srgb, currentcolor 18%, transparent);
-    font: 0.85rem/1.5 var(--font-sans, Inter, sans-serif);
-  }
-
   .narration-heading {
     display: flex;
     align-items: center;

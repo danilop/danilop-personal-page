@@ -1,5 +1,91 @@
 # Release verification
 
+## Article typography and combined release — 15 October 2026
+
+Included in this release: the reviewed listening layout, Python information
+disclosure, portable paragraph callouts and standalone article typography.
+“Clever Enough to Find the Loophole” replaces 20 bold spans with 14 italic term
+introductions and six ordinary acronym/product mentions. Its wording, links and
+publication metadata are unchanged. Browser inspection confirmed the 14 emphasis
+elements, no remaining bold spans in the article and no recorded console errors.
+Both public narration renditions passed validation without audio regeneration.
+Book drafts retain their publication status. Fresh release validation and hosted
+revision verification are required before treating this release as deployed.
+
+## Quiet callouts and whole-book emphasis — 15 October 2026
+
+Included in this release. The portable Pandoc/Quarto note
+profile renders as quiet in-flow paragraphs in article/book HTML and exports as
+native Markua asides. Unsupported profiles and nesting fail explicitly; literal
+code fences and source offsets are preserved. Narration flattens callout contents
+without an added label or pause. See [the editorial conventions](book-emphasis.md).
+
+Two HomePage regression tests cover LF/CRLF offsets, code literals, invalid
+attributes, nested/unclosed fences, links/strong text, article/book/generic-prose
+HTML, Markua and unchanged speech hashes. The final isolated snapshot passed
+25 of 26 gate tasks; the remaining task had one browser-navigation timeout in an
+unchanged article-sharing test. That test file passed separately on retry (3/3).
+Across the run and retry, 343 JavaScript tests passed and the opt-in AWS test was
+skipped. Coverage thresholds passed; types, lint, architecture, Python checks and
+narration readiness passed. The isolated production build passed: 31 pages,
+194 output files, 921 local links and private-content sentinels.
+
+The canonical book now has 33 callouts: the introduction and 32 existing chapter
+paragraphs. Removing the added wrappers restores every chapter byte-for-byte;
+prose word counts are unchanged. All 33 occur in the HTML and EPUB. Four canonical
+regression tests verify HTML/LaTeX conversion, strong text, unsupported/nested
+profiles, literal code and the five updated prose-analysis paths. British English
+review found zero targets. Export validation passed all 133 printed Python blocks,
+21 chapters in both formats, 28 EPUB spine documents, zero broken internal links,
+zero duplicate IDs and zero missing resources.
+
+Browser checks used Codex's in-app browser at localhost:4322 for the article and
+chapter, and localhost:4370 for the canonical HTML. Desktop 1280×720 and mobile
+390×844 screenshots were inspected: ordinary typography, comfortable padding,
+clear surrounding spacing, no horizontal overflow or framework overlay, and no
+recorded warning/error console messages on the tested website pages. The EPUB's
+extracted introduction and bundled CSS were inspected as an HTML browser proof
+because direct XHTML navigation was blocked by the browser; this is not a native
+EPUB-reader or pagination test. No new interactive control was added by callouts. The chapter still showed its
+book-player link. Its actual Python example passed Step (next line 1), Run
+(finished with ten notches) and Reset (original code restored, output cleared).
+
+A representative standalone LaTeX document using the exact quiet-note environment
+compiled successfully with Codex's built-in compiler. The Mac lacks XeLaTeX, so
+the complete book PDF build and visual pagination check remain unverified. No
+remote Leanpub preview was requested or submitted; actual Leanpub styling and
+physical reader/accessibility testing remain to be checked before distribution.
+
+The actual Chapter 1 speech segments and hash were compared before/after wrapping.
+They are identical. Its two unchanged code explanations were re-reviewed against
+their source and context, renewing their context-bound hashes. Private audiobook
+preparation reused all 61 chunks (1,008.2 seconds), without new synthesis.
+
+## Listening layout and Python information — 15 October 2026
+
+Included in this release. An isolated snapshot of the interface changes
+passed all 26 repository checks: 341 JavaScript tests passed, one opt-in AWS test
+was skipped. The production build verified 31 pages, 194 output files and 921
+local links. The initial run hit navigation/cleanup timing failures; the final
+run passed. A subsequent mobile button-padding adjustment passed targeted style
+and formatting checks.
+
+CUA checks in the Codex in-app browser covered introduction, chapter, standalone
+article and book-page listening surfaces, including a 390px mobile viewport.
+Listening areas leave 32px before reading content. The chapter link opens the
+book player at Introduction without autoplay; article and book play/pause still
+work. The Python information disclosure opens by mouse and keyboard without
+starting a runtime, provides official project links, and fits beside
+Run/Step/Reset on mobile without horizontal overflow. Actual Python Run and Step
+worked; Reset restored the original source and cleared output. Safari, Firefox
+and screen-reader behaviour were not tested in this pass.
+
+The introduction's distinction between illustrative Python inputs and historical
+records was clarified in both the canonical manuscript and the website copy.
+The original book's British English check found no review targets. Its private
+preview audiobook was regenerated, reusing 61 unchanged chunks. This was a local
+preview refresh, not publication or deployment.
+
 ## Shared code-control icons — 14 October 2026
 
 Included in this release. Run, Step and Reset retain their visible labels
@@ -1858,7 +1944,6 @@ placement audio. Type checks and targeted ESLint passed again. Browser checks on
 “Clever Enough to Find the Loophole” confirm 20 min read from 1186.19 seconds at 1×,
 17:58 listen at 1.1×, and 9:53 listen at 2× without changing the reading label.
 Desktop and mobile checks found no overflow or page errors.
-
 
 The first hosted attempt for the duration labels exceeded the test runner's
 ten-minute limit in the narration authoring browser fixture. Local runs also

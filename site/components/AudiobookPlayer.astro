@@ -1,6 +1,7 @@
 ---
 import type { PublicAudiobook } from "../../core/audiobook-store";
 import AudioPlaybackButton from "./AudioPlaybackButton.astro";
+import "./audio-surface.css";
 import { audioClock } from "../../runtime/audiobook-progress";
 interface Props {
   audiobook?: PublicAudiobook;
@@ -23,7 +24,7 @@ const map = b && {
 
 {b && (
   <section
-    class="audiobook"
+    class="audiobook audio-surface"
     id="audiobook"
     data-audiobook
     aria-label="Book audiobook"
@@ -160,13 +161,6 @@ const map = b && {
   import "../../runtime/audiobook-player";
 </script>
 <style>
-  .audiobook {
-    margin: 1.5rem 0 2rem;
-    padding: 1.2rem 0;
-    border-block: 1px solid var(--hairline, #c9c9c3);
-    font: 0.85rem/1.5 var(--font-sans, Inter, sans-serif);
-  }
-
   .book-audio-heading,
   .audio-buttons {
     display: flex;

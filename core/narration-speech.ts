@@ -293,6 +293,12 @@ export async function speechDocument(
   }
   add("title", title);
   async function walk(nodes: SpeechNode[]) {
+    // Visual emphasis does not add speech, pauses, or change paragraph neighbours.
+    nodes = nodes.flatMap((n) =>
+      n.type === "containerDirective" && n.name === "callout"
+        ? (n.children ?? [])
+        : [n],
+    );
     for (const [index, n] of nodes.entries()) {
       if (n.type === "heading" || n.type === "paragraph") {
         const neighbours = [nodes[index - 1], nodes[index + 1]].map((x) =>
