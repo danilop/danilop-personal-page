@@ -1,5 +1,14 @@
 # Release verification
 
+## Listening label simplification — 15 October 2026
+
+Included in this release. Removed the “AI narration” badge and its
+unused styling from both article and audiobook players. Playback controls, audio
+files, spoken opening credits and internal voice choices are unchanged.
+`npm run check` passed with no diagnostics. Browser inspection confirmed both
+players omit the badge and retain their controls; no console errors or warnings
+were recorded. Formatting and diff-whitespace checks passed.
+
 ## Article typography and combined release — 15 October 2026
 
 Included in this release: the reviewed listening layout, Python information

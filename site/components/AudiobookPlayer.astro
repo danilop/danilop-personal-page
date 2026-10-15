@@ -37,7 +37,6 @@ const map = b && {
     <div class="book-audio-heading">
       <AudioPlaybackButton kind="book" title={b.title} />
       <span data-book-native>Listen to this book</span>
-      <span class="audio-credit">AI narration</span>
     </div>
     <p class="audio-edition">
       {b.preview
@@ -169,12 +168,6 @@ const map = b && {
     flex-wrap: wrap;
   }
 
-  .audio-credit {
-    margin-left: auto;
-    font-size: 0.75rem;
-    color: var(--muted, #586371);
-  }
-
   button:not(.audio-playback-button),
   select {
     font: inherit;
@@ -285,11 +278,6 @@ const map = b && {
 
     .audio-buttons button {
       padding: 0.35rem 0.5rem;
-    }
-
-    .audio-credit {
-      width: 100%;
-      margin: 0;
     }
   }
 </style>

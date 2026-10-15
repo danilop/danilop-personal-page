@@ -17,8 +17,9 @@ the reviewed, identical speech can then reuse cached audio chunks.
 
 **Article narration** is a spoken rendition, preserving the article's claims,
 qualifications and sequence. **Listen to this article** appears below the article
-metadata. It is optional, never autoplays on page load, and is labelled
-**AI narration**. Voice names are internal to the authoring preview and are not
+metadata. It is optional and never autoplays on page load. The player shows the
+listening action and duration without an “AI narration” badge. Voice names are
+internal to the authoring preview and are not
 displayed in the public player. The compact player offers pause, seeking, ±15 seconds,
 playback speed, download and the exact spoken transcript. Native audio controls
 remain available without JavaScript. With JavaScript, listening positions are saved

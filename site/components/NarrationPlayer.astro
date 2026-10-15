@@ -28,7 +28,6 @@ const clock = (seconds: number) =>
       <span class="narration-duration" data-listening-duration>
         {clock(n.duration)} listen at 1×
       </span>
-      <span class="narration-credit">AI narration</span>
     </div>
     <!-- Audio-only narration has the exact spoken transcript immediately below. -->
     {/* eslint-disable-next-line astro/jsx-a11y/media-has-caption -- Exact adjacent transcript is the text alternative for this audio-only content. */}
@@ -122,11 +121,6 @@ const clock = (seconds: number) =>
     cursor: pointer;
   }
 
-  .narration-credit {
-    margin-left: auto;
-    font-size: 0.75rem;
-  }
-
   audio {
     display: block;
     width: 100%;
@@ -207,11 +201,6 @@ const clock = (seconds: number) =>
   }
 
   @media (width <= 520px) {
-    .narration-credit {
-      width: 100%;
-      margin-left: 0;
-    }
-
     .narration-controls {
       flex-wrap: wrap;
     }

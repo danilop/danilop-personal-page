@@ -29,8 +29,9 @@ rewind/forward and speed. Reuse the article player's 1.1× default and available
 selected speed, while download metadata reports the recording's duration at 1×.
 Expand **Chapters** for the hierarchical audio contents and **More options** for
 secondary controls. The opening credits are a navigable entry, so skipping them
-uses chapter navigation rather than another prominent button. Label the recording
-**AI narration**; voice names remain internal. Use keyboard-operable controls,
+uses chapter navigation rather than another prominent button. The player has no
+“AI narration” badge; voice names remain internal. This UI choice does not change
+the existing spoken opening credits. Use keyboard-operable controls,
 clear focus and labels, restrained status announcements, and text-reading links.
 
 The shared play/pause component now shows SVG symbols beside the action label

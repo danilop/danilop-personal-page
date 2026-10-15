@@ -585,8 +585,9 @@ from the full 1× audio duration rounded up to whole minutes (minimum one), with
 word count at 220 words per minute as the fallback when audio is unavailable.
 The reading estimate stays fixed when playback speed changes.
 Playback is explicit, with inline seek/speed controls, ±15 seconds, an exact
-transcript and download. The public label is **AI narration**, without a voice
-name. Voice names appear only in the authoring preview; George is the default.
+transcript and download. Public players show the listening action and duration
+without an “AI narration” badge. Voice names appear only in the authoring preview;
+George is the default.
 Playback starts at 1.1×; readers can choose 0.8×, 1×, 1.1×, 1.2×, 1.5× or 2×.
 The listening label shows the full audio duration divided by the selected speed
 and updates immediately; homepage estimates use the default 1.1×. Seek-bar
