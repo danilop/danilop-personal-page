@@ -657,10 +657,14 @@ and portrait/biography assets; individual token values have defaults. Supported
 fonts are Newsreader/Georgia and Inter/system-ui. The HTTPS origin and deployment
 base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.yaml` contains
 optional lead, recentCount, elsewhereCount, and selected collection IDs.
+`recentCount` is currently six: it limits recent entries after grouping each book
+into one slot, with the lead article excluded. Standalone pieces each take one
+slot. **All writing** links to the complete unpaginated article index.
 `lead` accepts a piece or collection ID. An unavailable draft feature falls back to
-the newest visible piece; unknown IDs fail validation. Saved publication timestamps
+the newest published piece in both release and preview; unknown IDs fail validation. Saved publication timestamps
 determine latest order, including collection-only articles. Draft preview dates
-are provisional only. See [publication timestamps](publication-time.md).
+are provisional only and are not shown as publication dates in the separate
+homepage/Writing draft groups. See [publication timestamps](publication-time.md).
 
 ## Browser icons
 

@@ -143,13 +143,15 @@ collections/books in a structured editorial layout. Keep the personal masthead
 compact enough that writing is visible immediately. A large introductory portrait
 must not push the publication's contents out of the first view.
 
-Proposed composition, with counts and placement still open:
+Implemented composition (homepage discovery refinements included in this release):
 
 1. Masthead: Danilo Poccia, Notes Along the Way, compact navigation and optional
    small portrait/one-line introduction.
 2. Lead story: one explicitly pinned public article, otherwise the latest eligible
    article. Show a title, useful summary, publication date, and optional visual.
-3. More recent writing: roughly three additional articles, excluding the lead.
+3. Recent writing: up to six entries below the lead, with a prominent **All writing**
+   link. Group each book into one slot showing its title and latest instalment;
+   label standalone entries **Article**. Exclude the lead article.
 4. Collections and books: two or three curated entries, each explaining the topic,
    identifying a collection/growing book/released edition as appropriate, and
    offering a clear entry into its contents. Exact status labels remain open.
@@ -166,13 +168,19 @@ update may be explicitly highlighted without pretending it is a new publication.
 The layout must work at launch with one article and one collection, then expand
 with available content. Keep collections easy to find on mobile and avoid a
 carousel as the only way to discover them. No image is required for every post;
-typography can carry the hierarchy. Exact visual placement and section names will
-be compared in mockups before selection.
+typography can carry the hierarchy. Recent cards use two columns on desktop and
+one on narrow screens.
 
 The automatic recent list includes eligible standalone and collection-only pieces,
 counted once per identity. Collection-only entries link directly to their reading
 page and carry book/chapter context. A piece or collection can be featured; a
-featured book links to its first readable piece while its articles remain recent.
+featured book links to its first readable piece while its latest instalment can
+still appear in one recent book slot. Preview drafts never compete with published
+entries for the lead or recent slots. They appear in a separate **Drafts in preview**
+section, grouped by book and without provisional publication dates. The Writing
+index retains all articles with book labels, followed by the same draft groups.
+No automatic infinite scrolling or pagination is introduced; the current index
+is small enough to display in full.
 In the implemented Ink & Paper theme, article artwork fills the available column
 at its natural aspect ratio. Dedicated covers use centred containers up to 320
 pixels wide on the homepage and collection overview, with height determined by

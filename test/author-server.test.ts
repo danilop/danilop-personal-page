@@ -256,13 +256,20 @@ test(
     t.after(() => browser.close());
     const page = await browser.newPage();
     await page.goto(origin);
-    const draftImage = await page
+    const previewLeadImage = await page
       .locator(".lead .article-art img")
       .getAttribute("src");
-    assert.equal(
+    assert.notEqual(
       await page.locator(".lead .article-art img").getAttribute("alt"),
       "Draft fixture artwork",
     );
+    assert.equal(
+      await page
+        .locator('.preview-drafts a[href="/writing/server-fixture/"]')
+        .count(),
+      1,
+    );
+    assert.equal(await page.locator(".preview-drafts time").count(), 0);
     assert.equal(await page.locator("#preview-content").inputValue(), "drafts");
     assert(
       (await page.locator('a[href="/writing/server-fixture/"]').count()) > 0,
@@ -292,7 +299,7 @@ test(
       (await leadImage.count()) ? await leadImage.getAttribute("src") : null,
       publishedImage,
     );
-    assert.notEqual(publishedImage, draftImage);
+    assert.equal(publishedImage, previewLeadImage);
     assert.equal(
       await page.locator('a[href="/writing/server-fixture/"]').count(),
       0,
@@ -314,7 +321,7 @@ test(
     assert.equal((await api("files")).includeDrafts, true);
     assert.equal(
       await page.locator(".lead .article-art img").getAttribute("src"),
-      draftImage,
+      previewLeadImage,
     );
     assert(
       (await page.locator('a[href="/writing/server-fixture/"]').count()) > 0,
@@ -415,19 +422,23 @@ test(
     }
     await page.goto(origin);
     assert.equal(
-      await page.locator(".lead .article-art img").getAttribute("alt"),
-      "A blue book cover",
+      await page.locator(".lead .article-art img").getAttribute("src"),
+      previewLeadImage,
     );
-    const coverSrc = await page
-      .locator(".lead .article-art img")
-      .getAttribute("src");
-    assert.match(coverSrc!, /^\/media\/.+\.webp$/);
-    assert.equal((await fetch(origin + coverSrc)).status, 200);
+    assert.equal(
+      await page
+        .locator('.preview-drafts a[href="/collections/cover-fixture/"]')
+        .count(),
+      1,
+    );
     await page.goto(origin + "/collections/cover-fixture/");
     assert.equal(
-      await page.locator(".article-art img").getAttribute("src"),
-      coverSrc,
+      await page.locator(".article-art img").getAttribute("alt"),
+      "A blue book cover",
     );
+    const coverSrc = await page.locator(".article-art img").getAttribute("src");
+    assert.match(coverSrc!, /^\/media\/.+\.webp$/);
+    assert.equal((await fetch(origin + coverSrc)).status, 200);
     await browser.close();
     const metadata = await api("metadata", {
       file,

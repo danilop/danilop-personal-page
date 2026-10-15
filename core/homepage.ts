@@ -13,6 +13,7 @@ export type HomeEntry = {
   minutes?: number;
   narration?: Pick<import("./narration-store").PublicNarration, "duration">;
   context?: string;
+  books?: { id: string; title: string; url: string; draft: boolean }[];
   kind: "piece" | "collection";
   draft?: boolean;
   image?: { src: string; alt: string; width?: number; height?: number };
@@ -43,6 +44,8 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
       const entry = entries.get(announcement.piece);
       if (
         entry &&
+        (entry.draft ||
+          !site.authoring?.collections.includes(announcement.collection)) &&
         collection?.nodes.some(
           (n) =>
             n.kind === "piece" &&
@@ -64,11 +67,16 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
       if (!p || p.status !== "published") continue;
       const parent = readingContext(c, n.id).parent;
       const context = `${c.title} · ${parent?.kind === "chapter" ? `Chapter ${parent.number ?? parent.title}` : n.title}`;
-      if (entries.has(p.id)) {
-        entries.get(p.id)!.context ??= context;
+      const book = collectionBook(c, site);
+      const existing = entries.get(p.id);
+      if (existing) {
+        addMembership(existing, c, site, context);
         continue;
       }
-      const draft = site.authoring?.pieces.includes(p.id);
+      const draft = Boolean(
+        site.authoring?.pieces.includes(p.id) ||
+        site.authoring?.collections.includes(c.id),
+      );
       entries.set(p.id, {
         id: p.id,
         title: p.title,
@@ -79,6 +87,7 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
         minutes: readingMinutes(p.body, n.narration?.duration),
         narration: n.narration,
         context,
+        books: book ? [book] : [],
         kind: "piece",
         draft,
         image: articleImage(n.html),
@@ -86,16 +95,74 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
     }
   }
 }
-export function homepageSelection(site: CompiledSite) {
+function collectionBook(
+  c: CompiledSite["collections"][number],
+  site: CompiledSite,
+) {
+  return c.book
+    ? {
+        id: c.id,
+        title: c.title,
+        url: c.url,
+        draft: Boolean(site.authoring?.collections.includes(c.id)),
+      }
+    : undefined;
+}
+function addMembership(
+  entry: HomeEntry,
+  c: CompiledSite["collections"][number],
+  site: CompiledSite,
+  context: string,
+) {
+  if (entry.draft || !site.authoring?.collections.includes(c.id))
+    entry.context ??= context;
+  const book = collectionBook(c, site);
+  if (book) (entry.books ??= []).push(book);
+}
+export function writingGroups(site: CompiledSite) {
   const writing: HomeEntry[] =
     site.homeWriting ??
     site.articles.map((a) => ({
       ...a,
       image: articleImage(a.html),
       kind: "piece" as const,
+      draft: site.authoring?.pieces.includes(a.id),
     }));
-  const featured = site.collections.find((c) => c.id === site.home.lead);
-  const first = featured?.nodes.find((n) => n.kind === "piece" && !n.planned);
+  return {
+    published: writing.filter((entry) => !entry.draft),
+    drafts: writing.filter((entry) => entry.draft),
+  };
+}
+export type WritingGroup = {
+  book?: NonNullable<HomeEntry["books"]>[number];
+  entries: HomeEntry[];
+};
+export function groupWriting(entries: HomeEntry[]): WritingGroup[] {
+  const groups = new Map<string, WritingGroup>();
+  for (const entry of entries) {
+    // Published articles must not be grouped under a preview-only book.
+    const book = entry.books?.find(
+      (candidate) => entry.draft || !candidate.draft,
+    );
+    const key = book ? `book:${book.id}` : `piece:${entry.id}`;
+    const group = groups.get(key);
+    if (group) group.entries.push(entry);
+    else groups.set(key, { book, entries: [entry] });
+  }
+  return [...groups.values()];
+}
+export function homepageSelection(site: CompiledSite) {
+  const { published: writing, drafts } = writingGroups(site);
+  const featured = site.collections.find(
+    (c) =>
+      c.id === site.home.lead && !site.authoring?.collections.includes(c.id),
+  );
+  const first = featured?.nodes.find(
+    (n) =>
+      n.kind === "piece" &&
+      !n.planned &&
+      !site.authoring?.pieces.includes(n.pieceId ?? ""),
+  );
   const book: HomeEntry | undefined =
     featured && first
       ? {
@@ -111,11 +178,14 @@ export function homepageSelection(site: CompiledSite) {
       : undefined;
   const pinned = book ?? writing.find((p) => p.id === site.home.lead);
   const lead = pinned ?? writing[0];
+  const recentGroups = groupWriting(
+    writing.filter((p) => p.id !== lead?.id),
+  ).slice(0, site.home.recentCount);
   return {
     lead,
+    drafts,
+    recentGroups,
     featured: Boolean(pinned),
-    recent: writing
-      .filter((p) => p.id !== lead?.id)
-      .slice(0, site.home.recentCount),
+    recent: recentGroups.map((group) => group.entries[0]),
   };
 }

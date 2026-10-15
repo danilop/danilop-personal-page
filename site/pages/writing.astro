@@ -1,7 +1,9 @@
 ---
-import DraftBadge from "../components/DraftBadge.astro";
+import WritingGroups from "../components/WritingGroups.astro";
+import { groupWriting, writingGroups } from "../../core/homepage";
 import Layout from "../components/Layout.astro";
 import { site, dateLabel } from "../data";
+const { published, drafts } = writingGroups(site);
 ---
 
 <Layout title="Writing" description="Articles and notes by Danilo Poccia.">
@@ -10,18 +12,39 @@ import { site, dateLabel } from "../data";
     <p>Articles, experiments, and ideas that can grow over time.</p>
   </header>
   <div class="writing-list">
-    {(site.homeWriting ?? site.articles).map((p) => (
+    {published.map((p) => (
       <article>
+        <p class="eyebrow">
+          {p.books?.filter((book) => !book.draft).length
+            ? p.books
+                .filter((book) => !book.draft)
+                .map((book) => <a href={book.url}>Book · {book.title}</a>)
+            : "Article"}
+        </p>
         <p class="meta">
           {p.publishedAt && (
             <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
           )}
         </p>
         <h2>
-          <a href={p.url}>{p.title}</a> <DraftBadge pieceId={p.id} />
+          <a href={p.url}>{p.title}</a>
         </h2>
         <p>{p.summary}</p>
       </article>
     ))}
   </div>
+  {drafts.length > 0 && (
+    <section class="preview-drafts" aria-labelledby="drafts-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="drafts-heading">Drafts in preview</h2>
+          <p>
+            Unpublished writing, grouped by book. Visible only in this local
+            preview.
+          </p>
+        </div>
+      </div>
+      <WritingGroups groups={groupWriting(drafts)} compact={false} />
+    </section>
+  )}
 </Layout>

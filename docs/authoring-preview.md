@@ -34,6 +34,13 @@ a local authoring preview, not a production deployment. All tabs on the same ser
 share the selection until restart. A failed build retains the last successful view.
 This switch is available in live preview, not read-only snapshots or release mode.
 
+In **Show drafts**, the homepage lead and recent entries still use published
+writing. Drafts appear in their own **Drafts in preview** section on the homepage
+and Writing index, grouped by book. Provisional dates are omitted there so they
+cannot be mistaken for publication dates. Draft books do not take featured or
+public collection slots; their reading links remain available in the draft groups
+and preview banner. A draft-only site shows an empty published-writing message.
+
 Astro's content cache and Vite's cache live under each workspace's ignored
 `.astro/` directory. Temporary previews and concurrent test builds share installed
 dependencies through a symlink, but never share generated content stores. This

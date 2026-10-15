@@ -1,0 +1,53 @@
+---
+import type { WritingGroup } from "../../core/homepage";
+import DraftBadge from "./DraftBadge.astro";
+import { dateLabel } from "../data";
+interface Props {
+  groups: WritingGroup[];
+  compact?: boolean;
+}
+const { groups, compact = true } = Astro.props;
+---
+
+<div class="writing-grid">
+  {groups.map(({ book, entries }) => {
+    const first = entries[0];
+    return (
+      <article>
+        <p class="eyebrow">{book ? "Book" : "Article"}</p>
+        <h3>
+          <a href={book?.url ?? first.url}>{book?.title ?? first.title}</a>
+          <DraftBadge
+            pieceId={book ? undefined : first.id}
+            collectionId={book?.id}
+          />
+        </h3>
+        {book && compact && (
+          <p class="book-update">
+            <span>Latest instalment</span>
+            <a href={first.url}>{first.title}</a>
+          </p>
+        )}
+        {compact || !book ? (
+          <p>{first.summary}</p>
+        ) : (
+          <ul class="draft-pieces">
+            {entries.map((entry) => (
+              <li>
+                <a href={entry.url}>{entry.title}</a>
+                <DraftBadge pieceId={entry.id} />
+              </li>
+            ))}
+          </ul>
+        )}
+        {!first.draft && first.publishedAt && (
+          <p class="meta">
+            <time datetime={first.publishedAt}>
+              {dateLabel(first.publishedAt)}
+            </time>
+          </p>
+        )}
+      </article>
+    );
+  })}
+</div>

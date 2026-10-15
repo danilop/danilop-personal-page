@@ -1,5 +1,22 @@
 # Release verification
 
+## Homepage discovery — 15 October 2026
+
+Included in this release: six recent entries with one slot per book, a clear
+**All writing** link, book/standalone labels and separate preview draft groups.
+Drafts cannot displace the published lead or use recent slots. The Writing index
+keeps all articles and shows book membership; draft dates are not presented as
+publication dates. No infinite scrolling or pagination is added. Fifteen focused
+homepage tests passed, including chapter-batch grouping, shared book membership,
+draft-only previews and draft book isolation. Astro and TypeScript checks passed.
+Browser checks at 1280×720 and 390×844 confirmed the published lead remains
+visible with five drafts present, drafts group into two book cards with no
+publication dates, and All writing opens the complete published list above
+drafts. No horizontal overflow or recorded console warnings/errors were found.
+The local-authoring browser integration test also passed after replacing its
+old draft-feature expectation: toggling preview visibility preserves the
+published lead and artwork, while draft links remain confined to preview groups.
+
 ## Listening label simplification — 15 October 2026
 
 Included in this release. Removed the “AI narration” badge and its

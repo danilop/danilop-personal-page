@@ -1,6 +1,7 @@
 ---
 import DraftBadge from "../../site/components/DraftBadge.astro";
-import { homepageSelection } from "../../core/homepage";
+import WritingGroups from "../../site/components/WritingGroups.astro";
+import { groupWriting, homepageSelection } from "../../core/homepage";
 import { dateLabel } from "../../site/data";
 import type { CompiledSite } from "../../core/site-data";
 import type { SiteConfig } from "../../core/config";
@@ -9,55 +10,69 @@ interface Props {
   config: SiteConfig;
 }
 const { site, config } = Astro.props;
-const { lead, recent, featured } = homepageSelection(site);
+const { lead, recentGroups, drafts, featured } = homepageSelection(site);
+const visibleCollections = site.collections.filter(
+  (c) => !site.authoring?.collections.includes(c.id),
+);
+const draftGroups = groupWriting(drafts);
 const collections = site.home.collections.length
-  ? site.home.collections.map((id) =>
-      site.collections.find((c) => c.id === id)!,
-    )
-  : site.collections.slice(0, 3);
+  ? site.home.collections
+      .map((id) => visibleCollections.find((c) => c.id === id))
+      .filter((c) => c !== undefined)
+  : visibleCollections.slice(0, 3);
 const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
 ---
 
-<div
-  class:list={[
-    "front-page",
-    { linear: config.layout === "linear", "single-story": recent.length === 0 },
-  ]}
->
+<div class:list={["front-page", { linear: config.layout === "linear" }]}>
+  {!lead && <h1>Writing</h1>}
   {lead && (
-    <article class="lead">
-      <p class="eyebrow">{featured ? "Featured" : "Latest"}</p>
-      {lead.context && <p class="eyebrow">{lead.context}</p>}
-      <h1>
-        <a href={lead.url}>{lead.title}</a>
-        <DraftBadge
-          pieceId={lead.kind === "piece" ? lead.id : undefined}
-          collectionId={lead.kind === "collection" ? lead.id : undefined}
-        />
-      </h1>
-      <p class="lead-summary">{lead.summary}</p>
-      <p class="meta">
-        {lead.publishedAt && (
-          <time datetime={lead.publishedAt}>{dateLabel(lead.publishedAt)}</time>
-        )}
-        {lead.minutes && (
-          <span>
-            {lead.publishedAt ? " · " : ""}
-            {lead.minutes} min read
-          </span>
-        )}
-        {lead.narration && (
-          <span>
-            {" "}
-            · {Math.floor(lead.narration.duration / 1.1 / 60)}:
-            {String(Math.floor((lead.narration.duration / 1.1) % 60)).padStart(
-              2,
-              "0",
-            )}{" "}
-            listen at 1.1×
-          </span>
-        )}
-      </p>
+    <article class:list={["lead", { "with-art": Boolean(lead.image) }]}>
+      <div class="lead-copy">
+        <p class="eyebrow">
+          {featured ? "Featured" : "Latest"}
+          {lead.kind === "piece" && !lead.books?.some((book) => !book.draft)
+            ? " article"
+            : ""}
+        </p>
+        {lead.context && <p class="eyebrow">{lead.context}</p>}
+        <h1>
+          <a href={lead.url}>{lead.title}</a>
+          <DraftBadge
+            pieceId={lead.kind === "piece" ? lead.id : undefined}
+            collectionId={lead.kind === "collection" ? lead.id : undefined}
+          />
+        </h1>
+        <p class="lead-summary">{lead.summary}</p>
+        <p class="meta">
+          {lead.publishedAt && (
+            <time datetime={lead.publishedAt}>
+              {dateLabel(lead.publishedAt)}
+            </time>
+          )}
+          {lead.minutes && (
+            <span>
+              {lead.publishedAt ? " · " : ""}
+              {lead.minutes} min read
+            </span>
+          )}
+          {lead.narration && (
+            <span>
+              {" "}
+              · {Math.floor(lead.narration.duration / 1.1 / 60)}:
+              {String(
+                Math.floor((lead.narration.duration / 1.1) % 60),
+              ).padStart(2, "0")}{" "}
+              listen at 1.1×
+            </span>
+          )}
+        </p>
+        <a class="read-link" href={lead.url}>
+          {lead.kind === "collection" ? "Start reading" : "Read the article"}{" "}
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 12h15m-6-6 6 6-6 6" />
+          </svg>
+        </a>
+      </div>
       {lead.image && (
         <a
           href={lead.url}
@@ -75,39 +90,40 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
           />
         </a>
       )}
-      <a class="read-link" href={lead.url}>
-        {lead.kind === "collection" ? "Start reading" : "Read the article"}{" "}
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 12h15m-6-6 6 6-6 6" />
-        </svg>
-      </a>
     </article>
   )}
-  {recent.length > 0 && (
-    <section class="recent" aria-labelledby="recent-heading">
-      <h2 id="recent-heading" class="section-label">
-        More writing
-      </h2>
-      {recent.map((p) => (
-        <article>
-          {p.context && <p class="eyebrow">{p.context}</p>}
-          <h3>
-            <a href={p.url}>{p.title}</a> <DraftBadge pieceId={p.id} />
-          </h3>
-          <p>{p.summary}</p>
-          <p class="meta">
-            {p.publishedAt && (
-              <time datetime={p.publishedAt}>{dateLabel(p.publishedAt)}</time>
-            )}
-          </p>
-        </article>
-      ))}
-      <a class="read-link" href="/writing/">
-        Browse all posts
-      </a>
-    </section>
-  )}
 </div>
+<section class="recent-writing" aria-labelledby="recent-heading">
+  <div class="section-heading">
+    <h2 id="recent-heading">Recent writing</h2>
+    <a href="/writing/">
+      All writing <span aria-hidden="true">→</span>
+    </a>
+  </div>
+  {recentGroups.length > 0 ? (
+    <WritingGroups groups={recentGroups} />
+  ) : (
+    <p class="empty-writing">
+      {lead
+        ? "More writing will appear here as it is published."
+        : "No articles published yet."}
+    </p>
+  )}
+</section>
+{draftGroups.length > 0 && (
+  <section class="preview-drafts" aria-labelledby="drafts-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="drafts-heading">Drafts in preview</h2>
+        <p>
+          Unpublished writing, grouped by book. Visible only in this local
+          preview.
+        </p>
+      </div>
+    </div>
+    <WritingGroups groups={draftGroups} compact={false} />
+  </section>
+)}
 {collections.length > 0 && (
   <section class="collections-section">
     <div class="section-heading">

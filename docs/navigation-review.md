@@ -18,7 +18,7 @@ It is not a usability study with independent readers.
 | A published edition could become undiscoverable without a live collection | Index and main-menu visibility include published editions independently |
 | Archive pagination relied solely on numbers | Previous/Next links and explicit current-page labels |
 | Preserved original site had no clear route back | Small return banner in generated copies; snapshot sources unchanged |
-| Populated homepage's recent list lacked a direct browse-all action | Browse all posts link |
+| Populated homepage's recent list lacked a direct browse-all action | Prominent All writing link beside Recent writing |
 
 ## Browser and structural evidence
 

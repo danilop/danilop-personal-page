@@ -393,10 +393,18 @@ See [asset provenance](docs/assets.md) for fonts, artwork, and preserved materia
 
 ### Homepage discovery and draft labels
 
+The homepage shows up to six recent entries below the lead, with a prominent
+**All writing** link. Each book occupies one slot linking to its overview and
+latest published instalment; standalone entries are labelled **Article**. The
+lead article is not repeated. The Writing index keeps every article and shows its
+book membership. Preview drafts appear separately under **Drafts in preview**,
+grouped by book without provisional publication dates. There is no infinite
+scroll or pagination: **All writing** is the complete current list.
+
 The featured article uses its first rendered body image, with the same alt text.
 Articles without images show no homepage artwork; the site-wide decorative hero
-is not used as an article fallback. Switching preview visibility therefore changes
-the artwork along with the selected article.
+is not used as an article fallback. Draft preview does not replace the published
+lead or its artwork.
 Featured books and collections use their explicitly assigned cover, also shown on
 their overview page. They never inherit the first chapter's illustration.
 Featured artwork keeps its natural aspect ratio. Article illustrations fill the
@@ -419,8 +427,8 @@ replace each other's cached article inventory.
 
 Set `lead` in `publishing/home.yaml` to a piece or collection ID to feature it, or
 omit it for automatic latest selection. Chronicles of Computation is selected;
-Start reading opens its Introduction. While it is draft, the release homepage
-falls back to visible writing. Draft badges appear only in authoring previews,
+Start reading opens its Introduction once published. While it is draft, both the
+release homepage and draft preview fall back to published writing. Draft badges appear only in authoring previews,
 on homepage/list entries, collection contents and article headers. They are
 publication-state labels, not topic tags or access controls.
 

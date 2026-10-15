@@ -178,7 +178,7 @@ video {
 
 .front-page {
   display: grid;
-  grid-template-columns: minmax(0, 1.82fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 30px;
   padding: 36px 0 30px;
 }
@@ -1205,3 +1205,94 @@ button:disabled {
 }
 
 /* Topic labels remain non-interactive until public topic pages exist. */
+
+.front-page .lead {
+  max-width: 900px;
+}
+
+.writing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 42px;
+  padding-bottom: 35px;
+}
+
+.writing-grid article {
+  border-top: 1px solid var(--hairline);
+  padding-top: 18px;
+}
+
+.writing-grid h3 {
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 10px 0;
+}
+
+.writing-grid article > p:not(.eyebrow, .meta) {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.writing-grid .book-update span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.writing-grid .book-update a {
+  color: var(--blue);
+}
+
+.draft-pieces {
+  padding-left: 20px;
+}
+
+.draft-pieces li {
+  margin: 10px 0;
+}
+
+.empty-writing {
+  padding-bottom: 30px;
+  color: var(--muted);
+}
+
+.preview-drafts {
+  margin-block: 20px;
+}
+
+.writing-list .eyebrow a + a::before {
+  content: " · ";
+}
+
+@media (width <= 700px) {
+  .writing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.front-page:not(.linear) .lead.with-art {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  max-width: none;
+}
+
+.front-page .lead.with-art h1 {
+  font-size: clamp(38px, 4.5vw, 64px);
+}
+
+@media (width <= 700px) {
+  .front-page:not(.linear) .lead.with-art {
+    display: block;
+  }
+}
+
+.recent-writing .section-heading > a {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 500;
+}
