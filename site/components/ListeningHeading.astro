@@ -1,0 +1,13 @@
+---
+import { controlIcon } from "../../runtime/control-icons.js";
+import "../../runtime/control-icons.css";
+interface Props {
+  label?: string;
+}
+const { label = "Listen" } = Astro.props;
+---
+
+<p class="listening-heading icon-label-button">
+  <Fragment set:html={controlIcon("headphones")} />
+  <span>{label}</span>
+</p>

@@ -4,8 +4,9 @@ _Notes Along the Way_
 
 Articles, experiments, and ideas that will grow over time.
 
-The draft tally example has [reusable interactive Python activities](docs/code-activities.md):
-one editable code area, labelled Run/Step/Reset icon buttons and one output.
+Every Python fence uses [reusable interactive Python activities](docs/code-activities.md):
+one editable code area, labelled Run, Step, Restore original and Copy code icon
+buttons, and one output. Both examples in the draft opening chapter are runnable.
 Icons and their layout are shared with audio controls. Step highlights the next
 line in that same editor, without a numbered gutter, and follows longer examples
 by scrolling within the editor. The simplified runner passed all 26 repository checks, the production build and
@@ -333,7 +334,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Article narration](docs/article-narration.md): local Kokoro audio, compact listening controls with voice names kept in authoring, reviewed explanations, measured listening durations (adjusted to playback speed), browser-local listening progress, 1.1× default playback with 0.8–2× controls and mandatory publication gates; deployed on 13 October 2026.
 - [Growing audiobooks](docs/book-audiobooks.md): book-page listening, passage-based browser progress, spoken book structure and full current-edition MP3 downloads; implemented with publication and release verification gates.
 - Shared SVG play/pause controls with visible, accessible action labels now cover article narration, book players and private voice previews. Pause preserves progress. This interface update is included in the 14 October 2026 release; see the [control contract](docs/article-narration.md#shared-playback-controls).
-- Included in this release: article/book players and chapter audiobook links share listening-area spacing. **Open audiobook from here** clearly navigates to the book player at the current passage without autoplay, separated from the reading text; see [book listening](docs/book-audiobooks.md).
+- Listening controls share a tinted, bordered panel and headphones heading. The book player plays the full audiobook; its reading table of contents links to chapter pages with bounded chapter audio. There is no duplicate audio chapter list; see [book listening](docs/book-audiobooks.md).
 - Python examples now include an information disclosure with project credits and official Python, Pyodide and WebAssembly links; see [interactive code activities](docs/code-activities.md). Included in this release.
 - Quiet paragraph emphasis uses a documented [Pandoc/Quarto callout subset](docs/authoring-format.md#quiet-paragraph-callouts), with preview styling, native Markua asides for Leanpub exports, and unchanged narration. The [book emphasis conventions](docs/book-emphasis.md) cover 33 reviewed placements in the canonical Chronicles book and the matching introduction/Chapter 1 website copies; included in this release.
 - Inline emphasis uses italics for introduced terms and ordinary text for acronyms and product/model names. This has been applied to “Clever Enough to Find the Loophole”; see the [emphasis conventions](docs/book-emphasis.md#standalone-article-review). The article wording and narration are unchanged; included in this release.
@@ -392,6 +393,10 @@ local file deletion is never mirrored with `sync --delete`.
 See [asset provenance](docs/assets.md) for fonts, artwork, and preserved material.
 
 ### Homepage discovery and draft labels
+
+The [next homepage discovery design](docs/homepage-discovery-plan.md) proposes a
+latest article alongside both books, a separate independent-article list and
+explicit Show more browsing. It is a planning document, not deployed behaviour.
 
 The homepage shows up to six recent entries below the lead, with a prominent
 **All writing** link. Each book occupies one slot linking to its overview and

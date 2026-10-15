@@ -58,6 +58,7 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
     </p>
   )}
   <nav class="contents" aria-label="Table of contents">
+    <h2>Table of contents</h2>
     <ol>
       {c.nodes
         .filter((n) => plan.get(n.id)!.inContents)

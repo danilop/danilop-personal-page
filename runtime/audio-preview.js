@@ -1,3 +1,4 @@
+import { controlIcon } from "./control-icons.js";
 import { bindPlaybackButton } from "./audio-playback.js";
 
 const clock = (value) => {
@@ -10,9 +11,9 @@ const clock = (value) => {
  */
 export function mountVoicePreview(audio) {
   const panel = audio.ownerDocument.createElement("div");
-  panel.className = "voice-preview";
+  panel.className = "voice-preview audio-surface";
   panel.hidden = audio.hidden;
-  panel.innerHTML = `<button type="button" data-preview-play></button>
+  panel.innerHTML = `<p class="listening-heading icon-label-button">${controlIcon("headphones")}<span>Listen to preview</span></p><button type="button" data-preview-play></button>
     <div class="voice-preview-controls">
       <button type="button" data-preview-back aria-label="Back 15 seconds">−15s</button>
       <input type="range" data-preview-seek min="0" max="0" step="0.1" value="0" aria-label="Playback position">

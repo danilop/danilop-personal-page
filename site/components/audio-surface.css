@@ -1,19 +1,2 @@
-/* Shared separation between listening controls and reading content. */
-.audio-surface {
-  margin: 1.5rem 0 2rem;
-  padding: 1rem 0;
-  border-block: 1px solid var(--hairline, #c9c9c3);
-  font: 0.85rem/1.5 var(--font-sans, Inter, sans-serif);
-}
-
-.audio-surface .book-audio-link:not(.audio-surface) {
-  margin-top: 0.75rem;
-}
-
-/* The reading header already supplies the upper divider. */
-.article-heading + .audio-surface,
-.article-heading + .narration-container > .audio-surface {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-}
+/* Public components and private auditions share the same listening surface. */
+@import url("../../runtime/audio-playback.css");

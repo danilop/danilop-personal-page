@@ -156,3 +156,7 @@
     transparent calc(var(--python-line-top) + 1.7em)
   );
 }
+
+.code-activity [data-copy-status]:empty {
+  display: none;
+}

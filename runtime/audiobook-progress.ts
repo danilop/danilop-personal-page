@@ -95,7 +95,7 @@ export function restoreProgress(book: AudioMap, saved?: BookProgress) {
   return {
     time: t.start + Math.min(saved.offset, t.end - t.start),
     message: addedEarlier
-      ? "New material was added earlier in the book. Your place is preserved; explore Chapters to find it."
+      ? "New material was added earlier in the book. Your place is preserved; explore the table of contents to find it."
       : saved.finished
         ? "You're up to date with this edition."
         : "",

@@ -47,20 +47,21 @@ recording title. Buttons support native keyboard activation, visible focus and a
 44-pixel minimum target. State follows the audio element, including playback
 started elsewhere, errors, completion and one-player-at-a-time changes.
 
-Public listening areas share `site/components/audio-surface.css`: restrained
-dividers, one rem of internal vertical padding and two rem after the area before
-reading content. `BookAudioLink.astro` uses the shared icon-and-label styling for
-**Open audiobook from here**, with a headphones icon and navigation arrow. It
-opens the book-page player at the current passage without autoplay; play/pause
-symbols remain reserved for playback on the current page. A section with both
-its own narration and a book link groups them in one listening area. These
-layout refinements are included in this release.
+Public listening areas and private auditions share the surface in
+`runtime/audio-playback.css` (imported by `site/components/audio-surface.css`): a subtle tinted
+background, complete border, internal padding and space before the prose. The
+reusable `ListeningHeading.astro` pairs a headphones icon with Listen or Audiobook;
+play/pause symbols remain on the actual playback buttons. Chapter and section
+pages use a bounded portion of the verified book recording when available, with
+their own relative timeline and saved progress. The book overview retains the
+full-book player and download, followed by the text table of contents. There is
+no second audio chapter list. See [book listening](book-audiobooks.md).
 
 `site/components/AudioPlaybackButton.astro` supplies public markup, with shared
 state/activation behaviour and audio styling in `runtime/audio-playback.js` and
 `runtime/audio-playback.css`. The local icon refinement shares decorative SVGs
 and icon/label layout through `runtime/control-icons.js` and
-`runtime/control-icons.css` with Run/Step/Reset code controls. This refinement is
+`runtime/control-icons.css` with Run/Step/Restore original/Copy code controls. This refinement is
 included in this release; audio actions and accessible labels are unchanged. `runtime/audio-preview.js` reuses the same control
 for private article/book auditions and supplies seeking, ±15 seconds, time,
 speed and retry. Private preview enhancement preserves native audio as its

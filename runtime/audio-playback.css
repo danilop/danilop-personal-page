@@ -63,3 +63,33 @@ audio[data-enhanced-preview] {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+
+/* Shared separation between listening controls and reading content. */
+.audio-surface {
+  margin: 1.5rem 0 2rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+  border: 1px solid var(--hairline, #c9c9c3);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent, #164b88) 5%, var(--paper, #fff));
+  font: 0.85rem/1.5 var(--font-sans, Inter, sans-serif);
+}
+
+.audio-surface .book-audio-link:not(.audio-surface) {
+  margin-top: 0.75rem;
+}
+
+.audio-surface .listening-heading {
+  margin: 0 0 0.6rem;
+  min-height: 0;
+  color: var(--muted, #586371);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.audio-surface > :last-child {
+  margin-bottom: 0;
+}
+
+.audio-surface > [role="status"]:empty {
+  display: none;
+}

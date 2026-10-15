@@ -7,7 +7,7 @@ import type { PythonRecording } from "../runtime/python-trace-player";
 function trace(source: string): PythonRecording {
   return JSON.parse(
     execFileSync(
-      "python3",
+      process.env.NOTES_TEST_PYTHON ?? "python3",
       ["-c", `${pythonTrace}\nprint(article_trace(${JSON.stringify(source)}))`],
       { encoding: "utf8", timeout: 10000 },
     ),

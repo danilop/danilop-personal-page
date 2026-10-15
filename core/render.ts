@@ -78,6 +78,7 @@ export async function renderDocument(
     }
   >();
   const counters: Record<string, number> = {};
+  let codeNumber = 0;
   const blockAssets: Record<string, string> = {};
   indexBlockReferences();
   const citationEntries = new Map<string, Cite["data"][number]>();
@@ -386,7 +387,13 @@ export async function renderDocument(
       });
       const activity =
         doc.target === "web" &&
-        piece.activities?.find((a) => a.codeSha256 === codeHash(v.value));
+        v.lang === "python" &&
+        (piece.activities?.find((a) => a.codeSha256 === codeHash(v.value)) ?? {
+          id: `python-${++codeNumber}`,
+          title: "Try this Python example",
+          runtime: "python" as const,
+          codeSha256: codeHash(v.value),
+        });
       put(
         v,
         activity

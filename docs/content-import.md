@@ -100,7 +100,7 @@ npm run content:import -- --from path/to/library \
 ## Source refresh on 7 October 2026
 
 The existing Chronicles Introduction and Chapter 1 drafts were checked against
-the canonical book manuscript. The Introduction now records Python 3.14.8 and
+the canonical book manuscript. The Introduction then recorded Python 3.14.8 and
 distinguishes selected source checks on 7 October from the AI coverage cutoff of
 19 September. Chapter 1, its two code examples and its four cited notes were
 unchanged. The private raw extract, source manifest and quality baselines were
@@ -195,3 +195,12 @@ hide source committed to the public GitHub repository.
 Narration sidecars are local adaptations: imports preserve an existing destination
 `narration.yaml`, even when the incoming manuscript supplies one. Changed source
 invalidates affected spoken approvals; import does not publish or synthesise.
+
+## Python compatibility refresh on 16 October 2026
+
+After all 117 examples, strict coverage/import checks and 16 concept/audit tests
+passed with both installed Python 3.14 and 3.15, the canonical introduction and
+Python appendix were updated to name only those minor versions. The existing
+Introduction article was synchronised by a scoped dry-run/fingerprint import;
+publication settings and unrelated drafts were preserved. Browser Pyodide remains
+a separately pinned runtime. No book publication is implied by this refresh.

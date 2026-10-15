@@ -1,9 +1,11 @@
 import { pythonSandbox } from "./python-sandbox";
+import { bindCopyCode } from "./copy-code";
 import { pythonTracePlayer, type PythonRecording } from "./python-trace-player";
 
 export function mountPythonRunner(root: HTMLElement) {
   const editor = root.querySelector<HTMLTextAreaElement>("[data-python-code]")!;
   const initial = editor.value;
+  bindCopyCode(root, editor);
   const run = root.querySelector<HTMLButtonElement>("[data-python-run]")!;
   const step = root.querySelector<HTMLButtonElement>("[data-python-step]")!;
   const status = root.querySelector<HTMLElement>("[data-python-status]")!;
@@ -63,7 +65,7 @@ export function mountPythonRunner(root: HTMLElement) {
     source = editor.value;
     runToEnd = play;
     run.disabled = step.disabled = true;
-    status.textContent = "Loading Python… Reset cancels.";
+    status.textContent = "Loading Python… Restore original cancels.";
     frame = document.createElement("iframe");
     frame.title = "Isolated Python runner";
     frame.hidden = true;
@@ -86,6 +88,7 @@ export function mountPythonRunner(root: HTMLElement) {
     edit("Original code restored.");
     editor.value = initial;
     editor.scrollTop = editor.scrollLeft = 0;
+    root.querySelector<HTMLElement>("[data-copy-status]")!.textContent = "";
   });
   editor.addEventListener("input", () => edit("Code changed. Ready to run."));
   window.addEventListener("message", receive);

@@ -8,7 +8,8 @@ import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
 import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
-import BookAudioLink from "../../../../components/BookAudioLink.astro";
+import AudiobookPlayer from "../../../../components/AudiobookPlayer.astro";
+import { audiobookExcerpt } from "../../../../../core/audiobook-excerpt";
 import { readingContext } from "../../../../../core/reading-navigation";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
@@ -23,6 +24,7 @@ export function getStaticPaths() {
 const { c, n } = Astro.props;
 const plan = readingPlan(c.nodes, { rootId: n.id });
 const { children } = readingContext(c, n.id);
+const excerpt = audiobookExcerpt(c.audiobook, c.nodes, n.id);
 ---
 
 <Layout title={n.title} canonical={c.url} description={c.summary}>
@@ -36,11 +38,7 @@ const { children } = readingContext(c, n.id);
         {n.title}
       </h1>
     </header>
-    {c.audiobook && (
-      <BookAudioLink
-        href={`${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`}
-      />
-    )}
+    <AudiobookPlayer audiobook={excerpt} />
     {children.map((child) => {
       const format = plan.get(child.id)!;
       const Heading = `h${format.headingLevel ?? 2}` as
@@ -65,7 +63,12 @@ const { children } = readingContext(c, n.id);
             </p>
           )}
           <div class="narration-container">
-            <NarrationPlayer narration={child.narration} title={child.title} />
+            {!excerpt && (
+              <NarrationPlayer
+                narration={child.narration}
+                title={child.title}
+              />
+            )}
           </div>
           <div
             set:html={readingLinks(

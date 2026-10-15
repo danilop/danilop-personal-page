@@ -2032,3 +2032,33 @@ errors, no horizontal overflow and minimum 44-pixel playback targets. Screenshot
 were inspected. Native article controls remain usable with JavaScript disabled.
 Physical Safari/iPhone and screen-reader testing remain unverified. Existing
 content and draft asset-manifest hashes were unchanged.
+
+## Python controls and listening boundaries — 16 October 2026
+
+Implemented for this release. Every Python web fence receives the same editable
+Run/Step/Restore original/Copy control; the optional sidecar still validates
+custom titles against source hashes. Static book exports retain the source.
+Clipboard success and denial, duplicate fences with unique labels, source restore,
+line highlighting, two independent runners and web/book fallbacks have automated
+coverage. The second Chronicles example now runs without a special sidecar.
+
+The canonical manuscript's 117 standalone examples and 16 inline examples executed
+successfully under Python 3.14.8 and 3.15.0. Both strict example audits and all 16
+concept/audit tests passed; the actual Python tracing helper's three tests also
+passed under both interpreters. The required British English check reported zero
+review targets. Book prose, its README and the imported introduction now name
+Python 3.14 and 3.15 without patch versions. This does not upgrade Pyodide.
+
+The full JavaScript suite passed 351 tests with one optional AWS test skipped.
+Focused tests verify full-book resume, excerpt timing/seek bounds, end/replay,
+per-placement progress, and preserved whole-book progress. Build verification
+checks scoped chapter players, no duplicate audio chapter list, and reading links
+in the book contents. Narration freshness was renewed for the changed private
+introduction with Kokoro MLX (60 chunks reused); draft status was preserved.
+
+Real Chromium browser checks in the local snapshot executed both opening examples
+(expected ten notches and three True comparisons), copied edited source, restored
+it, and stepped with the current line highlighted. Chapter audio played at its
+book offset, stopped at its end, replayed from the chapter start and offered
+Continue after reload. A 390-pixel mobile viewport showed no horizontal overflow.
+Release-gate and final visual results are recorded after completion below.

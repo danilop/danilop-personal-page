@@ -58,7 +58,7 @@ const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
 function pythonFixture(t) {
   const result = dom(
     t,
-    `<section data-code-activity><div data-code-static>Original</div><div data-python-controls hidden><textarea data-python-code>print(10)</textarea><button data-python-step></button><button data-python-run></button><button data-python-reset></button><p data-python-status></p><samp data-python-output></samp></div></section>`,
+    `<section data-code-activity><div data-code-static>Original</div><div data-python-controls hidden><textarea data-python-code>print(10)</textarea><button data-python-step></button><button data-python-run></button><button data-python-reset></button><button data-python-copy></button><p data-copy-status></p><p data-python-status></p><samp data-python-output></samp></div></section>`,
   );
   const previous = globalThis.getComputedStyle;
   globalThis.getComputedStyle = () => ({
@@ -724,7 +724,7 @@ test("narration player uses measured time, explicit playback, bounded seeking an
   assert.equal(audio.paused, true);
 });
 
-test("audiobook player resumes locally, navigates chapters, adjusts remaining time and keeps progress without autoplay", async (t) => {
+test("audiobook player resumes locally, seeks, adjusts remaining time and keeps progress without autoplay", async (t) => {
   const map = {
     bookId: "book",
     title: "A book",
@@ -746,7 +746,7 @@ test("audiobook player resumes locally, navigates chapters, adjusts remaining ti
   };
   const { document, window, click } = dom(
     t,
-    `<section data-audiobook><script data-book-map type="application/json">${JSON.stringify(map)}</script><audio controls preload="none"></audio><button data-book-play hidden></button><input data-book-seek><select data-book-speed><option value="1.1" selected>1.1</option><option value="2">2</option></select><p data-book-notice></p><p data-book-position></p><p data-book-time></p><p data-book-error hidden></p><div data-book-controls hidden></div><button data-book-retry></button><button data-book-back></button><button data-book-forward></button><button data-book-next></button><button data-book-previous></button><span data-book-native></span><div data-book-chapters><button data-book-chapter="0"></button><button data-book-chapter="1"></button><button data-book-chapter="2"></button></div></section><video></video>`,
+    `<section data-audiobook><script data-book-map type="application/json">${JSON.stringify(map)}</script><audio controls preload="none"></audio><button data-book-play hidden></button><input data-book-seek><select data-book-speed><option value="1.1" selected>1.1</option><option value="2">2</option></select><p data-book-notice></p><p data-book-position></p><p data-book-time></p><p data-book-error hidden></p><div data-book-controls hidden></div><button data-book-retry></button><button data-book-back></button><button data-book-forward></button><span data-book-native></span></section><video></video>`,
   );
   location.href = "https://fixture.invalid/collections/book/";
   let plays = 0,
@@ -800,9 +800,9 @@ test("audiobook player resumes locally, navigates chapters, adjusts remaining ti
   assert.equal(button.getAttribute("aria-label"), "Pause: A book");
   click("[data-book-back]");
   assert.equal(audio.currentTime, 12);
-  click("[data-book-next]");
-  assert.equal(audio.currentTime, 20);
-  click('[data-book-chapter="1"]');
+  const seek = document.querySelector("[data-book-seek]");
+  seek.value = "20";
+  seek.dispatchEvent(new Event("input"));
   await tick();
   assert.equal(audio.currentTime, 20);
   const speed = document.querySelector("[data-book-speed]");
@@ -827,11 +827,11 @@ test("audiobook player resumes locally, navigates chapters, adjusts remaining ti
   audio.dispatchEvent(new Event("error"));
   reject = false;
   audio.dispatchEvent(new Event("loadedmetadata"));
-  click("[data-book-previous]");
+  seek.value = "20";
+  seek.dispatchEvent(new Event("input"));
   assert.equal(audio.currentTime, 20);
   click("[data-book-forward]");
   assert.equal(audio.currentTime, 35);
-  const seek = document.querySelector("[data-book-seek]");
   seek.value = "58";
   seek.dispatchEvent(new Event("input"));
   assert.equal(audio.currentTime, 58);
@@ -929,4 +929,123 @@ test("voice previews share play/pause, stop competing media, seek, retry and rev
   audio.hidden = true;
   await tick();
   assert.equal(panel.hidden, true);
+});
+
+test("Copy code copies edited source and reports clipboard failures without changing execution", async (t) => {
+  const { document, editor, click } = pythonFixture(t);
+  const { bindCopyCode } = await import("../runtime/copy-code.ts");
+  const previous = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  let copied,
+    reject = false;
+  Object.defineProperty(globalThis, "navigator", {
+    configurable: true,
+    value: {
+      clipboard: {
+        writeText: async (text) => {
+          if (reject) throw Error("Denied");
+          copied = text;
+        },
+      },
+    },
+  });
+  t.after(() => Object.defineProperty(globalThis, "navigator", previous));
+  bindCopyCode(document.querySelector("section"), editor);
+  editor.value = 'print("edited")';
+  click("[data-python-copy]");
+  await tick();
+  assert.equal(copied, editor.value);
+  assert.equal(
+    document.querySelector("[data-copy-status]").textContent,
+    "Code copied.",
+  );
+  assert.equal(document.querySelector("iframe"), null);
+  reject = true;
+  click("[data-python-copy]");
+  await tick();
+  assert.match(
+    document.querySelector("[data-copy-status]").textContent,
+    /Copy unavailable/,
+  );
+  assert.equal(document.querySelector("[data-python-copy]").disabled, false);
+  editor.dispatchEvent(new Event("input"));
+  assert.equal(document.querySelector("[data-copy-status]").textContent, "");
+});
+
+test("chapter audio uses relative time, clamps playback, resumes and replays only its excerpt", async (t) => {
+  const map = {
+    bookId: "book",
+    title: "Chapter",
+    hash: "edition",
+    scope: "chapter",
+    offset: 100,
+    listenLabel: "Listen to this chapter",
+    segments: [
+      {
+        id: "p",
+        placement: "chapter",
+        contentHash: "speech",
+        label: "Chapter",
+      },
+    ],
+    audio: { duration: 20, timings: [{ start: 0, end: 20 }] },
+  };
+  const { document, click } = dom(
+    t,
+    `<section data-audiobook><script data-book-map>${JSON.stringify(map)}</script><audio></audio><button data-book-play></button><input data-book-seek><select data-book-speed><option value="1.1" selected>1.1</option></select><p data-book-notice></p><p data-book-position></p><p data-book-time></p><p data-book-error hidden></p><div data-book-controls></div><button data-book-retry></button><button data-book-back></button><button data-book-forward></button><span data-book-native></span></section>`,
+  );
+  location.href = "https://fixture.invalid/chapter/";
+  const audio = document.querySelector("audio");
+  audio.currentTime = 0;
+  audio.paused = true;
+  audio.play = async () => {
+    audio.paused = false;
+    audio.dispatchEvent(new Event("play"));
+  };
+  audio.pause = () => {
+    audio.paused = true;
+    audio.dispatchEvent(new Event("pause"));
+  };
+  localStorage.setItem(
+    "audiobook:v1:book:chapter",
+    JSON.stringify({
+      version: 1,
+      edition: "old",
+      segment: "p",
+      placement: "chapter",
+      contentHash: "speech",
+      offset: 5,
+      finished: false,
+      order: ["p"],
+    }),
+  );
+  const { mountAudiobook } = await import("../runtime/audiobook-player.ts");
+  mountAudiobook(document.querySelector("section"));
+  audio.dispatchEvent(new Event("loadedmetadata"));
+  assert.equal(audio.currentTime, 105);
+  assert.equal(audio.paused, true);
+  click("[data-book-back]");
+  assert.equal(audio.currentTime, 100);
+  click("[data-book-play]");
+  await tick();
+  audio.currentTime = 120.3;
+  audio.dispatchEvent(new Event("timeupdate"));
+  assert.equal(audio.paused, true);
+  assert.equal(audio.currentTime, 120);
+  assert.match(
+    document.querySelector("[data-book-play]").textContent,
+    /Listen again/,
+  );
+  assert.equal(
+    JSON.parse(localStorage.getItem("audiobook:v1:book:chapter")).finished,
+    true,
+  );
+  assert.equal(localStorage.getItem("audiobook:v1:book"), null);
+  click("[data-book-play]");
+  await tick();
+  assert.equal(audio.currentTime, 100);
+  assert.equal(audio.paused, false);
+  const seek = document.querySelector("[data-book-seek]");
+  seek.value = "999";
+  seek.dispatchEvent(new Event("input"));
+  assert.equal(audio.currentTime, 120);
 });

@@ -16,7 +16,7 @@ export function renderCodeActivity(
       <div data-python-editor><label class="activity-code-label">Python code <textarea data-python-code spellcheck="false" autocapitalize="off" autocomplete="off" rows="7" wrap="off" aria-describedby="${e(id)}-help">${e(code)}</textarea></label></div>
       <p id="${e(id)}-help" class="activity-help">Run the code or Step through it. First use downloads Python. Edits stay in this tab.</p>
       <div class="activity-toolbar">
-        <div class="activity-controls"><button type="button" class="icon-label-button" data-python-run>${controlIcon("play")}<span>Run</span></button><button type="button" class="icon-label-button" data-python-step>${controlIcon("step")}<span>Step</span></button><button type="button" class="icon-label-button" data-python-reset>${controlIcon("reset")}<span>Reset</span></button></div>
+        <div class="activity-controls"><button type="button" class="icon-label-button" data-python-run>${controlIcon("play")}<span>Run</span></button><button type="button" class="icon-label-button" data-python-step>${controlIcon("step")}<span>Step</span></button><button type="button" class="icon-label-button" data-python-reset title="Restore the original code and clear execution and output">${controlIcon("reset")}<span>Restore original</span></button><button type="button" class="icon-label-button" data-python-copy aria-label="Copy code" title="Copy code">${controlIcon("copy")}<span>Copy</span></button></div>
         <details class="activity-about">
           <summary aria-label="About running Python" title="About running Python"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v6" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/></svg></summary>
           <div class="activity-about-content">
@@ -25,6 +25,7 @@ export function renderCodeActivity(
           </div>
         </details>
       </div>
+      <p role="status" data-copy-status></p>
       <p role="status" data-python-status>Ready to run.</p>
       <p class="activity-heading">Output</p>
       <pre class="activity-output" tabindex="0" aria-label="Python output"><samp data-python-output></samp></pre>

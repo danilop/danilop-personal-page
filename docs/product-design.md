@@ -143,6 +143,12 @@ collections/books in a structured editorial layout. Keep the personal masthead
 compact enough that writing is visible immediately. A large introductory portrait
 must not push the publication's contents out of the first view.
 
+The [16 October homepage discovery proposal](homepage-discovery-plan.md) defines
+the next revision: an automatic latest article, a stable Books area, independent
+articles and explicit loading of older entries. It covers each possible source
+of the latest article and avoids repeating that article in a book card. This is
+planned; the implemented behaviour below remains unchanged until that work lands.
+
 Implemented composition (homepage discovery refinements included in this release):
 
 1. Masthead: Danilo Poccia, Notes Along the Way, compact navigation and optional

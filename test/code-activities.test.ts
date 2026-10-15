@@ -76,17 +76,17 @@ test("interactive markup escapes source and labels; every placement has its own 
     $("button")
       .map((_, button) => $(button).text())
       .get(),
-    ["Run", "Step", "Reset"],
+    ["Run", "Step", "Restore original", "Copy"],
   );
   assert.equal($("[data-python-output]").length, 1);
   assert.deepEqual(
     $("button svg")
       .map((_, svg) => $(svg).attr("data-control-icon"))
       .get(),
-    ["play", "step", "reset"],
+    ["play", "step", "reset", "copy"],
   );
-  assert.equal($("button svg[aria-hidden=true][focusable=false]").length, 3);
-  assert.equal($("button.icon-label-button > span").length, 3);
+  assert.equal($("button svg[aria-hidden=true][focusable=false]").length, 4);
+  assert.equal($("button.icon-label-button > span").length, 4);
   assert.equal(
     $(
       "[data-python-trace], [data-python-lines], [data-python-variables], [data-python-marks]",
@@ -135,6 +135,24 @@ test("sidecar loads with library; web enhances the original fence and book outpu
   const book = await renderDocument({ ...doc, target: "book" }, lib, defaults);
   assert.doesNotMatch(book.html, /data-code-activity|textarea/);
   assert.match(load(book.html)("code").text(), /Number of notches/);
+  // Without a sidecar, all Python fences get independent, reusable controls.
+  piece.activities = undefined;
+  piece.body = body + body + "\n```javascript\nconsole.log(1)\n```\n";
+  piece.ast = parser().parse(piece.body);
+  const automatic = await renderDocument(standalone(piece), lib, defaults);
+  const auto = load(automatic.html);
+  assert.equal(auto("[data-code-activity]").length, 2);
+  assert.equal(auto("[data-python-copy]").length, 2);
+  const labels = auto("[data-code-activity]")
+    .map((_, el) => auto(el).attr("aria-labelledby"))
+    .get();
+  assert.equal(new Set(labels).size, 2);
+  const staticBook = await renderDocument(
+    { ...standalone(piece), target: "book" },
+    lib,
+    defaults,
+  );
+  assert.doesNotMatch(staticBook.html, /data-code-activity/);
   await fs.writeFile(
     path.join(root, "pieces/example/activities.yaml"),
     JSON.stringify({

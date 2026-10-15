@@ -1,14 +1,18 @@
 ---
-import type { PublicAudiobook } from "../../core/audiobook-store";
+import type { ListeningAudio } from "../../core/audiobook-excerpt";
+import ListeningHeading from "./ListeningHeading.astro";
 import AudioPlaybackButton from "./AudioPlaybackButton.astro";
 import "./audio-surface.css";
 import { audioClock } from "../../runtime/audiobook-progress";
 interface Props {
-  audiobook?: PublicAudiobook;
+  audiobook?: ListeningAudio;
 }
 const { audiobook: b } = Astro.props;
 const map = b && {
   bookId: b.bookId,
+  offset: b.offset ?? 0,
+  scope: b.scope,
+  listenLabel: b.listenLabel,
   title: b.title,
   author: b.author,
   hash: b.hash,
@@ -25,18 +29,19 @@ const map = b && {
 {b && (
   <section
     class="audiobook audio-surface"
-    id="audiobook"
+    id={b.scope ? `audio-${b.scope}` : "audiobook"}
     data-audiobook
-    aria-label="Book audiobook"
+    aria-label={b.scope ? `Listen: ${b.title}` : "Book audiobook"}
   >
     <script
       type="application/json"
       data-book-map
       set:html={JSON.stringify(map).replace(/</g, "\\u003c")}
     />
+    <ListeningHeading label={b.scope ? "Listen" : "Audiobook"} />
     <div class="book-audio-heading">
-      <AudioPlaybackButton kind="book" title={b.title} />
-      <span data-book-native>Listen to this book</span>
+      <AudioPlaybackButton kind="book" title={b.title} label={b.listenLabel} />
+      <span data-book-native>{b.listenLabel ?? "Listen to this book"}</span>
     </div>
     <p class="audio-edition">
       {b.preview
@@ -51,7 +56,11 @@ const map = b && {
     <audio
       controls
       preload="none"
-      src={b.url}
+      src={
+        b.scope
+          ? `${b.url}#t=${b.offset},${(b.offset ?? 0) + b.audio.duration}`
+          : b.url
+      }
       aria-label={`Audiobook of ${b.title}`}
     />
     <div data-book-controls hidden>
@@ -68,25 +77,11 @@ const map = b && {
         />
       </label>
       <div class="audio-buttons">
-        <button
-          type="button"
-          data-book-previous
-          aria-label="Previous chapter or section"
-        >
-          Previous
-        </button>
         <button type="button" data-book-back aria-label="Back 15 seconds">
           −15s
         </button>
         <button type="button" data-book-forward aria-label="Forward 15 seconds">
           +15s
-        </button>
-        <button
-          type="button"
-          data-book-next
-          aria-label="Next chapter or section"
-        >
-          Next
         </button>
         <label>
           <span class="sr-only">Playback speed</span>
@@ -107,39 +102,24 @@ const map = b && {
       <button type="button" data-book-retry>
         Retry
       </button>{" "}
-      or download the MP3 below.
+      Please try again later.
     </p>
-    <details data-book-chapters hidden>
-      <summary>Chapters</summary>
-      <ol class="audio-contents">
-        {b.segments.map(
-          (s, i) =>
-            s.navigation && (
-              <li style={`--audio-depth:${Math.min(s.depth, 3)}`}>
-                <button type="button" data-book-chapter={i}>
-                  {s.label}
-                  {b.partial.includes(s.placement) ? " — published so far" : ""}
-                </button>
-                <span>{audioClock(b.audio.timings[i].start)}</span>
-              </li>
-            ),
-        )}
-      </ol>
-    </details>
-    <p class="audio-download">
-      <a href={b.url} download={b.filename}>
-        Download audiobook (MP3)
-      </a>{" "}
-      <span>· {(b.audio.bytes / 1024 / 1024).toFixed(1)} MB</span>
-    </p>
+    {!b.scope && (
+      <p class="audio-download">
+        <a href={b.url} download={b.filename}>
+          Download audiobook (MP3)
+        </a>{" "}
+        <span>· {(b.audio.bytes / 1024 / 1024).toFixed(1)} MB</span>
+      </p>
+    )}
     <details>
       <summary>More listening options</summary>
       <p>
         {b.preview
-          ? "This private download includes draft material listed in Chapters."
-          : "This download contains the published material listed in Chapters."}{" "}
-        Saved browser progress stays on this device; downloaded files do not
-        update automatically.
+          ? "This private recording includes draft material."
+          : "This recording contains the material published so far."}{" "}
+        Saved browser progress stays on this device. Downloads from the book
+        page do not update automatically.
       </p>
       <details class="audio-transcript">
         <summary>Spoken transcript</summary>
@@ -205,35 +185,6 @@ const map = b && {
     cursor: pointer;
     padding: 0.65rem 0;
     min-height: 44px;
-  }
-
-  .audio-contents {
-    list-style: none;
-    padding: 0;
-    max-height: 24rem;
-    overflow: auto;
-  }
-
-  .audio-contents li {
-    padding-left: calc(var(--audio-depth) * 0.7rem);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .audio-contents button {
-    border: 0;
-    text-align: left;
-    flex: 1;
-  }
-
-  .audio-contents span {
-    font-size: 0.75rem;
-  }
-
-  .audio-contents [aria-current="true"] {
-    color: var(--accent, #164b88);
-    font-weight: 600;
   }
 
   .audio-download {

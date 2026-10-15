@@ -7,15 +7,24 @@ import {
   segmentAt,
   type AudioMap,
 } from "./audiobook-progress";
-type PlayerBook = AudioMap & { title: string; author: string; bookId: string };
-function mount(panel: HTMLElement) {
+type PlayerBook = AudioMap & {
+  title: string;
+  author: string;
+  bookId: string;
+  offset?: number;
+  scope?: string;
+  listenLabel?: string;
+};
+export function mountAudiobook(panel: HTMLElement) {
   const get = <T extends HTMLElement>(s: string) => panel.querySelector<T>(s)!;
   const book = JSON.parse(get("[data-book-map]").textContent) as PlayerBook;
   const audio = get<HTMLAudioElement>("audio"),
     play = get<HTMLButtonElement>("[data-book-play]"),
     seek = get<HTMLInputElement>("[data-book-seek]"),
     speed = get<HTMLSelectElement>("[data-book-speed]");
-  const key = "audiobook:v1:" + book.bookId;
+  const offset = book.offset ?? 0;
+  const key =
+    "audiobook:v1:" + book.bookId + (book.scope ? ":" + book.scope : "");
   let saved;
   try {
     saved = readProgress(localStorage.getItem(key));
@@ -28,11 +37,16 @@ function mount(panel: HTMLElement) {
     engaged = false,
     lastSaved = 0;
   get("[data-book-notice]").textContent = restored.message;
-  const current = () => (loaded ? audio.currentTime : pending);
+  const current = () =>
+    Math.min(
+      book.audio.duration,
+      Math.max(0, loaded ? audio.currentTime - offset : pending),
+    );
   const updatePlayback = bindPlaybackButton(play, audio, {
-    label: "Listen to this book",
+    label: book.listenLabel ?? "Listen to this book",
     title: book.title,
     position: current,
+    ended: () => audio.ended || current() >= book.audio.duration,
     start,
   });
   function save() {
@@ -40,7 +54,13 @@ function mount(panel: HTMLElement) {
     try {
       localStorage.setItem(
         key,
-        JSON.stringify(captureProgress(book, audio.currentTime, audio.ended)),
+        JSON.stringify(
+          captureProgress(
+            book,
+            current(),
+            audio.ended || current() >= book.audio.duration,
+          ),
+        ),
       );
     } catch {
       /* Playback remains available. */
@@ -59,30 +79,18 @@ function mount(panel: HTMLElement) {
       "aria-valuetext",
       `${audioClock(time)} of ${audioClock(book.audio.duration)}`,
     );
-    for (const button of panel.querySelectorAll<HTMLButtonElement>(
-      "[data-book-chapter]",
-    ))
-      button.setAttribute(
-        "aria-current",
-        String(Number(button.dataset.bookChapter) === navigationIndex(i)),
-      );
-  }
-  const chapters = [
-    ...panel.querySelectorAll<HTMLButtonElement>("[data-book-chapter]"),
-  ].map((b) => Number(b.dataset.bookChapter));
-  function navigationIndex(i: number) {
-    return chapters.filter((n) => n <= i).at(-1) ?? 0;
   }
   function jump(time: number) {
     pending = Math.min(book.audio.duration, Math.max(0, time));
     if (loaded) {
-      audio.currentTime = pending;
+      audio.currentTime = offset + pending;
       engaged = true;
       save();
     }
     render();
   }
   async function start() {
+    if (current() >= book.audio.duration) jump(0);
     engaged = true;
     get("[data-book-controls]").hidden = false;
     try {
@@ -94,10 +102,19 @@ function mount(panel: HTMLElement) {
   }
   audio.addEventListener("loadedmetadata", () => {
     loaded = true;
-    audio.currentTime = pending;
+    audio.currentTime = offset + pending;
     render();
   });
   audio.addEventListener("timeupdate", () => {
+    if (
+      book.scope &&
+      loaded &&
+      current() >= book.audio.duration &&
+      !audio.paused
+    ) {
+      audio.pause();
+      audio.currentTime = offset + book.audio.duration;
+    }
     render();
     if (Date.now() - lastSaved > 5000) {
       save();
@@ -131,27 +148,6 @@ function mount(panel: HTMLElement) {
     jump(current() - 15);
   get<HTMLButtonElement>("[data-book-forward]").onclick = () =>
     jump(current() + 15);
-  get<HTMLButtonElement>("[data-book-previous]").onclick = () =>
-    jump(
-      book.audio.timings[
-        chapters
-          .filter((i) => book.audio.timings[i].start < current() - 1)
-          .at(-1) ?? 0
-      ].start,
-    );
-  get<HTMLButtonElement>("[data-book-next]").onclick = () => {
-    const n = chapters.find(
-      (i) => book.audio.timings[i].start > current() + 0.1,
-    );
-    if (n !== undefined) jump(book.audio.timings[n].start);
-  };
-  for (const button of panel.querySelectorAll<HTMLButtonElement>(
-    "[data-book-chapter]",
-  ))
-    button.onclick = () => {
-      jump(book.audio.timings[Number(button.dataset.bookChapter)].start);
-      void start();
-    };
   speed.onchange = () => {
     audio.defaultPlaybackRate = Number(speed.value);
     audio.playbackRate = Number(speed.value);
@@ -171,8 +167,7 @@ function mount(panel: HTMLElement) {
   play.hidden = false;
   get("[data-book-controls]").hidden = false;
   get("[data-book-native]").hidden = true;
-  get("[data-book-chapters]").hidden = false;
   render();
 }
 for (const panel of document.querySelectorAll<HTMLElement>("[data-audiobook]"))
-  mount(panel);
+  mountAudiobook(panel);

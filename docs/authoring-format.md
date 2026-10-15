@@ -553,12 +553,11 @@ section, create a new piece and set `adaptedFrom: agent-memory`.
 
 ## 7. Experiments, editions and distribution
 
-For editable Python alongside an existing fence, use an `activities.yaml`
-companion file as described in [interactive code activities](code-activities.md).
-It selects the exact parsed code by SHA-256 for one editable code area,
-Run/Step/Reset controls and one output. No Markdown directive or duplicate source listing is needed. Source drift
-fails validation and requires review. The simplified runner is included in this release; the first tally
-chapter remains a draft. Ordinary fences are not executable by default.
+Every `python` fence automatically uses the shared editable runner in web output:
+Run, Step, Restore original, Copy code and one output. Other languages and book
+exports retain their static listings. An optional `activities.yaml` companion
+provides a title and reviewed source hash; changes to a selected source still
+require hash review. See [interactive code activities](code-activities.md).
 
 A simulation block selects a registered module. Fields, validation and execution
 are defined in `runtime/experiment-registry.ts`; additional modules use that

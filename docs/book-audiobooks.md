@@ -23,16 +23,16 @@ and before the contents:
   file size and included chapter/section range. Say **Published so far** until
   the book is explicitly complete. Identify partially published chapters clearly.
 
-Keep a compact player with play/pause, seek, previous/next chapter, 15-second
-rewind/forward and speed. Reuse the article player's 1.1× default and available
-0.8×, 1×, 1.1×, 1.2×, 1.5× and 2× speeds. Show remaining listening time at the
-selected speed, while download metadata reports the recording's duration at 1×.
-Expand **Chapters** for the hierarchical audio contents and **More options** for
-secondary controls. The opening credits are a navigable entry, so skipping them
-uses chapter navigation rather than another prominent button. The player has no
-“AI narration” badge; voice names remain internal. This UI choice does not change
-the existing spoken opening credits. Use keyboard-operable controls,
-clear focus and labels, restrained status announcements, and text-reading links.
+Keep a compact player with play/pause, seek, 15-second rewind/forward and speed.
+Reuse the article player's 1.1× default and 0.8×, 1×, 1.1×, 1.2×, 1.5× and 2×
+speeds. Show remaining time at the selected speed; download metadata uses 1×.
+The full recording plays continuously. Do not duplicate the reading table of
+contents with audio chapter buttons or previous/next chapter controls. Keep the
+current spoken section label as orientation, not a navigation list. The normal
+Table of contents links to text chapter/section pages below the listening area.
+The player has no AI narration badge or public voice name. Opening credits remain
+in the recording. A shared headphones heading and tinted bordered panel separate
+listening controls from prose, with keyboard-operable buttons and visible focus.
 
 The shared play/pause component now shows SVG symbols beside the action label
 in both book-page and private-preview playback, matching article narration.
@@ -44,18 +44,21 @@ collection publication settings.
 The book main page is the listening destination. Do not initially require a separate
 audio page, modal or floating player across the whole site. Playback across ordinary
 page navigation is not promised; returning and choosing Continue restores progress.
-Individual chapter and section pages offer **Open audiobook from here**, a
-headphones-and-arrow link to the full book player positioned at that passage.
-Navigation does not start playback. The full player and current-edition MP3
-download remain on the book main page. The link uses the same listening-area
-typography, dividers and separation from prose as article and book players. When
-a section also has its own narration, the book link sits inside that listening
-area rather than creating another panel. This presentation refinement is
-included in this release.
+Individual chapter and section pages play only their own portion of the verified
+book recording through the same reusable player, labelled **Listen to this chapter**
+or **Listen to this section**. The range contains the selected placement and its
+descendants, without the next chapter or book closing. A local timeline translates
+to the existing MP3's absolute offset, clamps seeking and stops at the range end.
+No extra audio generation or duplicate assets are required. Full-book downloads
+remain on the book overview, so a chapter download cannot accidentally deliver the
+whole book. Separate per-placement progress uses the same segment-aware restoration
+as the whole book and does not overwrite its listening position. Direct article
+narration remains a fallback when no valid book recording is available.
 
-Provide
-native audio/download fallback when scripting is unavailable, without claiming
-automatic queueing or saved progress in that fallback.
+The whole-book native audio/download fallback remains available without JavaScript.
+Chapter native audio uses a media-fragment range; exact bounded playback and saved
+progress are verified in the enhanced player. Native fragment support depends on
+the browser. Existing `?listen=placement` book links remain supported without autoplay.
 
 ## Progress that survives growth
 

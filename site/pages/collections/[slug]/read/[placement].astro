@@ -12,6 +12,8 @@ import { readingContext } from "../../../../../core/reading-navigation";
 import TagList from "../../../../components/TagList.astro";
 import ArticleSharing from "../../../../components/ArticleSharing.astro";
 import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
+import AudiobookPlayer from "../../../../components/AudiobookPlayer.astro";
+import { audiobookExcerpt } from "../../../../../core/audiobook-excerpt";
 export function getStaticPaths() {
   return site.collections.flatMap((c) =>
     c.nodes
@@ -23,6 +25,7 @@ export function getStaticPaths() {
   );
 }
 const { c, n } = Astro.props;
+const excerpt = audiobookExcerpt(c.audiobook, c.nodes, n.id);
 const format = readingPlan(c.nodes, { rootId: n.id }).get(n.id)!;
 const { parent, position, total } = readingContext(c, n.id);
 const original = site.articles.find((p) => p.id === n.pieceId);
@@ -73,15 +76,11 @@ const original = site.articles.find((p) => p.id === n.pieceId);
         position="top"
       />
     </header>
-    <NarrationPlayer
-      narration={n.narration}
-      title={n.title}
-      audiobookHref={
-        c.audiobook
-          ? `${c.url}?listen=${encodeURIComponent(n.id)}#audiobook`
-          : undefined
-      }
-    />
+    {excerpt ? (
+      <AudiobookPlayer audiobook={excerpt} />
+    ) : (
+      <NarrationPlayer narration={n.narration} title={n.title} />
+    )}
     <div
       id={n.id}
       class="prose"

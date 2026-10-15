@@ -2,6 +2,7 @@
 import type { PublicNarration } from "../../core/narration-store";
 import AudioPlaybackButton from "./AudioPlaybackButton.astro";
 import BookAudioLink from "./BookAudioLink.astro";
+import ListeningHeading from "./ListeningHeading.astro";
 import "./audio-surface.css";
 interface Props {
   narration?: PublicNarration;
@@ -22,6 +23,7 @@ const clock = (seconds: number) =>
     data-title={title}
     data-duration={n.duration}
   >
+    <ListeningHeading />
     <div class="narration-heading">
       <AudioPlaybackButton kind="article" title={title} />
       <span data-native-label>Listen to this article</span>

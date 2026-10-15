@@ -82,3 +82,12 @@ removing Amplify catch-all redirects. The previous recommendation to use a `404`
 rule targeting `/404.html` is superseded: live testing showed a 302 redirect followed
 by a 200 response. Custom error-page rendering remains local-only; hosted missing
 URLs have an empty native 404 body. See [verification](verification.md).
+
+## Listening and reading separation — 16 October 2026
+
+The book overview has one continuous audiobook player and a separate labelled
+Table of contents with reading links. The former audio Chapters list and chapter
+skip buttons have been removed. Chapter and section pages offer bounded audio
+for the text on that page, reusing the verified full-book recording. Tinted,
+bordered listening panels with a headphones heading distinguish playback from
+reading in public pages and private auditions. Play/pause remains the action icon.

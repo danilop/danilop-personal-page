@@ -5,6 +5,9 @@ const paths = {
   step: '<path d="M5 5v14l10-7zM17 5h2v14h-2z" fill="currentColor"/>',
   reset:
     '<path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  copy: '<rect x="8" y="8" width="12" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+  headphones:
+    '<path d="M4 14v-2a8 8 0 0 1 16 0v2M4 13h3v7H4zm13 0h3v7h-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
 };
 
 /** @param {keyof typeof paths} name @param {boolean} [hidden] */

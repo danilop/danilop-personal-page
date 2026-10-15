@@ -1,20 +1,19 @@
 # Interactive code activities
 
-Status: the separate tally animation shipped on 14 October 2026. A simplified
-replacement passed all 26 repository checks, the production build and
-desktop/mobile browser checks and is included in this release. The first activity belongs to the draft Chronicles chapter
-**Before Written Arithmetic**, which remains private.
+Status: the shared runner now enhances every Python fence in web articles and books.
+The 16 October 2026 update adds Copy code and Restore original; browser and release
+validation are recorded in [verification](verification.md). Draft books remain private.
 
 ## Reader behaviour
 
-One editable Python area, **Run**, **Step**, **Reset** and one output keep the
+One editable Python area, **Run**, **Step**, **Restore original**, **Copy code** and one output keep the
 example close to its printed form. There is no numbered gutter, separate source
 listing, variables panel or independent tally diagram. The tally appears naturally
 in the Python program's printed output.
 
 Each control keeps its visible label beside a decorative SVG: a play triangle for
 Run, a single triangle pointing to a bar for Step, and a counterclockwise arrow
-for Reset. Step advances rather than pauses execution, so it does not use pause
+for Restore original. Copy code uses overlapping rectangles and copies the current edited source, with success or failure feedback. Step advances rather than pauses execution, so it does not use pause
 bars. There is no rewind control. Icons are hidden from assistive technology;
 native buttons retain their label as the accessible name, keyboard activation,
 focus outline, disabled state and 44-pixel minimum targets.
@@ -37,18 +36,18 @@ and the reader's editing selection are preserved.
 The complete bounded program runs before stepping begins; it is a recording, not
 an interpreter paused between clicks. Unchanged source reuses that recording.
 Editing the code cancels pending execution and clears the recording, highlight
-and output. **Reset** also restores the exact article source and scroll position.
+and output. **Restore original** also restores the exact article source and scroll position.
 There is no extra editing mode. Changes stay in this tab and are not saved.
 Python exceptions appear once, in the output, after any preceding printed text.
 
-Ordinary code fences remain static unless explicitly selected. Without JavaScript,
+Every `python` fence uses these controls automatically; other languages remain static. Without JavaScript,
 the original highlighted code remains visible. Book/export renditions retain that
 code without browser controls. Narration continues to follow its existing code
 explanation policy; these controls do not add spoken interface text.
 
 ## Authoring and source identity
 
-Place `activities.yaml` beside a piece's `index.md`. This attaches web behaviour
+Optionally place `activities.yaml` beside a piece's `index.md` to supply a reviewed title and source fingerprint. All Python fences already receive the same web behaviour
 without editing canonical manuscript prose or duplicating its code:
 
 ```yaml
@@ -77,7 +76,8 @@ DOM labels are scoped to each placement. The former `demo` and local prototype
 
 - `core/code-activities.ts` validates the sidecar and exact code identity.
 - `renderers/code-activity.ts` renders accessible, escaped, progressively enhanced
-  markup. `core/render.ts` attaches it only to the selected web fence.
+  markup. `core/render.ts` attaches it to every Python web fence; sidecars customise titles.
+- `runtime/copy-code.ts` copies current source without affecting execution or output.
 - `runtime/python-runner.ts` owns editor, reset, cancellation, deadlines and message validation.
 - `runtime/python-trace.ts` uses Python `sys.settrace` to capture actual line events.
 - `runtime/python-trace-player.ts` supplies reusable stepping, completion,
@@ -95,7 +95,7 @@ dependency, not an npm or local Python dependency. No Python runtime is download
 while reading. The first Run or Step downloads several megabytes
 from jsDelivr; the runtime assets use the browser's ordinary HTTP cache. The notice
 appears before activation. A blocked CDN or offline first run reports an error
-while leaving the editor and Reset available.
+while leaving the editor and Restore original available.
 
 Each run starts a fresh module Worker inside an iframe sandboxed with
 `allow-scripts` **without** `allow-same-origin`. Python/JavaScript interop cannot
@@ -108,7 +108,7 @@ the opaque frame during testing; the data-URL module Worker retained isolation
 and passed actual Python execution and blocked-network checks.
 This is an isolation boundary; the Worker alone would not provide one.
 
-Editing, Reset, navigation and deadlines remove the frame and its Worker. There
+Editing, restoring the original, navigation and deadlines remove the frame and its Worker. There
 is a 90-second loading deadline, a 10-second execution deadline, a 16,000-character
 source limit and a 65,536 UTF-16-unit output limit. Recordings stop at 500 line events plus
 a final snapshot. Variable values are not collected. Trace-limit and Python errors retain recorded steps and
@@ -136,3 +136,10 @@ source edits, line semantics, function calls, output timing, Unicode, exceptions
 and limits. Browser WASM checks separately verify the worker
 integration. Python documents line-event semantics in
 [sys.settrace](https://docs.python.org/3/library/sys.html#sys.settrace).
+
+## Python compatibility
+
+The canonical Chronicles examples are tested with Python 3.14 and 3.15. This does
+not change the separately pinned browser Pyodide runtime. Use
+`NOTES_TEST_PYTHON=/path/to/python node --import tsx --test test/python-trace.test.ts`
+to exercise the actual line-recording helper with either installed interpreter.

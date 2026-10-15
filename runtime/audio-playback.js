@@ -8,7 +8,7 @@ const listeningDocuments = new WeakSet();
 /**
  * @param {HTMLButtonElement} button
  * @param {HTMLAudioElement} audio
- * @param {{label: string, title: string, position?: () => number, start: () => void | Promise<void>}} options
+ * @param {{label: string, title: string, position?: () => number, ended?: () => boolean, start: () => void | Promise<void>}} options
  */
 export function bindPlaybackButton(button, audio, options) {
   button.classList.add("audio-playback-button", "icon-label-button");
@@ -20,7 +20,7 @@ export function bindPlaybackButton(button, audio, options) {
     const playing = !audio.paused && !audio.ended;
     const action = playing
       ? "Pause"
-      : audio.ended
+      : (options.ended?.() ?? audio.ended)
         ? "Listen again"
         : (options.position?.() ?? audio.currentTime) > 0
           ? "Continue listening"

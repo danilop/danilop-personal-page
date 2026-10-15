@@ -4,10 +4,12 @@ import "../../runtime/audio-playback.css";
 interface Props {
   kind: "article" | "book";
   title: string;
+  label?: string;
 }
 const { kind, title } = Astro.props;
 const label =
-  kind === "book" ? "Listen to this book" : "Listen to this article";
+  Astro.props.label ??
+  (kind === "book" ? "Listen to this book" : "Listen to this article");
 ---
 
 <button

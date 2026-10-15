@@ -16,6 +16,30 @@ import sharp from "sharp";
 import { mediaSettings } from "../core/media";
 import { readAssetManifest, verifyAsset } from "../core/asset-manifest";
 import { verifyPublicAsset } from "../core/asset-release";
+import { audiobookExcerpt } from "../core/audiobook-excerpt";
+
+async function verifyChapterAudio(c: CompiledSite["collections"][number]) {
+  for (const n of c.nodes) {
+    const excerpt = audiobookExcerpt(c.audiobook, c.nodes, n.id);
+    if (!excerpt || !["piece", "chapter", "appendix", "part"].includes(n.kind))
+      continue;
+    const route = `${c.url}${n.kind === "piece" ? "read" : "chapters"}/${n.id}/`;
+    const html = load(
+      await fs.readFile(path.join(siteOutput, route, "index.html"), "utf8"),
+    );
+    const player = html("[data-audiobook]");
+    assert.equal(player.length, 1, `${route}: scoped audio player missing`);
+    const map = JSON.parse(player.find("[data-book-map]").text());
+    assert.equal(map.scope, n.id);
+    assert.equal(map.offset, excerpt.offset);
+    assert.equal(map.audio.duration, excerpt.audio.duration);
+    assert.equal(
+      player.find("a[download], [data-book-chapter], audio[autoplay]").length,
+      0,
+    );
+    assert.equal(player.find("audio").attr("preload"), "none");
+  }
+}
 async function verifyNarrationMarkup(site: CompiledSite) {
   for (const c of site.collections) {
     if (!c.audiobook) continue;
@@ -31,16 +55,17 @@ async function verifyNarrationMarkup(site: CompiledSite) {
     assert.equal(map.hash, c.audiobook.hash);
     assert.equal(map.segments.length, c.audiobook.segments.length);
     assert.equal(player.find("a[download]").attr("href"), c.audiobook.url);
-    assert.equal(
-      player.find("[data-book-chapter]").length,
-      c.audiobook.segments.filter((s) => s.navigation).length,
-    );
+    assert.equal(player.find("[data-book-chapter]").length, 0);
+    assert(html('nav[aria-label="Table of contents"] a').length > 0);
+    await verifyChapterAudio(c);
   }
   const pages = [
     ...site.articles,
-    ...site.collections.flatMap((c) =>
-      c.nodes.map((n) => ({ ...n, url: `${c.url}read/${n.id}/` })),
-    ),
+    ...site.collections
+      .filter((c) => !c.audiobook)
+      .flatMap((c) =>
+        c.nodes.map((n) => ({ ...n, url: `${c.url}read/${n.id}/` })),
+      ),
   ];
   for (const page of pages) {
     if (!page.narration) continue;

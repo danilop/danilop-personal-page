@@ -392,13 +392,13 @@ Sources: [Shiki](https://shiki.style/guide/),
 
 ## 6. Browser experiments
 
-Opt-in Python fences can use the [code activity components](code-activities.md).
-A source-hashed sidecar attaches web controls without changing manuscript prose;
+All Python web fences use the [code activity components](code-activities.md).
+An optional source-hashed sidecar customises the title without changing manuscript prose;
 book output stays static. Code and audio buttons reuse decorative SVGs and an
 icon/label layout from `runtime/control-icons.js` and `runtime/control-icons.css`.
 Editable Python runs in an opaque-origin sandbox frame
 and a disposable Worker. Python line-event snapshots drive reusable stepping and progressive output in
-one editable code area. Run completes the example; Reset cancels and restores it.
+one editable code area. Run completes the example; Restore original cancels and restores it. Copy code copies current editor text without changing execution.
 The editor highlights the next line without a numbered gutter and scrolls to follow
 longer examples. The simplified runner is included in this release. The tally pilot
 chapter remains a draft and is available in local preview.
