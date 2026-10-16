@@ -2117,3 +2117,12 @@ contains 131 individual recommendations: 115 remaining narrative files and all
 checked; code and context hashes record the reviewed version. Recommendations
 are not implementations or newly tested replacements. No remaining example was
 edited during this review, and the British English check found no review targets.
+
+The follow-up dependency check covers all 132 current samples, including the
+retained Chapter 1 tally and 16 inline appendix snippets: every import is from the
+standard library. All 116 standalone examples also execute successfully on Python
+3.14 and 3.15 with `-I -S` (isolated mode and no site-package initialisation), from
+outside the source tree. This confirms that installed third-party packages are
+not needed; it does not certify every standard-library feature in the browser.
+The existing strict example audit rejects non-standard-library imports in included
+files. The broader inline-snippet check was performed for this review.

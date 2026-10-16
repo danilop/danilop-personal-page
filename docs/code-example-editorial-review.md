@@ -12,6 +12,17 @@ the narrative moving, but readable rather than compressed. A runnable block that
 only repeats an answer already given in prose may be better removed. A longer
 algorithm can earn its space when following its steps is the point.
 
+An obvious result is not enough to justify a narrative example: running or changing
+it should reveal a mechanism, consequence, contrast or limitation. Do not add
+complexity merely to make an elementary result look interesting.
+
+All book samples, including appendix snippets and website copies, must use Python
+built-ins and the standard library only. No third-party imports, package installation,
+external services or credentials are required. This applies to future replacements
+as well as retained examples. Authoring/build tools have separate dependencies and
+are not reader prerequisites. Standard-library membership alone does not establish
+browser compatibility; verify each imported example in the browser runtime too.
+
 Do not impose a fixed number per chapter. Roughly 5–15 displayed lines is a useful
 starting range; around 20, review the scope, and above 30 consider staged
 presentation with a complete companion file. These are editorial prompts, not

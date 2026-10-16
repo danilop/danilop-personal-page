@@ -539,3 +539,6 @@ Ishango discussion explains the limits of arithmetic evidence in prose. See the
 The [whole-book code example review](docs/code-example-editorial-review.md) records
 the teaching and length criteria and the outcome of individually reviewing the
 remaining 131 Chronicles samples. These are recommendations, not applied edits.
+Every book sample must use Python built-ins and the standard library only, with
+no external packages or services. Narrative examples must reveal something through
+execution or experimentation, rather than merely print an obvious answer.
