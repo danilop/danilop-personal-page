@@ -660,7 +660,7 @@ base belong in `publishing/deployment.json`, not `site.yaml`. `publishing/home.y
 follow in stable library order. The newest eligible article is always the lead;
 legacy `lead` and `recentCount` values remain accepted but no longer control this
 layout. Unknown referenced IDs still fail validation. The first home page excludes
-the lead from independent articles; subsequent pages contain batches of `pageSize`.
+the lead from standalone articles; subsequent pages contain batches of `pageSize`.
 The Writing index and each linked filter use `pageSize` throughout.
 The article slugs `independent`, `books` and `page` are reserved for discovery routes.
 

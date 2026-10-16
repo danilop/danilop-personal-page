@@ -1,4 +1,4 @@
-# Homepage discovery: books and independent articles
+# Homepage discovery: books and standalone articles
 
 Status: implemented and locally tested, 16 October 2026. Deployment is confirmed
 by the release workflow and exact live revision marker.
@@ -7,8 +7,8 @@ by the release workflow and exact live revision marker.
 
 The latest published article must be immediately identifiable, whether it belongs
 to Chronicles of Computation, Good Enough, or neither book. Both published books
-must remain discoverable as independent articles and book instalments accumulate.
-Book publication batches must not displace independent articles. Do not repeat the
+must remain discoverable as standalone articles and book instalments accumulate.
+Book publication batches must not displace standalone articles. Do not repeat the
 lead article as another card or describe an older chapter as the latest instalment.
 Preview drafts must remain separate from published discovery.
 
@@ -27,7 +27,7 @@ Preview drafts must remain separate from published discovery.
    lead heading. Keep the book overview visible; do not promote its previous
    instalment to “latest”. Do not show another Collections & Books section for
    these same books farther down the homepage.
-3. **Independent articles**: the newest pieces without membership in a published
+3. **More articles**: the newest pieces without membership in a published
    book, excluding the lead by stable piece identity. Show three initially, then
    offer **Show more articles** in batches of six. Use brief summaries and dates,
    without large repeated artwork. Keep **All writing** visible beside the heading.
@@ -35,30 +35,35 @@ Preview drafts must remain separate from published discovery.
 On desktop, use a wider lead column and a narrower Books column so the latest
 article and both books are visible near the top. Avoid a tall hero image that
 pushes the books or article list down. On narrow screens use natural document
-order: lead, compact book entries, independent articles. No carousel, nested scroll
+order: lead, compact book entries, standalone articles. No carousel, nested scroll
 area, sticky book rail or automatic content insertion. Exact spacing and image
 limits require visual validation at desktop and mobile widths and browser zoom.
 
 With both books available, the initial layout has six content blocks: one lead,
-two book overviews and three independent articles. These are different roles,
+two book overviews and three standalone articles. These are different roles,
 not six chronological article slots. This layout replaces the earlier shared
 slot budget; it also keeps a lead book's overview visible, refining the earlier
 suggestion to exclude that book entirely. Fewer available items means fewer
 blocks, with no duplicated pieces or placeholder cards. Do not show a load-more
 control when there is nothing left to load.
 
+Public labels are **Article**, **More articles** on the homepage, and **Articles**
+in Writing filters. Book membership uses **From [book title]**. “Standalone” is
+an internal description, not a public label. Existing `/writing/independent/`
+URLs and internal identifiers stay stable.
+
 ## Publication cases
 
-| Newest publication | Lead | Chronicles entry | Good Enough entry | Independent articles |
+| Newest publication | Lead | Chronicles entry | Good Enough entry | Standalone articles |
 | --- | --- | --- | --- | --- |
-| Independent article | That article | Latest published instalment | Latest published instalment | Next three independent articles |
-| Chronicles instalment | That instalment, with book context | Latest instalment featured above; contents link | Latest published instalment | Newest three independent articles |
-| Good Enough instalment | That instalment, with book context | Latest published instalment | Latest instalment featured above; contents link | Newest three independent articles |
+| Standalone article | That article | Latest published instalment | Latest published instalment | Next three standalone articles |
+| Chronicles instalment | That instalment, with book context | Latest instalment featured above; contents link | Latest published instalment | Newest three standalone articles |
+| Good Enough instalment | That instalment, with book context | Latest published instalment | Latest instalment featured above; contents link | Newest three standalone articles |
 
 The same piece can be reused in more than one book. Deduplicate by piece identity:
 if it is the latest instalment of both books and the lead, both book entries refer
 to the lead. The lead exposes both memberships without repeating the article.
-Membership in a draft-only book must not reclassify a public independent article.
+Membership in a draft-only book must not reclassify a public standalone article.
 Books with no readable published content do not appear publicly. Draft-only preview
 libraries keep their content in Drafts in preview, without inventing a public lead.
 
@@ -72,8 +77,7 @@ on failure. Keyboard navigation must reach the newly inserted items naturally,
 without jumping back to the beginning or skipping them.
 
 The complete **All writing** index remains chronological and includes every
-published piece once. Offer linked filters for **All writing**, **Independent
-articles**, **Chronicles of Computation** and **Good Enough**, generated from public
+published piece once. Offer linked filters for **All writing**, **Articles**, **Chronicles of Computation** and **Good Enough**, generated from public
 books rather than hard-coded names. Use the same loading component. Book overview
 pages retain their reading-order contents; publication order is a discovery view,
 not a replacement for book order.
@@ -81,7 +85,7 @@ not a replacement for book order.
 Use real, addressable paginated documents underneath the enhanced Show more
 interaction, with Previous/Next fallback links when JavaScript is unavailable.
 Filter/page state must survive refresh, browser Back/Forward and copied links.
-The homepage's Show more control extends only Independent articles, not the lead
+The homepage's Show more control extends only More articles, not the lead
 or Books area; All writing is the explicit route to older book instalments.
 Do not deliver the entire future catalogue merely to hide most rows in the browser.
 
@@ -97,7 +101,7 @@ These findings inform a recommendation, not a claim of reader-tested superiority
 
 ## Implementation and verification plan
 
-1. Separate latest-piece selection, stable book summaries and independent article
+1. Separate latest-piece selection, stable book summaries and standalone article
    selection in the core view model. Replace the homepage lead override in this
    layout and define the new initial-count/batch configuration in authoring docs.
 2. Reuse book summaries, article lists and loading controls across home and Writing;
@@ -121,7 +125,7 @@ These findings inform a recommendation, not a claim of reader-tested superiority
 only the next static HTML page, validates its build revision and filter identity,
 and never combines lists from different deployments.
 
-Routes are `/page/2/` for older home-page independent articles,
+Routes are `/page/2/` for older home-page standalone articles,
 `/writing/page/2/`, `/writing/independent/`, and `/writing/books/<book-id>/`
 with `/page/2/` suffixes for filtered continuation. Only existing pages are built.
 Enhanced URLs add `?from=1` (or the directly opened starting page) so reload and

@@ -46,7 +46,7 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
             ? lead.books
                 .filter((book) => !book.draft)
                 .map((book) => <a href={book.url}>From {book.title}</a>)
-            : "Independent article"}
+            : "Article"}
         </p>
         {leadContext && <p class="meta">{leadContext}</p>}
         <h1 id="latest-heading">
@@ -110,7 +110,7 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
 </div>
 <section class="recent-writing" aria-labelledby="recent-heading">
   <div class="section-heading">
-    <h2 id="recent-heading">Independent articles</h2>
+    <h2 id="recent-heading">More articles</h2>
     <a href="/writing/">
       All writing <span aria-hidden="true">→</span>
     </a>

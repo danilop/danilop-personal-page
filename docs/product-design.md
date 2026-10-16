@@ -141,13 +141,13 @@ records remaining scope, including incremental full-site preparation.
 The [homepage discovery design](homepage-discovery-plan.md) is implemented.
 The latest published article appears first, regardless of whether it belongs to a
 book. Desktop places compact book overviews beside it; mobile uses lead, books,
-then independent articles. Every readable public book remains discoverable. When
+then standalone articles. Every readable public book remains discoverable. When
 its latest instalment is the lead, its overview links upwards without repeating
 the article or misleadingly calling an older chapter “latest”.
 
-Independent articles show three entries initially and six more on explicit request.
-The All writing index provides chronological discovery with linked filters for
-independent articles and each public book. It includes each piece once, even when
+The **More articles** section shows three standalone entries initially and six more on explicit request.
+The All writing index provides chronological discovery with linked filters labelled
+**Articles** and each public book’s title. It includes each piece once, even when
 reused across books. Reading-order tables of contents remain on book pages.
 Both surfaces share article rows and an accessible Show more control with real
 paginated fallback links, result counts, failure recovery and history restoration.
@@ -155,7 +155,7 @@ There is no automatic infinite scrolling, carousel or nested scroll area.
 
 Saved publication dates and stable identity determine ordering; edits do not move
 articles to the top. Legacy editorial lead settings cannot displace the newest
-publication. Preview-only books do not reclassify public independent articles,
+publication. Preview-only books do not reclassify public standalone articles,
 and drafts remain in their own labelled preview section without publication dates.
 Three article columns reduce to two and then one as width decreases. Lead artwork
 is limited to 180px high (130px on narrow phones) with its aspect ratio preserved.

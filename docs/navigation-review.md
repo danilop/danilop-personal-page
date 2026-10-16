@@ -94,7 +94,7 @@ reading in public pages and private auditions. Play/pause remains the action ico
 
 ## Homepage and Writing discovery — 16 October 2026
 
-The latest article leads; compact book summaries and independent articles have
+The latest article leads; compact book summaries and standalone articles have
 separate roles. The shared pager provides explicit Show more, real Previous/Next
 fallbacks, counts and linked All/Independent/Book filters. Drafts stay separate.
 All three newest-publication cases, duplicate identities and multi-book reuse are

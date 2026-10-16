@@ -51,7 +51,7 @@ export function discovery(site: CompiledSite) {
   const filters = [
     { title: "All writing", url: "/writing/", entries: home.writing },
     {
-      title: "Independent articles",
+      title: "Articles",
       url: "/writing/independent/",
       entries: home.independent,
     },

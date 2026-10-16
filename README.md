@@ -397,9 +397,9 @@ See [asset provenance](docs/assets.md) for fonts, artwork, and preserved materia
 The [homepage discovery design](docs/homepage-discovery-plan.md) is implemented:
 the newest published article leads, with compact book overviews alongside it on
 desktop. Each book shows its latest instalment, or points to the lead when it is
-already featured above. Independent articles have their own list: three initially,
+already featured above. Standalone articles appear under **More articles**: three initially,
 then six per **Show more articles** action. **All writing** includes chronological
-articles and linked filters for independent writing and each published book.
+articles and linked filters labelled **Articles** and each published book’s title.
 
 Real paginated pages support sharing, JavaScript-free navigation and indexed links.
 The enhanced control appends articles, announces results and restores loaded batches
