@@ -4,13 +4,14 @@ pace: 1
 profile: kokoro-mlx-bf16-v1
 pronunciations: {}
 adaptations:
-  code-c331238c62777b8c651a4ef5:
+  code-470a07612b3153577f11f2e8:
     treatment: explanation
-    sourceHash: fd86b7f4666725d24707c6114fd8c76293f18057c79f46a5db4264aacd44921b
-    text: The program begins with an empty string called notches. It repeats ten
-      times, appending one vertical mark and printing the growing string on each
-      repetition. Finally, it prints Number of notches and the string length,
-      which is ten.
-    reason: Re-reviewed against the unchanged tally code and revised chapter on
-      16 October 2026. The spoken explanation still accurately describes each
-      operation after removal of the separate doubling example.
+    sourceHash: 814c4aebfa27032e1359a00c47330f47ffbbb3ff60965c6d18374ab741baab41
+    text: The program sets the animal count to ten and starts with an empty
+      string called notches. For each animal, it adds one vertical mark and
+      prints the growing string. Finally, it prints the number of notches,
+      which is ten. Changing the animal count changes how many times the loop runs.
+    reason: Reviewed against the revised six-line tally and its prediction and
+      stepping exercise on 16 October 2026. Each operation and the editable
+      animal count are described without attributing this invented example to
+      the historical objects discussed in the chapter.

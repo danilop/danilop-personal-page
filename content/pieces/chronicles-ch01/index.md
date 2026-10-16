@@ -4,7 +4,10 @@ id: "chronicles-ch01"
 title: "Before Written Arithmetic"
 summary: "Notched bones, tally marks and the limits of interpreting early records."
 language: "en-GB"
-publication: { "surfaces": [ "collection", "book" ] }
+publication:
+  surfaces:
+    - collection
+    - book
 slug: "chronicles-ch01"
 tags: [ "history", "computing", "python", "data-representation" ]
 draft: true
@@ -25,14 +28,15 @@ The record separates the quantity from the things counted. It also changes the w
 A short program demonstrates this correspondence. Python calls a sequence of text characters a *string*. Here the string begins empty, and a loop adds one mark on each of ten repetitions. The instruction `print` displays the record, while `len` returns its length.
 
 ```python
+animals = 10
 notches = ""
-for _ in range(10):
+for _ in range(animals):
     notches += "|"
     print(notches)
 print("Number of notches:", len(notches))
 ```
 
-The stored marks are the program's *state*: information retained while it runs. The loop changes that state according to a rule. There is no need to understand the rest of Python to follow this example; each repetition has the same effect, and counting the resulting characters gives ten. Changing the number of repetitions to seven produces seven marks. The computer can repeat the procedure, but the meaning of those marks still comes from the person who chose the example.
+The stored marks are the program's *state*: information retained while it runs. The loop changes that state according to a rule. There is no need to understand the rest of Python to follow this example; each repetition has the same effect, and counting the resulting characters gives ten. Before running it, predict the final line. Then change `animals` to seven; stepping through the loop shows the record growing one mark at a time. The computer can repeat the procedure, but the meaning of those marks still comes from the person who chose the example.
 
 ::: {.callout-note appearance="simple" icon="false"}
 A tally also makes the cost of a representation visible. A count of ten takes ten marks; a count of ten thousand takes ten thousand. Grouping the marks can make them easier to inspect, while replacing a group with a distinct sign can reduce the space needed. Either change introduces a convention that the reader must learn. The convenience of a shorter record depends on an agreement about how to interpret it.

@@ -25,20 +25,20 @@ its outline supplies the reading order and referenced pieces. A shared release
 still does not merge articles or introduce an instalment entity. Import selections
 are operational choices, separate from the [content model](content-model.md).
 
-| Option | Behavior |
-| --- | --- |
-| `--from PATH` | Required canonical source library; paths are relative to the working directory unless absolute |
-| `--to PATH` | Destination library; defaults to `content`; useful for rehearsal in a separate directory |
-| `--piece ID` | Select a piece by its metadata ID; repeat to select several; does not select owning collections |
-| `--collection ID` | Select a collection and its referenced pieces, including before/after/front/back matter; repeatable |
-| `--all` | Explicitly select every non-retired piece and collection; cannot combine with positive piece/collection selectors |
-| `--exclude-piece ID` | Exclude a source piece; repeatable; never silently break a selected collection or adaptation |
-| `--exclude-collection ID` | Exclude an outline; repeatable; does not exclude independently selected pieces |
-| `--update` | Allow changed/new files within existing identities; otherwise differing existing content blocks the import |
-| `--apply` | Apply the validated selection; without it, only plan and validate |
-| `--expect HASH` | With apply, require the fingerprint from a previous dry run; a changed plan fails |
-| `--json` | Print the plan with selected identities, file actions, SHA-256 hashes, warnings, and fingerprint |
-| `--help` | Show command usage |
+| Option                    | Behavior                                                                                                          |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `--from PATH`             | Required canonical source library; paths are relative to the working directory unless absolute                    |
+| `--to PATH`               | Destination library; defaults to `content`; useful for rehearsal in a separate directory                          |
+| `--piece ID`              | Select a piece by its metadata ID; repeat to select several; does not select owning collections                   |
+| `--collection ID`         | Select a collection and its referenced pieces, including before/after/front/back matter; repeatable               |
+| `--all`                   | Explicitly select every non-retired piece and collection; cannot combine with positive piece/collection selectors |
+| `--exclude-piece ID`      | Exclude a source piece; repeatable; never silently break a selected collection or adaptation                      |
+| `--exclude-collection ID` | Exclude an outline; repeatable; does not exclude independently selected pieces                                    |
+| `--update`                | Allow changed/new files within existing identities; otherwise differing existing content blocks the import        |
+| `--apply`                 | Apply the validated selection; without it, only plan and validate                                                 |
+| `--expect HASH`           | With apply, require the fingerprint from a previous dry run; a changed plan fails                                 |
+| `--json`                  | Print the plan with selected identities, file actions, SHA-256 hashes, warnings, and fingerprint                  |
+| `--help`                  | Show command usage                                                                                                |
 
 Without positive selectors, the dry run includes all non-retired candidates, minus
 exclusions. With positive selectors, their union is used. A collection adds its
@@ -219,3 +219,20 @@ The obsolete spoken adaptation was removed and the unchanged tally explanation
 re-reviewed against the new source context. Article narration and the preview
 audiobook are regenerated, including the full MP3 and chapter timing. The chapter
 and book remain drafts; deploying this edit does not publish either.
+
+## Code example application on 16 October 2026
+
+The whole-book example recommendations were applied in the original manuscript and
+example files before refreshing the website copy. Only Chapter 1 currently has an
+article affected by these code changes. Its expanded canonical body and four cited
+notes match the imported article; the Introduction and later publication scope are
+unchanged. The scoped import selected only `chronicles-ch01` with `--update`, then
+applied the inspected fingerprint with `--apply --expect HASH`.
+
+The tally's semantic activity ID remains `tally`; its source hash now covers the
+named `animals` input. The spoken explanation was reviewed against the changed code
+and nearby prediction exercise before regenerating article narration and the preview
+audiobook. The active source manifest and copied tally source were refreshed, and
+the removed second example was removed from the active extraction inventory.
+The historical combined pilot remains a historical snapshot, not a source to reimport.
+See [the applied example decisions](code-example-editorial-review.md#applied-outcome).

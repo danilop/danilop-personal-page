@@ -1,5 +1,46 @@
 # Release verification
 
+## Chronicles code example application — 16 October 2026
+
+Applied the individual review decisions to the canonical book and synchronised
+the existing Chapter 1 article through a scoped, fingerprinted import. Later
+chapters have no corresponding articles yet. Publication flags and unrelated
+draft work remain unchanged. See [the editorial record](code-example-editorial-review.md).
+
+The resulting inventory is 104 included programs, 16 inline appendix snippets
+and one optional attention companion. All 105 standalone files passed with
+Python 3.14.8 and 3.15.0 under `-I -S`. Both interpreters also executed all 120
+printed blocks successfully. The strict include/index/import audit found no
+issues; 44 focused example tests passed on both interpreters, the complete book
+tooling suite passed 94 tests, and the British English check found no targets.
+The rebuilt HTML and EPUB contain 21 chapters and 28 EPUB spine documents, with
+no broken internal links, duplicate IDs or missing resources. The book contains
+83,252 prose words, within its existing 80,000–90,000 target.
+
+The reviewed tally explanation and changed prose were regenerated with the
+existing George/MLX profile: 549.0 seconds for the article and 962.6 seconds for
+the preview audiobook. The private preview built 43 pages and verified 220 files
+and 1,496 local links. Its initial sandboxed content-worker attempt was unavailable;
+the retry with local worker access completed successfully.
+
+In-app Chromium checks verified the actual Python output for ten and seven
+animals, copied code equality, original-code restoration with cleared output,
+and stepping through the loop with the correct line highlight and growing tally.
+Desktop 1280px and mobile 390px article views were inspected; controls reflow,
+the editor scrolls horizontally when necessary, and the page does not overflow.
+Chapter playback advanced and paused with the new duration; the book page exposes
+the regenerated full MP3. No console warnings or errors were recorded in the
+tested article flow. Canonical HTML inspection found two long listings, which
+were wrapped without changing execution, and a Pandoc highlight-style override
+that defeated narrow-screen code scrolling; the export stylesheet now contains
+that scrolling and allows long inline paths and reference URLs to wrap.
+
+Native PDF rebuilding and pagination remain unverified because XeLaTeX is not
+installed. EPUB structure and execution were checked; this pass does not claim
+a native EPUB-reader or remote Leanpub proof. Full repository gates and the
+exact hosted revision are checked by the commit/release workflow before reporting
+deployment complete.
+
 ## Homepage and Writing discovery — 16 October 2026
 
 Implemented the latest article, stable public book summaries and independent

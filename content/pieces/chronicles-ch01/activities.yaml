@@ -2,5 +2,5 @@ schemaVersion: 1
 activities:
   - id: tally
     title: Make a tally
-    codeSha256: a6c19a5301c2eed99d5f54576e053b6b1432d95a5e11ee1f72e911f4c960f600
+    codeSha256: 81f368900aaa1cb21fdfa204b8d5ef82680378a28ecdd98e1f86d9c3483a4b64
     runtime: python

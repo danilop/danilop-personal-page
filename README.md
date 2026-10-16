@@ -537,8 +537,9 @@ Ishango discussion explains the limits of arithmetic evidence in prose. See the
 [editorial refresh](docs/content-import.md#chapter-1-example-refinement-on-16-october-2026).
 
 The [whole-book code example review](docs/code-example-editorial-review.md) records
-the teaching and length criteria and the outcome of individually reviewing the
-remaining 131 Chronicles samples. These are recommendations, not applied edits.
+the teaching and length criteria and their individual application to the original
+book and existing Chapter 1 article. The book now has 104 included programs,
+16 appendix snippets and one optional attention companion. Draft status is preserved.
 Every book sample must use Python built-ins and the standard library only, with
 no external packages or services. Narrative examples must reveal something through
 execution or experimentation, rather than merely print an obvious answer.
