@@ -204,3 +204,18 @@ Python appendix were updated to name only those minor versions. The existing
 Introduction article was synchronised by a scoped dry-run/fingerprint import;
 publication settings and unrelated drafts were preserved. Browser Pyodide remains
 a separately pinned runtime. No book publication is implied by this refresh.
+
+## Chapter 1 example refinement on 16 October 2026
+
+Removed the doubling-pairs example and its introductory and follow-up paragraphs
+from the canonical manuscript, then applied the same bounded removal to the
+existing Chapter 1 article. Expanded canonical source and article body match
+exactly, including the retained interpretation paragraph and four citations.
+The tally remains the sole runnable example. The original book example file and
+index entry were removed; strict coverage now reports 116 examples, includes and
+index rows. Historical verification counts above describe their earlier runs.
+
+The obsolete spoken adaptation was removed and the unchanged tally explanation
+re-reviewed against the new source context. Article narration and the preview
+audiobook are regenerated, including the full MP3 and chapter timing. The chapter
+and book remain drafts; deploying this edit does not publish either.

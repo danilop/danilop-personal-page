@@ -531,3 +531,7 @@ for the current review session; they neither save text nor suppress future check
 Finding links track unchanged quotations through edits; changing one passage no
 longer disables links to every other finding. Missing or ambiguous targets are
 disabled individually, while the report retains its out-of-date notice.
+
+The draft Chronicles opening chapter now uses one runnable tally example; its
+Ishango discussion explains the limits of arithmetic evidence in prose. See the
+[editorial refresh](docs/content-import.md#chapter-1-example-refinement-on-16-october-2026).

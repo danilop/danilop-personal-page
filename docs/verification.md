@@ -2083,3 +2083,31 @@ All 26 staged-snapshot commit checks passed, including coverage, types, lint,
 architecture, formatting and narration freshness. The private preview build
 verified 42 pages, 218 output files and 1,466 local links. Deployment still uses
 the exact-revision live verification gate; private book routes remain excluded.
+
+## Chapter 1 example refinement — 16 October 2026
+
+The canonical Chapter 1 and article now contain one tally example. Their bodies
+match after expanding the canonical code include and normalising citation syntax.
+The historical-interpretation paragraph is unchanged. The removed example has no
+remaining manuscript include or example-index entry, and its narration adaptation
+was removed.
+
+All 116 remaining standalone examples pass on both Python 3.14 and 3.15. Strict
+example coverage/import/index audit has no findings, all four include tests pass,
+and the required British English check reports no review targets. The refreshed
+article narration is 539.2 seconds; the complete preview audiobook is 952.84
+seconds and reuses 58 speech chunks. Its transcript excludes the removed example
+and retains the interpretation paragraph. In-app Chromium verified one code
+editor, Run producing ten marks, Restore original, actual chapter audio playback
+and the revised Ishango layout, with no console errors. The preview build verifies
+220 files and 1,496 local links. Release checks confirm deployment separately;
+draft publication flags are preserved. The pilot preview assertion now requires
+one code listing and still checks all four citation references.
+
+Deployment status for this refinement: pending. The initial full gate exposed a
+stale two-example assertion, which was corrected to one. Subsequent complete
+runs reached 25/26 checks but the JavaScript coverage process timed out during
+different unrelated tests, with unusually long wall-clock pauses. Temporary sleep
+prevention did not resolve this. No commit or deployment was made; the focused
+source, Python, narration and preview results above passed. A clean full gate is
+required before release.

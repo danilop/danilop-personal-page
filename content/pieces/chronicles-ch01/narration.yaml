@@ -6,20 +6,11 @@ pronunciations: {}
 adaptations:
   code-c331238c62777b8c651a4ef5:
     treatment: explanation
-    sourceHash: aa92b9eff30f89336dd65f5e10f56a375546dcbc5c4d2db5dc5650508ef9c8dd
+    sourceHash: fd86b7f4666725d24707c6114fd8c76293f18057c79f46a5db4264aacd44921b
     text: The program begins with an empty string called notches. It repeats ten
       times, appending one vertical mark and printing the growing string on each
       repetition. Finally, it prints Number of notches and the string length,
       which is ten.
-    reason: Reviewed against the saved source and surrounding explanation; diagram
-      visually inspected. Prepared by Codex under the authorised narration
-      review workflow.
-  code-84297cc0de3de927d8bb0499:
-    treatment: explanation
-    sourceHash: 545fcf8a0c4b5937c5d1bfbc4db76464a9d51df2cae5d56d8e3dfc02c227dfed
-    text: "The program stores three pairs: three and six, four and eight, and five
-      and ten. For each pair, it prints both numbers and checks whether the
-      second equals twice the first. Each comparison is true."
-    reason: Reviewed against the saved source and surrounding explanation; diagram
-      visually inspected. Prepared by Codex under the authorised narration
-      review workflow.
+    reason: Re-reviewed against the unchanged tally code and revised chapter on
+      16 October 2026. The spoken explanation still accurately describes each
+      operation after removal of the separate doubling example.

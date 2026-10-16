@@ -46,16 +46,6 @@ These arrangements have attracted proposals involving doubling, calendars and nu
 
 It is easy to reproduce some of the arithmetic. Three doubled is six, and four doubled is eight; neither calculation is in doubt. The historical question is whether those relationships explain why the marks were made. A researcher must decide which groups belong together, how to treat a damaged or ambiguous mark, and which relationships to test. Different choices can produce different accounts of the same object. A calculation establishes the consequences of those choices, but cannot by itself establish that a prehistoric user made them.
 
-The following example keeps that distinction visible. It stores three proposed pairs and calculates whether the second count is twice the first. The pairs are selected from the groups described by the museum; they are not a transcription of every notch on the bone.
-
-```python
-pairs = [(3, 6), (4, 8), (5, 10)]
-for first, second in pairs:
-    print(first, second, second == 2 * first)
-```
-
-All three comparisons return `True`. The result confirms the arithmetic relationship for the selected pairs. It provides no date, no identification of a user and no account of what the other groups meant. The program is useful because its small claim can be inspected: change one count and the corresponding comparison changes. Its limits are equally clear from what it has been given to work with.
-
 ## Records and their readers
 
 The surviving objects are a small part of the material that people once handled. Bone can survive where wood or plant fibre does not, and a preserved object may have been exceptional rather than typical. Dating an artefact establishes something about its place in the surviving evidence; it does not establish when the practice began. Nor can the absence of writing be taken as the absence of a complex procedure passed on through demonstration and practice.

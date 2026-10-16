@@ -211,7 +211,7 @@ body{padding:0 24px 50px}.preview-bar{max-width:960px;margin:auto;padding:20px 0
         "chapter-01-preview.html",
       ].includes(file);
       // Count source listings, not the interactive runner's output panel.
-      assert.equal($("pre code").length, expected ? 2 : 0);
+      assert.equal($("pre code").length, expected ? 1 : 0);
       assert.equal($("[data-footnote-ref]").length, expected ? 4 : 0);
       await fs.writeFile(path.join(root, file), html);
     }
