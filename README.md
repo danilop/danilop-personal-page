@@ -535,3 +535,7 @@ disabled individually, while the report retains its out-of-date notice.
 The draft Chronicles opening chapter now uses one runnable tally example; its
 Ishango discussion explains the limits of arithmetic evidence in prose. See the
 [editorial refresh](docs/content-import.md#chapter-1-example-refinement-on-16-october-2026).
+
+The [whole-book code example review](docs/code-example-editorial-review.md) records
+the teaching and length criteria and the outcome of individually reviewing the
+remaining 131 Chronicles samples. These are recommendations, not applied edits.

@@ -2104,10 +2104,16 @@ and the revised Ishango layout, with no console errors. The preview build verifi
 draft publication flags are preserved. The pilot preview assertion now requires
 one code listing and still checks all four citation references.
 
-Deployment status for this refinement: pending. The initial full gate exposed a
-stale two-example assertion, which was corrected to one. Subsequent complete
-runs reached 25/26 checks but the JavaScript coverage process timed out during
-different unrelated tests, with unusually long wall-clock pauses. Temporary sleep
-prevention did not resolve this. No commit or deployment was made; the focused
-source, Python, narration and preview results above passed. A clean full gate is
-required before release.
+The initial full gate exposed a stale two-example assertion, corrected to one.
+Several later attempts timed out during unrelated checks after unusually long
+wall-clock pauses. The resumed run passed all 26 checks, including 359 JavaScript
+tests with one opt-in AWS test skipped. Commit `3fe4f71` contains the Chapter 1
+removal. Release status is established by the workflow and exact live revision
+check; private book routes must remain unavailable.
+
+The subsequent [whole-book example review](code-example-editorial-review.md)
+contains 131 individual recommendations: 115 remaining narrative files and all
+16 appendix snippets. Inventory coverage, unique identities and source links were
+checked; code and context hashes record the reviewed version. Recommendations
+are not implementations or newly tested replacements. No remaining example was
+edited during this review, and the British English check found no review targets.
