@@ -6,8 +6,12 @@ Date: 2026-09-15.
 This document defines the experience independently of rendering libraries and
 hosting mechanisms. See [the content model](content-model.md) for the concepts
 and [the architecture](architecture.md) for implementation choices. “Must” means
-required; “should” means preferred. All planned publishing capabilities are in launch scope; search, site-wide AI,
-browser editing and subscriptions remain separate future decisions.
+required; “should” means preferred. All planned publishing capabilities are in launch scope; search, site-wide AI and
+browser editing remain separate future decisions. Newsletter subscriptions and
+optional article distribution are now requested future scope; see the
+[newsletter proposal](newsletter-plan.md), with provider and format still undecided.
+The owner deferred selection and implementation on 17 October 2026; the research
+is saved for a future discussion.
 
 ## 1. Purpose
 
@@ -365,7 +369,10 @@ Launch scope includes native Markdown articles, collections/book structure,
 static rich content, archive migration, short links, simulations/WASM, browser
 model adapters, frozen editions/Markua export, Leanpub and cross-posting adapters.
 Account-dependent verification is recorded separately from local implementation.
-Browser editing, subscriptions, search and a site-wide assistant are deferred.
+Browser editing, search and a site-wide assistant are deferred. Newsletter
+subscriptions on the homepage, article pages and book pages, with optional article
+distribution, are requested future scope; the [proposal](newsletter-plan.md)
+separates those requirements from recommendations that remain undecided.
 
 ## 10. First-release success criteria
 

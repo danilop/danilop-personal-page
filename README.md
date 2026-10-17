@@ -342,6 +342,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Authoring format](docs/authoring-format.md): Markdown/YAML, math syntax and configuration.
 - [Architecture](docs/architecture.md): replaceable implementation choices.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
+- [Newsletter research — deferred](docs/newsletter-plan.md): homepage/article/book subscriptions and optional distribution; saved provider comparisons (including Substack), free and paid pricing, API constraints and email-format trade-offs. Selection and implementation are deferred for a future discussion.
 - [Analytics and privacy](docs/analytics-and-privacy.md): deployed PostHog EU analytics, visitor consent, event definitions and operating instructions; MCP and exports remain unconfigured.
 - [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
 - [Asset release design](docs/asset-release-design.md): ignored editorial media, checksum manifests, release/deployment gates and automatic retention.

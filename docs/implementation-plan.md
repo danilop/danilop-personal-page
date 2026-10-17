@@ -12,7 +12,12 @@ Updated: 2026-10-02.
 
 Danilo selected **all planned publishing capabilities before deployment**.
 The former release 1 / later releases split is superseded. Search, a site-wide
-assistant, browser editing, and subscriptions remain separate future decisions.
+assistant and browser editing remain separate future decisions. Newsletter
+subscriptions and optional article distribution were requested on 17 October 2026;
+the [research and proposal](newsletter-plan.md) record the scope and open choices.
+No provider is selected and no newsletter functionality is implemented or deployed.
+The owner deferred selection and implementation on 17 October 2026; retain the
+research for a future discussion and refresh provider details before proceeding.
 
 | Capability                                        | Implementation                                                                                                                  | Verification / remaining gate                                                                                                                                       |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

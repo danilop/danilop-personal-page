@@ -204,6 +204,15 @@ unpublishing and republishing retain it. Local draft saves and previews do not
 assign publication times. Actual delivery may occur later than the local publish
 action. See [publication timestamps](publication-time.md).
 
+### Newsletter distribution — proposed
+
+Optional newsletter distribution and subscription forms on the homepage, article
+pages and book pages are requested future scope. The
+[newsletter proposal](newsletter-plan.md) compares providers and email formats.
+No newsletter is sent by the current publishing or release workflow; provider
+selection and implementation were deferred by the owner on 17 October 2026.
+The research is saved for a future discussion.
+
 ## 5. Manually publish an external copy, when wanted
 
 Exports use the managed media CDN and include local asset bytes. Save the source
