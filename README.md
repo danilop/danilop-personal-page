@@ -182,6 +182,26 @@ The guide also covers collections, book editions, updates, and recovery. Use the
 [authoring reference](docs/authoring-format.md) for file formats and the
 [image authoring workflow](docs/image-authoring-workflow.md) for subscription-based Codex generation.
 
+The unpublished article [Do second brains dream of agentic loops?](content/pieces/a-second-brain-for-my-ai-agents/index.md)
+describes personal memory maintained with AI agents, the history of the term,
+nightly wiki consolidation and the project's reported evaluations. The narrative
+uses Forte's account of organising medical records and Bush's imagined research
+trail to introduce the idea, with restrained humour in the technical account.
+A human-memory comparison distinguishes working, episodic and semantic memory;
+sleep and dream studies explain the inspiration without claiming biological
+equivalence or that dreams cause consolidation. The dreaming section connects
+the title to tool use and continuity across runs, distinguishing the implemented
+maintenance job from repetition until a measured target is reached.
+Two matching Mermaid diagrams show the shared setup and the memory lifecycle,
+with the latter beside the dreaming explanation; both render as SVG figures.
+Deployment details follow the conceptual account and evaluations, including S3 backup after
+nightly consolidation and a verified restore drill. Its
+[source notes and publication preparation](docs/second-brain-article-research.md)
+separate verified desktop access, recorded deployment details and planned work.
+The article will be published only once the application repository is public and
+its links work without authentication. Neither the article nor a repository
+visibility change has been published as part of this drafting work.
+
 The article on the limits of reward-based AI training has a
 [article](content/pieces/clever-enough-to-find-the-loophole/index.md),
 [researched outline](docs/ai-taming-outline.md) and

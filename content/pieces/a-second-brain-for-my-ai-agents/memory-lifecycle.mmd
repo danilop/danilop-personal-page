@@ -1,0 +1,15 @@
+flowchart TB
+  experiences["Experiences"]
+  journal["Journal"]
+  dreams["Nightly consolidation"]
+  wiki["Wiki"]
+  search["Local search"]
+  recall["Memories for later tasks"]
+  experiences -->|"Record details"| journal
+  journal -->|"Revisit"| dreams
+  wiki -->|"Read"| dreams
+  dreams -->|"Update"| wiki
+  journal -. indexed .-> search
+  wiki -. indexed .-> search
+  dreams -. "Find related" .-> search
+  search -->|"Keywords + embeddings"| recall

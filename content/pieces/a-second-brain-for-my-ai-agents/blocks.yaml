@@ -1,0 +1,16 @@
+schemaVersion: 1
+blocks:
+  shared-memory:
+    kind: diagram
+    source:
+      format: mermaid
+      path: ./shared-memory.mmd
+    caption: Shared memory. AI tools share the journal and wiki on the Raspberry Pi computer, which schedules consolidation through a cloud model.
+    description: AI tools use the brain's MCP interface or CLI to access a Raspberry Pi computer over Tailscale. The computer stores a Git-backed Markdown journal and wiki with local search. It schedules a nightly job that sends journal context to a cloud model and applies wiki updates through MCP.
+  memory-lifecycle:
+    kind: diagram
+    source:
+      format: mermaid
+      path: ./memory-lifecycle.mmd
+    caption: Memory lifecycle. Dreams connect recorded experiences with existing knowledge. Keyword search and embeddings help both the consolidator and later agents find relevant memories; the details remain in the journal and wiki.
+    description: Useful details from experiences are recorded in the journal. Nightly consolidation revisits those episodes, reads existing wiki knowledge and updates the wiki. Both journal and wiki are indexed for local search, which combines keywords and embeddings to find related memories during consolidation and for later tasks. The journal remains available after consolidation.

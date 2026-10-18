@@ -20,6 +20,9 @@ tags:
   - id: data-representation
     label: Data representation
     description: How information is encoded, stored, and interpreted, from tallies to digital formats.
+  - id: systems-thinking
+    label: Systems thinking
+    description: How rules, dependencies and interactions shape outcomes across people and institutions.
   - id: website
     label: Website
     description: The design, operation, and development of this website.
