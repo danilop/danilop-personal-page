@@ -75,6 +75,15 @@ forbids network scraping. Import or deliberately capture metadata before adding
 an Open Graph-only source. Corrections are applied after metadata resolution on
 every build; do not edit disposable cache entries to make a lasting correction.
 
+## Analytics dashboard
+
+Run `./analytics.sh` to open the PostHog dashboard list in your default browser.
+Use `./analytics.sh traffic` for visitor statistics or `./analytics.sh collections`
+for book/collection actions. The script works by absolute path from another
+directory too. The commands read the [private operations note](private-operations.md#analytics-launcher)
+on each run. See [analytics and privacy](analytics-and-privacy.md) for event meanings,
+consent controls, review findings and the limits of the measurements.
+
 ## Theme configuration
 
 Edit `publishing/site.yaml` for theme (`ink-and-paper` or `plain`), layout

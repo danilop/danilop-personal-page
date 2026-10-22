@@ -14,6 +14,30 @@ events and reproducible procedures without private account links or measurements
 Required public identifiers in application/provisioning configuration are not
 credentials; moving a note does not make browser-visible configuration secret.
 
+## Analytics launcher
+
+The shell shortcut `./analytics.sh` opens the dashboard list by default;
+`./analytics.sh traffic` and `./analytics.sh collections` open the respective
+reports. It delegates to the same private-note reader, accepts `--print` and
+`--notes /absolute/path`, and works from another directory when invoked by its
+absolute path. Node and installed repository dependencies are required.
+
+`npm run analytics:open` reads the private note each time and opens its traffic
+dashboard in the default browser. `npm run analytics:open -- collections` selects
+the collection/book dashboard; `npm run analytics:open -- dashboards` opens the
+project's dashboard list. `--print` prints the selected URL without opening it.
+`--notes /absolute/path` selects an alternative private note.
+
+Under `## PostHog`, maintain exactly one bullet starting `- Traffic: ` and one
+starting `- Collections/books: `, each containing a Markdown link to its dashboard.
+The expected URL shape is `https://eu.posthog.com/project/<project-id>/dashboard/<dashboard-id>`
+without credentials, query parameters or fragments. Keep the actual IDs only in
+the private note. Dashboard names can change without affecting the launcher.
+When replacing a dashboard, update its labelled link rather than appending another
+entry. The launcher does not determine the latest dashboard through the API.
+Use the signed-in dashboard list to verify or recover the correct destination.
+Opening a link still requires the browser's normal PostHog authentication.
+
 ## Reconstruct a lost note
 
 The note is a convenience index. Provider configuration is the source of truth:

@@ -130,11 +130,15 @@ for (const button of document.querySelectorAll<HTMLButtonElement>(
   });
 }
 window.addEventListener("storage", (event) => {
-  if (event.key !== CONSENT_KEY) return;
+  // localStorage.clear() emits a null key, including when consent is removed.
+  if (event.key !== CONSENT_KEY && event.key !== null) return;
+  if (event.storageArea && event.storageArea !== localStorage) return;
   const choice = readConsent(event.newValue);
   if (choice !== true && accepted === true) {
     accepted = choice;
+    endEngagement();
     client?.opt_out_capturing();
+    clearIdentifier();
     location.reload();
   }
 });
@@ -148,8 +152,10 @@ function endEngagement() {
   timer = undefined;
 }
 function beginEngagement() {
-  const body = document.querySelector<HTMLElement>("article.reading .prose");
-  if (!body || timer) return;
+  const bodies = [
+    ...document.querySelectorAll<HTMLElement>("article.reading .prose"),
+  ];
+  if (!bodies.length || timer) return;
   activeSeconds = 0;
   lastTick = Date.now();
   lastActivity = Date.now();
@@ -170,12 +176,15 @@ function beginEngagement() {
     )
       activeSeconds += Math.min((now - lastTick) / 1000, 5);
     lastTick = now;
-    const rect = body.getBoundingClientRect();
+    // Chapter pages contain several prose sections; measure their complete span.
+    const rects = bodies.map((body) => body.getBoundingClientRect());
+    const top = Math.min(...rects.map((rect) => rect.top));
+    const bottom = Math.max(...rects.map((rect) => rect.bottom));
     const depth = Math.max(
       0,
       Math.min(
         100,
-        Math.round(((innerHeight - rect.top) / Math.max(1, rect.height)) * 100),
+        Math.round(((innerHeight - top) / Math.max(1, bottom - top)) * 100),
       ),
     );
     for (const threshold of [30, 60, 180]) {

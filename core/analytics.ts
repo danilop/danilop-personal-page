@@ -83,5 +83,11 @@ export function cleanEvent<
       /* No referrer. */
     }
   }
-  return { ...event, properties };
+  const cleaned = { ...event, properties };
+  // The SDK also supports top-level profile updates. Keep only the event envelope.
+  for (const key of Object.keys(cleaned)) {
+    if (!["event", "properties", "uuid", "timestamp"].includes(key))
+      delete (cleaned as Record<string, unknown>)[key];
+  }
+  return cleaned;
 }

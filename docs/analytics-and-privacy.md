@@ -1,6 +1,43 @@
 # Analytics and visitor privacy
 
-## Status — 16 September 2026
+## Review and local changes — 17 October 2026
+
+The browser launcher and three implementation corrections are implemented locally,
+not yet deployed. `npm run analytics:open` opens the traffic dashboard from the
+private operations note. The runtime now revokes consent when another tab clears
+local storage, calculates chapter depth across all prose sections, and strips
+top-level SDK metadata/profile updates as well as unapproved event properties.
+Regression tests cover these cases. The review inspected the installed SDK and
+current page markup; it did not send production test events or change PostHog.
+Validation: all 15 focused analytics/runtime tests, scoped ESLint, Astro/TypeScript
+checks and local documentation file-link checks passed. The CLI help, saved-link
+selection and browser-launch command were exercised. A full release build and
+deployment were not run for this change.
+
+Both private links and the project's dashboard list were verified in the existing
+signed-in Safari session on 17 October. The list contains the traffic and wizard
+dashboards described below. The traffic dashboard displays results with mixed
+date windows and generic autocapture guidance; the launcher follows the maintained
+traffic link rather than assuming the largest dashboard ID is the right report.
+Account-specific observations stay in the private operations note. Project
+settings and individual insight filters were not audited.
+
+### Remaining improvements
+
+- **Reporting:** replace generic autocapture tiles with the explicit events below,
+  align date windows and exclude labelled deployment-test identities. Check the
+  actual saved insight filters in a follow-up; no dashboard configuration was changed.
+- **Reader context:** page paths distinguish chapter routes, but collection and
+  placement IDs are absent from page-view/engagement events. Add these only with
+  corresponding report definitions. Continuous reading on collection overview
+  pages and audiobook listening are not currently measured.
+- **Consent lifetime:** expiry is checked on page load. A page left open beyond
+  the preference's expiry does not yet re-prompt until navigation/reload. A future
+  change should enforce expiry during an open page and test SDK-load races too.
+- **Recovery:** test a private export and restore of event data and dashboard
+  definitions before relying on portability. MCP and exports remain unconfigured.
+
+## Historical production verification — 16 September 2026
 
 PostHog Cloud EU integration is implemented. The owner created the account and
 authorized wizard v2.74.1. The wizard created a collection/book dashboard and
@@ -18,7 +55,7 @@ checked against the public build revision and live consent controls. MCP, export
 and historical import remain unconfigured. Local browser tests intercept PostHog
 requests rather than sending visitor data.
 
-Validation: all 45 tests, type checking and the production build pass. Local
+At that release, all 45 tests, type checking and the production build passed. Local
 desktop and mobile browser checks cover acceptance, refusal, withdrawal,
 re-acceptance, engagement events and removal of sensitive URL values. No provider
 requests occur before consent; withdrawal removes the analytics cookie. The same consent
@@ -41,6 +78,40 @@ The starter template mentions automatic click capture, but this site deliberatel
 disables broad autocapture. Its generic click-based charts will not fill from
 page views alone. Find exact dashboard names and links in the private operations
 note, or recover them from the signed-in project's dashboard list.
+
+### Open from the command line
+
+Use the shell shortcut from the repository root:
+
+```sh
+./analytics.sh                     # dashboard list (default)
+./analytics.sh traffic             # visitors, sessions, page views
+./analytics.sh collections         # collection/book actions
+./analytics.sh --print             # print the dashboard-list URL without opening
+./analytics.sh --help
+```
+
+The executable script also works by absolute path from another directory. It
+requires Node and the repository dependencies (`npm install`), and delegates to
+the same launcher. Put the optional target before any flags; `--notes` and
+`--print` are forwarded unchanged. The existing npm commands remain available,
+with traffic as their default:
+
+```sh
+npm run analytics:open                 # traffic: visitors, sessions, page views
+npm run analytics:open -- collections  # collection/book actions
+npm run analytics:open -- dashboards   # project dashboard list for recovery
+npm run analytics:open -- --print      # print the saved traffic URL without opening
+npm run analytics:open -- --help
+```
+
+Each run reads `~/.config/notes-along-the-way/operations.md`; no account ID or
+dashboard URL is embedded in source or build output. Use `--notes /absolute/path`
+for a private note at another location. The launcher requires plain HTTPS PostHog
+EU dashboard URLs and opens the operating system's default browser. Sign in there
+if needed. It does not query the reporting API, refresh chart data itself, or
+require a personal API key. Update the private links when dashboards are replaced;
+see [the note format and recovery procedure](private-operations.md#analytics-launcher).
 
 ## Setup and deployment
 
@@ -80,11 +151,13 @@ Its local cache and downloaded reference copies are excluded from Git.
   browser-identifier cookie also has a 180-day expiry, renewed through use.
 - Withdrawal stops capture, clears the analytics identifier and reloads the page
   to dispose of active SDK work. Re-acceptance resumes with a new identifier.
+  The local October fix also handles clearing local storage in another tab.
 - Session replay, broad autocapture, exception capture, performance capture,
   surveys, feature flags and remote extension loading are disabled.
 - External viewers remain independently activated by their Load viewer controls;
   analytics consent does not authorize those providers.
 
+The SDK also uses session storage for tab/session bookkeeping after consent.
 The bundled SDK is loaded on demand. The consent layer and event-property boundary
 are independent of PostHog, so another adapter can replace it.
 
@@ -96,7 +169,7 @@ are independent of PostHog, so another adapter can replace it.
 | `collection_reading_started` | Start reading link clicked | Collection ID/type |
 | `collection_navigation_used` | Previous, next or contents link clicked | Direction, collection ID |
 | `edition_artifact_opened` | Book artifact link clicked | Edition ID |
-| `article_engagement` | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and article-body depth rounded down to 25% |
+| `article_engagement` | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and prose depth rounded down to 25%; local October fix spans all chapter prose sections |
 | `code_copied` | Clipboard write succeeded | None |
 | `embed_opened` | External viewer activation clicked | None |
 | `simulator_started` | Simulation run clicked | Experiment ID |
@@ -105,13 +178,16 @@ Events include the canonical page path, standalone content ID when available,
 referring domain, necessary pseudonymous/session IDs and broad browser/device
 properties. A closed property list drops arbitrary SDK metadata, query strings,
 fragments, referrer paths, inputs, code text, prompts and profile updates. The
-public project token is retained because ingestion requires it. Person profiles
+public project token is retained because ingestion requires it. The local October
+boundary also drops top-level SDK fields except the event name, properties, UUID
+and timestamp, so top-level profile updates cannot bypass the property allowlist.
+Person profiles
 and cross-site identification are not enabled.
 
 Time and depth are attention estimates, not proof of reading. Simulator starts and
-artifact clicks do not establish successful completion. The welcome post is the
-only published new article; collection/book handlers require real published
-content before end-to-end production reporting can be verified.
+artifact clicks do not establish successful completion. Collection/book handlers
+match the current page markup, but their current end-to-end production reporting
+still needs verification against real consented actions and the signed-in charts.
 
 ### Further reporting work
 

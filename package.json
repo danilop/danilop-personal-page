@@ -55,6 +55,7 @@
     "zod": "^4.6.7"
   },
   "scripts": {
+    "analytics:open": "node --import tsx scripts/open-analytics.ts",
     "assets:prepare": "node --import tsx scripts/prepare-assets.ts",
     "assets:provision-cleanup": "node --import tsx scripts/provision-asset-cleanup.ts",
     "release": "node --import tsx scripts/release.ts",

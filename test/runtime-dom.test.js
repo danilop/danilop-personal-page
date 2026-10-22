@@ -406,8 +406,18 @@ test("analytics sends nothing before consent and removes identifiers when consen
   t.mock.method(globalThis, "clearInterval", () => {});
   document.querySelector(".prose").getBoundingClientRect = () => ({
     top: 0,
-    height: 1000,
+    bottom: 400,
+    height: 400,
   });
+  const laterSection = document.createElement("section");
+  laterSection.className = "prose";
+  laterSection.textContent = "Later chapter section";
+  laterSection.getBoundingClientRect = () => ({
+    top: 400,
+    bottom: 2400,
+    height: 2000,
+  });
+  document.querySelector("article.reading").append(laterSection);
   Object.defineProperty(document, "visibilityState", { value: "visible" });
   await import("../runtime/analytics.ts");
   assert.deepEqual(events, []);
@@ -443,7 +453,31 @@ test("analytics sends nothing before consent and removes identifiers when consen
     interval();
   }
   assert(events.some(([name]) => name === "article_engagement"));
+  assert.deepEqual(events.find(([name]) => name === "article_engagement")[1], {
+    active_seconds: 30,
+    depth: 25,
+  });
   assert.equal(settings.before_send(null), null);
+  const storageClear = new Event("storage");
+  Object.assign(storageClear, {
+    key: null,
+    newValue: null,
+    storageArea: localStorage,
+  });
+  window.dispatchEvent(storageClear);
+  assert.equal(
+    optedOut,
+    1,
+    "clearing storage in another tab immediately revokes consent",
+  );
+  assert.match(document.cookie, /Max-Age=0/);
+  assert.equal(
+    settings.before_send({ event: "$pageview", properties: {} }),
+    null,
+  );
+  const count = events.length;
+  click(".reading-navigation a");
+  assert.equal(events.length, count);
   click("[data-analytics-choice=reject]");
   assert(optedOut > 0);
   assert.equal(
