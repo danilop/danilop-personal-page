@@ -7,7 +7,7 @@ import path from "node:path";
 import http from "node:http";
 import crypto from "node:crypto";
 import { spawn, execFileSync } from "node:child_process";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import { load } from "cheerio";
 import {
@@ -665,8 +665,16 @@ async function main() {
                 data.file.endsWith("/index.md");
               if (narrationRequired) {
                 const previous = await store.read(data.file);
-                const oldData = matter(previous.text).data,
-                  newData = matter(data.text).data;
+                const oldData = matter(previous.text, {
+                    engines: {
+                      yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }),
+                    },
+                  }).data,
+                  newData = matter(data.text, {
+                    engines: {
+                      yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }),
+                    },
+                  }).data;
                 const published = (v: Record<string, unknown>) =>
                   (v.status ?? (v.draft ? "draft" : "published")) ===
                   "published";
@@ -685,7 +693,9 @@ async function main() {
               );
               queueImageCleanup();
               if (narrationRequired) {
-                const value = matter(result.text).data;
+                const value = matter(result.text, {
+                  engines: { yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }) },
+                }).data;
                 if (
                   (value.status ?? (value.draft ? "draft" : "published")) ===
                   "published"

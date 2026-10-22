@@ -1,6 +1,6 @@
 import path from "node:path";
 import YAML from "yaml";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import { AuthorStore } from "../core/author-store";
 import { id as pieceId, loadLibrary, pieceSchema } from "../core/model";
 import { Narrations } from "../core/narration";

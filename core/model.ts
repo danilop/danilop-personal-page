@@ -3,7 +3,7 @@ import { asError } from "./errors";
 import { z } from "zod";
 import fs from "node:fs/promises";
 import path from "node:path";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import { unified } from "unified";
 import remarkParse from "remark-parse";

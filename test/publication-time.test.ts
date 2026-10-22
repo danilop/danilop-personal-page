@@ -6,7 +6,7 @@ import {
 } from "../core/publication-time.mjs";
 import { stampPublication } from "../core/author-publication";
 import YAML from "yaml";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 const source = (metadata: string) =>
   `---\nid: example\n${metadata}\n---\nBody stays unchanged.\n`;
 const data = (text: string) =>

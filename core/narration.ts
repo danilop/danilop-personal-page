@@ -3,7 +3,7 @@ import { audiobookPlan, publicBooks } from "./audiobook-plan";
 import { bookUpdates, type BookRecord } from "./audiobook-store";
 import fs from "node:fs/promises";
 import path from "node:path";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import crypto from "node:crypto";
 import { z } from "zod";

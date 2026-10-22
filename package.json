@@ -1,7 +1,7 @@
 {
   "name": "danilop-personal-page",
   "version": "1.0.0",
-  "description": "Notes Along the Way \u2014 articles, collections, books, and interactive explanations",
+  "description": "Notes Along the Way — articles, collections, books, and interactive explanations",
   "main": "processLinks.js",
   "engines": {
     "node": ">=24.21.0 <25",
@@ -9,6 +9,7 @@
   },
   "packageManager": "npm@12.2.0",
   "dependencies": {
+    "@11ty/gray-matter": "^3.0.0",
     "@astrojs/check": "^0.9.10",
     "@aws-sdk/client-amplify": "^3.1150.0",
     "@aws-sdk/client-cloudfront": "^3.1150.0",
@@ -28,7 +29,6 @@
     "cheerio": "^1.2.0",
     "csv-parse": "^7.0.3",
     "fs-extra": "^11.4.1",
-    "gray-matter": "^4.0.3",
     "katex": "^0.19.0",
     "open-graph-scraper": "^6.12.0",
     "posthog-js": "^1.438.9",

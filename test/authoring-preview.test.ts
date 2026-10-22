@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import { stageAuthoring, authoringContext } from "../core/authoring-preview";
 import { loadLibrary } from "../core/model";
 

@@ -25,7 +25,7 @@ import { Assets, localAsset, escape } from "../core/assets";
 import { compileLinks } from "../core/shortlinks";
 import type { CompiledSite, ArchiveRecord } from "../core/site-data";
 import metadata from "../lib/link-metadata.js";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import { prepareIcons } from "./prepare-icons";
 import { homepageWriting } from "../core/homepage";
 import { collectionCover } from "../core/collection-cover";
