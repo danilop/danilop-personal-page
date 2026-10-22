@@ -3,7 +3,7 @@ import type { Nodes } from "mdast";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import { z } from "zod";
 import { parser } from "./model";

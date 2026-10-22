@@ -11,7 +11,7 @@ import os from "node:os";
 import crypto from "node:crypto";
 import { spawn } from "node:child_process";
 import { constants } from "node:fs";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import { z } from "zod";
 import { AuthorStore, revision } from "./author-store";

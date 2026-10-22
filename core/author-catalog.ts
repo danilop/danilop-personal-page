@@ -1,5 +1,5 @@
 import { AuthorStore } from "./author-store";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import { loadTagRegistry, readTagPieces, buildTagInventory } from "./tags";
 export async function authorCatalog(root: string) {

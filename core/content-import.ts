@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { randomUUID } from "node:crypto";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import {
   collectionSchema,

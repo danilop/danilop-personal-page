@@ -9,6 +9,22 @@ updates. Python requirements were re-resolved with `uv pip compile --upgrade
 environments. This refresh was committed and deployed on 13 October 2026 with
 the narration release; see [verification](verification.md).
 
+## Front-matter parser — 2026-10-22
+
+Front matter is split with `@11ty/gray-matter` 3.0.0, the Eleventy team's
+maintained fork of `gray-matter`. The original `gray-matter` 4.0.3 is unmaintained
+and pins `js-yaml` 3, whose `argparse` 1 dependency pulled in `sprintf-js`
+([GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c), no
+patched release). The fork uses `js-yaml` 5, so `sprintf-js` is no longer installed.
+
+Every production `matter()` call that reads front-matter data passes the `yaml`
+package as its YAML engine (`YAML.parse` with `maxAliasCount: 0`), so dates stay
+strings, as the content schema expects, and `js-yaml` 5's schema changes
+(unquoted dates as strings, no `<<` merge keys, errors on `!!binary`/`!!set` tags)
+do not affect content. `scripts/prepare.ts` reads only the body of `about.md` and
+keeps the default engine. Implemented and tested; it deploys with the commit that
+introduces it.
+
 ## Supported stack
 
 The [interactive Python pilot](code-activities.md) also pins Pyodide 314.0.7
@@ -73,11 +89,11 @@ Set-Cookie responses with zero reusable lifetime, and conditional 304 responses.
 Reassess this conclusion before adding a server/shared response cache or changing
 Astro's cache usage. No custom fork or dependency patch was introduced.
 
-The root npm audit still reports 11 affected package entries: seven high and four
-moderate, arising from two underlying advisories in `braces` 3.0.3 (Stylelint's glob
-chain) and `sprintf-js` 1.1.3 (gray-matter's YAML/argument-parser chain). Both are
-current releases with no patched version available. The audit's suggested old
-major downgrades are not applied. This is a dependency status report, not a full
+The root npm audit still reports seven high-severity package entries, all arising
+from one advisory in `braces` 3.0.3 (Stylelint's dev-only glob chain), a current
+release with no patched version available. The `sprintf-js` advisory was removed on
+22 October 2026 by the [front-matter parser switch](#front-matter-parser--2026-10-22).
+The audit's suggested old major downgrades are not applied. This is a dependency status report, not a full
 assessment of those additional findings. The prototype audit reports zero known
 vulnerabilities. See [verification evidence](verification.md#dependency-refresh-and-cache-boundary-check--2026-10-13).
 

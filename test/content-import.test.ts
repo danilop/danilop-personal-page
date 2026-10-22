@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { spawnSync } from "node:child_process";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import YAML from "yaml";
 import { prepareImport, applyImport } from "../core/content-import";
 import {

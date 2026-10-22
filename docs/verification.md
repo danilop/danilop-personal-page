@@ -1,5 +1,21 @@
 # Release verification
 
+## Front-matter parser switch — 22 October 2026
+
+Replaced `gray-matter` 4.0.3 with `@11ty/gray-matter` 3.0.0 to drop the
+unpatched `sprintf-js` advisory; see the
+[dependency guide](dependencies-and-hosting.md#front-matter-parser--2026-10-22).
+
+1. The regenerated lockfile has no `sprintf-js` or `gray-matter` entry; `js-yaml`
+   resolves to 5.5.0 and `argparse` to 3.0.3. `npm audit signatures` verified all
+   registry signatures. None of the new packages has install scripts.
+2. Every `content/**/*.md` file parsed with the production `yaml` engine produced
+   identical data and body under the old and new packages.
+3. `tsc --noEmit -p tsconfig.core.json` passed. On a Raspberry Pi without a
+   Puppeteer browser, the Node suite (excluding the four browser test files)
+   passed 336 of 339; the two failures were Mermaid renders that could not find
+   `chrome-headless-shell`. CI runs the complete suite with a browser.
+
 ## Chronicles code example application — 16 October 2026
 
 Applied the individual review decisions to the canonical book and synchronised

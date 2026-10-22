@@ -7,7 +7,7 @@ const crypto = require("node:crypto");
 const { pathToFileURL } = require("node:url");
 const { chromium } = require("playwright");
 const { executablePath } = require("puppeteer");
-const matter = require("gray-matter");
+const matter = require("@11ty/gray-matter");
 const filename = "content/pieces/browser-fixture/index.md";
 const original =
   "---\nid: browser-fixture\ntitle: Browser fixture\nsummary: A browser test article\ndraft: true\ntags: [computing]\n---\n\n## Opening\n\nOne phrase. One phrase.\n";

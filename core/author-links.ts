@@ -1,7 +1,7 @@
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import YAML from "yaml";
-import matter from "gray-matter";
+import matter from "@11ty/gray-matter";
 import { loadLibrary } from "./model";
 import { siteConfig } from "./config";
 import { loadEditions } from "./editions";
@@ -20,7 +20,9 @@ export class AuthorLinks {
     let ref: string;
     let title: string;
     if (file.endsWith("/index.md")) {
-      const metadata = matter(source.text).data;
+      const metadata = matter(source.text, {
+        engines: { yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }) },
+      }).data;
       ref = String(metadata.id ?? "");
       title = String(metadata.title ?? "");
     } else if (/^content\/collections\/[^/]+\.yaml$/.test(file)) {
