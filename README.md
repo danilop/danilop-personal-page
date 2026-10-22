@@ -541,6 +541,10 @@ The [whole-book code example review](docs/code-example-editorial-review.md) reco
 the teaching and length criteria and their individual application to the original
 book and existing Chapter 1 article. The book now has 104 included programs,
 16 appendix snippets and one optional attention companion. Draft status is preserved.
+The canonical book's 224-page native PDF has also been built and visually checked;
+all 120 printed Python listings pass character and pagination checks. See the
+[PDF verification record](docs/verification.md#chronicles-native-pdf-proof--16-october-2026)
+for the Homebrew setup, fixes and remaining publisher-proof boundary.
 Every book sample must use Python built-ins and the standard library only, with
 no external packages or services. Narrative examples must reveal something through
 execution or experimentation, rather than merely print an obvious answer.

@@ -16,6 +16,48 @@ unpatched `sprintf-js` advisory; see the
    passed 336 of 339; the two failures were Mermaid renders that could not find
    `chrome-headless-shell`. CI runs the complete suite with a browser.
 
+## Chronicles native PDF proof — 16 October 2026
+
+Installed XeLaTeX through Homebrew's `texlive` formula and the DejaVu font family
+on the authoring Mac. A fresh equivalent setup uses:
+
+```sh
+brew install texlive pandoc poppler librsvg
+brew install --cask font-dejavu
+xelatex --version
+```
+
+Run `./build_pdf.sh` in the canonical Chronicles book checkout. Its tooling guide
+documents installation, font overrides, generated evidence and maintenance through
+Homebrew. MacTeX is an alternative distribution, not an additional dependency.
+The canonical `editorial/pdf-proof-2026-10-16.md` records this proof in detail.
+
+Fixed code listings splitting between pages, long highlighted tokens overflowing,
+font extraction changing ASCII pipes/hyphens, a missing superscript-five glyph,
+reference URLs extending into the margin, and contents page-number boxes too narrow
+for three digits. Intentional blank versos now omit running headers and numbers.
+The native build retains Letter paper, 2 cm margins, 10 pt text, right-hand chapter
+openings and breakable quiet notes.
+
+The resulting PDF has 224 pages. All pages were inspected at overview scale,
+with detailed checks of short and long listings, indentation, notes, the layout
+table, the agent diagram, contents and bibliography. All 120 Python listings
+match source non-whitespace characters and fit on individual pages. No text
+exceeds the checked page bounds; the final compiler pass has no missing glyphs,
+overfull boxes or unresolved references. All fonts are embedded; 799 internal links
+and 859 named destinations resolve. The book tooling suite passes 102 tests,
+including a real XeLaTeX long-token regression. The British English check reports
+zero targets.
+
+The canonical PDF build now runs a stdlib/Poppler audit before replacing the last
+successful PDF, retaining its exact assembled source, compiler log and a JSON
+report with source/PDF fingerprints. Visual checks remain necessary: the audit
+does not certify image placement, whitespace-preserving copy/paste or publisher
+output. Native PDF proofing is complete for this reading-copy layout; remote
+Leanpub rendering, native EPUB-reader proof and print-production sign-off are
+separate. These are local book-build and documentation changes; manuscript prose,
+article narration and website publication state are unchanged.
+
 ## Chronicles code example application — 16 October 2026
 
 Applied the individual review decisions to the canonical book and synchronised
@@ -51,8 +93,9 @@ were wrapped without changing execution, and a Pandoc highlight-style override
 that defeated narrow-screen code scrolling; the export stylesheet now contains
 that scrolling and allows long inline paths and reference URLs to wrap.
 
-Native PDF rebuilding and pagination remain unverified because XeLaTeX is not
-installed. EPUB structure and execution were checked; this pass does not claim
+The later [native PDF proof](#chronicles-native-pdf-proof--16-october-2026) resolves
+the initial missing-XeLaTeX limitation. EPUB structure and execution were checked;
+the example pass does not claim
 a native EPUB-reader or remote Leanpub proof. Full repository gates and the
 exact hosted revision are checked by the commit/release workflow before reporting
 deployment complete.
@@ -152,8 +195,9 @@ book-player link. Its actual Python example passed Step (next line 1), Run
 (finished with ten notches) and Reset (original code restored, output cleared).
 
 A representative standalone LaTeX document using the exact quiet-note environment
-compiled successfully with Codex's built-in compiler. The Mac lacks XeLaTeX, so
-the complete book PDF build and visual pagination check remain unverified. No
+compiled successfully with Codex's built-in compiler. XeLaTeX was unavailable
+during that check; the later [native PDF proof](#chronicles-native-pdf-proof--16-october-2026)
+completes the book build and pagination review. No
 remote Leanpub preview was requested or submitted; actual Leanpub styling and
 physical reader/accessibility testing remain to be checked before distribution.
 

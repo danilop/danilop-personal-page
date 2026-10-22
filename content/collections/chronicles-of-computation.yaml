@@ -5,6 +5,7 @@ summary: A Practical History of Software Engineering.
 slug: chronicles-of-computation
 ordered: true
 book: true
+completion: in-progress
 frontMatter:
   - id: introduction
     kind: piece
@@ -18,6 +19,7 @@ body:
       - id: early-records
         kind: piece
         ref: chronicles-ch01
+        integration: body
 backMatter: []
 draft: true
 cover:

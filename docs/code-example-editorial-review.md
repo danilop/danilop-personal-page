@@ -110,3 +110,9 @@ The Chapter 1 tally now names `animals` and offers a prediction/change/step exer
 The article's stable `tally` activity ID is preserved with a reviewed source hash.
 Its spoken explanation has been re-reviewed and the article and preview audiobook
 regenerated. No later chapters or unrelated drafts were imported or published.
+
+The subsequent [native PDF proof](verification.md#chronicles-native-pdf-proof--16-october-2026)
+verified all 120 printed listings against source characters and kept each listing
+on one page. The canonical build now rejects missing characters, split listings
+and overflow; a real XeLaTeX regression covers long syntax-highlighted tokens.
+These layout changes do not alter example behaviour or narration.
