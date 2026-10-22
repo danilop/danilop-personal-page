@@ -1,0 +1,15 @@
+schemaVersion: 1
+voice: bm_george
+pace: 1
+profile: kokoro-mlx-bf16-v1
+pronunciations: {}
+adaptations:
+  table-5760458233f66fd71dbd5ae2:
+    treatment: explanation
+    sourceHash: dd836bd1caad0a83979464145f20e138f6ea53559afb4eb712469cfa7cdc6496
+    text: The table lists four arrangements. With settings A and B both off, the
+      cost is ten. With A on and B off, it is twelve. With A off and B on, it is
+      eleven. With both on, it is six.
+    reason: Reviewed against the saved source and surrounding explanation; diagram
+      visually inspected. Prepared by Codex under the authorised narration
+      review workflow.

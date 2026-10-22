@@ -1,0 +1,18 @@
+flowchart TB
+  agents["AI tools"]
+  access["Brain MCP or CLI"]
+  agents <--> access
+  subgraph pi["Raspberry Pi"]
+    service["Brain service"]
+    journal["Journal"]
+    wiki["Wiki"]
+    search["Local search"]
+    service --> journal
+    service <--> wiki
+    service <--> search
+    journal -. indexed .-> search
+    wiki -. indexed .-> search
+  end
+  access <-->|"Private Tailscale connection"| service
+  journal -->|"Nightly consolidation"| model["Cloud model"]
+  model -->|"Wiki updates via MCP"| wiki

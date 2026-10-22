@@ -1,0 +1,38 @@
+schemaVersion: 1
+id: good-enough
+title: "Good Enough: The Local Minimum Trap"
+summary: Why sensible choices can preserve difficult situations, and what would
+  make a different choice possible.
+introduction: Part I considers information, costs and interdependence.
+slug: good-enough
+ordered: true
+book: true
+completion: in-progress
+frontMatter: []
+body:
+  - id: why-arrangements-persist
+    kind: part
+    title: Why arrangements persist
+    children:
+      - id: why-sensible-choices-get-stuck
+        kind: chapter
+        title: Why sensible choices get stuck
+        children:
+          - id: sensible-choices
+            kind: piece
+            ref: good-enough-ch01
+            integration: body
+      - id: what-a-local-minimum-means
+        kind: chapter
+        title: What a local minimum means
+        children:
+          - id: local-minimum-foundations
+            kind: piece
+            ref: good-enough-ch02-foundations
+            integration: body
+          - id: search-and-transitions
+            kind: piece
+            ref: good-enough-ch02-search
+            integration: body
+backMatter: []
+draft: true

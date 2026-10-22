@@ -39,6 +39,36 @@
       "key": "originals/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png",
       "publicKey": "media/open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png"
     },
+    "content/pieces/good-enough-ch02-search/assets/fig-smooth-vs-rugged.png": {
+      "sha256": "c3ece4369d8bf4806a6b6a1c9c82f833d3d554cf6cfe09c9cb1df5b63d047795",
+      "bytes": 91057,
+      "contentType": "image/png",
+      "key": "originals/fig-smooth-vs-rugged-c3ece4369d8bf4806a6b6a1c9c82f833d3d554cf6cfe09c9cb1df5b63d047795.png"
+    },
+    "content/pieces/clever-enough-to-find-the-loophole/assets/narration-3a007a0290304857722a09b2109a3d4b77e5fe98175227ce5ec7bc86b7eb26b3.mp3": {
+      "sha256": "3a007a0290304857722a09b2109a3d4b77e5fe98175227ce5ec7bc86b7eb26b3",
+      "bytes": 14235308,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-3a007a0290304857722a09b2109a3d4b77e5fe98175227ce5ec7bc86b7eb26b3.mp3"
+    },
+    "content/pieces/hello-brave-new-world/assets/narration-16bc365b10075c1bd17c67e546eb2ce688d02a659955dcf73dcd4e563016b331.mp3": {
+      "sha256": "16bc365b10075c1bd17c67e546eb2ce688d02a659955dcf73dcd4e563016b331",
+      "bytes": 541772,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-16bc365b10075c1bd17c67e546eb2ce688d02a659955dcf73dcd4e563016b331.mp3"
+    },
+    "content/pieces/clever-enough-to-find-the-loophole/assets/narration-b9705cc172dff63deb616132dcd9cd6515e172989ef801d1d48f8d9ff80d6076.mp3": {
+      "sha256": "b9705cc172dff63deb616132dcd9cd6515e172989ef801d1d48f8d9ff80d6076",
+      "bytes": 14235308,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-b9705cc172dff63deb616132dcd9cd6515e172989ef801d1d48f8d9ff80d6076.mp3"
+    },
+    "content/pieces/hello-brave-new-world/assets/narration-474be441322eed7a55159fd1bd3f4c0ff888c0d39ff421eca41bb0bde9974f8c.mp3": {
+      "sha256": "474be441322eed7a55159fd1bd3f4c0ff888c0d39ff421eca41bb0bde9974f8c",
+      "bytes": 541772,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-474be441322eed7a55159fd1bd3f4c0ff888c0d39ff421eca41bb0bde9974f8c.mp3"
+    },
     "content/pieces/clever-enough-to-find-the-loophole/assets/narration-8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2.mp3": {
       "sha256": "8bb65ad481319fedbb5f644f3b364198150bc9a34b787b7b5650839bd32589f2",
       "bytes": 14235308,

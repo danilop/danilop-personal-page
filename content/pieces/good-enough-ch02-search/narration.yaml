@@ -1,0 +1,19 @@
+schemaVersion: 1
+voice: bm_george
+pace: 1
+profile: kokoro-mlx-bf16-v1
+pronunciations: {}
+adaptations:
+  image-f72c89fc88c49028e098a637:
+    treatment: explanation
+    sourceHash: a374526daa7111dfa3419a492b1e5c19e71bde3b2f553f86dbd36feb3df0f717
+    text: Figure two point one compares two schematic objective functions. The
+      convex example forms one bowl, whose lowest point is both a local and a
+      global minimum. The nonconvex example has several valleys at different
+      heights; a local minimum need not be the global minimum. The horizontal
+      axis represents the candidate solution and the vertical axis the objective
+      value. Smoothness alone does not establish whether a local minimum is
+      global.
+    reason: Reviewed against the saved source and surrounding explanation; diagram
+      visually inspected. Prepared by Codex under the authorised narration
+      review workflow.

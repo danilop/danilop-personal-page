@@ -20,6 +20,12 @@ tags:
   - id: data-representation
     label: Data representation
     description: How information is encoded, stored, and interpreted, from tallies to digital formats.
+  - id: decision-making
+    label: Decision making
+    description: How people assess alternatives, constraints, trade-offs and the consequences of their choices.
+  - id: systems-thinking
+    label: Systems thinking
+    description: How rules, dependencies and interactions shape outcomes across people and institutions.
   - id: website
     label: Website
     description: The design, operation, and development of this website.
