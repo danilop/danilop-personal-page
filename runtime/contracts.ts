@@ -6,6 +6,23 @@ export type RecordedRun = {
   output: unknown;
   capturedAt: string;
 };
+/** A tool offered to the model; same shape as the agent tool registry. */
+export type AgentToolSpec = {
+  name: string;
+  description: string;
+  inputSchema: object;
+};
+/** What the assistant loop sends to the model next. */
+type AgentInput =
+  { user: string } | { toolResult: { name: string; result: unknown } };
+/** The model's next move: a tool call, or plain text when it calls none. */
+export type AgentStep =
+  { call: { name: string; input: Record<string, unknown> } } | { text: string };
+/** One question's conversation; history stays inside the runtime. */
+export interface AgentChat {
+  send(input: AgentInput, signal: AbortSignal): Promise<AgentStep>;
+  dispose(): Promise<void>;
+}
 export interface ModelSession {
   run(
     prompt: string,
@@ -15,15 +32,20 @@ export interface ModelSession {
   stop(): void;
   reset(): Promise<void>;
   dispose(): Promise<void>;
+  /** Tool-using conversations for the reading assistant, where supported. */
+  startAgentChat?(system: string, tools: AgentToolSpec[]): Promise<AgentChat>;
 }
 export interface ModelRuntime {
   id: string;
   version: string;
   locality: "local";
   formats: string[];
-  probe(
-    model: ModelDescriptor,
-  ): Promise<{ supported: boolean; reason?: string }>;
+  probe(model: ModelDescriptor): Promise<{
+    supported: boolean;
+    reason?: string;
+    /** True when the model must be downloaded before use. */
+    download?: boolean;
+  }>;
   load(
     model: ModelDescriptor,
     progress: (text: string) => void,
@@ -31,10 +53,14 @@ export interface ModelRuntime {
   ): Promise<ModelSession>;
   clear(model: ModelDescriptor): Promise<void>;
 }
-export type ModelDescriptor = {
+type ModelBase = {
   id: string;
   runtime: string;
   format: string;
+  label?: string;
+};
+/** WebLLM: MLC weights and a WebGPU library pinned by revision and hash. */
+export type WebLlmModel = ModelBase & {
   model: string;
   modelLib: string;
   integrity?: {
@@ -49,6 +75,31 @@ export type ModelDescriptor = {
   revision: string;
   artifacts: { path: string; bytes: number; sha256?: string }[];
 };
+/** A model the browser provides and versions itself (Prompt API). */
+export type BuiltinModel = ModelBase & {
+  runtime: "prompt-api";
+  format: "builtin";
+  languages: string[];
+};
+/** One .litertlm file at a pinned revision (LiteRT-LM). */
+export type LiteRtModel = ModelBase & {
+  runtime: "litert-lm";
+  format: "litertlm";
+  model: string;
+  revision: string;
+  downloadBytes: number;
+  sha256: string;
+  vramMB: number;
+  requiredFeatures: string[];
+};
+export type ModelDescriptor = WebLlmModel | BuiltinModel | LiteRtModel;
+/** Download size and memory for display; browser-provided models have none. */
+export function modelSummary(model: ModelDescriptor) {
+  if (model.format === "builtin")
+    return `${model.label ?? model.id}, provided by this browser.`;
+  const m = model as WebLlmModel | LiteRtModel;
+  return `${m.label ?? m.id}. Download approximately ${Math.ceil(m.downloadBytes / 1024 / 1024)} MB; estimated GPU memory ${Math.ceil(m.vramMB)} MB.`;
+}
 export function downloadRecord(name: string, record: RecordedRun) {
   const url = URL.createObjectURL(
     new Blob([JSON.stringify(record, null, 2)], { type: "application/json" }),

@@ -586,7 +586,9 @@ blocks:
 Use `growth-js` to select the equivalent JavaScript implementation. Browser
 controls support run, stop, reset, scenarios and downloaded result records.
 Model blocks use `kind: model-experiment`, `source.format: text-generation`,
-`locality: local`, and a model ID from `publishing/models.json`. Optional source
+`locality: local`, and a model ID from `publishing/models.json`, or a list of IDs
+in preference order (for example `[browser-language-model, gemma-4-E2B-it-web]`);
+the page uses the first model this browser supports and names it. Optional source
 fields include `runtime`, `prompt` and `recordedResult`. Runtime selection lives
 in the model manifest and registry; prose does not depend on WebLLM. Supply a
 book alternative. No model loads until the reader chooses to start it.

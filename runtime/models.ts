@@ -1,5 +1,6 @@
 import {
   downloadRecord,
+  modelSummary,
   type ModelDescriptor,
   type ModelSession,
 } from "./contracts";
@@ -10,15 +11,20 @@ export function mountModels() {
   for (const root of document.querySelectorAll<HTMLElement>(
     ".model-experiment",
   )) {
-    const model = models.models.find((m) => m.id === root.dataset.model) as
-      ModelDescriptor | undefined;
+    // One model id, or several in preference order: the first this browser
+    // supports is used.
+    const candidates = (root.dataset.model ?? "")
+      .split(/\s+/)
+      .map((id) => models.models.find((m) => m.id === id) as ModelDescriptor)
+      .filter(Boolean);
     const output = root.querySelector("output")!;
-    if (!model) {
+    if (!candidates.length) {
       output.textContent = "This model is not registered.";
       root.querySelectorAll("button").forEach((b) => (b.disabled = true));
       continue;
     }
-    const runtime = runtimes[model.runtime];
+    let model = candidates[0];
+    let runtime = runtimes[model.runtime];
     let session: ModelSession | undefined;
     let loading: AbortController | undefined;
     let running: AbortController | undefined;
@@ -26,8 +32,11 @@ export function mountModels() {
     let generation = 0;
     let runEpoch = 0;
     const fallback = output.textContent;
-    root.querySelector(".model-info")!.textContent =
-      `${model.id}. Download approximately ${Math.ceil(model.downloadBytes / 1024 / 1024)} MB; estimated GPU memory ${Math.ceil(model.vramMB)} MB.`;
+    const info = root.querySelector(".model-info")!;
+    info.textContent =
+      candidates.length === 1
+        ? modelSummary(model)
+        : `Uses the first available of: ${candidates.map((m) => m.label ?? m.id).join("; ")}.`;
     const button = (action: string) =>
       root.querySelector<HTMLButtonElement>(`[data-action=${action}]`)!;
     button("load-model").addEventListener("click", () => {
@@ -37,9 +46,21 @@ export function mountModels() {
         loading = new AbortController();
         button("load-model").disabled = true;
         try {
-          const compatible = await runtime.probe(model);
-          if (!compatible.supported) throw Error(compatible.reason);
-          output.textContent = "Downloading model files…";
+          const reasons: string[] = [];
+          let chosen: ModelDescriptor | undefined;
+          for (const candidate of candidates) {
+            const result = await runtimes[candidate.runtime].probe(candidate);
+            if (result.supported) {
+              chosen = candidate;
+              break;
+            }
+            reasons.push(result.reason ?? "Not supported.");
+          }
+          if (!chosen) throw Error(reasons.join(" "));
+          model = chosen;
+          runtime = runtimes[model.runtime];
+          if (candidates.length > 1) info.textContent = modelSummary(model);
+          output.textContent = "Loading the model…";
           session = await runtime.load(
             model,
             (text) => {
@@ -125,7 +146,11 @@ export function mountModels() {
           record = {
             runtime: runtime.id,
             version: runtime.version,
-            input: { prompt, model: model.id, revision: model.revision },
+            input: {
+              prompt,
+              model: model.id,
+              ...("revision" in model ? { revision: model.revision } : {}),
+            },
             output: result,
             capturedAt: new Date().toISOString(),
           };

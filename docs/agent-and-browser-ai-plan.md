@@ -2,9 +2,9 @@
 
 Status: proposed on 23 October 2026; the owner accepted the plan's decisions the
 same day ([§8](#8-decisions)). Phase 0 spikes are complete
-([§9](#9-phase-0-results)). Phase 1 (search and reading index) and phase 2 (tool
-registry, WebMCP, feedback and the "For AI agents" page) are implemented and
-tested locally, not deployed ([search](architecture.md#search-and-reading-index),
+([§9](#9-phase-0-results)). Phase 1 (search and reading index), phase 2 (tool
+registry, WebMCP, feedback and the "For AI agents" page) and phase 3 (Prompt API
+and LiteRT-LM runtimes) are implemented and tested locally, not deployed ([search](architecture.md#search-and-reading-index),
 [agent tools](architecture.md#agent-tools-and-webmcp)); later phases are not
 implemented. It builds on the
 [WebMCP research](webmcp-research.md) and extends the existing browser-model
@@ -197,7 +197,13 @@ buttons and the tools, instead of tools clicking buttons.
 - **No polyfill on production pages.** `@mcp-b/global` is useful for local
   experiments with MCP clients, but shipping it would add a non-standard API.
 
-### 4.4 Model runtime extensions (phase 3)
+### 4.4 Model runtime extensions (phase 3, implemented locally)
+
+As built: the contract gained a descriptor union and an optional
+`startAgentChat(system, tools)` on sessions instead of separate `chatWithTools`
+and `generateJSON` methods; LiteRT-LM loads its WASM from jsDelivr (pinned), not
+from the site, because the package ships about 112 MB of WASM variants. Real
+Prompt API runs remain manual verification.
 
 The current contract (`runtime/contracts.ts`) assumes downloaded artifacts:
 `ModelDescriptor` has URLs, byte counts and checksums. Built-in models have none
@@ -222,8 +228,9 @@ languages: ["en"] }`, with `downloadBytes` and `vramMB` absent. `models.json`
   It loads `gemma-4-E2B-it-web.litertlm` (text-only, 2,008,432,640 bytes, SHA-256
   `3a08e8d9…35af35b5`) from a pinned revision of
   `litert-community/gemma-4-E2B-it-litert-lm`, with the same descriptor fields
-  as WebLLM models. The WASM files are served from the site, not a CDN. `clear`
-  removes the cached model file.
+  as WebLLM models. The WASM runtime loads from jsDelivr at the pinned package
+  version (superseding the earlier "served from the site" note; see above).
+  `clear` removes the cached model file.
 - Extend `ModelSession` with optional assistant methods:
   - `chatWithTools(messages, tools, signal)` for runtimes with native tool calls.
     LiteRT-LM implements it with conversation tools and
@@ -364,7 +371,7 @@ in try/catch, default on). It also states which browsers support this today.
 | 0. Spikes (done)           | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
 | 1. Index and search (done) | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
 | 2. Tools and WebMCP (done) | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
-| 3. Model runtimes          | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
+| 3. Model runtimes (done)   | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
 | 4. Assistant               | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
 | 5. Production enablement   | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
 | 6. Article                 | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |

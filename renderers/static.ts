@@ -515,14 +515,19 @@ export function registry() {
       async (r) => {
         if (r.target === "book") return alternative(r);
         const s = r.block.source;
+        // `model` is one id or a preference-ordered list of ids.
+        const ids: unknown[] = Array.isArray(s.model) ? s.model : [s.model];
         if (
           s.locality !== "local" ||
-          !modelManifest.models.some(
-            (m) => m.id === s.model && m.runtime === (s.runtime ?? m.runtime),
+          !ids.length ||
+          !ids.every((id) =>
+            modelManifest.models.some(
+              (m) => m.id === id && m.runtime === (s.runtime ?? m.runtime),
+            ),
           )
         )
           throw Error("Model requires a registered local runtime");
-        const model = text(s.model, "model ID");
+        const model = ids.map((id) => text(id, "model ID")).join(" ");
         return {
           html: `<section class="model-experiment" data-model="${e(model)}"><p>${e(description(r))}</p><p>Runs on your device using WebGPU. Model files download only when you choose to load them; your prompts stay in this browser.</p><p class="model-info"></p><button data-action="load-model">Check and load model</button><button data-action="cancel-model">Cancel / unload</button><button data-action="clear-model">Clear downloaded model</button><label>Prompt<textarea rows="3">${e(s.prompt ?? "Explain the idea in three sentences.")}</textarea></label><button data-action="generate">Generate</button><button data-action="stop-model">Stop</button><button data-action="reset-model">Reset conversation</button><button data-action="capture-model">Save result</button><output aria-live="polite">${e(s.recordedResult ?? "Load a model to try this example.")}</output></section>`,
         };

@@ -409,8 +409,21 @@ use WASM for workloads or existing libraries that benefit from it. Workers keep
 the UI responsive; demonstrations requiring an isolation boundary use a sandboxed
 iframe rather than treating a Worker as a security boundary.
 
-Model experiments select a runtime through the registry. WebLLM is the initial
-adapter for compatible LLMs, and can be replaced. A model manifest
+Model experiments select a runtime through the registry, which has three
+adapters (implemented locally 23 October 2026): WebLLM for MLC models; the
+browser's built-in model through the Prompt API (`runtime/adapters/prompt-api.ts`,
+descriptor format `builtin`, no files or checksums; recordings name the browser
+because the model is unversioned); and LiteRT-LM (`runtime/adapters/litert-lm.ts`,
+format `litertlm`) for one pinned `.litertlm` file. LiteRT-LM checks WebGPU and free
+storage, downloads once into the `notes-models-v1` Cache API store with progress,
+rejects an incomplete download by byte count (hashing 2 GB in the page is not
+practical; the URL pins an immutable revision), and loads its WASM runtime from
+jsDelivr at the pinned package version, as Pyodide does, instead of shipping about
+112 MB of WASM variants. Sessions may offer `startAgentChat` for the reading
+assistant: LiteRT-LM uses native constrained tool calls; the Prompt API uses
+schema-constrained JSON validated and retried once
+(`runtime/adapters/json-agent-chat.ts`). A model block may list several models in
+preference order. A model manifest
 records source format, exact artifacts/tokenizer, checksums, and compatible
 plugins/backends. Backend options include WebGPU and supported WASM paths;
 WebNN can be added through an adapter as real device support warrants it.
@@ -421,8 +434,8 @@ permits, with storage limits and an explicit clear action. Do not include model
 weights in the normal page bundle or initiate downloads during reading.
 
 Local-only content rejects remote runtimes. There is no automatic cloud fallback.
-A browser-provided model runtime (Prompt API) and a shared agent tool registry are
-accepted and planned, not implemented; see the
+The runtime extensions and the shared
+[agent tool registry](#agent-tools-and-webmcp) follow the
 [agent tools and in-browser models plan](agent-and-browser-ai-plan.md).
 Unsupported devices show authored static results. Recorded book examples retain
 inputs, versions, settings, and actual outputs rather than promising deterministic

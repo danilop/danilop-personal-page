@@ -19,6 +19,7 @@
     "@citation-js/plugin-csl": "^0.9.0",
     "@fontsource/inter": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
+    "@litert-lm/core": "^0.18.0",
     "@mermaid-js/mermaid-cli": "^12.0.0",
     "@mlc-ai/web-llm": "^0.2.86",
     "@terrastruct/d2": "^0.1.33",

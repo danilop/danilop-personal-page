@@ -1,5 +1,6 @@
-import type { ModelRuntime, ModelDescriptor } from "../contracts";
-const app = (m: ModelDescriptor) => ({
+import type { ModelRuntime, WebLlmModel } from "../contracts";
+import webllmPackage from "@mlc-ai/web-llm/package.json";
+const app = (m: WebLlmModel) => ({
   model_list: [
     {
       model_id: m.id,
@@ -13,10 +14,11 @@ const app = (m: ModelDescriptor) => ({
 });
 export const webllm: ModelRuntime = {
   id: "webllm",
-  version: "0.2.85",
+  version: webllmPackage.version,
   locality: "local",
   formats: ["mlc"],
-  async probe(model) {
+  async probe(descriptor) {
+    const model = descriptor as WebLlmModel;
     const gpu = (
       navigator as Navigator & {
         gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> };
@@ -41,7 +43,8 @@ export const webllm: ModelRuntime = {
         : undefined,
     };
   },
-  async load(model, progress, signal) {
+  async load(descriptor, progress, signal) {
+    const model = descriptor as WebLlmModel;
     const api = await import("@mlc-ai/web-llm");
     const worker = new Worker(new URL("../model.worker.ts", import.meta.url), {
       type: "module",
@@ -107,6 +110,6 @@ export const webllm: ModelRuntime = {
   },
   async clear(model) {
     const api = await import("@mlc-ai/web-llm");
-    await api.deleteModelAllInfoInCache(model.id, app(model));
+    await api.deleteModelAllInfoInCache(model.id, app(model as WebLlmModel));
   },
 };

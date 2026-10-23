@@ -93,6 +93,25 @@
         },
         "config": "sha256-hPqM2kfEQ1idBccpUzmwxYwV2WTn8t9ThzNmGHeJu1k="
       }
+    },
+    {
+      "id": "browser-language-model",
+      "runtime": "prompt-api",
+      "format": "builtin",
+      "label": "The browser's built-in model",
+      "languages": ["en"]
+    },
+    {
+      "id": "gemma-4-E2B-it-web",
+      "runtime": "litert-lm",
+      "format": "litertlm",
+      "label": "Gemma 4 E2B (Google, Apache-2.0)",
+      "model": "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/a790a852d433991c0c0a41c1154cf9b3850300fa/gemma-4-E2B-it-web.litertlm",
+      "revision": "a790a852d433991c0c0a41c1154cf9b3850300fa",
+      "downloadBytes": 2008432640,
+      "sha256": "3a08e8d94e23b814ae5414469c370c503813949acb8ceaa17e4ebf8a35af35b5",
+      "vramMB": 1800,
+      "requiredFeatures": []
     }
   ]
 }
