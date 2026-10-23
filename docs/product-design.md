@@ -297,7 +297,7 @@ implemented: static full-text search for every reader; read/navigate and Python
 activity tools offered to browser agents through WebMCP, each mirroring a visible
 control and announced when used; and an “Ask about this page” assistant on all
 reading pages that runs only on the reader's device (the browser's built-in model,
-or an explicit WebLLM download), cites the sections it used, and never falls back
+or an explicit download of a small open model), cites the sections it used, and never falls back
 to a cloud model. See the
 [agent tools and in-browser models plan](agent-and-browser-ai-plan.md) and the
 [WebMCP research](webmcp-research.md).

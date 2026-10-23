@@ -17,7 +17,7 @@ search and a reader assistant, previously deferred in
 | WebMCP adapter (read/navigate tools)               | Visitors using ChatGPT desktop, Gemini in Chrome (2027), etc. | Chromium behind flag or origin trial                          | **Do as a labelled experiment**, feature-detected, with Chrome and Edge trial tokens  |
 | Agent-operable Python activities                   | Readers learning with an agent beside them                    | Same as WebMCP                                                | **Do.** The most distinctive tool set for these books                                 |
 | Browser-provided model adapter (Prompt API)        | Model experiments without a separate download                 | Chrome desktop 148+ with capable hardware; Edge Canary/Dev    | **Do**, small change to the existing runtime registry                                 |
-| Reader assistant (“Ask about this page”)           | Readers on capable devices                                    | Chrome desktop, Edge preview, or WebGPU with a ~1 GB download | **Do**, on all reading pages, labelled as a small on-device model that can be wrong   |
+| Reader assistant (“Ask about this page”)           | Readers on capable devices                                    | Chrome desktop, Edge preview, or WebGPU with a ~2 GB download | **Do**, on all reading pages, labelled as a small on-device model that can be wrong   |
 | Summarizer / Translator / Writer APIs in reader UI | —                                                             | Chrome and Edge                                               | **Skip.** Browsers already offer page translation and summaries; Writer suits authors |
 | Model features in the local editor                 | Author                                                        | Local                                                         | **Skip.** Coding agents and the existing review tools cover this                      |
 | `llms.txt`, NLWeb, `.well-known` tool manifests    | —                                                             | —                                                             | **Skip** (see research)                                                               |
@@ -65,8 +65,8 @@ Notes:
   ([Chrome docs](https://developer.chrome.com/docs/ai/prompt-api),
   [Edge docs](https://learn.microsoft.com/en-us/microsoft-edge/web-platform/prompt-api))
 - **Built-in models are shared** across sites and downloaded once by the browser
-  (about 2.7–4 GB), so a reader may already have one. WebLLM models are
-  per-origin downloads into the Cache API.
+  (about 2.7–4 GB), so a reader may already have one. WebLLM and LiteRT-LM
+  models are per-origin downloads.
 - **WebNN** is still an origin trial; keep it as a future adapter.
 
 ## 4. Architecture
@@ -81,6 +81,7 @@ flowchart TD
       A --> R[Model runtime registry]
       R --> P[Prompt API adapter<br/>browser-provided]
       R --> L[WebLLM adapter<br/>existing, WebGPU]
+      R --> G[LiteRT-LM adapter<br/>Gemma 4 E2B, WebGPU]
     end
     U[Visible controls: search, chapters, narration, Python Run/Step] --- T
 ```
@@ -204,18 +205,29 @@ languages: ["en"] }`, with `downloadBytes` and `vramMB` absent. `models.json`
   - `run` uses `promptStreaming`; `reset` clones from the initial session;
     `dispose` destroys it; `clear` cannot delete a browser model, so the UI
     explains where the browser manages it.
-- Extend `ModelSession` with an optional
-  `generateJSON(messages, schema, signal)` used by the assistant. Prompt API
-  implements it with `responseConstraint`; WebLLM with a `grammar` response
-  format compiled from the schema without free whitespace (WebLLM's own JSON-schema
-  mode allows unlimited whitespace, which small models loop on;
-  [§9](#9-phase-0-results)).
+- New adapter `runtime/adapters/litert-lm.ts` for
+  [`@litert-lm/core`](https://ai.google.dev/edge/litert-lm/js) (Google's
+  LiteRT-LM JS API, an early preview), runtime `litert-lm`, format `litertlm`.
+  It loads `gemma-4-E2B-it-web.litertlm` (text-only, 2,008,432,640 bytes, SHA-256
+  `3a08e8d9…35af35b5`) from a pinned revision of
+  `litert-community/gemma-4-E2B-it-litert-lm`, with the same descriptor fields
+  as WebLLM models. The WASM files are served from the site, not a CDN. `clear`
+  removes the cached model file.
+- Extend `ModelSession` with optional assistant methods:
+  - `chatWithTools(messages, tools, signal)` for runtimes with native tool calls.
+    LiteRT-LM implements it with conversation tools and
+    `enableConstrainedDecoding`. Tools must be passed wrapped as
+    `{ type: "function", function }`; the unwrapped form fails in 0.18.0.
+  - `generateJSON(messages, schema, signal)` for runtimes without tools. The
+    Prompt API implements it with `responseConstraint`.
+- WebLLM keeps serving the existing model experiments; the assistant does not
+  use it ([§9](#9-phase-0-results)).
 - **Recorded results.** Built-in models are unversioned, so a recording stores
   `runtime: "prompt-api"`, the browser name and version, and
   `model: "browser-provided (unversioned)"`. Book examples keep using recorded
   outputs.
 - Model experiments in articles gain an optional `runtimes` order, e.g.
-  `[prompt-api, webllm]`. The experiment chooses the first available runtime and
+  `[prompt-api, litert-lm, webllm]`. The experiment chooses the first available runtime and
   says which one is in use.
 - Fix in passing: the WebLLM adapter reports version `0.2.85` while the lockfile
   has `0.2.86`; derive the label from the package instead.
@@ -227,20 +239,21 @@ archive or original-site snapshot): answer questions about the current page or
 book, point to sections, and explain or run its code examples.
 
 - **Runtime ladder (decided).** (1) The browser's built-in model through the
-  Prompt API if available; (2) WebLLM with one pinned, tool-capable small
-  instruct model (Qwen3 1.7B, about 1 GB, chosen in the phase 0 spike) if WebGPU
-  is available and the reader agrees to the download; (3) otherwise the
-  assistant is not offered. No cloud model.
-- **Agent loop.** Built-in models have no native tool calling yet, so the loop
-  uses constrained JSON on every runtime:
-  `{ "action": "call", "tool": "...", "input": {...} }` or
-  `{ "action": "answer", "text": "...", "citations": ["section-id"] }`. At most
-  four tool calls per question, then an answer is required. Every reply is
-  parsed after stripping any `<think>` block, validated against the schema and
-  retried once on failure, because WebLLM's grammar is not a guarantee
-  ([§9](#9-phase-0-results)). The loop uses the
-  same registry as WebMCP. When the Prompt API ships `tools`, the adapter can use
-  it without changing the tools.
+  Prompt API if available; (2) Gemma 4 E2B through LiteRT-LM (about 2 GB, chosen
+  in phase 0) if WebGPU is available and the reader agrees to the download;
+  (3) otherwise the assistant is not offered. No cloud model.
+- **Agent loop.** One loop over the shared registry, with at most four tool calls
+  per question before an answer is required. The final answer is itself a tool,
+  `answer({ found, answer, citations })`, whose `citations` enum is limited to the
+  section IDs retrieved so far.
+  - LiteRT-LM: native tool calls with constrained decoding. The registry's tools
+    are already WebMCP-shaped (`name`, `description`, `inputSchema`), which is the
+    shape LiteRT-LM's own `AutoToolChat` accepts; the site keeps its own loop so
+    it controls the step limit, feedback and citation filtering.
+  - Prompt API: no tool calling yet, so the loop uses constrained JSON,
+    `{ "action": "call", "tool": "...", "input": {...} }` or the `answer`
+    object, validated and retried once on failure. When the Prompt API ships
+    `tools`, it moves to the native path without changing the tools.
 - **Grounding.** Answers must cite section IDs returned by tools; citations that
   were not retrieved are dropped. The system prompt says the page text is the
   authority and the assistant must say when it does not know.
@@ -300,9 +313,9 @@ in try/catch, default on). It also states which browsers support this today.
   - Built-in model downloadable: “Your browser can download its built-in model
     (about 3–4 GB, shared with other sites). This happens once.” →
     **Download and start** / **Not now**.
-  - WebLLM: model name, size from the manifest and storage note →
-    **Download (about 1 GB)**, with progress and **Cancel**, and **Clear
-    downloaded model** later.
+  - Downloadable model: model name (Gemma 4 E2B), size from the descriptor and a
+    storage note → **Download (about 2 GB)**, with progress and **Cancel**, and
+    **Clear downloaded model** later.
 - **Conversation.** Three or four suggested questions generated from the page
   outline (“What problem does this chapter solve?”, “Run the first example and
   explain the output”). Answers stream; each tool step appears as a compact line
@@ -335,15 +348,15 @@ in try/catch, default on). It also states which browsers support this today.
 
 ## 7. Delivery plan
 
-| Phase                       | Scope                                                                                                | Size | Exit criteria                                                                                                              |
-| --------------------------- | ---------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
-| 0. Spikes (done)            | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one WebLLM tool-capable model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
-| 1. Index and search         | Reading index, Pagefind, search page and dialog, declarative tool attributes                         | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
-| 2. Tool registry and WebMCP | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                       | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
-| 3. Model runtimes           | Descriptor variant, Prompt API adapter, runtime order for experiments, recording changes             | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
-| 4. Assistant                | Loop, panel, grounding, evaluation set covering every published piece                                | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
-| 5. Production enablement    | Chrome and Edge origin-trial tokens, release notes                                                   | S    | Deployed and verified; token expiry warning in build                                                                       |
-| 6. Article                  | Write-up based on observed agent and model behaviour after release                                   | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
+| Phase                       | Scope                                                                                                   | Size | Exit criteria                                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
+| 0. Spikes (done)            | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
+| 1. Index and search         | Reading index, Pagefind, search page and dialog, declarative tool attributes                            | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
+| 2. Tool registry and WebMCP | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
+| 3. Model runtimes           | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
+| 4. Assistant                | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
+| 5. Production enablement    | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
+| 6. Article                  | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
 
 ### Testing
 
@@ -354,7 +367,7 @@ in try/catch, default on). It also states which browsers support this today.
   `--enable-features=WebMCPTesting`, skipped when Chrome is not installed (the
   Puppeteer headless shell used by other tests has no WebMCP); a mocked
   `LanguageModel` for the assistant UI states.
-  Real Prompt API and WebLLM runs cannot happen in CI and are recorded as manual
+  Real Prompt API and LiteRT-LM runs cannot happen in CI and are recorded as manual
   verification in [verification](verification.md).
 - **Bundle budget:** pages without WebMCP or activation load no extra code beyond
   the feature checks.
@@ -379,11 +392,14 @@ Accepted by the owner on 23 October 2026:
    both Chrome and Edge, not only for browsers with the flag.
 3. **Assistant scope:** all reading pages (articles and book chapters).
 4. **Assistant models:** the browser's built-in model first, then an explicit
-   WebLLM download on WebGPU browsers; never a cloud model.
+   download of Gemma 4 E2B (LiteRT-LM, about 2 GB) on WebGPU browsers; never a
+   cloud model. The owner chose Gemma 4 E2B over the smaller Qwen3 1.7B after
+   the phase 0 comparison ([§9](#9-phase-0-results)).
 5. **Article:** write it after the features ship, from real observations; until
    then the “For AI agents” page is the public explanation.
 
-Settled in phase 0: the WebLLM model is Qwen3 1.7B ([§9](#9-phase-0-results)).
+Settled in phase 0: the downloadable assistant model is Gemma 4 E2B on
+LiteRT-LM ([§9](#9-phase-0-results)).
 Still to settle: the citation-accuracy threshold for the assistant evaluation
 (phase 4).
 
@@ -421,27 +437,41 @@ the on-device page never finishes classifying the device. Real built-in model
 behaviour, including `responseConstraint`, is therefore manual verification on
 the owner's everyday Chrome; automated tests use a mocked `LanguageModel`.
 
-**WebLLM model choice (0.2.86).** Six models answered 8 tool-routing requests
+**Downloadable model choice.** Each model answered 8 tool-routing requests
 (including two that must be refused) and 16 grounded questions over real site
 sections (12 answerable, each with the gold section and two decoys from the same
 page in rotating order; 4 unanswerable). Output was schema-constrained; citations
 could only be section IDs that were provided. Indicative only: the set is small.
+WebLLM 0.2.86 models used a JSON-schema response format; the LiteRT-LM run used
+native tool calls with constrained decoding (`@litert-lm/core` 0.18.0).
 
-| Model (q4f16_1)       | Storage | Routing | Valid JSON | Found / cites gold | Abstains | Median answer |
-| --------------------- | ------: | ------: | ---------: | -----------------: | -------: | ------------: |
-| Qwen3 1.7B            |  986 MB |     6/8 |      16/16 |        9/12 · 8/12 |      4/4 |         4.2 s |
-| Qwen3.5 2B            | 1080 MB |     6/8 |      15/16 |       10/12 · 8/12 |      4/4 |         7.0 s |
-| Qwen2.5 1.5B Instruct |  882 MB |     5/8 |      16/16 |       12/12 · 9/12 |      1/4 |         4.9 s |
-| Qwen3.5 0.8B          |  444 MB |     5/8 |      16/16 |        5/12 · 9/12 |      3/4 |         5.1 s |
-| Llama 3.2 1B Instruct |  711 MB |     4/8 |      13/16 |        1/12 · 4/12 |      0/4 |         2.6 s |
-| Gemma 3 1B            |  603 MB |     2/8 |      13/16 |        1/12 · 2/12 |      3/4 |         3.9 s |
+| Model                       | Storage | Routing | Valid JSON | Found / cites gold | Abstains | Median answer |
+| --------------------------- | ------: | ------: | ---------: | -----------------: | -------: | ------------: |
+| Gemma 4 E2B web, LiteRT-LM  | 2008 MB |     6/8 |      16/16 |      12/12 · 12/12 |      4/4 |         3.9 s |
+| Gemma 4 E2B q4f16_1, WebLLM | 2842 MB |     5/8 |      16/16 |        8/12 · 4/12 |      3/4 |        15.1 s |
+| Qwen3 1.7B                  |  986 MB |     6/8 |      16/16 |        9/12 · 8/12 |      4/4 |         4.2 s |
+| Qwen3.5 2B                  | 1080 MB |     6/8 |      15/16 |       10/12 · 8/12 |      4/4 |         7.0 s |
+| Qwen2.5 1.5B Instruct       |  882 MB |     5/8 |      16/16 |       12/12 · 9/12 |      1/4 |         4.9 s |
+| Qwen3.5 0.8B                |  444 MB |     5/8 |      16/16 |        5/12 · 9/12 |      3/4 |         5.1 s |
+| Llama 3.2 1B Instruct       |  711 MB |     4/8 |      13/16 |        1/12 · 4/12 |      0/4 |         2.6 s |
+| Gemma 3 1B                  |  603 MB |     2/8 |      13/16 |        1/12 · 2/12 |      3/4 |         3.9 s |
 
-Decision: **Qwen3 1.7B** (Apache-2.0), the best balance of routing, refusing
-unanswerable questions and citing only the right section, at the plan's ~1 GB
-budget. Qwen3.5 2B is the fallback if the phase 4 evaluation needs more quality.
-Weaknesses to address in phase 4: picking a section from headings alone (route
-such questions through search), and sometimes answering correctly while setting
-`found` to false.
+The WebLLM rows are q4f16_1 builds. Decision: **Gemma 4 E2B, Google's
+text-only web build on LiteRT-LM** (Apache-2.0, not gated). Every answer was
+correct and cited only the gold section, it declined every unanswerable
+question, and its two routing misses chose search for topics not named in a
+heading, which is the better behaviour; Qwen models guessed a wrong section
+instead. It loaded in 6 seconds from a local file. The cost is a 2 GB download
+(about 1.8 GB of GPU memory per Google's card) and an early-preview runtime that
+supports only the Gemma 4 web builds. The same model through WebLLM includes the
+vision and audio encoders and scored far lower, so the gain comes from the web
+build and native tool calling, not size alone. Qwen3 1.7B on WebLLM (986 MB) was
+the best of the smaller models and remains the fallback if LiteRT-LM proves
+unusable in Safari or Firefox (to verify in phase 3).
+
+Gemma 4 E2B's "0.8 GB" figure refers to memory for text-only weights on native
+runtimes, which memory-map a further 1.12 GB of per-layer embeddings; every
+download format is about 2 GB (GGUF QAT 2.2 GB, ONNX QAT 2.3 GB, MLX 2.4 GB).
 
 Implementation notes from the spike:
 
@@ -453,5 +483,8 @@ Implementation notes from the spike:
   prose). Strip, validate and retry.
 - WebLLM 0.2.86's prebuilt Gemma 3 1B record sets both a context window and a
   sliding window and fails to load without an override.
-- WebLLM's official function-calling list only contains 7–8B models, so the
-  assistant keeps its constrained-JSON loop rather than native tool calls.
+- WebLLM's official function-calling list only contains 7–8B models.
+- LiteRT-LM 0.18.0 rejects tools passed as bare function declarations ("Failed
+  to apply template: undefined value"); wrap them as `{ type: "function",
+function }`. Two unanswerable replies put the literal text "false" in
+  `answer`; the UI should write its own not-found message when `found` is false.
