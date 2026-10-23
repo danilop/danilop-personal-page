@@ -932,6 +932,25 @@ holds one registry used by WebMCP and the reading assistant:
 Excluded on purpose: model downloads, saving, sharing, consent and the local
 editor. Production pages carry no polyfill.
 
+**Origin trials.** Browsers without the WebMCP flag expose `document.modelContext`
+only with an origin-trial token for the site's domain. Tokens are public and
+configured in `publishing/site.yaml` (schema in `core/config.ts`):
+
+```yaml
+originTrials:
+  - browser: chrome # or edge
+    feature: WebMCP
+    token: "<token from the trial console>"
+    expires: 2027-03-30
+```
+
+To add one: register the production origin for the WebMCP trial in the Chrome or
+Edge origin-trials console, paste the token and its expiry date, rebuild and
+release. `Layout.astro` emits one `<meta http-equiv="origin-trial">` per unexpired
+token; `core/origin-trials.ts` drops expired tokens and `verify-build.ts` warns
+30 days before an expiry. Which account registered a token and when to renew it
+belong in the private operations note, not here.
+
 ## Reading assistant
 
 Implemented locally and tested on 23 October 2026. `AssistantEntry.astro` adds a

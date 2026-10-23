@@ -7,8 +7,9 @@ registry, WebMCP, feedback and the "For AI agents" page) and phase 3 (Prompt API
 and LiteRT-LM runtimes) and phase 4 (reading assistant) are implemented and
 tested locally ([search](architecture.md#search-and-reading-index),
 [agent tools](architecture.md#agent-tools-and-webmcp),
-[assistant](architecture.md#reading-assistant)); phase 5 (deployment and trial
-tokens) follows. It builds on the
+[assistant](architecture.md#reading-assistant)). Phase 5 added origin-trial
+token configuration; no token is registered yet, so until the owner registers
+one, WebMCP tools are exposed only in browsers with WebMCP enabled by flag. It builds on the
 [WebMCP research](webmcp-research.md) and extends the existing browser-model
 rules in [architecture §6](architecture.md#6-browser-experiments). Site-wide
 search and a reader assistant, previously deferred in
@@ -393,15 +394,15 @@ in try/catch, default on). It also states which browsers support this today.
 
 ## 7. Delivery plan
 
-| Phase                      | Scope                                                                                                   | Size | Exit criteria                                                                                                              |
-| -------------------------- | ------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
-| 0. Spikes (done)           | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
-| 1. Index and search (done) | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
-| 2. Tools and WebMCP (done) | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
-| 3. Model runtimes (done)   | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
-| 4. Assistant (done)        | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
-| 5. Production enablement   | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
-| 6. Article                 | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
+| Phase                          | Scope                                                                                                   | Size | Exit criteria                                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
+| 0. Spikes (done)               | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
+| 1. Index and search (done)     | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
+| 2. Tools and WebMCP (done)     | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
+| 3. Model runtimes (done)       | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
+| 4. Assistant (done)            | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
+| 5. Production (tokens pending) | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
+| 6. Article                     | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
 
 ### Testing
 

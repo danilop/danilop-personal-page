@@ -13,6 +13,7 @@ import { themes } from "../../themes/registry";
 import { site } from "../data";
 import { loadEditions } from "../../core/editions";
 import PostHog from "./posthog.astro";
+import { activeOriginTrials } from "../../core/origin-trials";
 const publishedEditions = (await loadEditions()).filter(
   (e) => e.status === "published",
 );
@@ -79,6 +80,9 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title===config.name?`${config.name} — ${config.title}`:`${title} — ${config.name}`}</title>
     <meta name="description" content={description} />
+    {activeOriginTrials(config.originTrials).map((trial) => (
+      <meta http-equiv="origin-trial" content={trial.token} />
+    ))}
     {site.isPreview && <meta name="robots" content="noindex,nofollow" />}
     <link rel="canonical" href={url} />
     <link rel="icon" href={site.icons.ico} sizes="16x16 32x32 48x48" />

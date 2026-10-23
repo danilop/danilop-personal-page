@@ -5,6 +5,7 @@ import {
   siteOutput,
 } from "../core/deployment.mjs";
 import { siteConfig } from "../core/config";
+import { originTrialWarnings } from "../core/origin-trials";
 import fs from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -156,6 +157,8 @@ async function walk(dir: string): Promise<string[]> {
 }
 async function main() {
   const config = await siteConfig();
+  for (const warning of originTrialWarnings(config.originTrials))
+    console.warn(`Warning: ${warning}`);
   const manifest = await readAssetManifest(process.cwd());
   if (
     manifest &&

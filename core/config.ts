@@ -60,6 +60,19 @@ export const siteSchema = z
       .object({ portrait: asset, biography: asset, hero: asset.optional() })
       .strict(),
     overrideCss: z.string().optional(),
+    /** Public, domain-bound tokens; see core/origin-trials.ts. */
+    originTrials: z
+      .array(
+        z
+          .object({
+            browser: z.enum(["chrome", "edge"]),
+            feature: z.literal("WebMCP"),
+            token: z.string().regex(/^[A-Za-z0-9+/]{40,}={0,2}$/),
+            expires: z.iso.date(),
+          })
+          .strict(),
+      )
+      .default([]),
   })
   .strict();
 export type SiteConfig = z.infer<typeof siteSchema> & { url: string };
