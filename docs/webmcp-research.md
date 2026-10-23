@@ -37,7 +37,10 @@ browser-mediated typed-function API inspired by MCP.
 - **Naming churn**: the API moved from `navigator.modelContext` to
   `document.modelContext` in mid-2026; Chrome 150 reportedly keeps the old name
   as a deprecated alias, and Chrome 156 drops `window.ontoolactivated` and
-  `window.ontoolcancel`. Code should feature-detect both locations.
+  `window.ontoolcancel`. Code should feature-detect both locations. (Phase 0 of
+  the [plan](agent-and-browser-ai-plan.md#9-phase-0-results) found
+  `navigator.modelContext` absent in Chrome 156, so the site detects only
+  `document.modelContext`.)
   ([report](https://byteiota.com/webmcp-chrome-150-navigator-modelcontext-deprecation/))
 - **Known gaps**: no pre-visit discovery (a `.well-known` manifest is discussed in
   [issue #340](https://github.com/webmachinelearning/webmcp/issues/340) but not

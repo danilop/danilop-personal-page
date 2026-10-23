@@ -1,7 +1,8 @@
 # Agent tools and in-browser models: technical and UX plan
 
 Status: proposed on 23 October 2026; the owner accepted the plan's decisions the
-same day ([§8](#8-decisions)). Nothing is implemented yet. It builds on the
+same day ([§8](#8-decisions)). Phase 0 spikes are complete
+([§9](#9-phase-0-results)); no site feature is implemented yet. It builds on the
 [WebMCP research](webmcp-research.md) and extends the existing browser-model
 rules in [architecture §6](architecture.md#6-browser-experiments). Site-wide
 search and a reader assistant, previously deferred in
@@ -74,7 +75,7 @@ Notes:
 flowchart TD
     I[Build: reading index + Pagefind full-text index] --> T
     subgraph Page runtime
-      T[Agent tool registry<br/>runtime/agent-tools] --> W[WebMCP adapter<br/>document/navigator.modelContext]
+      T[Agent tool registry<br/>runtime/agent-tools] --> W[WebMCP adapter<br/>document.modelContext]
       T --> A[Reader assistant loop]
       T --> F[Feedback layer<br/>highlight + live announcement]
       A --> R[Model runtime registry]
@@ -160,8 +161,9 @@ buttons and the tools, instead of tools clicking buttons.
 
 ### 4.3 WebMCP adapter (phase 2)
 
-- `enhance.ts` checks `document.modelContext ?? navigator.modelContext` and only
-  then imports the adapter, like simulations and code activities today.
+- `enhance.ts` checks `document.modelContext` and only then imports the adapter,
+  like simulations and code activities today. Chrome 156 no longer has the old
+  `navigator.modelContext` alias ([§9](#9-phase-0-results)).
 - The adapter registers tools whose `available()` is true, each with one
   `AbortController` signal so all can be removed (on `pagehide`, or when the
   reader turns agent tools off).
@@ -204,8 +206,10 @@ languages: ["en"] }`, with `downloadBytes` and `vramMB` absent. `models.json`
     explains where the browser manages it.
 - Extend `ModelSession` with an optional
   `generateJSON(messages, schema, signal)` used by the assistant. Prompt API
-  implements it with `responseConstraint`; WebLLM with its JSON-schema response
-  format.
+  implements it with `responseConstraint`; WebLLM with a `grammar` response
+  format compiled from the schema without free whitespace (WebLLM's own JSON-schema
+  mode allows unlimited whitespace, which small models loop on;
+  [§9](#9-phase-0-results)).
 - **Recorded results.** Built-in models are unversioned, so a recording stores
   `runtime: "prompt-api"`, the browser name and version, and
   `model: "browser-provided (unversioned)"`. Book examples keep using recorded
@@ -224,14 +228,17 @@ book, point to sections, and explain or run its code examples.
 
 - **Runtime ladder (decided).** (1) The browser's built-in model through the
   Prompt API if available; (2) WebLLM with one pinned, tool-capable small
-  instruct model (about 1 GB, chosen in a spike for JSON reliability) if WebGPU
+  instruct model (Qwen3 1.7B, about 1 GB, chosen in the phase 0 spike) if WebGPU
   is available and the reader agrees to the download; (3) otherwise the
   assistant is not offered. No cloud model.
 - **Agent loop.** Built-in models have no native tool calling yet, so the loop
   uses constrained JSON on every runtime:
   `{ "action": "call", "tool": "...", "input": {...} }` or
   `{ "action": "answer", "text": "...", "citations": ["section-id"] }`. At most
-  four tool calls per question, then an answer is required. The loop uses the
+  four tool calls per question, then an answer is required. Every reply is
+  parsed after stripping any `<think>` block, validated against the schema and
+  retried once on failure, because WebLLM's grammar is not a guarantee
+  ([§9](#9-phase-0-results)). The loop uses the
   same registry as WebMCP. When the Prompt API ships `tools`, the adapter can use
   it without changing the tools.
 - **Grounding.** Answers must cite section IDs returned by tools; citations that
@@ -330,7 +337,7 @@ in try/catch, default on). It also states which browsers support this today.
 
 | Phase                       | Scope                                                                                                | Size | Exit criteria                                                                                                              |
 | --------------------------- | ---------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
-| 0. Spikes                   | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one WebLLM tool-capable model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
+| 0. Spikes (done)            | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one WebLLM tool-capable model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
 | 1. Index and search         | Reading index, Pagefind, search page and dialog, declarative tool attributes                         | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
 | 2. Tool registry and WebMCP | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                       | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
 | 3. Model runtimes           | Descriptor variant, Prompt API adapter, runtime order for experiments, recording changes             | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
@@ -343,8 +350,10 @@ in try/catch, default on). It also states which browsers support this today.
 - **Unit (node:test):** schemas, validation, size caps, `available()` rules, the
   agent loop with a scripted fake model, citation filtering.
 - **Browser (Playwright):** search and declarative form in all engines; WebMCP
-  tools in Chromium launched with the WebMCP feature enabled (exact flag
-  confirmed in phase 0); a mocked `LanguageModel` for the assistant UI states.
+  tools in installed Chrome (`channel: "chrome"`) launched with
+  `--enable-features=WebMCPTesting`, skipped when Chrome is not installed (the
+  Puppeteer headless shell used by other tests has no WebMCP); a mocked
+  `LanguageModel` for the assistant UI states.
   Real Prompt API and WebLLM runs cannot happen in CI and are recorded as manual
   verification in [verification](verification.md).
 - **Bundle budget:** pages without WebMCP or activation load no extra code beyond
@@ -374,5 +383,75 @@ Accepted by the owner on 23 October 2026:
 5. **Article:** write it after the features ship, from real observations; until
    then the “For AI agents” page is the public explanation.
 
-Still to settle during implementation: the WebLLM model (phase 0 spike) and the
-citation-accuracy threshold for the assistant evaluation (phase 4).
+Settled in phase 0: the WebLLM model is Qwen3 1.7B ([§9](#9-phase-0-results)).
+Still to settle: the citation-accuracy threshold for the assistant evaluation
+(phase 4).
+
+## 9. Phase 0 results
+
+Run on 23 October 2026 on an Apple M1 Pro (16 GB) with Chrome 156.0.8078.48 and
+Playwright 1.64. Edge is not installed on the test machine; its WebMCP checks
+wait for phase 5. Spike scripts were throwaway and are not in the repository.
+
+**WebMCP (Chrome 156).**
+
+- `--enable-features=WebMCPTesting` (and also `WebMCP`, the Blink feature or
+  experimental web platform features) exposes `document.modelContext` with
+  `registerTool`, `getTools`, `executeTool` and `ontoolchange`. Without a flag it is
+  absent. `navigator.modelContext` does not exist, and `window.ontoolactivated` /
+  `window.ontoolcancel` are gone.
+- `registerTool(tool, { signal })` resolves to `undefined`; aborting the signal
+  unregisters the tool; `toolchange` fires for both.
+- `getTools()` returns plain objects with `name`, `title`, `description`,
+  `inputSchema`, `annotations` (all four hints, defaulted to `false`), `origin` and
+  `window`. A declarative form appears with a schema inferred from input `name`,
+  `toolparamdescription` and `required`.
+- `executeTool(toolObject, inputObject)` takes the object from `getTools()` and an
+  input object (a JSON string is rejected) and resolves to the JSON-serialised
+  result. A declarative form without `toolautosubmit` must have a submit button.
+- `SubmitEvent.agentInvoked`, `SubmitEvent.respondWith`, `:tool-form-active` and
+  the `tools` Permissions Policy are present.
+- The Puppeteer headless shell (Chromium 155) has no WebMCP even with flags, so
+  WebMCP browser tests use installed Chrome.
+
+**Prompt API.** `LanguageModel` and `Summarizer` exist in Chrome 156, but in a
+fresh automated profile both report `unavailable`, even with Playwright's
+component-update and feature-disabling defaults removed and after 90 seconds:
+the on-device page never finishes classifying the device. Real built-in model
+behaviour, including `responseConstraint`, is therefore manual verification on
+the owner's everyday Chrome; automated tests use a mocked `LanguageModel`.
+
+**WebLLM model choice (0.2.86).** Six models answered 8 tool-routing requests
+(including two that must be refused) and 16 grounded questions over real site
+sections (12 answerable, each with the gold section and two decoys from the same
+page in rotating order; 4 unanswerable). Output was schema-constrained; citations
+could only be section IDs that were provided. Indicative only: the set is small.
+
+| Model (q4f16_1)       | Storage | Routing | Valid JSON | Found / cites gold | Abstains | Median answer |
+| --------------------- | ------: | ------: | ---------: | -----------------: | -------: | ------------: |
+| Qwen3 1.7B            |  986 MB |     6/8 |      16/16 |        9/12 · 8/12 |      4/4 |         4.2 s |
+| Qwen3.5 2B            | 1080 MB |     6/8 |      15/16 |       10/12 · 8/12 |      4/4 |         7.0 s |
+| Qwen2.5 1.5B Instruct |  882 MB |     5/8 |      16/16 |       12/12 · 9/12 |      1/4 |         4.9 s |
+| Qwen3.5 0.8B          |  444 MB |     5/8 |      16/16 |        5/12 · 9/12 |      3/4 |         5.1 s |
+| Llama 3.2 1B Instruct |  711 MB |     4/8 |      13/16 |        1/12 · 4/12 |      0/4 |         2.6 s |
+| Gemma 3 1B            |  603 MB |     2/8 |      13/16 |        1/12 · 2/12 |      3/4 |         3.9 s |
+
+Decision: **Qwen3 1.7B** (Apache-2.0), the best balance of routing, refusing
+unanswerable questions and citing only the right section, at the plan's ~1 GB
+budget. Qwen3.5 2B is the fallback if the phase 4 evaluation needs more quality.
+Weaknesses to address in phase 4: picking a section from headings alone (route
+such questions through search), and sometimes answering correctly while setting
+`found` to false.
+
+Implementation notes from the spike:
+
+- WebLLM compiles `json_object` schemas with unlimited whitespace and offers no
+  option to change it; Gemma looped on whitespace until compact JSON was forced.
+  Generate a compact grammar from each schema instead.
+- Qwen3-family output starts with an empty `<think></think>` block even with
+  thinking disabled, and the grammar was not reliably enforced (one reply was
+  prose). Strip, validate and retry.
+- WebLLM 0.2.86's prebuilt Gemma 3 1B record sets both a context window and a
+  sliding window and fails to load without an override.
+- WebLLM's official function-calling list only contains 7–8B models, so the
+  assistant keeps its constrained-JSON loop rather than native tool calls.
