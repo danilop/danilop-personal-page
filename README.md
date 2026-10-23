@@ -81,7 +81,7 @@ ChatGPT-signed-in Codex CLI. Static full-text search (Pagefind, `/search/`, `/`
 shortcut), WebMCP browser-agent tools with a “For AI agents” page and an
 on-device “Ask about this page” assistant (browser built-in model or a 2 GB
 Gemma 4 E2B download, never cloud; `npm run assistant:eval` checks it with the real
-model) are implemented; see the
+model) were deployed on 23 October 2026; see the
 [plan](docs/agent-and-browser-ai-plan.md).
 
 ## Develop
@@ -369,7 +369,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Cross-posting](docs/cross-posting.md): delivery policies and provider limits.
 - [Newsletter research — deferred](docs/newsletter-plan.md): homepage/article/book subscriptions and optional distribution; saved provider comparisons (including Substack), free and paid pricing, API constraints and email-format trade-offs. Selection and implementation are deferred for a future discussion.
 - [WebMCP and agent-facing web research](docs/webmcp-research.md): October 2026 state of WebMCP (browser positions, consuming agents, adoption, security), adjacent techniques and ranked options for this site. Research only; nothing is implemented or decided.
-- [Agent tools and in-browser models plan — accepted; phases 0–4 implemented](docs/agent-and-browser-ai-plan.md): Pagefind search; a shared agent tool registry exposed through WebMCP with Chrome and Edge origin-trial tokens; agent-operable Python activities; Prompt API and LiteRT-LM runtimes beside WebLLM; an on-device “Ask about this page” assistant on all reading pages (built-in model first, then an explicit Gemma 4 E2B download of about 2 GB, never cloud); UX, browser capability matrix and phased delivery. An article follows after release.
+- [Agent tools and in-browser models plan — deployed 23 October 2026; trial tokens pending](docs/agent-and-browser-ai-plan.md): Pagefind search; a shared agent tool registry exposed through WebMCP (origin-trial tokens configurable, not yet registered); agent-operable Python activities; Prompt API and LiteRT-LM runtimes beside WebLLM; an on-device “Ask about this page” assistant on all reading pages (built-in model first, then an explicit Gemma 4 E2B download of about 2 GB, never cloud); UX, browser capability matrix and phased delivery. An article follows after release.
 - [Analytics and privacy](docs/analytics-and-privacy.md): PostHog EU analytics, visitor consent and event definitions. Run `./analytics.sh` for the dashboard list, `./analytics.sh traffic` for visitor statistics or `./analytics.sh collections` for book/collection metrics; links stay in the private operations note. The October review fixes are local and not yet deployed; MCP and exports remain unconfigured.
 - [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
 - [Asset release design](docs/asset-release-design.md): ignored editorial media, checksum manifests, release/deployment gates and automatic retention.

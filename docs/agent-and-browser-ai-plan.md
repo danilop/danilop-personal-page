@@ -1,19 +1,15 @@
 # Agent tools and in-browser models: technical and UX plan
 
 Status: proposed on 23 October 2026; the owner accepted the plan's decisions the
-same day ([§8](#8-decisions)). Phase 0 spikes are complete
-([§9](#9-phase-0-results)). Phase 1 (search and reading index), phase 2 (tool
-registry, WebMCP, feedback and the "For AI agents" page) and phase 3 (Prompt API
-and LiteRT-LM runtimes) and phase 4 (reading assistant) are implemented and
-tested locally ([search](architecture.md#search-and-reading-index),
+same day ([§8](#8-decisions)). Phases 0–5 are implemented, tested and deployed on
+23 October 2026 (release `61af1ef`): search, the WebMCP tool registry with its
+“For AI agents” page, the Prompt API and LiteRT-LM runtimes, the reading assistant
+and origin-trial token configuration
+([search](architecture.md#search-and-reading-index),
 [agent tools](architecture.md#agent-tools-and-webmcp),
-[assistant](architecture.md#reading-assistant)). Phase 5 added origin-trial
-token configuration; no token is registered yet, so until the owner registers
-one, WebMCP tools are exposed only in browsers with WebMCP enabled by flag. It builds on the
-[WebMCP research](webmcp-research.md) and extends the existing browser-model
-rules in [architecture §6](architecture.md#6-browser-experiments). Site-wide
-search and a reader assistant, previously deferred in
-[product design](product-design.md), are now accepted, planned scope.
+[assistant](architecture.md#reading-assistant)). No origin-trial token is
+registered yet, so WebMCP tools reach only browsers with WebMCP enabled by flag.
+Phase 6 (the article) follows.
 
 ## 1. What is worth doing
 
@@ -93,7 +89,7 @@ flowchart TD
     U[Visible controls: search, chapters, narration, Python Run/Step] --- T
 ```
 
-### 4.1 Reading index and search (phase 1, implemented locally)
+### 4.1 Reading index and search (phase 1, deployed)
 
 Implemented and tested locally on 23 October 2026; details in
 [architecture](architecture.md#search-and-reading-index).
@@ -123,7 +119,7 @@ Implemented and tested locally on 23 October 2026; details in
   attributes through `site/webmcp.d.ts`; HTML validation does not run on built
   pages, so no allowance was needed.
 
-### 4.2 Agent tool registry (phase 2, implemented locally)
+### 4.2 Agent tool registry (phase 2, deployed)
 
 A framework-independent module, `runtime/agent-tools/`, defines each tool once
 ([architecture](architecture.md#agent-tools-and-webmcp)). As built, there is no
@@ -174,7 +170,7 @@ recording. To support this, `mountPythonRunner` returns a small controller
 (`run(code?)`, `step()`, `restore()`, a result promise) used by both the
 buttons and the tools, instead of tools clicking buttons.
 
-### 4.3 WebMCP adapter (phase 2, implemented locally; tokens in phase 5)
+### 4.3 WebMCP adapter (phase 2, deployed; trial tokens pending)
 
 - `enhance.ts` checks `document.modelContext` and only then imports the adapter,
   like simulations and code activities today. Chrome 156 no longer has the old
@@ -200,7 +196,7 @@ buttons and the tools, instead of tools clicking buttons.
 - **No polyfill on production pages.** `@mcp-b/global` is useful for local
   experiments with MCP clients, but shipping it would add a non-standard API.
 
-### 4.4 Model runtime extensions (phase 3, implemented locally)
+### 4.4 Model runtime extensions (phase 3, deployed)
 
 As built: the contract gained a descriptor union and an optional
 `startAgentChat(system, tools)` on sessions instead of separate `chatWithTools`
@@ -253,7 +249,7 @@ languages: ["en"] }`, with `downloadBytes` and `vramMB` absent. `models.json`
 - Fix in passing: the WebLLM adapter reports version `0.2.85` while the lockfile
   has `0.2.86`; derive the label from the package instead.
 
-### 4.5 Reader assistant (phase 4, implemented locally)
+### 4.5 Reader assistant (phase 4, deployed)
 
 As built (23 October 2026), differences from the design below:
 

@@ -2314,3 +2314,26 @@ Phases 3 and 4 of the [agent tools plan](agent-and-browser-ai-plan.md).
 - Unit and DOM tests cover the adapters with fakes, the loop (citation filtering,
   declines, tool limit, unknown tools, errors, abort) and the panel (ladder,
   disclosure, progress, cancel, answers, errors, clear, Escape).
+
+## Production release of search, agent tools and the assistant — 23 October 2026
+
+- `npm run release` first stopped in validation: two authoring-preview tests needed
+  draft audiobook MP3s that the local orphan cleanup had moved to
+  `.authoring-state/image-trash/` during an authoring-preview run. Copying them back
+  into `.asset-cache` (SHA-256 verified) let validation pass; nothing had been
+  pushed. Releases `c95d398` and, after the dependency refresh, `61af1ef` were
+  released and verified on https://www.danilop.net/.
+- Live checks in Chrome 156 (WebMCP flag): `/search/?q=FelonyBench` returned the
+  article; `/reading-index.json` listed both published articles; `/agents/` listed
+  14 tools and the footer links to it; an article page registered 9 tools and
+  `find_in_page` found the right section; no origin-trial meta tag is emitted.
+- The first live assistant run downloaded Gemma 4 E2B from Hugging Face on the
+  production origin (ready after 140 seconds) but could not submit: the analytics
+  consent banner covered the panel's Ask button. The open panel now stacks above
+  the banner and moves it aside on wide screens. After release `61af1ef`, the
+  assistant started from cache in 3 seconds and answered “What is FelonyBench?”
+  from “A rather awkward sort of leaderboard”, citing that section.
+- Dependency refresh: `npm audit` reports no vulnerabilities; the Python locks pin
+  `certifi` 2026.10.23, above the 2026.10.19 fix for the three Dependabot alerts
+  (awaiting GitHub's rescan). The full gate passed; one long author-server test
+  failed once under `npm run validate` load and passed alone and in the gate.

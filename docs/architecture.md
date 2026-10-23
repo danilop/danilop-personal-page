@@ -410,7 +410,7 @@ the UI responsive; demonstrations requiring an isolation boundary use a sandboxe
 iframe rather than treating a Worker as a security boundary.
 
 Model experiments select a runtime through the registry, which has three
-adapters (implemented locally 23 October 2026): WebLLM for MLC models; the
+adapters (deployed 23 October 2026): WebLLM for MLC models; the
 browser's built-in model through the Prompt API (`runtime/adapters/prompt-api.ts`,
 descriptor format `builtin`, no files or checksums; recordings name the browser
 because the model is unversioned); and LiteRT-LM (`runtime/adapters/litert-lm.ts`,
@@ -869,7 +869,7 @@ audio were deployed on 13 October 2026; synthesis and authoring remain local.
 
 ## Search and reading index
 
-Implemented locally and tested on 23 October 2026; not deployed.
+Deployed 23 October 2026.
 [Pagefind](https://pagefind.app/) 1.5.2 is a build-time dev dependency.
 `core/search-index.ts` runs at the start of `scripts/package-site.ts`, the step
 every build path shares after `astro build`, and writes a chunked index, WASM
@@ -905,7 +905,7 @@ articles.
 
 ## Agent tools and WebMCP
 
-Implemented locally and tested on 23 October 2026; not deployed. `runtime/agent-tools/`
+Deployed 23 October 2026. `runtime/agent-tools/`
 holds one registry used by WebMCP and the reading assistant:
 
 - `registry.ts`: tool type, a small JSON-Schema-subset validator (strings with
@@ -953,7 +953,7 @@ belong in the private operations note, not here.
 
 ## Reading assistant
 
-Implemented locally and tested on 23 October 2026. `AssistantEntry.astro` adds a
+Deployed 23 October 2026. `AssistantEntry.astro` adds a
 hidden “Ask about this page” button after the listening controls on articles, book
 pieces and chapter pages. `enhance.ts` reveals it only when `LanguageModel` or
 `navigator.gpu` exists and loads `runtime/assistant/panel.ts` on the first click,

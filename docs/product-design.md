@@ -294,7 +294,7 @@ unsupported devices, and ordinary reading. A sequence of states or recorded
 results may explain an experiment better than a single screenshot.
 
 Experiments are content elements. Decided on 23 October 2026: static full-text
-search for every reader (implemented locally, not deployed; a masthead Search
+search for every reader (deployed 23 October 2026; a masthead Search
 link, `/` shortcut and `/search/` page with highlighted excerpts); read/navigate
 and Python activity tools offered to browser agents through WebMCP, each
 mirroring a visible control and announced when used, with a “For AI agents” page
