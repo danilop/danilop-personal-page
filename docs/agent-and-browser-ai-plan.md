@@ -9,8 +9,8 @@ and origin-trial token configuration
 [agent tools](architecture.md#agent-tools-and-webmcp),
 [assistant](architecture.md#reading-assistant)). Chrome and Edge WebMCP
 origin-trial tokens for `https://www.danilop.net` were registered on 23 October
-2026 and added to `publishing/site.yaml`, so WebMCP-capable Chrome (149+) and Edge
-builds expose the tools without a flag once that configuration is released.
+2026 and released the same day (release `d58fc82`); Chrome 156 without the flag
+now exposes the tools on the live site ([verification](verification.md)).
 Phase 6 (the article) is drafted.
 
 ## 1. What is worth doing

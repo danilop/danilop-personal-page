@@ -2337,3 +2337,19 @@ Phases 3 and 4 of the [agent tools plan](agent-and-browser-ai-plan.md).
   `certifi` 2026.10.23, above the 2026.10.19 fix for the three Dependabot alerts
   (awaiting GitHub's rescan). The full gate passed; one long author-server test
   failed once under `npm run validate` load and passed alone and in the gate.
+
+## WebMCP origin-trial tokens — 23 October 2026
+
+- The Chrome and Edge WebMCP tokens for `https://www.danilop.net` were decoded
+  before use (origin `https://www.danilop.net:443`, feature `WebMCP`; Chrome
+  expiry 30 March 2027, Edge 7 December 2026). Gitleaks flagged them as generic
+  API keys; `.gitleaks.toml` now allows origin-trial tokens in
+  `publishing/site.yaml` only.
+- Release `d58fc82` was released and verified. The live home page carries both
+  `<meta http-equiv="origin-trial">` tags.
+- A fresh headless Chrome 156 launched by Playwright without the WebMCP flag
+  exposed `document.modelContext` on the live article page and registered its 9
+  tools (`find_in_page`, `get_page_outline`, `get_section_text`, `go_to_section`,
+  `list_writing`, `open_page`, `pause_narration`, `play_narration`,
+  `search_writing`). The same browser had no `document.modelContext` on an
+  unregistered origin. Edge has not been checked by hand.
