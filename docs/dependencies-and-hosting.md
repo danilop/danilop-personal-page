@@ -9,6 +9,31 @@ updates. Python requirements were re-resolved with `uv pip compile --upgrade
 environments. This refresh was committed and deployed on 13 October 2026 with
 the narration release; see [verification](verification.md).
 
+## Dependency refresh — 2026-10-23
+
+All npm dependencies in the root and prototype manifests were moved to their
+latest stable releases (including Astro 7.4.2, ESLint 10.13, Playwright 1.64.1,
+Puppeteer 25.16.0 and the AWS SDK clients 3.1156.0) with compatible transitive
+updates; `npm audit` reports no vulnerabilities. The install-script allowlist pins
+exact versions, so it now allows `puppeteer@25.16.0` and keeps `core-js@3.51.0`
+disabled, as before. Python requirements in all three tools were re-resolved with
+`uv pip compile --upgrade --generate-hashes` (code analysis after content quality,
+which it includes) and reinstalled with hash checks; this moves `certifi` to
+2026.10.23, resolving the critical emSign-root advisories.
+
+Two latest majors are deliberately not adopted:
+
+- **TypeScript 7** (the native compiler): `typescript-eslint` 8.72 supports
+  TypeScript below 6.1 and `@astrojs/check` 0.9.12 supports 5 and 6, so TypeScript
+  stays on 6.0.3.
+- **`@types/node` 26**: the site runs Node 24 (`.nvmrc`), so its types stay on the
+  24 line (24.19.2, the latest).
+
+The same refresh added `pagefind` 1.5.2 (dev) and `@litert-lm/core` 0.18.0 for
+search and the reading assistant.
+
+## Front-matter parser — 2026-10-22
+
 ## Front-matter parser — 2026-10-22
 
 Front matter is split with `@11ty/gray-matter` 3.0.0, the Eleventy team's
