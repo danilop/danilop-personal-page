@@ -421,6 +421,9 @@ permits, with storage limits and an explicit clear action. Do not include model
 weights in the normal page bundle or initiate downloads during reading.
 
 Local-only content rejects remote runtimes. There is no automatic cloud fallback.
+A browser-provided model runtime (Prompt API) and a shared agent tool registry are
+accepted and planned, not implemented; see the
+[agent tools and in-browser models plan](agent-and-browser-ai-plan.md).
 Unsupported devices show authored static results. Recorded book examples retain
 inputs, versions, settings, and actual outputs rather than promising deterministic
 LLM generation across hardware.

@@ -292,8 +292,15 @@ Every interactive element needs a meaningful static presentation for books,
 unsupported devices, and ordinary reading. A sequence of states or recorded
 results may explain an experiment better than a single screenshot.
 
-Experiments are content elements. Site-wide search and an AI assistant remain
-separate, deferred product decisions.
+Experiments are content elements. Decided on 23 October 2026, not yet
+implemented: static full-text search for every reader; read/navigate and Python
+activity tools offered to browser agents through WebMCP, each mirroring a visible
+control and announced when used; and an “Ask about this page” assistant on all
+reading pages that runs only on the reader's device (the browser's built-in model,
+or an explicit WebLLM download), cites the sections it used, and never falls back
+to a cloud model. See the
+[agent tools and in-browser models plan](agent-and-browser-ai-plan.md) and the
+[WebMCP research](webmcp-research.md).
 
 ## 7. Books and editions
 
@@ -369,7 +376,8 @@ Launch scope includes native Markdown articles, collections/book structure,
 static rich content, archive migration, short links, simulations/WASM, browser
 model adapters, frozen editions/Markua export, Leanpub and cross-posting adapters.
 Account-dependent verification is recorded separately from local implementation.
-Browser editing, search and a site-wide assistant are deferred. Newsletter
+Browser editing remains deferred. Search, browser-agent tools and an on-device
+reading assistant are accepted, planned scope (see §6). Newsletter
 subscriptions on the homepage, article pages and book pages, with optional article
 distribution, are requested future scope; the [proposal](newsletter-plan.md)
 separates those requirements from recommendations that remain undecided.
