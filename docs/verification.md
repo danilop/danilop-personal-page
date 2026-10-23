@@ -2227,3 +2227,36 @@ outside the source tree. This confirms that installed third-party packages are
 not needed; it does not certify every standard-library feature in the browser.
 The existing strict example audit rejects non-standard-library imports in included
 files. The broader inline-snippet check was performed for this review.
+
+## Static search and reading index — 23 October 2026
+
+Phase 1 of the [agent tools plan](agent-and-browser-ai-plan.md), implemented and
+tested locally; not deployed.
+
+- `npm run build` indexed 3 pages (two published articles and About; the books
+  are drafts and absent from production builds) and `verify-build.ts` passed its
+  new search checks. A build with `NOTES_BASE_PATH=/preview/` rewrote the form
+  action, Pagefind URL and base, and result links resolved under `/preview/`.
+- Chrome 156 (Playwright): `?q=` results with highlighted excerpts, a typed
+  search updating the URL, a no-results message, `/` from another page opening
+  search with the field focused. With `--enable-features=WebMCPTesting`,
+  `getTools()` listed `search_writing` with the inferred `{ q }` schema and
+  `executeTool` returned structured results (absolute URL, context, plain-text
+  excerpt) without navigating. Without `toolautosubmit` the call waited for the
+  reader to press Search, so the attribute was added.
+- WebKit 27.2 (Playwright): the same reader flow passed.
+- Chrome with JavaScript disabled: the masthead link and form reached
+  `/search/?q=agents` and the page explained that search needs JavaScript.
+- Firefox: not verified. Playwright's Firefox build and the installed Firefox
+  through Puppeteer both failed to launch on this machine. Manual check pending:
+  open `/search/?q=agents` in Firefox and confirm results appear.
+- Desktop (1280 px) and phone (390 px) screenshots checked: the masthead gains a
+  Search link that wraps with the existing navigation.
+- Full gate: 26/26 checks; 363 JavaScript tests passed, 1 opt-in AWS test
+  skipped. New unit tests cover the reading index and the search runtime (stale
+  queries, errors, reader rendering and the WebMCP `respondWith` path); the
+  existing enhancement test covers the `/` shortcut.
+- Two existing release tests first failed because they build through
+  `package-site.ts` directly; indexing now runs inside that step. A fixture book
+  with an empty introduction was skipped by Pagefind, so a book without an
+  introduction indexes its summary instead.

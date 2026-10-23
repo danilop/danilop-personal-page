@@ -84,6 +84,12 @@ const original = site.articles.find((p) => p.id === n.pieceId);
     <div
       id={n.id}
       class="prose"
+      {...(!original && {
+        "data-pagefind-body": "",
+        "data-pagefind-meta": "title[data-title], context[data-context]",
+        "data-title": `${n.number ? `${n.number}. ` : ""}${n.title}`,
+        "data-context": `${c.book ? "Book" : "Collection"} · ${c.title}`,
+      })}
       set:html={readingLinks(
         readingHeadings(n.html, format.bodyOffset),
         c.url,

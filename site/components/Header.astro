@@ -47,5 +47,13 @@ const current = (prefix: string) =>
     <a href="/about/" aria-current={current("/about/")}>
       About
     </a>
+    <a
+      href="/search/"
+      aria-current={current("/search/")}
+      aria-keyshortcuts="/"
+      data-search-link
+    >
+      Search
+    </a>
   </nav>
 </header>

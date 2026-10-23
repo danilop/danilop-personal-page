@@ -595,8 +595,10 @@ test("WebLLM adapter probes compatibility and releases workers during cancellati
 test("progressive enhancement loads an embed only on request and handles clipboard success and denial", async (t) => {
   const { document, click } = dom(
     t,
-    '<div><button class="load-embed" data-src="https://fixture.invalid/embed" data-title="Fixture" data-height="200">Load</button><div class="embed-host"></div></div><pre><code>example()</code></pre><pre>No code element</pre>',
+    '<div><button class="load-embed" data-src="https://fixture.invalid/embed" data-title="Fixture" data-height="200">Load</button><div class="embed-host"></div></div><pre><code>example()</code></pre><pre>No code element</pre><a data-search-link href="/search/">Search</a><input id="typing">',
   );
+  let assigned;
+  location.assign = (url) => (assigned = url);
   const previous = Object.getOwnPropertyDescriptor(globalThis, "navigator");
   let copied;
   Object.defineProperty(globalThis, "navigator", {
@@ -631,6 +633,18 @@ test("progressive enhancement loads an embed only on request and handles clipboa
     document.querySelector(".copy-code").textContent,
     "Select code to copy",
   );
+  const press = (target, init = {}) => {
+    const event = new Event("keydown", { bubbles: true, cancelable: true });
+    Object.assign(event, { key: "/", ...init });
+    target.dispatchEvent(event);
+    return event;
+  };
+  press(document.querySelector("#typing"));
+  press(document.body, { metaKey: true });
+  press(document.body, { key: "a" });
+  assert.equal(assigned, undefined);
+  assert.equal(press(document.body).defaultPrevented, true);
+  assert.match(assigned, /\/search\/$/);
 });
 
 test("narration player uses measured time, explicit playback, bounded seeking and hash-scoped resume", async (t) => {
@@ -1082,4 +1096,100 @@ test("chapter audio uses relative time, clamps playback, resumes and replays onl
   seek.value = "999";
   seek.dispatchEvent(new Event("input"));
   assert.equal(audio.currentTime, 120);
+});
+
+test("search renders Pagefind results, ignores stale queries and answers WebMCP agents with plain text", async (t) => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { pathToFileURL } = require("node:url");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pagefind-fixture-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const fake = path.join(dir, "pagefind.mjs");
+  fs.writeFileSync(
+    fake,
+    `export const calls = [];
+export async function options(o) { calls.push(o); }
+export async function search(q) {
+  if (q === "broken") throw Error("offline");
+  const hit = (n) => ({ data: async () => ({ url: "/writing/" + n + "/", excerpt: "about <mark>" + q + "</mark> &amp; more", meta: n === "b" ? {} : { title: "Piece " + n, context: "Article", date: "1 October 2026" } }) });
+  return { results: q === "none" ? [] : ["a", "b"].map(hit) };
+}`,
+  );
+  const { document } = dom(
+    t,
+    `<form data-search data-src="${pathToFileURL(fake).href}" data-base="/notes/"><input name="q"><button type="submit">Search</button></form><p data-search-status></p><ol data-search-results></ol>`,
+  );
+  let replaced;
+  Object.assign(globalThis.location, {
+    href: "https://fixture.invalid/search/",
+    search: "?q=agents",
+  });
+  for (const [key, value] of Object.entries({
+    history: { replaceState: (_, __, url) => (replaced = String(url)) },
+  })) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, key);
+    Object.defineProperty(globalThis, key, { value, configurable: true });
+    t.after(() =>
+      previous
+        ? Object.defineProperty(globalThis, key, previous)
+        : delete globalThis[key],
+    );
+  }
+  const { mountSearch } = await import("../runtime/search.ts");
+  const form = document.querySelector("form");
+  const status = document.querySelector("[data-search-status]");
+  const input = form.querySelector("input");
+  mountSearch(form);
+  assert.equal(input.value, "agents");
+  assert.equal(status.textContent, "Searching…");
+  await tick();
+  const fakeModule = await import(pathToFileURL(fake).href);
+  assert.deepEqual(fakeModule.calls, [{ baseUrl: "/notes/" }]);
+  const items = [...document.querySelectorAll("[data-search-results] li")];
+  assert.deepEqual(
+    items.map((li) => [
+      li.querySelector("a").getAttribute("href"),
+      li.querySelector("a").textContent,
+      li.querySelector(".search-context").textContent,
+    ]),
+    [
+      ["/writing/a/", "Piece a", "Article · 1 October 2026"],
+      ["/writing/b/", "/writing/b/", ""],
+    ],
+  );
+  assert.equal(items[0].querySelector("mark").textContent, "agents");
+  assert.equal(status.textContent, "2 results for “agents”");
+  const submit = (value, init = {}) => {
+    input.value = value;
+    const event = new Event("submit", { cancelable: true });
+    Object.assign(event, init);
+    form.dispatchEvent(event);
+    return event;
+  };
+  assert.equal(submit("none").defaultPrevented, true);
+  assert.match(replaced, /\?q=none$/);
+  await tick();
+  assert.equal(status.textContent, "No results for “none”");
+  submit("stale");
+  submit("");
+  await tick();
+  assert.equal(status.textContent, "");
+  assert.equal(document.querySelectorAll("[data-search-results] li").length, 0);
+  const errors = t.mock.method(console, "error", () => {});
+  submit("broken");
+  await tick();
+  assert.equal(status.textContent, "Search could not load. Please try again.");
+  assert.equal(errors.mock.callCount(), 1);
+  let answered;
+  submit("agents", {
+    agentInvoked: true,
+    respondWith: (promise) => (answered = promise),
+  });
+  assert.deepEqual((await answered)[0], {
+    title: "Piece a",
+    url: "https://fixture.invalid/writing/a/",
+    context: "Article · 1 October 2026",
+    excerpt: "about agents & more",
+  });
 });

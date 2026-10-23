@@ -123,6 +123,7 @@
     "html-validate": "11.16.2",
     "knip": "6.41.0",
     "linkedom": "^0.18.13",
+    "pagefind": "^1.5.2",
     "playwright": "^1.64.0",
     "postcss-html": "2.0.0",
     "prettier": "^3.9.10",

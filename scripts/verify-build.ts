@@ -92,6 +92,59 @@ async function verifyNarrationMarkup(site: CompiledSite) {
     );
   }
 }
+/** Search indexes each reading text once and the index matches the pages. */
+async function verifySearch(site: CompiledSite, files: string[]) {
+  const marked: string[] = [];
+  for (const file of files.filter((f) => f.endsWith(".html")))
+    if ((await fs.readFile(file, "utf8")).includes("data-pagefind-body"))
+      marked.push(path.relative(siteOutput, file));
+  const entry = JSON.parse(
+    await fs.readFile(
+      path.join(siteOutput, "pagefind/pagefind-entry.json"),
+      "utf8",
+    ),
+  ) as { languages: Record<string, { page_count: number }> };
+  assert.deepEqual(Object.keys(entry.languages), ["en"]);
+  assert.equal(
+    entry.languages.en.page_count,
+    marked.length,
+    `Search index size: ${marked.join(", ")}`,
+  );
+  for (const a of site.articles)
+    assert(
+      marked.includes(path.join(a.url.slice(1), "index.html")),
+      `${a.url}: not searchable`,
+    );
+  for (const c of site.collections)
+    for (const n of c.nodes)
+      if (
+        n.kind === "piece" &&
+        !n.planned &&
+        site.articles.some((a) => a.id === n.pieceId)
+      )
+        assert(
+          !marked.includes(
+            path.join(c.url.slice(1), "read", n.id, "index.html"),
+          ),
+          `${c.url}${n.id}: indexed twice`,
+        );
+  const $ = load(
+    await fs.readFile(path.join(siteOutput, "search/index.html"), "utf8"),
+  );
+  assert.equal(
+    $(
+      'form[role="search"][toolname="search_writing"][toolautosubmit] button[type="submit"]',
+    ).length,
+    1,
+  );
+  const index = JSON.parse(
+    await fs.readFile(path.join(siteOutput, "reading-index.json"), "utf8"),
+  ) as { pieces: { id: string }[] };
+  assert.deepEqual(
+    index.pieces.map((p) => p.id),
+    site.articles.map((a) => a.id),
+  );
+}
 async function walk(dir: string): Promise<string[]> {
   const files: string[] = [];
   for (const d of await fs.readdir(dir, { withFileTypes: true })) {
@@ -137,6 +190,7 @@ async function main() {
     "Archive parity",
   );
   const files = await walk(siteOutput);
+  await verifySearch(site, files);
   const errors: string[] = [];
   let links = 0;
   const socialImages = new Set<string>();

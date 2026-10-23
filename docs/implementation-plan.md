@@ -11,8 +11,11 @@ verified; the release command verifies exact-revision hosted delivery.
 Updated: 2026-10-02.
 
 Danilo selected **all planned publishing capabilities before deployment**.
-The former release 1 / later releases split is superseded. Search, a site-wide
-assistant and browser editing remain separate future decisions. Newsletter
+The former release 1 / later releases split is superseded. Static search is
+implemented locally (23 October 2026, not deployed); browser-agent tools and an
+on-device assistant are planned in the
+[agent tools plan](agent-and-browser-ai-plan.md); browser editing remains a
+separate future decision. Newsletter
 subscriptions and optional article distribution were requested on 17 October 2026;
 the [research and proposal](newsletter-plan.md) record the scope and open choices.
 No provider is selected and no newsletter functionality is implemented or deployed.

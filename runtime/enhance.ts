@@ -37,6 +37,30 @@ for (const pre of document.querySelectorAll("pre")) {
   });
   pre.before(button);
 }
+const searchForm = document.querySelector<HTMLFormElement>("[data-search]");
+if (searchForm)
+  import("./search")
+    .then((m) => m.mountSearch(searchForm))
+    .catch((error: unknown) => console.error("Could not load search", error));
+// "/" opens search from any page, unless the reader is typing.
+document.addEventListener("keydown", (event) => {
+  const { target } = event;
+  if (
+    event.key !== "/" ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey ||
+    (target instanceof Element &&
+      target.closest("input, textarea, select, [contenteditable]"))
+  )
+    return;
+  const link = document.querySelector<HTMLAnchorElement>("a[data-search-link]");
+  if (!link) return;
+  event.preventDefault();
+  if (searchForm)
+    searchForm.querySelector<HTMLInputElement>('input[name="q"]')?.focus();
+  else location.assign(link.href);
+});
 if (document.querySelector(".experiment"))
   import("./simulations")
     .then((m) => m.mountSimulations())

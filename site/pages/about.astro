@@ -18,7 +18,14 @@ const config = await siteConfig();
       alt="Danilo Poccia"
     />
     <div>
-      <div class="prose" set:html={site.about} />
+      <div
+        class="prose"
+        data-pagefind-body
+        data-pagefind-meta="title[data-title], context[data-context]"
+        data-title="About"
+        data-context="Page"
+        set:html={site.about}
+      />
       <SocialLinks links={config.socialLinks} />
     </div>
   </div>

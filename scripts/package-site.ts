@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { deployment, siteOutput, sitePath } from "../core/deployment.mjs";
 import { readAssetManifest } from "../core/asset-manifest";
+import { buildSearchIndex } from "../core/search-index";
 
 async function walk(dir: string): Promise<string[]> {
   return (
@@ -22,6 +23,7 @@ async function stripCDNAssets() {
         await fs.rm(path.join(siteOutput, "media", name), { force: true });
 }
 async function main() {
+  console.log(`Indexed ${await buildSearchIndex(siteOutput)} pages for search`);
   await stripCDNAssets();
   // Remove prior root artifacts without touching the current nested build.
   if (deployment.basePath !== "/") {

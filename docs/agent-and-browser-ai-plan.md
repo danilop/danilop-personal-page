@@ -2,7 +2,10 @@
 
 Status: proposed on 23 October 2026; the owner accepted the plan's decisions the
 same day ([§8](#8-decisions)). Phase 0 spikes are complete
-([§9](#9-phase-0-results)); no site feature is implemented yet. It builds on the
+([§9](#9-phase-0-results)). Phase 1 (search and reading index) is implemented
+and tested locally, not deployed
+([architecture](architecture.md#search-and-reading-index)); later phases are not
+implemented. It builds on the
 [WebMCP research](webmcp-research.md) and extends the existing browser-model
 rules in [architecture §6](architecture.md#6-browser-experiments). Site-wide
 search and a reader assistant, previously deferred in
@@ -86,30 +89,35 @@ flowchart TD
     U[Visible controls: search, chapters, narration, Python Run/Step] --- T
 ```
 
-### 4.1 Reading index and search (phase 1)
+### 4.1 Reading index and search (phase 1, implemented locally)
 
-- **Reading index.** Generated at build from the content core next to `rss.xml`:
-  `/reading-index.json` with pieces, collections, chapter order, tags, canonical
-  URLs, summaries and section anchors. Drafts are excluded. A few tens of KB.
-- **Full-text search.** [Pagefind](https://pagefind.app/) 1.5.x indexes the built
-  HTML after `astro build`, ships a WASM search client and chunked index loaded on
-  demand, and works in every browser. Mark the reading text with
-  `data-pagefind-body` so navigation, archive and original-site pages are
-  excluded or weighted down. Pieces that appear both as an article and inside a
-  book are indexed once, at the canonical URL already chosen for search engines
-  ([content discovery](content-discovery.md)), with the other placements listed
-  in the result. Alternative: a custom lexical index from the reading index,
-  smaller but with more code to maintain.
-- **Search UI.** A search link in the masthead opens a `/search/` page (with
-  JavaScript, a dialog on any page, opened with `/`). The form is a real `<form
-action="/search/">` with a labelled input, so it works without JavaScript as a
-  link to the page. Results show title, collection or book, matching excerpt and
-  date, in the Ink & Paper list style.
-- **Declarative WebMCP for free.** The search form carries
-  `toolname="search_writing"`, `tooldescription="Search Danilo's articles and
-books"` and `toolparamdescription` on the input. Browsers with WebMCP expose it
-  with no extra script; others ignore the attributes. This needs an HTML-validate
-  allowance for the three attributes.
+Implemented and tested locally on 23 October 2026; details in
+[architecture](architecture.md#search-and-reading-index).
+
+- **Reading index.** `/reading-index.json`, generated at build from the compiled
+  site: published pieces with summaries, tags, linkable sections and book
+  placements, and books with ordered contents and URLs. No body text; drafts are
+  not in production builds. Root-relative URLs plus a `base` field.
+- **Full-text search.** [Pagefind](https://pagefind.app/) 1.5.2 indexes the built
+  HTML after `astro build` and ships a WASM client and chunked index loaded on
+  demand. Only reading text marked `data-pagefind-body` is indexed. Book chapter
+  pages declare the book as their canonical URL, so canonical URLs cannot pick
+  the result: a piece that is also a standalone article is found as the article,
+  whose result names its books ("Article · also in …"); other book pieces are
+  found at their reading page. Combined chapter pages, archive and original-site
+  copies are not indexed.
+- **Search UI.** A masthead Search link opens `/search/`; `/` opens it from any
+  page unless the reader is typing. The planned in-page dialog was not built: one
+  page keeps a single accessible search surface and works as a plain link. The
+  form is a real `GET` form; without JavaScript a note points to the writing
+  list. Results show title, context, date and a highlighted excerpt.
+- **Declarative WebMCP.** The form carries `toolname="search_writing"`,
+  `tooldescription`, `toolparamdescription` and `toolautosubmit` (search is
+  read-only, and phase 0 showed a form without it waits for the reader to press
+  Search). On an agent submission the page returns results through
+  `SubmitEvent.respondWith()` instead of rendering a new page. Astro types the
+  attributes through `site/webmcp.d.ts`; HTML validation does not run on built
+  pages, so no allowance was needed.
 
 ### 4.2 Agent tool registry (phase 2)
 
@@ -351,7 +359,7 @@ in try/catch, default on). It also states which browsers support this today.
 | Phase                       | Scope                                                                                                   | Size | Exit criteria                                                                                                              |
 | --------------------------- | ------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
 | 0. Spikes (done)            | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
-| 1. Index and search         | Reading index, Pagefind, search page and dialog, declarative tool attributes                            | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
+| 1. Index and search (done)  | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
 | 2. Tool registry and WebMCP | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
 | 3. Model runtimes           | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
 | 4. Assistant                | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |

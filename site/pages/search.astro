@@ -1,0 +1,58 @@
+---
+import Layout from "../components/Layout.astro";
+import { deployment } from "../../core/deployment.mjs";
+import { site } from "../data";
+import "../components/search.css";
+---
+
+<Layout
+  title="Search"
+  description="Search Danilo Poccia's articles and books on Notes Along the Way."
+>
+  <div class="search-page">
+    <header class="page-heading">
+      <h1>Search</h1>
+    </header>
+    <form
+      class="search-form"
+      action="/search/"
+      method="get"
+      role="search"
+      data-search
+      data-src="/pagefind/pagefind.js"
+      data-base={deployment.basePath}
+      toolname="search_writing"
+      toolautosubmit
+      tooldescription="Search Danilo Poccia's articles and books on this site. Returns matching pages with title, URL, context and a short excerpt."
+    >
+      <label for="search-query">Search the writing</label>
+      <div class="search-row">
+        <input
+          id="search-query"
+          type="search"
+          name="q"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          toolparamdescription="Words to search for, for example a topic, name or phrase"
+        />
+        <button type="submit">Search</button>
+      </div>
+    </form>
+    <p class="search-status" role="status" data-search-status></p>
+    <ol class="search-results" data-search-results></ol>
+    <noscript>
+      <p class="search-status">
+        Search runs in your browser and needs JavaScript. You can browse{" "}
+        <a href="/writing/">all writing</a>
+        {site.collections.length > 0 && (
+          <>
+            {" "}
+            or <a href="/collections/">collections and books</a>
+          </>
+        )}
+        .
+      </p>
+    </noscript>
+  </div>
+</Layout>

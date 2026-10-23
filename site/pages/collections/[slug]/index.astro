@@ -20,6 +20,14 @@ const editions = (await loadEditions()).filter(
   (e) => e.collection === c.id && e.status === "published",
 );
 const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
+// Search indexes the introduction, or the summary when there is none.
+const searchable = {
+  "data-pagefind-body": "",
+  "data-pagefind-meta": "title[data-title], context[data-context]",
+  "data-title": c.title,
+  "data-context": c.book ? "Book" : "Collection",
+};
+const hasIntroduction = c.introduction.replace(/<[^>]*>/g, "").trim() !== "";
 ---
 
 <Layout title={c.title} description={c.summary}>
@@ -31,7 +39,7 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
     <h1>
       {c.title} <DraftBadge collectionId={c.id} />
     </h1>
-    <p>{c.summary}</p>
+    <p {...(!hasIntroduction && searchable)}>{c.summary}</p>
   </header>
   <AudiobookPlayer audiobook={c.audiobook} />
   {c.cover && (
@@ -44,7 +52,11 @@ const first = c.nodes.find((n) => n.kind === "piece" && !n.planned);
       />
     </div>
   )}
-  <div class="prose collection-intro" set:html={c.introduction} />
+  <div
+    class="prose collection-intro"
+    {...(hasIntroduction && searchable)}
+    set:html={c.introduction}
+  />
   {first && c.ordered && (
     <p class="collection-start">
       <a

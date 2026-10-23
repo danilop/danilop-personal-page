@@ -118,11 +118,11 @@ see [the note format and recovery procedure](private-operations.md#analytics-lau
 The local `.env` contains the public project token and EU ingestion host. It is
 ignored by Git. Use `.env.example` for a new checkout.
 
-| Build variable | Value |
-| --- | --- |
-| `PUBLIC_POSTHOG_PROJECT_TOKEN` | Project token beginning `phc_`; public ingestion identifier |
-| `PUBLIC_POSTHOG_HOST` | `https://eu.i.posthog.com` |
-| `PUBLIC_ANALYTICS_ENABLED` | `true` to enable the consent-controlled integration; otherwise disabled |
+| Build variable                 | Value                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| `PUBLIC_POSTHOG_PROJECT_TOKEN` | Project token beginning `phc_`; public ingestion identifier             |
+| `PUBLIC_POSTHOG_HOST`          | `https://eu.i.posthog.com`                                              |
+| `PUBLIC_ANALYTICS_ENABLED`     | `true` to enable the consent-controlled integration; otherwise disabled |
 
 Set these in the **production branch's Amplify environment**, then rebuild.
 Never put a personal API key, access token or private reporting credential in a
@@ -163,21 +163,23 @@ are independent of PostHog, so another adapter can replace it.
 
 ## Implemented measurements
 
-| Event | Meaning | Additional fields |
-| --- | --- | --- |
-| `$pageview` | Consented page visit | None |
-| `collection_reading_started` | Start reading link clicked | Collection ID/type |
-| `collection_navigation_used` | Previous, next or contents link clicked | Direction, collection ID |
-| `edition_artifact_opened` | Book artifact link clicked | Edition ID |
-| `article_engagement` | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and prose depth rounded down to 25%; local October fix spans all chapter prose sections |
-| `code_copied` | Clipboard write succeeded | None |
-| `embed_opened` | External viewer activation clicked | None |
-| `simulator_started` | Simulation run clicked | Experiment ID |
+| Event                        | Meaning                                                        | Additional fields                                                                                   |
+| ---------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `$pageview`                  | Consented page visit                                           | None                                                                                                |
+| `collection_reading_started` | Start reading link clicked                                     | Collection ID/type                                                                                  |
+| `collection_navigation_used` | Previous, next or contents link clicked                        | Direction, collection ID                                                                            |
+| `edition_artifact_opened`    | Book artifact link clicked                                     | Edition ID                                                                                          |
+| `article_engagement`         | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and prose depth rounded down to 25%; local October fix spans all chapter prose sections |
+| `code_copied`                | Clipboard write succeeded                                      | None                                                                                                |
+| `embed_opened`               | External viewer activation clicked                             | None                                                                                                |
+| `simulator_started`          | Simulation run clicked                                         | Experiment ID                                                                                       |
 
 Events include the canonical page path, standalone content ID when available,
 referring domain, necessary pseudonymous/session IDs and broad browser/device
 properties. A closed property list drops arbitrary SDK metadata, query strings,
-fragments, referrer paths, inputs, code text, prompts and profile updates. The
+fragments, referrer paths, inputs, code text, prompts and profile updates. Site
+search runs entirely in the browser; its `?q=` query is a query string, so search
+terms are never sent and there is no search event. The
 public project token is retained because ingestion requires it. The local October
 boundary also drops top-level SDK fields except the event name, properties, UUID
 and timestamp, so top-level profile updates cannot bypass the property allowlist.

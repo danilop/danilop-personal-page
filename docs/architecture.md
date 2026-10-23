@@ -517,7 +517,10 @@ Sources: [Markua](https://help.leanpub.com/en/articles/5980641-what-is-markua),
 - **A database:** unnecessary for the initial authored content/collection graph.
 - **Mandatory React or another UI framework:** defer; add only when an experiment
   benefits enough to justify the dependency.
-- **Search and site-wide AI:** no first-release implementation or dependency.
+- **Search and site-wide AI:** superseded on 23 October 2026. Static search is
+  implemented (see [Search and reading index](#search-and-reading-index)); agent
+  tools and an on-device assistant are planned in the
+  [agent tools plan](agent-and-browser-ai-plan.md).
 
 The product model, routes, and source files stay stable if these choices change.
 Any genuine format incompatibility gets an explicit migration rather than a
@@ -850,6 +853,42 @@ exact spoken transcript feed a shared progressive player on standalone and
 collection reading routes. Staged/build checks independently validate the public
 graph. Draft receipts/proposals remain private. The public player and managed
 audio were deployed on 13 October 2026; synthesis and authoring remain local.
+
+## Search and reading index
+
+Implemented locally and tested on 23 October 2026; not deployed.
+[Pagefind](https://pagefind.app/) 1.5.2 is a build-time dev dependency.
+`core/search-index.ts` runs at the start of `scripts/package-site.ts`, the step
+every build path shares after `astro build`, and writes a chunked index, WASM
+search client and worker to `/pagefind/`. Pagefind's bundled UIs are deleted;
+the site renders its own results. Only elements marked `data-pagefind-body` are
+indexed, with title and context read from `data-title`/`data-context` attributes:
+article bodies, book piece pages whose piece is not also a standalone article (the
+article is the result), book introductions (or the summary when a book has
+no introduction) and About. Combined chapter pages,
+archive and original-site copies are not indexed. Indexing is forced to English
+so every page is in one index.
+
+`/search/` is a real `GET` form, usable as a link without JavaScript (a `noscript`
+note points to the writing list). `runtime/search.ts` loads Pagefind on demand
+from the form's `data-src`, which the deployment base rewrites, and passes
+`data-base` as Pagefind's `baseUrl`. The masthead has a Search link; `/` opens it
+from any page unless the reader is typing. The form carries WebMCP declarative
+attributes (`toolname="search_writing"`, `toolautosubmit`); when
+`SubmitEvent.agentInvoked` is set, results go back to the agent through
+`respondWith()` as title, absolute URL, context and plain-text excerpt, without
+navigating. `site/webmcp.d.ts` types the attributes for Astro and stylelint allows
+`:tool-form-active`. Queries stay in the browser; analytics events use the path
+without the query string.
+
+`/reading-index.json` (`core/reading-index.ts`) lists published pieces with
+summaries, tags, linkable sections and book placements, and books with their
+ordered contents and URLs. URLs are root-relative with a `base` field. It
+contains no body text and is the catalogue for future agent tools.
+`verify-build.ts` checks that the index covers exactly the marked pages, every
+article is searchable, no book copy of an article is indexed twice, the search
+form keeps its submit button and the reading index matches the published
+articles.
 
 ## Published-writing discovery
 
