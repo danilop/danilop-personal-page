@@ -9,7 +9,7 @@ export function renderCodeActivity(
   placement: string,
 ) {
   const id = `${placement}-activity-${activity.id}`;
-  return `<section class="code-activity" aria-labelledby="${e(id)}" data-code-activity>
+  return `<section class="code-activity" aria-labelledby="${e(id)}" data-code-activity data-activity-id="${e(activity.id)}">
     <p class="activity-heading" id="${e(id)}">${e(activity.title)}</p>
     <div data-code-static>${highlighted}</div>
     <div data-python-controls hidden>

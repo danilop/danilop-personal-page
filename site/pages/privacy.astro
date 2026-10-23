@@ -17,8 +17,10 @@ import Layout from "../components/Layout.astro";
       <p>
         When enabled, optional analytics use PostHog Cloud EU (Frankfurt) to
         understand visits, approximate reading engagement, collection
-        navigation, code-copy actions, viewer openings, simulator starts and
-        book-download clicks.
+        navigation, code-copy actions, viewer openings, simulator starts,
+        book-download clicks, which <a href="/agents/">agent tools</a> are used
+        (the tool name and whether it worked) and which kind of on-device model
+        starts the reading assistant.
       </p>
       <p>
         Analytics start only after you choose Accept analytics. PostHog uses a
@@ -27,8 +29,9 @@ import Layout from "../components/Layout.astro";
         browser/device details and the selected action. Your connection also
         exposes your IP address to the service, which may be used for
         approximate location. We do not send URL query strings, fragment text,
-        form contents, code contents or AI prompts. Session recordings and
-        automatic interaction recording are disabled.
+        form contents, search terms, code contents, AI prompts, questions or
+        answers. Session recordings and automatic interaction recording are
+        disabled.
       </p>
       <p>
         We remember your choice in this browser for up to 180 days using local

@@ -163,16 +163,18 @@ are independent of PostHog, so another adapter can replace it.
 
 ## Implemented measurements
 
-| Event                        | Meaning                                                        | Additional fields                                                                                   |
-| ---------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `$pageview`                  | Consented page visit                                           | None                                                                                                |
-| `collection_reading_started` | Start reading link clicked                                     | Collection ID/type                                                                                  |
-| `collection_navigation_used` | Previous, next or contents link clicked                        | Direction, collection ID                                                                            |
-| `edition_artifact_opened`    | Book artifact link clicked                                     | Edition ID                                                                                          |
-| `article_engagement`         | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and prose depth rounded down to 25%; local October fix spans all chapter prose sections |
-| `code_copied`                | Clipboard write succeeded                                      | None                                                                                                |
-| `embed_opened`               | External viewer activation clicked                             | None                                                                                                |
-| `simulator_started`          | Simulation run clicked                                         | Experiment ID                                                                                       |
+| Event                        | Meaning                                                        | Additional fields                                                                                    |
+| ---------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `$pageview`                  | Consented page visit                                           | None                                                                                                 |
+| `collection_reading_started` | Start reading link clicked                                     | Collection ID/type                                                                                   |
+| `collection_navigation_used` | Previous, next or contents link clicked                        | Direction, collection ID                                                                             |
+| `edition_artifact_opened`    | Book artifact link clicked                                     | Edition ID                                                                                           |
+| `article_engagement`         | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and prose depth rounded down to 25%; local October fix spans all chapter prose sections  |
+| `code_copied`                | Clipboard write succeeded                                      | None                                                                                                 |
+| `embed_opened`               | External viewer activation clicked                             | None                                                                                                 |
+| `simulator_started`          | Simulation run clicked                                         | Experiment ID                                                                                        |
+| `agent_tool_called`          | A browser agent or the reading assistant used a site tool      | Tool name, caller (`webmcp` or `assistant`), outcome (`success` or `error`); never inputs or results |
+| `assistant_started`          | The reading assistant started a model session                  | Runtime (`prompt-api` or `litert-lm`); never questions or answers                                    |
 
 Events include the canonical page path, standalone content ID when available,
 referring domain, necessary pseudonymous/session IDs and broad browser/device

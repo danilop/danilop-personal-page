@@ -1,0 +1,100 @@
+---
+import Layout from "../components/Layout.astro";
+import { agentTools } from "../../runtime/agent-tools/tools";
+---
+
+<Layout
+  title="For AI agents"
+  description="How this site offers tools to AI agents in your browser, what they can do, and how to turn them off."
+>
+  <article class="reading">
+    <h1>For AI agents</h1>
+    <div class="prose">
+      <p>
+        Some browsers let an AI agent act on a page for you. On those browsers
+        this site describes a few tools, so an agent can find and read the
+        writing, move around a page, play the narration and run the Python
+        examples, instead of guessing from the screen.
+      </p>
+      <p>
+        Every tool uses a control that is already on the page. When an agent
+        uses one, the page shows and announces what happened, and you can undo
+        it where that makes sense. Tools cannot change the site, download
+        models, share anything or change privacy choices. The site sends nothing
+        anywhere because of them; what an agent does with what it reads is up to
+        the agent you chose.
+      </p>
+      <h2 id="browser-support">Which browsers</h2>
+      <p>
+        The tools use{" "}
+        <a href="https://webmachinelearning.github.io/webmcp/">WebMCP</a>, an
+        experimental web standard. Today it works in Chromium browsers where it
+        is enabled, such as Chrome with the WebMCP testing flag, and in agents
+        built on them. Other browsers ignore it and the site works as usual.
+      </p>
+      <h2 id="tools">Tools</h2>
+      <dl class="agent-tool-list">
+        {agentTools.map((tool) => (
+          <>
+            <dt>
+              <code>{tool.name}</code> — {tool.title}
+            </dt>
+            <dd>{tool.description}</dd>
+          </>
+        ))}
+      </dl>
+      <h2 id="turn-off">Turn the tools off</h2>
+      <p>
+        The setting applies to this browser on this device. It is stored in the
+        browser, not sent to the site.
+      </p>
+      <p>
+        <button type="button" data-agent-switch hidden aria-pressed="true">
+          Agent tools are on
+        </button>
+        <noscript>
+          The switch needs JavaScript; without it no tools run.
+        </noscript>
+      </p>
+      <p role="status" data-agent-switch-status></p>
+    </div>
+  </article>
+</Layout>
+<script>
+  import {
+    agentToolsEnabled,
+    setAgentToolsEnabled,
+  } from "../../runtime/agent-tools/setting";
+  const button = document.querySelector<HTMLButtonElement>(
+    "[data-agent-switch]",
+  )!;
+  const status = document.querySelector<HTMLElement>(
+    "[data-agent-switch-status]",
+  )!;
+  const render = () => {
+    const on = agentToolsEnabled();
+    button.setAttribute("aria-pressed", String(on));
+    button.textContent = on ? "Agent tools are on" : "Agent tools are off";
+  };
+  button.addEventListener("click", () => {
+    const on = !agentToolsEnabled();
+    status.textContent = setAgentToolsEnabled(on)
+      ? on
+        ? "Agent tools turned on for this browser."
+        : "Agent tools turned off for this browser."
+      : "This browser does not allow saving the setting.";
+    render();
+  });
+  render();
+  button.hidden = false;
+</script>
+<style>
+  .agent-tool-list dt {
+    margin-top: 14px;
+    font-weight: 500;
+  }
+
+  .agent-tool-list dd {
+    margin: 4px 0 0;
+  }
+</style>

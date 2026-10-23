@@ -6,8 +6,8 @@ Date: 2026-09-15.
 This document defines the experience independently of rendering libraries and
 hosting mechanisms. See [the content model](content-model.md) for the concepts
 and [the architecture](architecture.md) for implementation choices. “Must” means
-required; “should” means preferred. All planned publishing capabilities are in launch scope. Static search is
-implemented, browser-agent tools and an on-device assistant are planned (see
+required; “should” means preferred. All planned publishing capabilities are in launch scope. Static search and
+browser-agent tools are implemented, an on-device assistant is planned (see
 §6), and browser editing remains a separate future decision. Newsletter subscriptions and
 optional article distribution are now requested future scope; see the
 [newsletter proposal](newsletter-plan.md), with provider and format still undecided.
@@ -295,10 +295,11 @@ results may explain an experiment better than a single screenshot.
 
 Experiments are content elements. Decided on 23 October 2026: static full-text
 search for every reader (implemented locally, not deployed; a masthead Search
-link, `/` shortcut and `/search/` page with highlighted excerpts); and, not yet
-implemented, read/navigate and Python
-activity tools offered to browser agents through WebMCP, each mirroring a visible
-control and announced when used; and an “Ask about this page” assistant on all
+link, `/` shortcut and `/search/` page with highlighted excerpts); read/navigate
+and Python activity tools offered to browser agents through WebMCP, each
+mirroring a visible control and announced when used, with a “For AI agents” page
+and a per-browser switch (implemented locally, not deployed); and, not yet
+implemented, an “Ask about this page” assistant on all
 reading pages that runs only on the reader's device (the browser's built-in model,
 or an explicit download of a small open model), cites the sections it used, and never falls back
 to a cloud model. See the
@@ -379,9 +380,9 @@ Launch scope includes native Markdown articles, collections/book structure,
 static rich content, archive migration, short links, simulations/WASM, browser
 model adapters, frozen editions/Markua export, Leanpub and cross-posting adapters.
 Account-dependent verification is recorded separately from local implementation.
-Browser editing remains deferred. Static search is implemented locally;
-browser-agent tools and an on-device reading assistant are accepted, planned
-scope (see §6). Newsletter
+Browser editing remains deferred. Static search and browser-agent tools are
+implemented locally; an on-device reading assistant is accepted, planned scope
+(see §6). Newsletter
 subscriptions on the homepage, article pages and book pages, with optional article
 distribution, are requested future scope; the [proposal](newsletter-plan.md)
 separates those requirements from recommendations that remain undecided.

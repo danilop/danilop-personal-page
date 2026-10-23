@@ -27,6 +27,8 @@ const eventProperties: Record<string, string[]> = {
   code_copied: [],
   embed_opened: [],
   simulator_started: ["experiment_id"],
+  agent_tool_called: ["tool", "caller", "outcome"],
+  assistant_started: ["runtime"],
 };
 const sdkProperties = [
   "token",

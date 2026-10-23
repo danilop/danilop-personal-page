@@ -1193,3 +1193,60 @@ export async function search(q) {
     excerpt: "about agents & more",
   });
 });
+
+test("Python controller lets agents await runs, replace code, step and restore", async (t) => {
+  const { document, window, editor } = pythonFixture(t);
+  t.mock.module("../runtime/python-sandbox.ts", {
+    namedExports: { pythonSandbox: () => "<!doctype html>fixture" },
+  });
+  const { mountPythonRunner } = await import("../runtime/python-runner.ts");
+  const root = document.querySelector("section");
+  const controller = mountPythonRunner(root);
+  assert.equal(mountPythonRunner(root), controller);
+  const target = {
+    postMessage(data) {
+      assert.equal(data.code, "print(5)");
+    },
+  };
+  const send = (data) => {
+    const event = new Event("message");
+    Object.assign(event, { source: target, data });
+    window.dispatchEvent(event);
+  };
+  const pending = controller.run("print(5)");
+  assert.equal(editor.value, "print(5)");
+  Object.defineProperty(document.querySelector("iframe"), "contentWindow", {
+    value: target,
+  });
+  send({ phase: "ready" });
+  send({
+    phase: "done",
+    output: "5\n",
+    error: "",
+    steps: [
+      { line: 1, outputLength: 0 },
+      { line: null, outputLength: 2 },
+    ],
+  });
+  assert.deepEqual(await pending, { status: "Finished.", output: "5\n" });
+  assert.deepEqual(await controller.step(), {
+    status: "Next line 1.",
+    output: "",
+    line: 1,
+  });
+  assert.deepEqual(controller.restore(), {
+    status: "Original code restored.",
+    output: "",
+  });
+  assert.equal(editor.value, "print(10)");
+  assert.match(
+    (await controller.run("x".repeat(16001))).status,
+    /between 1 and 16,000/,
+  );
+  const failing = controller.run("print(5)");
+  Object.defineProperty(document.querySelector("iframe"), "contentWindow", {
+    value: target,
+  });
+  send({ phase: "error", error: "boom" });
+  assert.match((await failing).status, /Could not finish: boom/);
+});

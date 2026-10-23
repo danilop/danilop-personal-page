@@ -2260,3 +2260,26 @@ tested locally; not deployed.
   `package-site.ts` directly; indexing now runs inside that step. A fixture book
   with an empty introduction was skipped by Pagefind, so a book without an
   introduction indexes its summary instead.
+
+## Agent tools and WebMCP — 23 October 2026
+
+Phase 2 of the [agent tools plan](agent-and-browser-ai-plan.md), implemented and
+tested locally; not deployed.
+
+- Chrome 156 with `--enable-features=WebMCPTesting`, authoring preview, book page
+  `/collections/chronicles-of-computation/read/early-records/`: 13 tools listed.
+  Through `executeTool`, the outline returned the page's sections; section text
+  was readable; `go_to_section` focused the heading at the top of the viewport and
+  showed “An AI agent moved to …” with Undo; `run_code_example` ran the tally in
+  real Pyodide in 1.6 seconds and returned its output; running edited code printed
+  `10` and left the edit visible; step and restore matched the buttons; an unknown
+  id and an external URL returned explanatory errors; `list_writing`,
+  `get_book_contents` and `search_writing` returned absolute same-site URLs.
+- `/agents/`: the switch removed all tools (7 → 0), stayed off after reload and
+  restored them.
+- Unit and DOM tests (linkedom) cover validation, result caps, every tool, feedback
+  and Undo, the WebMCP adapter with a fake `modelContext`, the device switch and
+  the Python controller's awaitable run, edit, step, restore and error paths.
+- Narration tools were tested with a fake player only; real playback started by
+  an agent depends on the browser's autoplay policy and reports a clear error
+  when blocked.

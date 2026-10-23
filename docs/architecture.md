@@ -890,6 +890,35 @@ article is searchable, no book copy of an article is indexed twice, the search
 form keeps its submit button and the reading index matches the published
 articles.
 
+## Agent tools and WebMCP
+
+Implemented locally and tested on 23 October 2026; not deployed. `runtime/agent-tools/`
+holds one registry used by WebMCP and the reading assistant:
+
+- `registry.ts`: tool type, a small JSON-Schema-subset validator (strings with
+  length/enum, bounded integers, booleans, no extra properties), 8,000-character
+  result cap and `runTool`, which turns failures into short model-readable errors
+  and dispatches `notes:agent-tool` (name, caller, outcome) for consented analytics.
+- `tools.ts`: `search_writing`, `list_writing`, `get_book_contents`,
+  `get_page_outline`, `get_section_text`, `go_to_section`, `open_page`,
+  `play_narration`, `pause_narration` and the four Python tools. Each uses an
+  existing control or source: Pagefind, `/reading-index.json`, the page's headings,
+  the shared playback button and the Python controller. Availability depends on the
+  page; the search page leaves `search_writing` to its declarative form. The site
+  base comes from the masthead Search link, which the deployment rewrites.
+- `feedback.ts`: a polite live-region notice with Undo where reversible, Escape and
+  a close button, and a dashed outline on the affected element. Styles are
+  injected with the first notice.
+- `webmcp.ts`: loaded by `enhance.ts` only when `document.modelContext` exists.
+  It registers available tools under one `AbortController`, returns tool errors as
+  `{ error }` data, unregisters on `pagehide` and on the device switch, and in
+  development warns about tools it did not register.
+- `setting.ts` and `/agents/`: "For AI agents" page, linked from the footer, lists
+  the registry's tools and offers a per-browser switch stored in `localStorage`.
+
+Excluded on purpose: model downloads, saving, sharing, consent and the local
+editor. Production pages carry no polyfill.
+
 ## Published-writing discovery
 
 `core/discovery.ts` derives bounded home/index/filter pages from stable piece IDs

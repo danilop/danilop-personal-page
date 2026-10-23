@@ -42,6 +42,15 @@ if (searchForm)
   import("./search")
     .then((m) => m.mountSearch(searchForm))
     .catch((error: unknown) => console.error("Could not load search", error));
+const modelContext = (document as { modelContext?: object }).modelContext;
+if (modelContext)
+  import("./agent-tools/webmcp")
+    .then((m) =>
+      m.mountWebMcp(modelContext as Parameters<typeof m.mountWebMcp>[0]),
+    )
+    .catch((error: unknown) =>
+      console.error("Could not load agent tools", error),
+    );
 // "/" opens search from any page, unless the reader is typing.
 document.addEventListener("keydown", (event) => {
   const { target } = event;

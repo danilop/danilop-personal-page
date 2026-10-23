@@ -2,7 +2,20 @@ import { pythonSandbox } from "./python-sandbox";
 import { bindCopyCode } from "./copy-code";
 import { pythonTracePlayer, type PythonRecording } from "./python-trace-player";
 
-export function mountPythonRunner(root: HTMLElement) {
+type PythonResult = { status: string; output: string; line?: number };
+export type PythonController = {
+  /** Run to the end; replaces the code first when given. */
+  run(code?: string): Promise<PythonResult>;
+  /** Show the next recorded line, running first if needed. */
+  step(): Promise<PythonResult>;
+  restore(): PythonResult;
+};
+const controllers = new WeakMap<HTMLElement, PythonController>();
+
+/** Buttons and agent tools share one controller per activity. */
+export function mountPythonRunner(root: HTMLElement): PythonController {
+  const existing = controllers.get(root);
+  if (existing) return existing;
   const editor = root.querySelector<HTMLTextAreaElement>("[data-python-code]")!;
   const initial = editor.value;
   bindCopyCode(root, editor);
@@ -14,6 +27,15 @@ export function mountPythonRunner(root: HTMLElement) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let runToEnd = false;
   let source = "";
+  let settled: (() => void)[] = [];
+  const output = root.querySelector<HTMLElement>("[data-python-output]")!;
+  const result = (): PythonResult => ({
+    status: status.textContent ?? "",
+    output: output.textContent ?? "",
+    ...(editor.dataset.currentLine
+      ? { line: Number(editor.dataset.currentLine) }
+      : {}),
+  });
   const finish = (message: string) => {
     clearTimeout(timer);
     frame?.remove();
@@ -22,9 +44,18 @@ export function mountPythonRunner(root: HTMLElement) {
     step.disabled = false;
     status.textContent = message;
   };
+  // Resolved after the recording is shown, or when loading or running stops.
+  const settle = () => {
+    const waiting = settled;
+    settled = [];
+    for (const resolve of waiting) resolve();
+  };
   const deadline = (ms: number, message: string) => {
     clearTimeout(timer);
-    timer = setTimeout(() => finish(message), ms);
+    timer = setTimeout(() => {
+      finish(message);
+      settle();
+    }, ms);
   };
   const receive = (event: MessageEvent) => {
     if (!frame || event.source !== frame.contentWindow) return;
@@ -43,13 +74,17 @@ export function mountPythonRunner(root: HTMLElement) {
       if (!validRecording(data, source.split("\n").length)) {
         status.textContent =
           "Python returned an invalid execution recording. Try again.";
+        settle();
         return;
       }
       player.load(data);
       if (runToEnd) player.run();
+      settle();
     }
-    if (data?.phase === "error")
+    if (data?.phase === "error") {
       finish(`Could not finish: ${String(data.error).slice(0, 4000)}`);
+      settle();
+    }
   };
   function start(play: boolean) {
     if (player.loaded()) {
@@ -80,24 +115,50 @@ export function mountPythonRunner(root: HTMLElement) {
   }
   function edit(message: string) {
     finish(message);
+    settle();
     player.clear();
   }
-  run.addEventListener("click", () => start(true));
-  step.addEventListener("click", () => start(false));
-  root.querySelector("[data-python-reset]")!.addEventListener("click", () => {
+  function restore() {
     edit("Original code restored.");
     editor.value = initial;
     editor.scrollTop = editor.scrollLeft = 0;
     root.querySelector<HTMLElement>("[data-copy-status]")!.textContent = "";
-  });
+  }
+  async function perform(play: boolean) {
+    const done = new Promise<void>((resolve) => settled.push(resolve));
+    start(play);
+    if (frame) await done;
+    else settle();
+    return result();
+  }
+  run.addEventListener("click", () => start(true));
+  step.addEventListener("click", () => start(false));
+  root.querySelector("[data-python-reset]")!.addEventListener("click", restore);
   editor.addEventListener("input", () => edit("Code changed. Ready to run."));
   window.addEventListener("message", receive);
   window.addEventListener("pagehide", () => {
     finish("Stopped.");
+    settle();
     player.clear();
   });
   root.querySelector<HTMLElement>("[data-code-static]")!.hidden = true;
   root.querySelector<HTMLElement>("[data-python-controls]")!.hidden = false;
+  const controller: PythonController = {
+    run(code) {
+      if (code !== undefined && code !== editor.value) {
+        editor.value = code;
+        edit("Code changed. Ready to run.");
+      }
+      return perform(true);
+    },
+    step: () => perform(false),
+    restore() {
+      restore();
+      return result();
+    },
+  };
+  controllers.set(root, controller);
+  return controller;
 }
 
 function validRecording(data: PythonRecording, lines: number) {

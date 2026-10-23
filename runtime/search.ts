@@ -30,16 +30,17 @@ function plain(html: string) {
   return Array.from(template.content.childNodes, (n) => n.textContent).join("");
 }
 
-async function searchWriting(
-  form: HTMLFormElement,
+/** Pagefind location: its script URL and the site base for result URLs. */
+export type SearchSite = { src: string; base: string };
+
+export async function searchWriting(
+  site: SearchSite,
   query: string,
   limit = LIMIT,
 ): Promise<SearchHit[]> {
   pagefind ??= (async () => {
-    const api = (await import(
-      /* @vite-ignore */ form.dataset.src!
-    )) as Pagefind;
-    await api.options({ baseUrl: form.dataset.base ?? "/" });
+    const api = (await import(/* @vite-ignore */ site.src)) as Pagefind;
+    await api.options({ baseUrl: site.base });
     return api;
   })();
   const search = await (await pagefind).search(query);
@@ -76,7 +77,16 @@ function render(list: HTMLOListElement, hits: SearchHit[]) {
   );
 }
 
+/** Results as agents receive them: absolute URLs and plain-text excerpts. */
+export const agentHits = (hits: SearchHit[]) =>
+  hits.map((hit) => ({
+    ...hit,
+    url: new URL(hit.url, location.href).href,
+    excerpt: plain(hit.excerpt),
+  }));
+
 export function mountSearch(form: HTMLFormElement) {
+  const site = { src: form.dataset.src!, base: form.dataset.base ?? "/" };
   const input = form.querySelector<HTMLInputElement>('input[name="q"]')!;
   const status = document.querySelector<HTMLElement>("[data-search-status]")!;
   const list = document.querySelector<HTMLOListElement>(
@@ -92,7 +102,7 @@ export function mountSearch(form: HTMLFormElement) {
     }
     status.textContent = "Searching…";
     try {
-      const hits = await searchWriting(form, query);
+      const hits = await searchWriting(site, query);
       if (ticket !== latest) return hits;
       render(list, hits);
       status.textContent = hits.length
@@ -115,15 +125,7 @@ export function mountSearch(form: HTMLFormElement) {
     const pending = run(query);
     // WebMCP: return results to the agent instead of navigating.
     if (event.agentInvoked && event.respondWith)
-      event.respondWith(
-        pending.then((hits) =>
-          hits.map((hit) => ({
-            ...hit,
-            url: new URL(hit.url, location.href).href,
-            excerpt: plain(hit.excerpt),
-          })),
-        ),
-      );
+      event.respondWith(pending.then(agentHits));
     else pending.catch(() => undefined);
   });
   const initial = new URLSearchParams(location.search).get("q") ?? "";

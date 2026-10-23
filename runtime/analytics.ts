@@ -233,6 +233,19 @@ document.addEventListener("click", (event) => {
     });
 });
 document.addEventListener("notes:code-copied", () => track("code_copied"));
+document.addEventListener("notes:agent-tool", (event) => {
+  const { tool, caller, ok } = (event as CustomEvent).detail ?? {};
+  track("agent_tool_called", {
+    tool,
+    caller,
+    outcome: ok ? "success" : "error",
+  });
+});
+document.addEventListener("notes:assistant-started", (event) =>
+  track("assistant_started", {
+    runtime: (event as CustomEvent).detail?.runtime,
+  }),
+);
 if (config && allowedHost) {
   if (accepted !== true) clearIdentifier();
   if (accepted === undefined) showChoice();

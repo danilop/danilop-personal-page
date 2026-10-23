@@ -123,6 +123,18 @@ then rerun actual-browser execution, errors, cancellation, reset, isolation,
 mobile layout and static/book fallback checks. An npm audit does not inspect this
 CDN dependency. Official guidance: [Pyodide in a Web Worker](https://pyodide.org/en/stable/usage/webworker.html).
 
+## Agent operation
+
+Implemented 23 October 2026. `mountPythonRunner` returns a controller
+(`run(code?)`, `step()`, `restore()`) used by both the buttons and the agent tools
+`list_code_examples`, `run_code_example`, `step_code_example` and
+`restore_code_example` (see the [agent tools plan](agent-and-browser-ai-plan.md)).
+`run` resolves when the recording is shown or loading/running stops, returning
+the visible status, output and current line. Agent code goes through the same
+editor, sandbox, deadlines and 16,000-character limit; the reader sees it in the
+editor, and the page offers Undo, which restores the original. Each activity
+carries `data-activity-id`; repeated ids on one page get `-2`, `-3` suffixes.
+
 ## Validation
 
 `test/code-activities.test.ts` covers source matching, schema rejection, escaping,

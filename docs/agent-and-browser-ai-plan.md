@@ -2,9 +2,10 @@
 
 Status: proposed on 23 October 2026; the owner accepted the plan's decisions the
 same day ([§8](#8-decisions)). Phase 0 spikes are complete
-([§9](#9-phase-0-results)). Phase 1 (search and reading index) is implemented
-and tested locally, not deployed
-([architecture](architecture.md#search-and-reading-index)); later phases are not
+([§9](#9-phase-0-results)). Phase 1 (search and reading index) and phase 2 (tool
+registry, WebMCP, feedback and the "For AI agents" page) are implemented and
+tested locally, not deployed ([search](architecture.md#search-and-reading-index),
+[agent tools](architecture.md#agent-tools-and-webmcp)); later phases are not
 implemented. It builds on the
 [WebMCP research](webmcp-research.md) and extends the existing browser-model
 rules in [architecture §6](architecture.md#6-browser-experiments). Site-wide
@@ -119,9 +120,11 @@ Implemented and tested locally on 23 October 2026; details in
   attributes through `site/webmcp.d.ts`; HTML validation does not run on built
   pages, so no allowance was needed.
 
-### 4.2 Agent tool registry (phase 2)
+### 4.2 Agent tool registry (phase 2, implemented locally)
 
-A framework-independent module, `runtime/agent-tools/`, defining each tool once:
+A framework-independent module, `runtime/agent-tools/`, defines each tool once
+([architecture](architecture.md#agent-tools-and-webmcp)). As built, there is no
+`scope` field: `available(document)` decides per page. The original sketch:
 
 ```ts
 type AgentTool = {
@@ -142,21 +145,21 @@ section IDs, capped in size (e.g. 8 KB for text), so a model cannot be flooded.
 Input is validated against the schema by a small validator; Zod stays at build
 time to keep the page bundle small.
 
-Proposed tools:
+Tools as implemented:
 
-| Tool                                                   | Scope         | Calls                                     | Annotations                       |
-| ------------------------------------------------------ | ------------- | ----------------------------------------- | --------------------------------- |
-| `search_writing(query, limit)`                         | site          | Pagefind                                  | read-only                         |
-| `list_writing(tag?, type?)`                            | site          | reading index                             | read-only                         |
-| `get_book_contents(collection)`                        | site          | reading index                             | read-only                         |
-| `get_page_outline()`                                   | article, book | headings and section IDs on the page      | read-only                         |
-| `get_section_text(sectionId)`                          | article, book | rendered text of one section              | read-only                         |
-| `open_page(url)`                                       | site          | same-origin navigation only               | not read-only (navigates)         |
-| `go_to_section(sectionId)`                             | article, book | scroll and focus, as an in-page link does | not read-only (moves focus)       |
-| `play_narration(fromSectionId?)` / `pause_narration()` | article, book | existing narration and audiobook players  | not read-only                     |
-| `list_code_examples()`                                 | code-activity | activities on the page, with titles       | read-only                         |
-| `run_code_example(id, code?)`                          | code-activity | the same path as **Run**, editor updated  | untrusted content if code changed |
-| `step_code_example(id)` / `restore_code_example(id)`   | code-activity | **Step** and **Restore original**         | not read-only                     |
+| Tool                                                 | Scope         | Calls                                     | Annotations                       |
+| ---------------------------------------------------- | ------------- | ----------------------------------------- | --------------------------------- |
+| `search_writing(query, limit?)`                      | site          | Pagefind                                  | read-only                         |
+| `list_writing(tag?)`                                 | site          | reading index                             | read-only                         |
+| `get_book_contents(book)`                            | site          | reading index                             | read-only                         |
+| `get_page_outline()`                                 | article, book | headings and section IDs on the page      | read-only                         |
+| `get_section_text(section)`                          | article, book | rendered text of one section              | read-only                         |
+| `open_page(url)`                                     | site          | same-origin navigation only               | not read-only (navigates)         |
+| `go_to_section(section)`                             | article, book | scroll and focus, as an in-page link does | not read-only (moves focus)       |
+| `play_narration()` / `pause_narration()`             | article, book | the shared visible playback button        | not read-only                     |
+| `list_code_examples()`                               | code-activity | activities on the page, with titles       | read-only                         |
+| `run_code_example(id, code?)`                        | code-activity | the same path as **Run**, editor updated  | untrusted content if code changed |
+| `step_code_example(id)` / `restore_code_example(id)` | code-activity | **Step** and **Restore original**         | not read-only                     |
 
 Deliberately excluded: loading or downloading models, saving results, sharing,
 analytics consent, anything in the local editor. These involve downloads,
@@ -168,7 +171,7 @@ recording. To support this, `mountPythonRunner` returns a small controller
 (`run(code?)`, `step()`, `restore()`, a result promise) used by both the
 buttons and the tools, instead of tools clicking buttons.
 
-### 4.3 WebMCP adapter (phase 2)
+### 4.3 WebMCP adapter (phase 2, implemented locally; tokens in phase 5)
 
 - `enhance.ts` checks `document.modelContext` and only then imports the adapter,
   like simulations and code activities today. Chrome 156 no longer has the old
@@ -356,15 +359,15 @@ in try/catch, default on). It also states which browsers support this today.
 
 ## 7. Delivery plan
 
-| Phase                       | Scope                                                                                                   | Size | Exit criteria                                                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
-| 0. Spikes (done)            | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
-| 1. Index and search (done)  | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
-| 2. Tool registry and WebMCP | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
-| 3. Model runtimes           | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
-| 4. Assistant                | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
-| 5. Production enablement    | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
-| 6. Article                  | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
+| Phase                      | Scope                                                                                                   | Size | Exit criteria                                                                                                              |
+| -------------------------- | ------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
+| 0. Spikes (done)           | WebMCP flag in Chrome and Edge; Prompt API probe and JSON constraints; one downloadable assistant model | S    | Feature names, flags and Playwright launch options confirmed; model choice recorded                                        |
+| 1. Index and search (done) | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
+| 2. Tools and WebMCP (done) | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
+| 3. Model runtimes          | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
+| 4. Assistant               | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
+| 5. Production enablement   | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
+| 6. Article                 | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
 
 ### Testing
 
