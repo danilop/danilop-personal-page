@@ -5,3 +5,10 @@ useDefault = true
 [[allowlists]]
 description = "Generated and third-party directories"
 paths = ['''(^|/)(node_modules|\.git|\.venv[^/]*|\.cache|\.analysis|\.generated|\.authoring-state|\.publication-state|coverage|dist|public|legacy|cache|exports)/''']
+
+[[allowlists]]
+description = "Public origin-trial tokens (signed payload starts with {\"origin\":)"
+paths = ['''^publishing/site\.yaml$''']
+regexTarget = "line"
+regexes = ['''^\s*token: "[A-Za-z0-9+/]+eyJvcmlnaW4iOi[A-Za-z0-9+/]+=*"$''']
+condition = "AND"

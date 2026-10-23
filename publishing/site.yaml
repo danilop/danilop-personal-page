@@ -46,3 +46,14 @@ assets:
     alt: Blue ink illustration of an open book and loose pages
     fit: contain
     position: center
+# Public WebMCP origin-trial tokens for https://www.danilop.net (see docs/architecture.md).
+# `expires` is the last full day the token is valid.
+originTrials:
+  - browser: chrome
+    feature: WebMCP
+    token: "Am9ex5ajBH2B8MXpmrS4Qa0g6b0YLFXXQqU6LfScAwHWNj8hvFlKzu2kGkB397796YC0170h3Y7eZud+o14cygcAAABPeyJvcmlnaW4iOiJodHRwczovL3d3dy5kYW5pbG9wLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxODA2MzY0ODAwfQ=="
+    expires: 2027-03-29
+  - browser: edge
+    feature: WebMCP
+    token: "A5QR0LJ+dPHgrENiTpsO4PCjQp/4OGzhCNIvvnW8ljxLmbqFl0MWLmdFcH143XLw+USJujv1MCrbqM4gAYmTY0QAAABPeyJvcmlnaW4iOiJodHRwczovL3d3dy5kYW5pbG9wLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzk2Njc2ODQ2fQ=="
+    expires: 2026-12-06

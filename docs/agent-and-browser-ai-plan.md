@@ -7,9 +7,11 @@ same day ([§8](#8-decisions)). Phases 0–5 are implemented, tested and deploye
 and origin-trial token configuration
 ([search](architecture.md#search-and-reading-index),
 [agent tools](architecture.md#agent-tools-and-webmcp),
-[assistant](architecture.md#reading-assistant)). No origin-trial token is
-registered yet, so WebMCP tools reach only browsers with WebMCP enabled by flag.
-Phase 6 (the article) follows.
+[assistant](architecture.md#reading-assistant)). Chrome and Edge WebMCP
+origin-trial tokens for `https://www.danilop.net` were registered on 23 October
+2026 and added to `publishing/site.yaml`, so WebMCP-capable Chrome (149+) and Edge
+builds expose the tools without a flag once that configuration is released.
+Phase 6 (the article) is drafted.
 
 ## 1. What is worth doing
 
@@ -170,7 +172,7 @@ recording. To support this, `mountPythonRunner` returns a small controller
 (`run(code?)`, `step()`, `restore()`, a result promise) used by both the
 buttons and the tools, instead of tools clicking buttons.
 
-### 4.3 WebMCP adapter (phase 2, deployed; trial tokens pending)
+### 4.3 WebMCP adapter (phase 2, deployed; trial tokens registered)
 
 - `enhance.ts` checks `document.modelContext` and only then imports the adapter,
   like simulations and code activities today. Chrome 156 no longer has the old
@@ -188,10 +190,12 @@ buttons and the tools, instead of tools clicking buttons.
   flag. Production registers for both the Chrome and the Edge WebMCP origin
   trials and emits one `<meta http-equiv="origin-trial">` tag per token from site
   configuration (`publishing/site.yaml`, schema-validated with browser, token and
-  expiry date). Tokens are public but tied to the domain; Edge's trial currently
-  lists 17 November 2026 and Chrome's runs to M156 (a reported extension is
-  unconfirmed). The build warns 30 days before an expiry and omits expired
-  tokens. Registration accounts and renewal dates belong in the private
+  expiry date). Tokens are public but tied to the domain. Both trials run to
+  30 March 2027 (Chrome 149–162; an earlier note of 17 November 2026 for Edge was
+  wrong). The Chrome token is valid until the trial ends; Edge issues tokens of
+  about six weeks' validity (the first expires 7 December 2026) that are renewed
+  from the Edge console. The build warns 30 days before an expiry and omits
+  expired tokens. Registration accounts and renewal dates belong in the private
   operations note.
 - **No polyfill on production pages.** `@mcp-b/global` is useful for local
   experiments with MCP clients, but shipping it would add a non-standard API.
@@ -397,7 +401,7 @@ in try/catch, default on). It also states which browsers support this today.
 | 2. Tools and WebMCP (done)     | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
 | 3. Model runtimes (done)       | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
 | 4. Assistant (done)            | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
-| 5. Production (tokens pending) | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
+| 5. Production (done)           | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
 | 6. Article                     | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
 
 ### Testing

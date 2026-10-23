@@ -941,15 +941,20 @@ originTrials:
   - browser: chrome # or edge
     feature: WebMCP
     token: "<token from the trial console>"
-    expires: 2027-03-30
+    expires: 2027-03-29 # last full day the token is valid
 ```
 
 To add one: register the production origin for the WebMCP trial in the Chrome or
 Edge origin-trials console, paste the token and its expiry date, rebuild and
 release. `Layout.astro` emits one `<meta http-equiv="origin-trial">` per unexpired
 token; `core/origin-trials.ts` drops expired tokens and `verify-build.ts` warns
-30 days before an expiry. Which account registered a token and when to renew it
-belong in the private operations note, not here.
+30 days before an expiry. Both trials end on 30 March 2027. The Chrome token
+lasts until then; Edge tokens expire sooner (the first on 7 December 2026), so
+renew them from the Edge console and replace the configured token. `.gitleaks.toml`
+allows these public tokens in `publishing/site.yaml` only. Tokens for
+`https://www.danilop.net` are configured for both browsers. Which account
+registered a token and when to renew it belong in the private operations note,
+not here.
 
 ## Reading assistant
 
