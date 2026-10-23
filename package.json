@@ -100,6 +100,7 @@
     "narration:recover": "node --import tsx scripts/narration.ts recover",
     "assets:doctor": "node --import tsx scripts/check-aws-cli.ts",
     "test:aws-cli": "NOTES_TEST_AWS_CLI=1 node --import tsx --test test/aws-cli-contract.test.ts",
+    "assistant:eval": "node --import tsx scripts/assistant-eval.ts",
     "audiobook:prepare": "node --import tsx scripts/audiobook.ts prepare",
     "audiobook:check": "node --import tsx scripts/audiobook.ts check",
     "audiobook:inventory": "node --import tsx scripts/audiobook.ts inventory"

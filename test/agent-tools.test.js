@@ -131,6 +131,7 @@ test("page tools read the outline and sections, move with undo and report bad id
       "list_writing",
       "get_page_outline",
       "get_section_text",
+      "find_in_page",
       "go_to_section",
       "open_page",
       "play_narration",
@@ -146,6 +147,7 @@ test("page tools read the outline and sections, move with undo and report bad id
     title: "Loophole",
     url: "https://fixture.invalid/notes/writing/a/",
     sections: [
+      { id: "introduction", title: "Introduction", level: 2 },
       { id: "tame", title: "What to tame", level: 2 },
       { id: "sub", title: "Detail", level: 3 },
       { id: "score", title: "The score", level: 2 },
@@ -167,6 +169,36 @@ test("page tools read the outline and sections, move with undo and report bad id
   assert.match(
     (await call("get_section_text", { section: "nope" })).error,
     /get_page_outline/,
+  );
+  assert.equal(
+    (await call("get_section_text", { section: "introduction" })).result.text,
+    "Intro.",
+  );
+  assert.deepEqual(
+    (await call("find_in_page", { query: "second, SCORE!" })).result,
+    {
+      matches: [
+        {
+          section: "score",
+          title: "The score",
+          excerpt: "The score\n\nSecond.",
+        },
+      ],
+    },
+  );
+  assert.match(
+    (await call("find_in_page", { query: "zebra" })).result.note,
+    /No section mentions/,
+  );
+  assert.deepEqual(
+    (await call("go_to_section", { section: "introduction" })).result,
+    {
+      section: "introduction",
+    },
+  );
+  assert.match(
+    document.querySelector(".agent-notice").textContent,
+    /moved to the introduction/,
   );
   assert.match((await call("get_section_text", {})).error, /required/);
   const moved = await call("go_to_section", { section: "score" });
@@ -417,7 +449,7 @@ test("WebMCP adapter registers available tools, returns errors as data and honou
   const { setAgentToolsEnabled, agentToolsEnabled } =
     await import("../runtime/agent-tools/setting.ts");
   await mountWebMcp(context);
-  assert.equal(registered.length, 11);
+  assert.equal(registered.length, 12);
   assert.equal(errors.mock.callCount(), 1);
   const outline = registered.find((r) => r.name === "get_page_outline");
   assert.deepEqual(outline.annotations, { readOnlyHint: true });
@@ -430,7 +462,7 @@ test("WebMCP adapter registers available tools, returns errors as data and honou
   assert.equal(registered.length, 0);
   setAgentToolsEnabled(true);
   await tick();
-  assert.equal(registered.length, 11);
+  assert.equal(registered.length, 12);
   globalThis.window.dispatchEvent(new Event("pagehide"));
   assert.equal(registered.length, 0);
   localStorage.setItem = () => {
@@ -441,4 +473,23 @@ test("WebMCP adapter registers available tools, returns errors as data and honou
     throw Error("blocked");
   };
   assert.equal(agentToolsEnabled(), true);
+});
+
+test("a page without headings is one introduction section", async (t) => {
+  const { document } = page(
+    t,
+    '<article class="reading"><h1>Hello</h1><div class="prose"><figure><img alt=""></figure><p>Welcome to the site.</p><p>It will grow.</p></div></article>',
+  );
+  const { call } = await tools();
+  const { outline, sectionAnchor } =
+    await import("../runtime/agent-tools/tools.ts");
+  assert.deepEqual(outline(document), [
+    { id: "introduction", title: "Introduction", level: 2 },
+  ]);
+  assert.equal(
+    (await call("get_section_text", { section: "introduction" })).result.text,
+    "Welcome to the site.\n\nIt will grow.",
+  );
+  assert.equal(sectionAnchor(document, "introduction").tagName, "FIGURE");
+  assert.equal(sectionAnchor(document, "missing"), undefined);
 });

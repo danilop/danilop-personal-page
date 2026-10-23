@@ -246,7 +246,7 @@ test("LiteRT-LM adapter checks WebGPU and storage, caches the download, and maps
       Engine: {
         create: async (settings) => {
           modelStream = settings.model;
-          assert.equal(settings.mainExecutorSettings.maxNumTokens, 4096);
+          assert.equal(settings.mainExecutorSettings.maxNumTokens, 8192);
           return {
             createConversation: async (config) => conversation(config),
             delete: async () => {
@@ -298,7 +298,7 @@ test("LiteRT-LM adapter checks WebGPU and storage, caches the download, and maps
   assert.deepEqual(tokens, ["Hi", "Hi there"]);
   const chat = await session.startAgentChat("System.", tools);
   const c = conversations.at(-1);
-  assert.equal(c.config.enableConstrainedDecoding, true);
+  assert.equal(c.config.enableConstrainedDecoding, false);
   assert.deepEqual(c.config.preface.messages, [
     { role: "system", content: "System." },
   ]);

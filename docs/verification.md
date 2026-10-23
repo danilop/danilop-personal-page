@@ -2283,3 +2283,34 @@ tested locally; not deployed.
 - Narration tools were tested with a fake player only; real playback started by
   an agent depends on the browser's autoplay policy and reports a clear error
   when blocked.
+
+## Model runtimes and reading assistant — 23 October 2026
+
+Phases 3 and 4 of the [agent tools plan](agent-and-browser-ai-plan.md).
+
+- Chrome 156 on an Apple M1 Pro, production build served locally: the panel found
+  no built-in model (automation never enables it), offered the Gemma 4 E2B
+  download with its size and source, downloaded 2,008,432,640 bytes from Hugging
+  Face into the Cache API in 128 seconds and started the model; later visits were
+  ready in 3 seconds from the cache.
+- First real questions failed: the model chose site search, and every turn after a
+  tool result failed with LiteRT-LM's “Invalid token at state …”. A direct probe of
+  four tool-result shapes showed the failure only with constrained decoding on,
+  so agent chats run without it; site search was replaced by `find_in_page`.
+- `npm run assistant:eval`: the introduction section first swallowed the whole
+  article (its prose is wrapped in one `section`), then the model marked declining
+  answers as found. After scoping the introduction and treating declining text as
+  not found, the run gave 8/8 answerable questions with the gold section cited and
+  3/3 unanswerable questions declined, median 4.8 seconds, across both published
+  articles.
+- Accessibility (keyboard and layout): Tab reached “Ask about this page”, Enter
+  opened the panel with focus on its heading, Escape closed it and returned focus
+  with `aria-expanded` reset; at 390 px the bottom sheet showed the answer with no
+  horizontal scrolling; a 640 × 450 viewport (200% zoom) did not overflow; answers
+  were announced through the status region. No screen-reader session was run.
+- Not verified: the Prompt API path with a real built-in model (automation cannot
+  enable it; manual check on an everyday Chrome pending), Safari and Firefox
+  WebGPU with LiteRT-LM, and Edge.
+- Unit and DOM tests cover the adapters with fakes, the loop (citation filtering,
+  declines, tool limit, unknown tools, errors, abort) and the panel (ladder,
+  disclosure, progress, cancel, answers, errors, clear, Escape).

@@ -124,7 +124,7 @@ export const litertLm: ModelRuntime = {
     progress("Starting the model…");
     const engine = await L.Engine.create({
       model: stream,
-      mainExecutorSettings: { maxNumTokens: 4096 },
+      mainExecutorSettings: { maxNumTokens: 8192 },
     });
     if (signal.aborted) {
       await engine.delete();
@@ -177,7 +177,9 @@ export const litertLm: ModelRuntime = {
               },
             })) as Tool[],
           },
-          enableConstrainedDecoding: true,
+          // 0.18.0 fails with "Invalid token" on any turn after a tool result
+          // when constrained decoding is on; calls are validated by the loop.
+          enableConstrainedDecoding: false,
           sessionConfig,
         });
         open.push(conversation);

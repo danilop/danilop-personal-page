@@ -932,6 +932,30 @@ holds one registry used by WebMCP and the reading assistant:
 Excluded on purpose: model downloads, saving, sharing, consent and the local
 editor. Production pages carry no polyfill.
 
+## Reading assistant
+
+Implemented locally and tested on 23 October 2026. `AssistantEntry.astro` adds a
+hidden “Ask about this page” button after the listening controls on articles, book
+pieces and chapter pages. `enhance.ts` reveals it only when `LanguageModel` or
+`navigator.gpu` exists and loads `runtime/assistant/panel.ts` on the first click,
+so ordinary page loads never request a GPU adapter or model.
+
+The panel probes the ladder in `publishing/models.json` order
+(`browser-language-model`, then `gemma-4-E2B-it-web`), states what will download
+and from where before any download, shows progress with Cancel, and offers Clear
+downloaded model for LiteRT-LM. `runtime/assistant/loop.ts` answers one question
+per fresh agent chat: at most four tool calls from the shared registry
+(`find_in_page`, `get_section_text` and the Python tools), then the `answer` tool.
+Citations survive only for sections read during that question; answers whose text
+says the page does not contain the answer are shown as not found, without a source.
+Tool steps appear as lines linking to sections; citations scroll to and outline
+the cited passage; answers are announced through a status region on completion.
+The panel is a labelled, non-modal `aside` (side panel from 1,100 px with the page
+reflowed, bottom sheet below), closes with Escape and returns focus. Styles are
+injected with the panel. `notes:assistant-started` (runtime only) feeds consented
+analytics. `scripts/assistant-eval.ts` drives the real panel in Chrome against the
+built site and `tools/assistant-eval/questions.json`.
+
 ## Published-writing discovery
 
 `core/discovery.ts` derives bounded home/index/filter pages from stable piece IDs

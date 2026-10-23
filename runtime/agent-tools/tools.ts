@@ -66,33 +66,9 @@ const text = (el: Element | null | undefined) =>
   (el?.textContent ?? "").replace(/\s+/g, " ").trim();
 
 type OutlineItem = { id: string; title: string; level: number };
-function outline(doc: Document): OutlineItem[] {
-  const article = readingBody(doc);
-  if (!article) return [];
-  return [
-    ...article.querySelectorAll<HTMLElement>(
-      ".prose :is(h2, h3)[id], section.prose[id]",
-    ),
-  ].map((el) => {
-    const heading =
-      el.tagName === "SECTION"
-        ? el.querySelector(":scope > :is(h2, h3, h4, h5, h6)")
-        : el;
-    return {
-      id: el.id,
-      title: text(heading) || el.id,
-      level: heading ? Number(heading.tagName.slice(1)) : 2,
-    };
-  });
-}
-function findSection(doc: Document, id: string) {
-  const el = doc.getElementById(id);
-  if (!el || !outline(doc).some((s) => s.id === id))
-    throw new ToolError(
-      `No section "${id}". Call get_page_outline for section ids.`,
-    );
-  return el;
-}
+type Section = { id: string; anchor: HTMLElement; text(): string };
+/** Text before the first heading has no element of its own. */
+const INTRODUCTION = "introduction";
 const BLOCK = /^(P|H[1-6]|LI|PRE|BLOCKQUOTE|FIGCAPTION|TD|TH|DT|DD)$/;
 const SKIP =
   "button, noscript, audio, [data-narration], [data-audiobook], .copy-code";
@@ -103,7 +79,47 @@ function blockText(el: Element): string[] {
   const nested = [...el.children].flatMap(blockText);
   return nested.length ? nested : [text(el)].filter(Boolean);
 }
-function sectionText(el: HTMLElement) {
+const isHeading = (el: Element) => /^H[2-6]$/.test(el.tagName) && !!el.id;
+/** Blocks before the first heading, in the heading's own container. */
+function introduction(doc: Document) {
+  const prose = readingBody(doc)?.querySelector<HTMLElement>(".prose");
+  if (!prose) return [];
+  const first = prose.querySelector(":is(h2, h3)[id]");
+  const container = first?.parentElement ?? prose;
+  const blocks: Element[] = [];
+  for (const child of container.children) {
+    if (child === first || (isHeading(child) && !first)) break;
+    blocks.push(child);
+  }
+  return blocks.flatMap(blockText).length ? blocks : [];
+}
+function headingSections(doc: Document) {
+  const article = readingBody(doc);
+  return article
+    ? [
+        ...article.querySelectorAll<HTMLElement>(
+          ".prose :is(h2, h3)[id], section.prose[id]",
+        ),
+      ]
+    : [];
+}
+export function outline(doc: Document): OutlineItem[] {
+  const items = headingSections(doc).map((el) => {
+    const heading =
+      el.tagName === "SECTION"
+        ? el.querySelector(":scope > :is(h2, h3, h4, h5, h6)")
+        : el;
+    return {
+      id: el.id,
+      title: text(heading) || el.id,
+      level: heading ? Number(heading.tagName.slice(1)) : 2,
+    };
+  });
+  return introduction(doc).length
+    ? [{ id: INTRODUCTION, title: "Introduction", level: 2 }, ...items]
+    : items;
+}
+function headingText(el: HTMLElement) {
   if (el.tagName === "SECTION") return blockText(el).join("\n\n");
   const level = Number(el.tagName.slice(1));
   const parts = [text(el)];
@@ -115,6 +131,30 @@ function sectionText(el: HTMLElement) {
   )
     parts.push(...blockText(next));
   return parts.filter(Boolean).join("\n\n");
+}
+/** Where a section starts, for scrolling to a cited section. */
+export const sectionAnchor = (doc: Document, id: string) =>
+  headingSections(doc).find((s) => s.id === id) ??
+  (id === INTRODUCTION
+    ? (introduction(doc)[0] as HTMLElement | undefined)
+    : undefined);
+
+function findSection(doc: Document, id: string): Section {
+  if (id === INTRODUCTION) {
+    const blocks = introduction(doc);
+    if (blocks.length)
+      return {
+        id,
+        anchor: blocks[0] as HTMLElement,
+        text: () => blocks.flatMap(blockText).join("\n\n"),
+      };
+  }
+  const el = headingSections(doc).find((s) => s.id === id);
+  if (!el)
+    throw new ToolError(
+      `No section "${id}". Call get_page_outline for section ids.`,
+    );
+  return { id, anchor: el, text: () => headingText(el) };
 }
 
 const activities = (doc: Document) => {
@@ -304,12 +344,67 @@ export const agentTools: AgentTool[] = [
     annotations: { readOnlyHint: true },
     available: (doc) => !!readingBody(doc),
     async execute(input) {
-      const el = findSection(document, input.section as string);
+      const section = findSection(document, input.section as string);
       return {
-        section: el.id,
-        url: `${location.href.split("#")[0]}#${el.id}`,
-        text: sectionText(el),
+        section: section.id,
+        url: `${location.href.split("#")[0]}#${section.anchor.id || section.id}`,
+        text: section.text(),
       };
+    },
+  },
+  {
+    name: "find_in_page",
+    title: "Find in this page",
+    description:
+      "Find the sections of the current page that mention the given words, best matches first, with a short excerpt. Then read a match with get_section_text.",
+    inputSchema: schema(
+      {
+        query: {
+          type: "string",
+          description: "Words to look for",
+          maxLength: 200,
+        },
+      },
+      ["query"],
+    ),
+    annotations: { readOnlyHint: true },
+    available: (doc) => !!readingBody(doc),
+    async execute(input) {
+      const terms = (input.query as string)
+        .toLowerCase()
+        .split(/[^\p{L}\p{N}]+/u)
+        .filter((t) => t.length > 2);
+      const matches = outline(document)
+        .map((s) => {
+          const body = findSection(document, s.id).text();
+          const lower = body.toLowerCase();
+          const score = terms.reduce(
+            (n, t) => n + lower.split(t).length - 1,
+            0,
+          );
+          const at = Math.max(
+            0,
+            Math.min(
+              ...terms.map((t) => lower.indexOf(t)).filter((i) => i >= 0),
+            ) - 80,
+          );
+          return {
+            section: s.id,
+            title: s.title,
+            score,
+            excerpt: body.slice(at, at + 240),
+          };
+        })
+        .filter((m) => m.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map(({ section, title, excerpt }) => ({ section, title, excerpt }));
+      return matches.length
+        ? { matches }
+        : {
+            matches,
+            note: "No section mentions these words; try other words or read the outline.",
+          };
     },
   },
   {
@@ -326,19 +421,21 @@ export const agentTools: AgentTool[] = [
     annotations: {},
     available: (doc) => !!readingBody(doc),
     async execute(input) {
-      const el = findSection(document, input.section as string);
+      const { id, anchor } = findSection(document, input.section as string);
       const previous = scrollY;
       const heading =
-        el.tagName === "SECTION"
-          ? (el.querySelector<HTMLElement>("h2, h3, h4") ?? el)
-          : el;
+        anchor.tagName === "SECTION"
+          ? (anchor.querySelector<HTMLElement>("h2, h3, h4") ?? anchor)
+          : anchor;
       if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1;
       heading.focus({ preventScroll: true });
-      announceAgentAction(`An AI agent moved to “${text(heading)}”.`, {
-        target: el,
+      const title =
+        id === INTRODUCTION ? "the introduction" : `“${text(heading)}”`;
+      announceAgentAction(`An AI agent moved to ${title}.`, {
+        target: anchor,
         undo: () => scrollTo({ top: previous }),
       });
-      return { section: el.id };
+      return { section: id };
     },
   },
   {

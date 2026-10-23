@@ -51,6 +51,32 @@ if (modelContext)
     .catch((error: unknown) =>
       console.error("Could not load agent tools", error),
     );
+// The reading assistant is offered only where an on-device model may run; the
+// full capability check waits until the reader opens it.
+const assistant = document.querySelector<HTMLElement>("[data-assistant]");
+if (
+  assistant &&
+  ("LanguageModel" in globalThis || "gpu" in (navigator as object))
+) {
+  assistant.hidden = false;
+  const opener = assistant.querySelector<HTMLButtonElement>(
+    "[data-assistant-open]",
+  )!;
+  opener.addEventListener(
+    "click",
+    () => {
+      import("./assistant/panel")
+        .then((m) => {
+          m.mountAssistant(assistant);
+          opener.click();
+        })
+        .catch((error: unknown) =>
+          console.error("Could not load the assistant", error),
+        );
+    },
+    { once: true },
+  );
+}
 // "/" opens search from any page, unless the reader is typing.
 document.addEventListener("keydown", (event) => {
   const { target } = event;

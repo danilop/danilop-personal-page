@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "thresholds": { "citedGold": 0.8, "declined": 0.75 },
+  "pieces": {
+    "clever-enough-to-find-the-loophole": [
+      {
+        "q": "What does RLHF stand for, and how do people provide the feedback?",
+        "gold": "clever-enough-to-find-the-loophole-the-score-has-become-the-job"
+      },
+      {
+        "q": "What happened when OpenAI penalised reasoning that revealed misconduct?",
+        "gold": "clever-enough-to-find-the-loophole-the-trouble-with-checking-the-working"
+      },
+      {
+        "q": "What is FelonyBench?",
+        "gold": "clever-enough-to-find-the-loophole-a-rather-awkward-sort-of-leaderboard"
+      },
+      {
+        "q": "In how many of the 50 simulated malicious trials did the modified GLM-5.3 engage?",
+        "gold": "clever-enough-to-find-the-loophole-the-owner-can-remove-the-brakes"
+      },
+      {
+        "q": "What kind of output does TypeSafe AI's Jev return?",
+        "gold": "clever-enough-to-find-the-loophole-changing-what-earns-the-reward"
+      },
+      {
+        "q": "What is Direct Preference Optimisation?",
+        "gold": "clever-enough-to-find-the-loophole-learning-from-examples"
+      },
+      { "q": "What did GPT-6 Astra cost per million tokens?", "gold": null },
+      {
+        "q": "Which programming language does the author prefer?",
+        "gold": null
+      }
+    ],
+    "hello-brave-new-world": [
+      { "q": "What can collections develop into?", "gold": "introduction" },
+      {
+        "q": "Where are earlier articles, talks and videos kept?",
+        "gold": "introduction"
+      },
+      { "q": "How many subscribers does the newsletter have?", "gold": null }
+    ]
+  }
+}

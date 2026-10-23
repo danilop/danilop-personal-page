@@ -8,6 +8,7 @@ import Layout from "../../../../components/Layout.astro";
 import { site } from "../../../../data";
 import ReadingNavigation from "../../../../components/ReadingNavigation.astro";
 import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
+import AssistantEntry from "../../../../components/AssistantEntry.astro";
 import AudiobookPlayer from "../../../../components/AudiobookPlayer.astro";
 import { audiobookExcerpt } from "../../../../../core/audiobook-excerpt";
 import { readingContext } from "../../../../../core/reading-navigation";
@@ -39,6 +40,7 @@ const excerpt = audiobookExcerpt(c.audiobook, c.nodes, n.id);
       </h1>
     </header>
     <AudiobookPlayer audiobook={excerpt} />
+    <AssistantEntry />
     {children.map((child) => {
       const format = plan.get(child.id)!;
       const Heading = `h${format.headingLevel ?? 2}` as

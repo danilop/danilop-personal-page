@@ -6,6 +6,7 @@ import type { ArticleData } from "../../core/site-data";
 import TagList from "../../site/components/TagList.astro";
 import ArticleSharing from "../../site/components/ArticleSharing.astro";
 import NarrationPlayer from "../../site/components/NarrationPlayer.astro";
+import AssistantEntry from "../../site/components/AssistantEntry.astro";
 import { searchContext } from "../../core/reading-index";
 interface Props {
   article: ArticleData;
@@ -58,6 +59,7 @@ const { article } = Astro.props;
       </div>
     </header>
     <NarrationPlayer narration={article.narration} title={article.title} />
+    <AssistantEntry />
     <div
       class="prose"
       data-pagefind-body

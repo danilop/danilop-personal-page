@@ -58,6 +58,24 @@ import Layout from "../components/Layout.astro";
         external link instead. Reading inside external documents or videos is
         not measured unless a supported integration is explicitly added.
       </p>
+      <h2>On-device features</h2>
+      <p>
+        Search runs in your browser; search terms are not sent anywhere. When
+        you run a Python example, the browser downloads the Pyodide runtime from
+        jsDelivr. When you start the reading assistant, it uses your browser's
+        built-in model if there is one; otherwise, after you choose Download,
+        the browser downloads an open model (about 2 GB) from Hugging Face and
+        its runtime from jsDelivr, and keeps the model in this site's browser
+        storage until you choose Clear downloaded model. Those providers receive
+        your connection like any download. Your questions, the page text the
+        assistant reads and its answers stay in your browser and are not saved
+        after you close the page.
+      </p>
+      <p>
+        Browser AI agents can use the tools described on the
+        <a href="/agents/">For AI agents</a> page; what an agent does with the
+        page is governed by the agent you chose.
+      </p>
       <h2>Hosting and questions</h2>
       <p>
         The site is hosted with AWS Amplify. Hosting services process technical

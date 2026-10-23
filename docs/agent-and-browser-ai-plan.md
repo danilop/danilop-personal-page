@@ -4,9 +4,11 @@ Status: proposed on 23 October 2026; the owner accepted the plan's decisions the
 same day ([§8](#8-decisions)). Phase 0 spikes are complete
 ([§9](#9-phase-0-results)). Phase 1 (search and reading index), phase 2 (tool
 registry, WebMCP, feedback and the "For AI agents" page) and phase 3 (Prompt API
-and LiteRT-LM runtimes) are implemented and tested locally, not deployed ([search](architecture.md#search-and-reading-index),
-[agent tools](architecture.md#agent-tools-and-webmcp)); later phases are not
-implemented. It builds on the
+and LiteRT-LM runtimes) and phase 4 (reading assistant) are implemented and
+tested locally ([search](architecture.md#search-and-reading-index),
+[agent tools](architecture.md#agent-tools-and-webmcp),
+[assistant](architecture.md#reading-assistant)); phase 5 (deployment and trial
+tokens) follows. It builds on the
 [WebMCP research](webmcp-research.md) and extends the existing browser-model
 rules in [architecture §6](architecture.md#6-browser-experiments). Site-wide
 search and a reader assistant, previously deferred in
@@ -250,7 +252,32 @@ languages: ["en"] }`, with `downloadBytes` and `vramMB` absent. `models.json`
 - Fix in passing: the WebLLM adapter reports version `0.2.85` while the lockfile
   has `0.2.86`; derive the label from the package instead.
 
-### 4.5 Reader assistant (phase 4)
+### 4.5 Reader assistant (phase 4, implemented locally)
+
+As built (23 October 2026), differences from the design below:
+
+- **Page tools only.** The assistant uses `find_in_page` (added to the registry:
+  matching sections ranked by term hits, with an excerpt), `get_section_text` and,
+  where present, the two Python tools. It does not use site search, which pulled
+  the model away from the page.
+- **An "introduction" section** covers text before the first heading, or the
+  whole text when there are no headings, so every page has citable sections.
+- **No constrained decoding on LiteRT-LM.** LiteRT-LM 0.18.0 fails with "Invalid
+  token" on any turn after a tool result when it is on. Native tool calls still
+  parse; the loop validates calls and keeps only citations of sections read in
+  that question. The `answer` tool's citation enum lists the page's sections.
+- **Declines are detected in the text.** When the answer says the page does not
+  state something, it is shown as not found and without a source, even if the
+  model marked it found.
+- **Each question is answered independently** (a fresh agent chat per question);
+  the visible conversation is cleared with New conversation and not stored.
+- **Context.** LiteRT-LM runs with an 8,192-token window; tool results are cut to
+  4,000 characters for the model. `measureContextUsage()` is not used; an
+  overflow shows the "try a narrower question" message.
+- **Languages.** The panel notes that questions work best in English when the
+  browser language is not English, instead of hiding the assistant.
+
+The original design:
 
 A bounded helper on every reading page (articles and book chapters, not the
 archive or original-site snapshot): answer questions about the current page or
@@ -372,7 +399,7 @@ in try/catch, default on). It also states which browsers support this today.
 | 1. Index and search (done) | Reading index, Pagefind, search page and `/` shortcut, declarative tool attributes                      | M    | Search works in Chrome, Firefox, Safari; no-JS fallback; validate passes; index excludes drafts                            |
 | 2. Tools and WebMCP (done) | Registry, Python controller refactor, adapter, feedback layer, `/agents/` page                          | M    | Tool Inspector lists and runs every tool; unit tests with a fake `modelContext`; no change for browsers without WebMCP     |
 | 3. Model runtimes (done)   | Descriptor variant, Prompt API and LiteRT-LM adapters, runtime order, recording changes                 | S    | Existing WebLLM experiment unchanged; Prompt API path verified on a capable Chrome; unsupported paths show static results  |
-| 4. Assistant               | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
+| 4. Assistant (done)        | Loop, panel, grounding, evaluation set covering every published piece                                   | L    | Evaluation questions for each published piece answered with valid citations at an agreed rate; manual accessibility review |
 | 5. Production enablement   | Chrome and Edge origin-trial tokens, release notes                                                      | S    | Deployed and verified; token expiry warning in build                                                                       |
 | 6. Article                 | Write-up based on observed agent and model behaviour after release                                      | M    | Draft reviewed through the normal editorial workflow; linked from the “For AI agents” page once published                  |
 
@@ -418,8 +445,11 @@ Accepted by the owner on 23 October 2026:
 
 Settled in phase 0: the downloadable assistant model is Gemma 4 E2B on
 LiteRT-LM ([§9](#9-phase-0-results)).
-Still to settle: the citation-accuracy threshold for the assistant evaluation
-(phase 4).
+Settled in phase 4: the evaluation (`npm run assistant:eval`,
+`tools/assistant-eval/questions.json`) passes when at least 80% of answerable
+questions cite the gold section and at least 75% of unanswerable ones are
+declined. Every published piece must have questions. First full run with Gemma
+4 E2B: 8/8 cited, 3/3 declined, median 4.8 seconds per question.
 
 ## 9. Phase 0 results
 

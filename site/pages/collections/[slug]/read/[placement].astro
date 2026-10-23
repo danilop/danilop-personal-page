@@ -12,6 +12,7 @@ import { readingContext } from "../../../../../core/reading-navigation";
 import TagList from "../../../../components/TagList.astro";
 import ArticleSharing from "../../../../components/ArticleSharing.astro";
 import NarrationPlayer from "../../../../components/NarrationPlayer.astro";
+import AssistantEntry from "../../../../components/AssistantEntry.astro";
 import AudiobookPlayer from "../../../../components/AudiobookPlayer.astro";
 import { audiobookExcerpt } from "../../../../../core/audiobook-excerpt";
 export function getStaticPaths() {
@@ -81,6 +82,7 @@ const original = site.articles.find((p) => p.id === n.pieceId);
     ) : (
       <NarrationPlayer narration={n.narration} title={n.title} />
     )}
+    <AssistantEntry />
     <div
       id={n.id}
       class="prose"

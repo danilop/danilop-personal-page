@@ -11,9 +11,9 @@ verified; the release command verifies exact-revision hosted delivery.
 Updated: 2026-10-02.
 
 Danilo selected **all planned publishing capabilities before deployment**.
-The former release 1 / later releases split is superseded. Static search and
-browser-agent tools are implemented locally (23 October 2026, not deployed); an
-on-device assistant is planned in the
+The former release 1 / later releases split is superseded. Static search,
+browser-agent tools and an on-device reading assistant are implemented (23
+October 2026) as described in the
 [agent tools plan](agent-and-browser-ai-plan.md); browser editing remains a
 separate future decision. Newsletter
 subscriptions and optional article distribution were requested on 17 October 2026;
