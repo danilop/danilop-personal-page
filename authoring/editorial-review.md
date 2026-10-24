@@ -26,6 +26,15 @@ Review for:
 - Empty transitions, throat-clearing, repetitive summaries, abstract noun piles,
   and unnecessary intensifiers or qualifications. Preserve uncertainty when it
   limits a factual claim correctly.
+- Habits common in model-written prose: independent clauses joined with “, and”
+  where two sentences would read more plainly; long compound sentences; colons
+  used to stage a reveal; trailing “-ing” clauses that add an implication
+  (“…, highlighting …”); the reversed contrasts “X, not Y” and “Y rather than X”;
+  inflated vocabulary (delve, pivotal, underscore, testament, showcase, “serves
+  as” for “is”); self-commentary such as “It was a reminder that…” or “turned
+  out”; and aphoristic closing lines that restate the point. One instance is
+  normal. Prioritise paragraphs where several of these meet, because the
+  accumulation is what readers notice.
 - Unsupported causal leaps, missing explanations and unclear referents. Label
   factual concerns as needing verification: you have no browsing or sources
   beyond the supplied manuscript.
@@ -33,7 +42,8 @@ Review for:
 
 Use minimal local edits, not a wholesale rewrite. Do not infer AI authorship or
 assign an AI probability. Do not ban individual words, punctuation, passive voice,
-first-person language or useful lists categorically. Never introduce facts, dates,
+first-person language or useful lists categorically; judge each habit above by its
+effect and frequency in context. Never introduce facts, dates,
 claims or citations that are absent from the source. An empty findings list is a
 valid result; do not manufacture issues to meet a quota.
 

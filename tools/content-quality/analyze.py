@@ -95,7 +95,26 @@ PHRASES = {
         r"\b(?:not (?:just|merely|simply|only)\b.{0,120}?\bbut\b|isn[’']t about\b.{0,120}?\bit[’']s about\b)",
         re.I,
     ),
+    # The reversed forms of the same contrast, common in recent model output.
+    "contrast-reversed": re.compile(r",\s+not\s+(?:an?\s+|the\s+)?[a-z]+|\brather than\b", re.I),
+    "ai-vocabulary": re.compile(
+        r"\b(?:delv(?:e|es|ed|ing)|tapestry|pivotal|underscor(?:e|es|ed|ing)|testament|showcas(?:e|es|ed|ing)|foster(?:s|ed|ing)?|intricate|meticulous(?:ly)?|vibrant|multifaceted|seamless(?:ly)?|(?:serves|stands) as)\b",
+        re.I,
+    ),
+    "self-commentary": re.compile(
+        r"\b(?:it (?:was|is) a reminder that|turned out (?:to|that)|it turns out|and that matters|this is the part|either way)\b",
+        re.I,
+    ),
 }
+# Patterns that read as model habits when several meet in one paragraph.
+TIC_PHRASES = (
+    "contrast-frame",
+    "contrast-reversed",
+    "ai-vocabulary",
+    "self-commentary",
+    "stock-framing",
+    "formulaic-signpost",
+)
 
 
 def line_at(segment, offset=0):
@@ -224,12 +243,104 @@ def token_findings(piece, segment, sent):
     return findings
 
 
+def has_subject(token):
+    return any(c.dep_ in {"nsubj", "nsubjpass", "expl"} for c in token.children)
+
+
+def is_clause_join(token, previous):
+    """“, and” followed by a conjunct verb with its own subject."""
+    return (
+        token.lower_ == "and"
+        and token.dep_ == "cc"
+        and previous is not None
+        and previous.text == ","
+        and has_subject(token.head)
+        and any(
+            c.dep_ == "conj" and c.pos_ in {"VERB", "AUX"} and has_subject(c)
+            for c in token.head.children
+        )
+    )
+
+
+def phrase_tics(text):
+    return sum(len(PHRASES[rule].findall(text)) for rule in TIC_PHRASES)
+
+
+def tic_findings(piece, segment, sent):
+    """Syntactic habits: clauses joined by “, and”, “-ing” tails and colon reveals."""
+    found = []
+    tokens = list(sent)
+    for i, t in enumerate(tokens):
+        previous = tokens[i - 1] if i else None
+        if is_clause_join(t, previous):
+            found.append(
+                finding(
+                    piece,
+                    segment,
+                    "clause-join",
+                    "Two clauses joined with “, and”. Consider two sentences or a tighter construction; keep it when the second clause depends on the first.",
+                    tokens[i - 1].idx,
+                    sent.text.strip(),
+                )
+            )
+        if (
+            t.tag_ == "VBG"
+            and t.dep_ in {"advcl", "acl"}
+            and previous is not None
+            and previous.text == ","
+            and i >= len(tokens) // 2
+        ):
+            found.append(
+                finding(
+                    piece,
+                    segment,
+                    "participle-tail",
+                    f"A trailing “, {t.text} …” clause. End at the fact, or give the implication its own sentence.",
+                    previous.idx,
+                    sent.text.strip(),
+                )
+            )
+        if t.text == ":" and 2 < i < len(tokens) - 3:
+            after = tokens[i + 1 :]
+            if not any(a.text in {",", ";"} for a in after) and any(
+                a.pos_ in {"VERB", "AUX"} and has_subject(a) for a in after
+            ):
+                found.append(
+                    finding(
+                        piece,
+                        segment,
+                        "colon-reveal",
+                        "A colon introduces a full clause as a reveal. Check whether a plain sentence says it better.",
+                        t.idx,
+                        sent.text.strip(),
+                    )
+                )
+    return found
+
+
+def stacked_tics(piece, segment, count, style):
+    if count < style.get("ticsPerParagraph", 3):
+        return []
+    return [
+        finding(
+            piece,
+            segment,
+            "tic-stack",
+            f"{count} writing habits meet in this paragraph (clause joins, contrasts, reveals, tails or stock phrases). One is normal; several together read as formulaic.",
+        )
+    ]
+
+
 def analyse_nlp(piece, nlp, style):
     findings, records, adverbs, passive, words = [], [], 0, 0, 0
     lemmas = Counter()
     for segment_index, segment in enumerate(piece["segments"]):
         doc = nlp(segment["text"])
+        tics = phrase_tics(segment["text"])
         for sent in doc.sents:
+            syntactic = tic_findings(piece, segment, sent)
+            tics += len(syntactic)
+            findings.extend(syntactic)
             tokens = [t for t in sent if t.is_alpha]
             if not tokens:
                 continue
@@ -302,6 +413,7 @@ def analyse_nlp(piece, nlp, style):
                 ]
                 findings.append(f)
             findings.extend(token_findings(piece, segment, sent))
+        findings.extend(stacked_tics(piece, segment, tics, style))
     openers = defaultdict(list)
     for r in records:
         openers[r["opener"]].append(r)

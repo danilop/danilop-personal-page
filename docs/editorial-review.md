@@ -140,7 +140,11 @@ question instead of invented wording. Explanation and replacement prose are sepa
 It checks
 repetition, vague claims, inflated framing, mechanical contrasts, repeated punchy
 fragments, rhetorical question/answer patterns, forced triples, decorative
-metaphors, over-explanation and other mannerisms. It preserves technical terms,
+metaphors, over-explanation and other mannerisms. Since 23 October 2026 it also
+names habits common in model-written prose: “, and” clause joins, long compound
+sentences, colon reveals, trailing “-ing” clauses, reversed contrasts, inflated
+vocabulary, self-commentary and aphoristic closers, and it prioritises paragraphs
+where several meet. It preserves technical terms,
 useful uncertainty, code, quotations, citations, voice and language variant. It
 permits an empty findings list and prohibits an AI-authorship score.
 

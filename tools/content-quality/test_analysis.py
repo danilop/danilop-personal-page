@@ -212,6 +212,49 @@ class QualityTests(unittest.TestCase):
             self.assertIsNotNone(qa.PHRASES[rule].search(text))
         self.assertIsNone(qa.PHRASES["reader-flattery"].search("The question was recorded."))
 
+    def test_writing_habits_are_specific(self):
+        def rules(text):
+            _, found = qa.analyse_nlp(piece("t", text), self.nlp, CONFIG["style"])
+            return [f["rule"] for f in found]
+
+        self.assertIn("clause-join", rules("The site sends nothing, and the model runs locally."))
+        self.assertNotIn("clause-join", rules("It reads the page, looks at it and guesses."))
+        self.assertNotIn("clause-join", rules("Bread, milk, and eggs were bought."))
+        self.assertIn(
+            "participle-tail",
+            rules("The model answered every question, showing which sections it had read."),
+        )
+        self.assertNotIn("participle-tail", rules("Reading the page, the model answered."))
+        self.assertIn(
+            "colon-reveal", rules("The answer was simple: the banner covered the button.")
+        )
+        self.assertNotIn(
+            "colon-reveal", rules("It needs three things: a name, a schema and a handler.")
+        )
+        for rule, text in [
+            ("contrast-reversed", "It is a regression check, not a measure of accuracy."),
+            ("contrast-reversed", "It says so rather than trying harder."),
+            ("ai-vocabulary", "This pivotal change underscores the design."),
+            ("self-commentary", "It was a reminder that pages are small."),
+        ]:
+            self.assertIsNotNone(qa.PHRASES[rule].search(text), rule)
+        self.assertIsNone(qa.PHRASES["contrast-reversed"].search("It has rather less to sell."))
+
+    def test_stacked_habits_in_one_paragraph(self):
+        text = (
+            "It was a reminder that the page matters, and the model runs locally. "
+            "The answer was simple: the banner covered the button. "
+            "It is a check, not a measure."
+        )
+        _, found = qa.analyse_nlp(piece("s", text), self.nlp, CONFIG["style"])
+        self.assertEqual(sum(f["rule"] == "tic-stack" for f in found), 1)
+        _, found = qa.analyse_nlp(
+            piece("c", "The site sends nothing, and the model runs locally."),
+            self.nlp,
+            CONFIG["style"],
+        )
+        self.assertFalse(any(f["rule"] == "tic-stack" for f in found))
+
     def test_empty_prose_is_well_defined(self):
         metrics, findings = qa.analyse_nlp(piece("empty", ""), self.nlp, CONFIG["style"])
         self.assertEqual(metrics["words"], 0)
