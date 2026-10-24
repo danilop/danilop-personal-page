@@ -73,6 +73,7 @@ const original = site.articles.find((p) => p.id === n.pieceId);
         pieceId={n.pieceId!}
         collectionId={c.id}
         title={n.title}
+        subtitle={n.summary}
         url={`${c.url}read/${n.id}/`}
         position="top"
       />
@@ -103,6 +104,7 @@ const original = site.articles.find((p) => p.id === n.pieceId);
       pieceId={n.pieceId!}
       collectionId={c.id}
       title={n.title}
+      subtitle={n.summary}
       url={`${c.url}read/${n.id}/`}
       position="bottom"
     />

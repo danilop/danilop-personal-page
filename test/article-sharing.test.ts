@@ -33,6 +33,23 @@ test("sharing encodes one URL consistently and bounds Bluesky graphemes", () => 
     300,
   );
   assert(text.endsWith(url));
+  // A subtitle joins the title on its own line only while the post still fits.
+  const shared = shareLinks(title, url, "One plain subtitle.");
+  for (const link of [shared.x, shared.bluesky])
+    assert.match(
+      new URL(link).searchParams.get("text")!,
+      /^A & B: 👩‍💻\nOne plain subtitle\./,
+    );
+  assert.equal(
+    new URL(shared.email).searchParams.get("body"),
+    `${title}\nOne plain subtitle.\n\n${url}`,
+  );
+  const long = shareLinks(title, url, "x".repeat(260));
+  assert.equal(new URL(long.x).searchParams.get("text"), title);
+  assert.equal(
+    new URL(long.bluesky).searchParams.get("text"),
+    `${title}\n${url}`,
+  );
   // Public short-link configuration must be an origin, not an arbitrary URL.
   const field = siteSchema.shape.shortLinkOrigin;
   assert(field.safeParse("https://short.example").success);

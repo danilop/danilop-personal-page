@@ -97,13 +97,16 @@ external archive links and the preserved original site do not require backfill.
 
 [Growing audiobooks](book-audiobooks.md) extend this foundation with
 book-level composition, resumable listening and complete current-edition MP3
-downloads. The book implementation uses the shared publication and release gates. Article title/subtitle improvements discussed
-alongside it are also proposals: titles already play, while including a true
-subtitle and an exact body-start skip would require new speech metadata and audio.
+downloads. The book implementation uses the shared publication and release gates.
+An exact body-start skip remains a proposal; it would need new speech metadata.
 
 The speech compiler reads the semantic source before HTML rendering. It speaks
-the title once, headings, prose, lists, quotations and substantive footnotes.
-It omits the summary/dek, citation markers and raw link URLs; link text remains.
+the title once, then the summary as the subtitle, then headings, prose, lists,
+quotations and substantive footnotes. The recording starts the way the page
+starts, with the title and the line shown beneath it. A changed summary therefore
+changes the speech and requires new audio. Book audiobooks leave out each
+article's title and subtitle so chapters continue the prose. Narration omits
+citation markers and raw link URLs; link text remains.
 Simple inline identifiers can be spoken directly; ambiguous notation needs review.
 No article code or interactive block is executed to generate narration.
 
@@ -212,6 +215,11 @@ On 24 October 2026 the profile hash for `kokoro-mlx-bf16-v1` was updated after t
 certifi 2026.10.23 and other patch releases). The model, voices and encoder are
 unchanged, so the profile keeps its name. Every public rendition was regenerated
 with the new environment.
+
+Also on 24 October 2026, article recordings began to include the summary as a
+spoken subtitle after the title (segment kind `subtitle`, same 0.55-second pause
+as the title). It was previously omitted by design. Subtitles are written to be
+read aloud: avoid repeating the body’s opening sentence.
 
 ## Runtime and measurements
 

@@ -24,6 +24,15 @@ button. With JavaScript disabled, a native disclosure exposes the full article
 link and Email. No platform SDK, tracking counter or sharing request runs merely
 because someone reads the article.
 
+Prefilled text puts the title and the subtitle (the article’s `summary`) on
+separate lines, followed by the link, for X, Bluesky, Email and **Share on your
+device**. The subtitle is added only when the whole post fits: 280 characters on X,
+where every link counts as 23, and 300 graphemes on Bluesky, where the link counts
+in full. Otherwise the title is used alone. LinkedIn’s share link accepts only the
+URL, so its card shows the page title and image. The Open Graph title stays the
+title alone, because platforms that show the description already display the
+subtitle there. Added 24 October 2026.
+
 ## Link selection and configuration
 
 `publishing/site.yaml` optionally declares `shortLinkOrigin`: an HTTPS origin

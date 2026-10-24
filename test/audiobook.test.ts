@@ -139,6 +139,8 @@ test("book speech preserves hierarchy, suppresses body article titles, excludes 
   assert.match(words, /Part 1. Beginnings/);
   assert.match(words, /Chapter 1. First chapter/);
   assert.doesNotMatch(words, /Article one|Article two|from three|A summary/);
+  // Article subtitles belong to the article recordings, not the book.
+  assert(!p.segments.some((s) => s.text === "Example"));
   assert.equal(p.partial[0], "chapter");
   assert.match(words, /You're up to date/);
   const pendingBook = await audiobookPlan(root, { ...c, status: "draft" }, lib);

@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: hello-brave-new-world
 title: Hello, Brave New World
-summary: A new home for articles, experiments, and ideas that will grow over time.
+summary: How the site is organised and where the earlier work lives.
 language: en
 status: published
 publication:

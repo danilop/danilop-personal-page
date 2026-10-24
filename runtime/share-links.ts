@@ -1,5 +1,6 @@
 /** Ordinary handoff links: platforms still require the reader to confirm posting. */
-export function shareLinks(title: string, url: string) {
+/** The subtitle joins the title on its own line when the whole post still fits. */
+export function shareLinks(title: string, url: string, subtitle = "") {
   const intent = (base: string, params: Record<string, string>) =>
     `${base}?${new URLSearchParams(params)}`;
   const segments = (text: string) =>
@@ -7,16 +8,22 @@ export function shareLinks(title: string, url: string) {
       new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text),
       (s) => s.segment,
     );
+  const full = subtitle ? `${title}\n${subtitle}` : title;
   const room = Math.max(0, 300 - segments(url).length - 1);
-  const shortTitle = segments(title).slice(0, room).join("");
+  const bluesky =
+    segments(full).length <= room
+      ? full
+      : segments(title).slice(0, room).join("");
+  // X counts every link as 23 characters, plus the space before it.
+  const x = segments(full).length + 24 <= 280 ? full : title;
   return {
-    email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${title}\n\n${url}`)}`,
-    x: intent("https://x.com/intent/tweet", { text: title, url }),
+    email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${full}\n\n${url}`)}`,
+    x: intent("https://x.com/intent/tweet", { text: x, url }),
     linkedin: intent("https://www.linkedin.com/sharing/share-offsite/", {
       url,
     }),
     bluesky: intent("https://bsky.app/intent/compose", {
-      text: shortTitle ? `${shortTitle}\n${url}` : url,
+      text: bluesky ? `${bluesky}\n${url}` : url,
     }),
   };
 }

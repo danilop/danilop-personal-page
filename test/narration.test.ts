@@ -150,6 +150,23 @@ test("speech ignores presentation and metadata but preserves spoken wording, voi
     ).speechHash,
     doc.speechHash,
   );
+  assert.deepEqual(
+    doc.segments.slice(0, 2).map((s) => [s.kind, s.text, s.pause]),
+    [
+      ["title", piece.title, 0.55],
+      ["subtitle", piece.summary, 0.55],
+    ],
+  );
+  assert.notEqual(
+    (
+      await speechDocument(
+        root,
+        { ...piece, summary: "Another subtitle." },
+        lib,
+      )
+    ).speechHash,
+    doc.speechHash,
+  );
   assert.match(doc.firstParagraph!, /^Welcome/);
   assert(!doc.segments.some((s) => s.text.includes("https:")));
 });

@@ -4,6 +4,7 @@ function mountSharing(dialog: HTMLDialogElement) {
   const full = dialog.dataset.full!;
   const short = dialog.dataset.short ?? "";
   const title = dialog.dataset.title!;
+  const subtitle = dialog.dataset.subtitle ?? "";
   const field = dialog.querySelector<HTMLInputElement>("input")!;
   const status = dialog.querySelector<HTMLElement>("[data-share-status]")!;
   const copy = dialog.querySelector<HTMLButtonElement>("[data-share-copy]")!;
@@ -18,7 +19,7 @@ function mountSharing(dialog: HTMLDialogElement) {
     chosen = url;
     field.value = url;
     copy.textContent = url === short ? "Copy short link" : "Copy full link";
-    const links = shareLinks(title, url);
+    const links = shareLinks(title, url, subtitle);
     for (const anchor of dialog.querySelectorAll<HTMLAnchorElement>(
       "[data-share-platform]",
     )) {
@@ -88,11 +89,13 @@ function mountSharing(dialog: HTMLDialogElement) {
     })();
   });
   device.addEventListener("click", () => {
-    void navigator.share({ title, url: chosen }).catch((error: unknown) => {
-      if (!(error instanceof DOMException && error.name === "AbortError"))
-        status.textContent =
-          "Device sharing was unavailable. You can copy the link instead.";
-    });
+    void navigator
+      .share({ title, text: subtitle || undefined, url: chosen })
+      .catch((error: unknown) => {
+        if (!(error instanceof DOMException && error.name === "AbortError"))
+          status.textContent =
+            "Device sharing was unavailable. You can copy the link instead.";
+      });
   });
   for (const button of document.querySelectorAll<HTMLButtonElement>(
     `[data-share-open="${dialog.id}"]`,

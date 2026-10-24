@@ -857,6 +857,7 @@ Ordered book collections may set `audioSubtitle` (a real spoken subtitle),
 `audioAuthor` (defaults to the site author), and `audiobook: {voice: bm_george,
 pace: 1, profile: kokoro-mlx-bf16-v1}`. These settings apply consistently across
 book content; article voice overrides do not change the book voice. Do not use
-`summary` for a subtitle: landing-page summaries are not narrated. See
+the book's `summary` for a subtitle: landing-page summaries are not narrated in
+the audiobook. Article summaries are spoken only in each article’s own recording. See
 [the audiobook workflow](book-audiobooks.md#authoring-and-operations) for preview,
 reviewed explanations, publication gating and current limitations.

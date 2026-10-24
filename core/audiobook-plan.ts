@@ -225,7 +225,10 @@ export async function audiobookPlan(
           n.depth,
           true,
         );
-      for (const s of doc.segments.filter((s) => s.kind !== "title"))
+      // Chapters continue the prose; the article title and subtitle are not repeated.
+      for (const s of doc.segments.filter(
+        (s) => s.kind !== "title" && s.kind !== "subtitle",
+      ))
         add(
           s,
           n.id,

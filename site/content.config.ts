@@ -19,7 +19,13 @@ const pieces = defineCollection({
         voice: z.string(),
         segments: z.array(
           z.object({
-            kind: z.enum(["title", "heading", "paragraph", "adaptation"]),
+            kind: z.enum([
+              "title",
+              "subtitle",
+              "heading",
+              "paragraph",
+              "adaptation",
+            ]),
             text: z.string(),
             pause: z.number(),
           }),

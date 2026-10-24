@@ -34,7 +34,13 @@ const narrationRecordSchema = z
     settings: settingsSchema,
     segments: z.array(
       z.object({
-        kind: z.enum(["title", "heading", "paragraph", "adaptation"]),
+        kind: z.enum([
+          "title",
+          "subtitle",
+          "heading",
+          "paragraph",
+          "adaptation",
+        ]),
         text: z.string().min(1),
         pause: z.number().nonnegative(),
       }),

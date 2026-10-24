@@ -14,6 +14,10 @@ checks named here are implemented; none of them edits text automatically.
   job’s name or a tool’s error message, never from invented asides.
 - Use British English (`language: en-GB`): “organise”, “behaviour”, “programme”
   for a plan and “program” for software.
+- The `summary` is the subtitle. It appears beneath the title, serves as the
+  search and social description, and is spoken after the title in the article’s
+  narration. Write one plain sentence that reads well aloud and does not repeat
+  the body’s opening sentence.
 - Name things exactly. Spell out “Raspberry Pi” for the computer, including in
   captions and alternative text. “Pi” alone is reserved for the Pi coding agent.
 

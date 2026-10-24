@@ -52,7 +52,7 @@ export const settingsSchema = z
   .strict();
 export type NarrationSettings = z.infer<typeof settingsSchema>;
 export type SpeechSegment = {
-  kind: "title" | "heading" | "paragraph" | "adaptation";
+  kind: "title" | "subtitle" | "heading" | "paragraph" | "adaptation";
   text: string;
   pause: number;
 };
@@ -168,7 +168,7 @@ export async function speechDocument(
       segments.push({
         kind,
         text,
-        pause: kind === "heading" || kind === "title" ? 0.55 : 0.28,
+        pause: kind === "paragraph" || kind === "adaptation" ? 0.28 : 0.55,
       });
   }
   async function dependencies(value: unknown): Promise<unknown> {
@@ -292,6 +292,8 @@ export async function speechDocument(
     );
   }
   add("title", title);
+  // The page shows the summary beneath the title, so the recording does too.
+  add("subtitle", piece.summary);
   async function walk(nodes: SpeechNode[]) {
     // Visual emphasis does not add speech, pauses, or change paragraph neighbours.
     nodes = nodes.flatMap((n) =>
@@ -332,7 +334,7 @@ export async function speechDocument(
   }
   await walk(tree.children ?? []);
   const firstParagraph = segments.find((s) => s.kind === "paragraph")?.text;
-  if (!segments.some((s) => s.kind !== "title"))
+  if (!segments.some((s) => s.kind !== "title" && s.kind !== "subtitle"))
     throw Error(`No speakable article content: ${piece.id}`);
   return {
     key: renditionKey(piece, title),

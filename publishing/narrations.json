@@ -4,7 +4,7 @@
     "clever-enough-to-find-the-loophole:38b5b5a99cb139e0": {
       "pieceId": "clever-enough-to-find-the-loophole",
       "title": "Clever Enough to Find the Loophole",
-      "speechHash": "996d25847f11f20ca1d045a1e2095f9f8d5e68e3f9d7af00308fc6ead23b2385",
+      "speechHash": "77b461142ea1670bc89a0276f0a1be2c019654bb8f368d4db4f8e0dc24241538",
       "reviewHash": "f8650ebfecda53788dcfa1fd32052e0646fa14601d58a1e5006b7b134e412bfd",
       "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
       "settings": {
@@ -25,6 +25,11 @@
         {
           "kind": "title",
           "text": "Clever Enough to Find the Loophole",
+          "pause": 0.55
+        },
+        {
+          "kind": "subtitle",
+          "text": "When increasingly capable AI agents show an excess of initiative.",
           "pause": 0.55
         },
         {
@@ -374,9 +379,9 @@
         }
       ],
       "audio": {
-        "sha256": "5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5",
-        "bytes": 14234444,
-        "duration": 1186.115,
+        "sha256": "d720f055f4feae9d36284631fcf786585d8d4dff17331f601b8c85acb0b15762",
+        "bytes": 14306156,
+        "duration": 1192.09,
         "timings": [
           {
             "start": 0,
@@ -384,290 +389,294 @@
           },
           {
             "start": 3.5,
-            "end": 13.43
+            "end": 9.475
           },
           {
-            "start": 13.43,
-            "end": 33.435
+            "start": 9.475,
+            "end": 19.405
           },
           {
-            "start": 33.435,
-            "end": 55.69
+            "start": 19.405,
+            "end": 39.41
           },
           {
-            "start": 55.69,
-            "end": 74.895
+            "start": 39.41,
+            "end": 61.665
           },
           {
-            "start": 74.895,
-            "end": 97.575
+            "start": 61.665,
+            "end": 80.87
           },
           {
-            "start": 97.575,
-            "end": 108.78
+            "start": 80.87,
+            "end": 103.55
           },
           {
-            "start": 108.78,
-            "end": 112.505
+            "start": 103.55,
+            "end": 114.755
           },
           {
-            "start": 112.505,
-            "end": 128.535
+            "start": 114.755,
+            "end": 118.48
           },
           {
-            "start": 128.535,
-            "end": 147.84
+            "start": 118.48,
+            "end": 134.51
           },
           {
-            "start": 147.84,
-            "end": 170.27
+            "start": 134.51,
+            "end": 153.815
           },
           {
-            "start": 170.27,
-            "end": 173.695
+            "start": 153.815,
+            "end": 176.245
           },
           {
-            "start": 173.695,
-            "end": 194.55
+            "start": 176.245,
+            "end": 179.67
           },
           {
-            "start": 194.55,
-            "end": 199.18
+            "start": 179.67,
+            "end": 200.525
           },
           {
-            "start": 199.18,
-            "end": 220.385
+            "start": 200.525,
+            "end": 205.155
           },
           {
-            "start": 220.385,
-            "end": 242.34
+            "start": 205.155,
+            "end": 226.36
           },
           {
-            "start": 242.34,
-            "end": 260.995
+            "start": 226.36,
+            "end": 248.315
           },
           {
-            "start": 260.995,
-            "end": 278.925
+            "start": 248.315,
+            "end": 266.97
           },
           {
-            "start": 278.925,
-            "end": 303.305
+            "start": 266.97,
+            "end": 284.9
           },
           {
-            "start": 303.305,
-            "end": 306.705
+            "start": 284.9,
+            "end": 309.28
           },
           {
-            "start": 306.705,
-            "end": 328.885
+            "start": 309.28,
+            "end": 312.68
           },
           {
-            "start": 328.885,
-            "end": 346.415
+            "start": 312.68,
+            "end": 334.86
           },
           {
-            "start": 346.415,
-            "end": 373.345
+            "start": 334.86,
+            "end": 352.39
           },
           {
-            "start": 373.345,
-            "end": 399.175
+            "start": 352.39,
+            "end": 379.32
           },
           {
-            "start": 399.175,
-            "end": 418.88
+            "start": 379.32,
+            "end": 405.15
           },
           {
-            "start": 418.88,
-            "end": 422.48
+            "start": 405.15,
+            "end": 424.855
           },
           {
-            "start": 422.48,
-            "end": 450.46
+            "start": 424.855,
+            "end": 428.455
           },
           {
-            "start": 450.46,
-            "end": 467.765
+            "start": 428.455,
+            "end": 456.435
           },
           {
-            "start": 467.765,
-            "end": 479.195
+            "start": 456.435,
+            "end": 473.74
           },
           {
-            "start": 479.195,
-            "end": 482.07
+            "start": 473.74,
+            "end": 485.17
           },
           {
-            "start": 482.07,
-            "end": 504.35
+            "start": 485.17,
+            "end": 488.045
           },
           {
-            "start": 504.35,
-            "end": 540.905
+            "start": 488.045,
+            "end": 510.325
           },
           {
-            "start": 540.905,
-            "end": 560.86
+            "start": 510.325,
+            "end": 546.88
           },
           {
-            "start": 560.86,
-            "end": 607.69
+            "start": 546.88,
+            "end": 566.835
           },
           {
-            "start": 607.69,
-            "end": 625.645
+            "start": 566.835,
+            "end": 613.665
           },
           {
-            "start": 625.645,
-            "end": 636.9
+            "start": 613.665,
+            "end": 631.62
           },
           {
-            "start": 636.9,
-            "end": 640.625
+            "start": 631.62,
+            "end": 642.875
           },
           {
-            "start": 640.625,
-            "end": 661.355
+            "start": 642.875,
+            "end": 646.6
           },
           {
-            "start": 661.355,
-            "end": 687.06
+            "start": 646.6,
+            "end": 667.33
           },
           {
-            "start": 687.06,
-            "end": 708.615
+            "start": 667.33,
+            "end": 693.035
           },
           {
-            "start": 708.615,
-            "end": 712.015
+            "start": 693.035,
+            "end": 714.59
           },
           {
-            "start": 712.015,
-            "end": 721.62
+            "start": 714.59,
+            "end": 717.99
           },
           {
-            "start": 721.62,
-            "end": 734.875
+            "start": 717.99,
+            "end": 727.595
           },
           {
-            "start": 734.875,
-            "end": 755.13
+            "start": 727.595,
+            "end": 740.85
           },
           {
-            "start": 755.13,
-            "end": 776.435
+            "start": 740.85,
+            "end": 761.105
           },
           {
-            "start": 776.435,
-            "end": 798.065
+            "start": 761.105,
+            "end": 782.41
           },
           {
-            "start": 798.065,
-            "end": 826.72
+            "start": 782.41,
+            "end": 804.04
           },
           {
-            "start": 826.72,
-            "end": 829.645
+            "start": 804.04,
+            "end": 832.695
           },
           {
-            "start": 829.645,
-            "end": 855.225
+            "start": 832.695,
+            "end": 835.62
           },
           {
-            "start": 855.225,
-            "end": 879.755
+            "start": 835.62,
+            "end": 861.2
           },
           {
-            "start": 879.755,
-            "end": 898.235
+            "start": 861.2,
+            "end": 885.73
           },
           {
-            "start": 898.235,
-            "end": 909.84
+            "start": 885.73,
+            "end": 904.21
           },
           {
-            "start": 909.84,
-            "end": 912.94
+            "start": 904.21,
+            "end": 915.815
           },
           {
-            "start": 912.94,
-            "end": 931.695
+            "start": 915.815,
+            "end": 918.915
           },
           {
-            "start": 931.695,
-            "end": 943.375
+            "start": 918.915,
+            "end": 937.67
           },
           {
-            "start": 943.375,
-            "end": 967.63
+            "start": 937.67,
+            "end": 949.35
           },
           {
-            "start": 967.63,
-            "end": 984.935
+            "start": 949.35,
+            "end": 973.605
           },
           {
-            "start": 984.935,
-            "end": 997.04
+            "start": 973.605,
+            "end": 990.91
           },
           {
-            "start": 997.04,
-            "end": 1020.42
+            "start": 990.91,
+            "end": 1003.015
           },
           {
-            "start": 1020.42,
-            "end": 1023.645
+            "start": 1003.015,
+            "end": 1026.395
           },
           {
-            "start": 1023.645,
-            "end": 1052.525
+            "start": 1026.395,
+            "end": 1029.62
           },
           {
-            "start": 1052.525,
-            "end": 1078.805
+            "start": 1029.62,
+            "end": 1058.5
           },
           {
-            "start": 1078.805,
-            "end": 1082.13
+            "start": 1058.5,
+            "end": 1084.78
           },
           {
-            "start": 1082.13,
-            "end": 1098.635
+            "start": 1084.78,
+            "end": 1088.105
           },
           {
-            "start": 1098.635,
-            "end": 1115.34
+            "start": 1088.105,
+            "end": 1104.61
           },
           {
-            "start": 1115.34,
-            "end": 1135.07
+            "start": 1104.61,
+            "end": 1121.315
           },
           {
-            "start": 1135.07,
-            "end": 1148.675
+            "start": 1121.315,
+            "end": 1141.045
           },
           {
-            "start": 1148.675,
-            "end": 1165.605
+            "start": 1141.045,
+            "end": 1154.65
           },
           {
-            "start": 1165.605,
-            "end": 1181.785
+            "start": 1154.65,
+            "end": 1171.58
           },
           {
-            "start": 1181.785,
-            "end": 1186.115
+            "start": 1171.58,
+            "end": 1187.76
+          },
+          {
+            "start": 1187.76,
+            "end": 1192.09
           }
         ],
         "reusedChunks": 0,
-        "generationSeconds": 264.2855915000546,
-        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3"
+        "generationSeconds": 163.08971908304375,
+        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-d720f055f4feae9d36284631fcf786585d8d4dff17331f601b8c85acb0b15762.mp3"
       }
     },
     "hello-brave-new-world:4c9faedb7e7ab5bc": {
       "pieceId": "hello-brave-new-world",
       "title": "Hello, Brave New World",
-      "speechHash": "47f87e8e765db196fc544da21f84c1dc2f44c98f07f511628f8b561c549f2150",
+      "speechHash": "939322788060a71b7164d3ba194fee07c930b6a0b922bdc996a755ecbaedb823",
       "reviewHash": "3f46ae07049721c5c623742a8170ee0f13b66d9de88276422404afaf586ac1ec",
       "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
       "settings": {
@@ -688,6 +697,11 @@
         {
           "kind": "title",
           "text": "Hello, Brave New World",
+          "pause": 0.55
+        },
+        {
+          "kind": "subtitle",
+          "text": "How the site is organised and where the earlier work lives.",
           "pause": 0.55
         },
         {
@@ -712,9 +726,9 @@
         }
       ],
       "audio": {
-        "sha256": "90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f",
-        "bytes": 541772,
-        "duration": 45.07,
+        "sha256": "ee45f083bb11627feed5b0994e90a63aba5f96d645f2f530fb455cec53c9b898",
+        "bytes": 599084,
+        "duration": 49.845,
         "timings": [
           {
             "start": 0,
@@ -722,24 +736,28 @@
           },
           {
             "start": 2.95,
-            "end": 10.93
+            "end": 7.725
           },
           {
-            "start": 10.93,
-            "end": 27.31
+            "start": 7.725,
+            "end": 15.705
           },
           {
-            "start": 27.31,
-            "end": 36.59
+            "start": 15.705,
+            "end": 32.085
           },
           {
-            "start": 36.59,
-            "end": 45.07
+            "start": 32.085,
+            "end": 41.365
+          },
+          {
+            "start": 41.365,
+            "end": 49.845
           }
         ],
         "reusedChunks": 0,
-        "generationSeconds": 11.811528208025265,
-        "path": "content/pieces/hello-brave-new-world/assets/narration-90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3"
+        "generationSeconds": 7.464493875042535,
+        "path": "content/pieces/hello-brave-new-world/assets/narration-ee45f083bb11627feed5b0994e90a63aba5f96d645f2f530fb455cec53c9b898.mp3"
       }
     }
   }

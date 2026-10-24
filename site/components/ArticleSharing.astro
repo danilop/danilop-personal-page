@@ -7,10 +7,18 @@ interface Props {
   pieceId: string;
   collectionId?: string;
   title: string;
+  subtitle?: string;
   url: string;
   position: "top" | "bottom";
 }
-const { pieceId, collectionId, title, url, position } = Astro.props;
+const {
+  pieceId,
+  collectionId,
+  title,
+  subtitle = "",
+  url,
+  position,
+} = Astro.props;
 const draft =
   site.authoring?.pieces.includes(pieceId) ||
   (collectionId && site.authoring?.collections.includes(collectionId));
@@ -21,7 +29,7 @@ const code = Object.keys(site.shortlinks)
   .find((key) => site.shortlinks[key] === full);
 const short =
   code && config.shortLinkOrigin ? `${config.shortLinkOrigin}/${code}` : "";
-const links = shareLinks(title, full);
+const links = shareLinks(title, full, subtitle);
 const id = "article-share";
 ---
 
@@ -54,6 +62,7 @@ const id = "article-share";
         data-full={full}
         data-short={short}
         data-title={title}
+        data-subtitle={subtitle}
         aria-labelledby="share-heading"
       >
         <div class="share-heading">
