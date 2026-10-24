@@ -393,6 +393,45 @@ blocks:
     caption: A minimal memory interface.
 ```
 
+### Diagram conventions
+
+Diagrams carry meaning through shape and line style, never colour, so they
+read the same in print, in greyscale and for colour-blind readers. Use one
+element for one meaning in every diagram:
+
+| Element                                     | Mermaid                       | Meaning                                                                |
+| ------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------- |
+| Rounded rectangle                           | `id("Visiting agent")`        | Someone who decides: a person, an agent or a model                     |
+| Rectangle                                   | `id["Brain service"]`         | Software doing a fixed job: a service, a tool, a scheduled job, a step |
+| Cylinder                                    | `id[("Journal")]`             | Stored records                                                         |
+| Document                                    | `id@{ shape: doc, label: … }` | A document someone reads, such as the article text                     |
+| Parallelogram                               | `id[/"Question"/]`            | What goes in or comes out of a process                                 |
+| Labelled box (subgraph)                     | `subgraph pi["Raspberry Pi"]` | A place: a device or a page                                            |
+| Solid arrow                                 | `-->`                         | A request, an action or data moving the way the arrow points           |
+| Dotted arrow                                | `-.->`                        | Derived automatically and rebuildable, such as indexing                |
+| Double-headed arrow                         | `<-->`                        | Two copies kept in sync; nothing else                                  |
+| Sequence: solid arrow / dashed arrow / note | `->>` / `-->>` / `Note over`  | A request or action / its reply / time passing                         |
+
+- An arrow points from whoever acts to what it acts on; in a pipeline, from
+  one step to the next. Label it with a short lower-case verb or with what
+  passes along it. Leave a label out when the target says it all.
+- Name nodes with nouns in sentence case: at most two short lines, with a
+  detail line such as `Keyword search<br/>SQLite FTS5`. Use the article's
+  terms; name a product only when the text does.
+- Draw top to bottom by default, which suits the reading column and phones.
+  Use left to right only when the result stays narrow. Keep sequence messages
+  short enough for the diagram to fit the 760px column.
+- Every diagram block needs a caption (a short title, then a sentence) and a
+  description that states the same relationships in prose.
+
+The Mermaid renderer applies a house style from the site's `tokens`: the paper
+background, ink lines, white boxes with muted borders, no shadows, opaque label
+backgrounds and light sequence lifelines. Rendered SVGs keep their natural size,
+so diagram text matches the page and only narrow screens scale it down. Charts
+from a Vega-Lite file set their own colours and fonts in the spec's `config`;
+size them with `render.<target>.options` (`width`, `height`), which override the
+spec.
+
 `chart-v1` is our small portable chart vocabulary. Start with line, bar, and
 point (scatter) marks, typed x/y fields, an optional color series, labels, and explicit
 units. Advanced specifications can instead declare `format: vega-lite` and a

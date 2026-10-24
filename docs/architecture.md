@@ -373,6 +373,8 @@ Any verified third-party frame follows the activation/CSP rules above.
 - **Diagrams:** render Mermaid/D2 during the build. Start with ELK where the
   selected version/diagram type supports it; validate engine-specific options.
   Keep separate adapters and source formats. Layout results need visual review.
+  Mermaid output uses a house style built from the site tokens and keeps its
+  natural pixel size ([diagram conventions](authoring-format.md#diagram-conventions)).
 - **Math:** use KaTeX for web output. Export semantic math where supported;
   otherwise use a deliberate static rendition and explanation.
 - **Figures:** asset processing centralizes widths, captions, descriptions, and

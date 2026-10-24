@@ -23,7 +23,72 @@ import {
   type Plugin,
 } from "./registry";
 import { escape as e, safeUrl, hash } from "../core/assets";
+import { siteConfig, type SiteConfig } from "../core/config";
 const exec = promisify(execFile);
+/**
+ * Mermaid sizes its SVG to 100% of the container; as an <img> that stretches
+ * every diagram to the column. Use the drawing's own size so text stays at the
+ * page's scale and only narrow screens shrink it (img max-width: 100%).
+ */
+export function naturalSize(svg: string) {
+  return svg.replace(/<svg\b[^>]*>/, (tag) => {
+    const box = /viewBox="[-\d.]+ [-\d.]+ ([\d.]+) ([\d.]+)"/.exec(tag);
+    if (!box) return tag;
+    const [w, h] = [box[1], box[2]].map((n) => Math.ceil(Number(n)));
+    return tag
+      .replace(/\swidth="[^"]*"/, "")
+      .replace(/\sheight="[^"]*"/, "")
+      .replace(/max-width:\s*[\d.]+px;?\s*/, "")
+      .replace(/^<svg/, `<svg width="${w}" height="${h}"`);
+  });
+}
+/**
+ * House style for Mermaid diagrams: site colours, no shadows and opaque label
+ * backgrounds. Meaning comes from shapes and line styles (docs/authoring-format.md).
+ */
+export function mermaidStyle(t: SiteConfig["tokens"]) {
+  const box = { fill: "#ffffff", line: t.muted };
+  return {
+    theme: "base",
+    flowchart: {
+      htmlLabels: false,
+      padding: 12,
+      nodeSpacing: 40,
+      rankSpacing: 48,
+      wrappingWidth: 260,
+    },
+    sequence: {
+      mirrorActors: false,
+      actorMargin: 24,
+      width: 116,
+      diagramMarginX: 4,
+      diagramMarginY: 4,
+    },
+    themeVariables: {
+      fontFamily: `${t.sans}, system-ui, sans-serif`,
+      fontSize: "15px",
+      background: t.paper,
+      primaryColor: box.fill,
+      primaryTextColor: t.ink,
+      primaryBorderColor: box.line,
+      secondaryColor: box.fill,
+      tertiaryColor: box.fill,
+      lineColor: t.ink,
+      clusterBkg: t.paper,
+      clusterBorder: t.rule,
+      edgeLabelBackground: t.paper,
+      actorBkg: box.fill,
+      actorBorder: box.line,
+      actorTextColor: t.ink,
+      signalColor: t.ink,
+      signalTextColor: t.ink,
+      noteBkgColor: t.paper,
+      noteBorderColor: t.hairline,
+      noteTextColor: t.ink,
+    },
+    themeCSS: `.edgeLabel rect,.edgeLabel .background,.labelBkg{fill:${t.paper}!important;opacity:1!important;background:${t.paper}!important}.node rect,.node polygon,.node path,.node circle,rect.actor,rect.note,.cluster rect{filter:none!important}.cluster-label text{fill:${t.muted}!important;font-size:13px}.actor-line{stroke:${t.hairline}!important;stroke-width:1px!important}.messageText{paint-order:stroke;stroke:${t.paper};stroke-width:6px;stroke-linejoin:round}`,
+  };
+}
 const empty = z.object({}).strict();
 const text = (v: unknown, name: string) => {
   if (typeof v !== "string" || !v.trim()) throw Error(`Missing ${name}`);
@@ -339,50 +404,55 @@ export function registry() {
       "mermaid",
       ["diagram"],
       ["mermaid"],
-      (r) =>
-        cached(r, "mermaid-native-labels-v2", async () => {
-          const dir = await fs.mkdtemp(
-            path.join(os.tmpdir(), "notes-mermaid-"),
-          );
-          try {
-            const input = path.join(dir, "source.mmd"),
-              output = path.join(dir, "diagram.svg"),
-              config = path.join(dir, "config.json");
-            await fs.writeFile(input, await source(r));
-            await fs.writeFile(
-              config,
-              JSON.stringify({
-                securityLevel: "strict",
-                theme: "neutral",
-                htmlLabels: false,
-                flowchart: { htmlLabels: false },
-                ...r.options,
-              }),
+      async (r) => {
+        const style = mermaidStyle((await siteConfig()).tokens);
+        return cached(
+          r,
+          `mermaid-house-sized-${hash(JSON.stringify(style))}`,
+          async () => {
+            const dir = await fs.mkdtemp(
+              path.join(os.tmpdir(), "notes-mermaid-"),
             );
-            await exec(
-              process.execPath,
-              [
-                "node_modules/@mermaid-js/mermaid-cli/src/cli.js",
-                "-i",
-                input,
-                "-o",
-                output,
-                "-c",
+            try {
+              const input = path.join(dir, "source.mmd"),
+                output = path.join(dir, "diagram.svg"),
+                config = path.join(dir, "config.json");
+              await fs.writeFile(input, await source(r));
+              await fs.writeFile(
                 config,
-                "-b",
-                "transparent",
-                "--quiet",
-                ...(process.env.AWS_APP_ID
-                  ? ["-p", "infrastructure/puppeteer-ci.json"]
-                  : []),
-              ],
-              { timeout: 60000 },
-            );
-            return fs.readFile(output, "utf8");
-          } finally {
-            await fs.rm(dir, { recursive: true, force: true });
-          }
-        }),
+                JSON.stringify({
+                  securityLevel: "strict",
+                  htmlLabels: false,
+                  ...style,
+                  ...r.options,
+                }),
+              );
+              await exec(
+                process.execPath,
+                [
+                  "node_modules/@mermaid-js/mermaid-cli/src/cli.js",
+                  "-i",
+                  input,
+                  "-o",
+                  output,
+                  "-c",
+                  config,
+                  "-b",
+                  "transparent",
+                  "--quiet",
+                  ...(process.env.AWS_APP_ID
+                    ? ["-p", "infrastructure/puppeteer-ci.json"]
+                    : []),
+                ],
+                { timeout: 60000 },
+              );
+              return naturalSize(await fs.readFile(output, "utf8"));
+            } finally {
+              await fs.rm(dir, { recursive: true, force: true });
+            }
+          },
+        );
+      },
       z.object({ layout: z.enum(["elk", "dagre"]).optional() }).strict(),
     ),
   );

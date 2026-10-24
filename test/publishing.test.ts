@@ -15,7 +15,12 @@ import {
 import { renderDocument } from "../core/render";
 import { readYaml } from "../core/model";
 import { Assets, localAsset } from "../core/assets";
-import { registry, publicEmbed } from "../renderers/static";
+import {
+  registry,
+  publicEmbed,
+  naturalSize,
+  mermaidStyle,
+} from "../renderers/static";
 import { freezeEdition, verifyEdition } from "../core/books";
 import { compileLinks } from "../core/shortlinks";
 import { siteSchema } from "../core/config";
@@ -702,4 +707,18 @@ test("short-link status query exposes only the public destination with CORS", as
     call("GET", "/hello", "https://outside.invalid/").statusCode,
     404,
   );
+});
+
+test("Mermaid diagrams keep their natural size and the site palette", () => {
+  const svg = naturalSize(
+    '<svg id="d" width="100%" style="max-width: 482.05px;" viewBox="4 4 482.05 535.5" role="graphics-document"><g/></svg>',
+  );
+  assert.match(svg, /^<svg width="483" height="536" id="d"/);
+  assert.doesNotMatch(svg, /100%|max-width/);
+  assert.equal(naturalSize("<svg><g/></svg>"), "<svg><g/></svg>");
+  const tokens = siteSchema.shape.tokens.parse({});
+  const style = mermaidStyle(tokens);
+  assert.equal(style.themeVariables.background, tokens.paper);
+  assert.equal(style.themeVariables.lineColor, tokens.ink);
+  assert.match(style.themeCSS, /filter:none/);
 });
