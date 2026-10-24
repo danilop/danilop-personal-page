@@ -85,29 +85,41 @@
       "sha256": "0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc",
       "bytes": 14235308,
       "contentType": "audio/mpeg",
-      "key": "originals/narration-0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3",
-      "publicKey": "media/0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3"
+      "key": "originals/narration-0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3"
     },
     "content/pieces/hello-brave-new-world/assets/narration-8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3": {
       "sha256": "8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b",
       "bytes": 541772,
       "contentType": "audio/mpeg",
-      "key": "originals/narration-8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3",
-      "publicKey": "media/8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3"
+      "key": "originals/narration-8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3"
+    },
+    "content/pieces/clever-enough-to-find-the-loophole/assets/narration-5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3": {
+      "sha256": "5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5",
+      "bytes": 14234444,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3",
+      "publicKey": "media/5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3"
+    },
+    "content/pieces/hello-brave-new-world/assets/narration-90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3": {
+      "sha256": "90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f",
+      "bytes": 541772,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3",
+      "publicKey": "media/90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3"
     }
   },
   "outputs": {
-    "0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3": {
-      "sha256": "0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc",
-      "bytes": 14235308,
+    "5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3": {
+      "sha256": "5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5",
+      "bytes": 14234444,
       "contentType": "audio/mpeg",
-      "key": "media/0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3"
+      "key": "media/5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3"
     },
-    "8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3": {
-      "sha256": "8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b",
+    "90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3": {
+      "sha256": "90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f",
       "bytes": 541772,
       "contentType": "audio/mpeg",
-      "key": "media/8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3"
+      "key": "media/90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3"
     },
     "open-notebook-manuscript-pages-upright-book-6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed.png": {
       "sha256": "6e4a7c4854eee6ef5c21aa2c71fff1194d7446e209e057e97d74ac04f60e61ed",

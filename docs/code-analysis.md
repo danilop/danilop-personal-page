@@ -14,19 +14,20 @@ Python tools and the existing NLP test dependencies are hash-locked in
 `tools/code-analysis/native-versions.json` and checked on every run. Installation
 never occurs during a commit.
 
-| Source                   | Checks                                                                                                                                                            |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TypeScript               | ESLint 10, typescript-eslint typed promise/assertion rules, strict TypeScript, Knip dead exports/files/dependencies, SonarJS duplication and cognitive complexity |
-| JavaScript and JSX       | ESLint correctness, browser/Node/CloudFront environments, SonarJS, Knip; maintained React, hooks and accessibility rules for the prototype                        |
-| Astro                    | Astro check, Astro ESLint and accessibility rules, embedded script checking, Stylelint for styles                                                                 |
-| HTML                     | HTML-validate, ESLint's HTML integration for inline scripts, Stylelint for embedded CSS                                                                           |
-| CSS                      | Stylelint standard rules; formatting with Prettier                                                                                                                |
-| Python                   | Ruff lint/format and complexity, ty type checking, Vulture dead code, Bandit security findings, Radon complexity inventory                                        |
-| YAML/JSON                | ESLint YAML/JSON correctness; Prettier; existing application schemas in tests/build                                                                               |
-| Shell and workflow shell | ShellCheck, plus actionlint for GitHub Actions expressions and workflow structure                                                                                 |
-| Secrets                  | Gitleaks with redacted diagnostics on the versionable snapshot                                                                                                    |
-| Test coverage            | c8/V8 with source maps for JS/TS and Python Coverage.py with branches; HTML, JSON and LCOV/XML reports                                                            |
-| Dependency architecture  | dependency-cruiser 18.4.0, runtime cycles and explicit module boundaries for JS/TS/JSX                                                                            |
+| Source                   | Checks                                                                                                                                                                                    |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript               | ESLint 10, typescript-eslint typed promise/assertion rules, strict TypeScript, Knip dead exports/files/dependencies, SonarJS duplication and cognitive complexity                         |
+| JavaScript and JSX       | ESLint correctness, browser/Node/CloudFront environments, SonarJS, Knip; maintained React, hooks and accessibility rules for the prototype                                                |
+| Astro                    | Astro check, Astro ESLint and accessibility rules, embedded script checking, Stylelint for styles                                                                                         |
+| HTML                     | HTML-validate, ESLint's HTML integration for inline scripts, Stylelint for embedded CSS                                                                                                   |
+| CSS                      | Stylelint standard rules; formatting with Prettier                                                                                                                                        |
+| Python                   | Ruff lint/format and complexity, ty type checking, Vulture dead code, Bandit security findings, Radon complexity inventory                                                                |
+| YAML/JSON                | ESLint YAML/JSON correctness; Prettier; existing application schemas in tests/build                                                                                                       |
+| Shell and workflow shell | ShellCheck, plus actionlint for GitHub Actions expressions and workflow structure                                                                                                         |
+| Secrets                  | Gitleaks with redacted diagnostics on the versionable snapshot                                                                                                                            |
+| Hidden characters        | Invisible, direction-changing and control characters in text files under `content/` and `authoring/`, including code and quotations; see the [writing style](writing-style.md#typography) |
+| Test coverage            | c8/V8 with source maps for JS/TS and Python Coverage.py with branches; HTML, JSON and LCOV/XML reports                                                                                    |
+| Dependency architecture  | dependency-cruiser 18.4.0, runtime cycles and explicit module boundaries for JS/TS/JSX                                                                                                    |
 
 The main app, local authoring, scripts, infrastructure source, legacy _generator_
 source and the isolated JSX prototype are included. Historical snapshots, generated

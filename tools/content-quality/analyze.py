@@ -106,6 +106,36 @@ PHRASES = {
         re.I,
     ),
 }
+# Characters checked one by one; the quote standard is in docs/writing-style.md.
+CHARACTER_RULES = (
+    (
+        "hidden-character",
+        re.compile(
+            "[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f\u00ad\u061c\u180e\u200b-\u200f"
+            "\u2028-\u202e\u2060-\u2064\u2066-\u206f\ufeff\ufff9-\ufffb\U000e0000-\U000e007f]"
+        ),
+        "error",
+        "Invisible character {code}. Remove it; it is never needed in prose and may be a hidden mark.",
+    ),
+    (
+        "unusual-space",
+        re.compile("[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]"),
+        "review",
+        "Non-standard space {code}. Use an ordinary space unless the break must be prevented.",
+    ),
+    (
+        "em-dash",
+        re.compile("—"),
+        "review",
+        "Em dash in prose. Use a comma, brackets or a new sentence; keep it only inside quoted titles.",
+    ),
+    (
+        "straight-quote",
+        re.compile("[\"']"),
+        "review",
+        "Straight quote. Use ’ for apostrophes, “ ” for quotations and ‘ ’ inside them.",
+    ),
+)
 # Patterns that read as model habits when several meet in one paragraph.
 TIC_PHRASES = (
     "contrast-frame",
@@ -646,6 +676,19 @@ def prose_findings(english):
                             "Review this stock construction in context; it is not automatically wrong.",
                             match.start(),
                             match.group(),
+                        )
+                    )
+            for rule, pattern, severity, message in CHARACTER_RULES:
+                for match in pattern.finditer(seg["text"]):
+                    findings.append(
+                        finding(
+                            p,
+                            seg,
+                            rule,
+                            message.format(code=f"U+{ord(match.group()[0]):04X}"),
+                            match.start(),
+                            match.group(),
+                            severity,
                         )
                     )
             match = re.search(

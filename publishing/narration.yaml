@@ -1,4 +1,4 @@
 schemaVersion: 1
 required: true
 profiles:
-  kokoro-mlx-bf16-v1: cf6ff558a033cab90b53e3aac2c7926571903d9afd1cfdbda145cfaf7791b048
+  kokoro-mlx-bf16-v1: f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231

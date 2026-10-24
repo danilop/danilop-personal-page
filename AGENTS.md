@@ -25,6 +25,12 @@ repository.
 Documentation synchronization is part of task completion, not optional follow-up
 work. Apply it without waiting for another reminder from the user.
 
+## Write in the house style
+
+Follow `docs/writing-style.md` for articles, book chapters, captions and summaries,
+and run the checks it lists. Book chapters on the site stay in sync with their
+original manuscripts: make every chapter edit in both places.
+
 ## Keep operator details private
 
 Store account-specific dashboard/notebook URLs, resource inventories, test

@@ -32,7 +32,8 @@ Review for:
   (“…, highlighting …”); the reversed contrasts “X, not Y” and “Y rather than X”;
   inflated vocabulary (delve, pivotal, underscore, testament, showcase, “serves
   as” for “is”); self-commentary such as “It was a reminder that…” or “turned
-  out”; and aphoristic closing lines that restate the point. One instance is
+  out”; em dashes used for asides; and aphoristic closing lines that restate
+  the point. One instance is
   normal. Prioritise paragraphs where several of these meet, because the
   accumulation is what readers notice.
 - Unsupported causal leaps, missing explanations and unclear referents. Label

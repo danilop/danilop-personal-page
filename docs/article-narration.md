@@ -207,6 +207,12 @@ may remain usable until explicitly retired. Changing the worker or its dependenc
 requires a reviewed profile-hash update and regeneration before release. Do not
 edit hashes just to bypass stale output.
 
+On 24 October 2026 the profile hash for `kokoro-mlx-bf16-v1` was updated after the
+23 October dependency refresh (MLX 0.32.3 → 0.32.4, Transformers 5.19.0 → 5.20.2,
+certifi 2026.10.23 and other patch releases). The model, voices and encoder are
+unchanged, so the profile keeps its name. Every public rendition was regenerated
+with the new environment.
+
 ## Runtime and measurements
 
 The selected runtime is **MLX-Audio 0.5.8**, Kokoro 82M BF16, British George at pace

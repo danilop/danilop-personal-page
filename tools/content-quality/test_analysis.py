@@ -240,6 +240,17 @@ class QualityTests(unittest.TestCase):
             self.assertIsNotNone(qa.PHRASES[rule].search(text), rule)
         self.assertIsNone(qa.PHRASES["contrast-reversed"].search("It has rather less to sell."))
 
+    def test_characters_follow_the_quote_standard(self):
+        def rules(text):
+            return [(f["rule"], f["severity"]) for f in qa.prose_findings([piece("c", text)])]
+
+        found = rules('The agent\u200bs turn came\u00a0next—"quietly".')
+        self.assertIn(("hidden-character", "error"), found)
+        self.assertIn(("unusual-space", "review"), found)
+        self.assertIn(("em-dash", "review"), found)
+        self.assertIn(("straight-quote", "review"), found)
+        self.assertEqual(rules("The agent’s “turn” came – 4–5 pages, ‘quoted’ inside."), [])
+
     def test_stacked_habits_in_one_paragraph(self):
         text = (
             "It was a reminder that the page matters, and the model runs locally. "

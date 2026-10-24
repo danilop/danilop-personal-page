@@ -189,7 +189,7 @@ test("analysis orchestration records every check and fails closed without skippi
   );
   assert.equal(process.exitCode, 1);
   assert.equal(summary.passed, false);
-  assert.equal(summary.checks.length, 27);
+  assert.equal(summary.checks.length, 28);
   assert.deepEqual(
     summary.checks.filter((row) => !row.passed).map((row) => row.check),
     ["eslint"],

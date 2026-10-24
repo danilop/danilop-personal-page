@@ -8,6 +8,12 @@ The [Good Enough opening](local-minimum-serialization.md), now Chapters 1 and 2,
 draft on 7 October 2026, using the separate private library at
 `exports/local-minimum-pilot/content` and collection ID `good-enough`.
 
+Imported chapters stay in sync with the original manuscripts in
+`~/Documents/MyBooks`: an edit made here is made there as well, and the reverse.
+The [writing style](writing-style.md#books) lists the source folders. On 24 October
+2026 the quotation-mark fixes in Chronicles Chapter 1 and Good Enough Chapter 1
+were applied to both copies.
+
 ## Selection and defaults
 
 Run `npm run content:import -- --from <library>` from the repository root.

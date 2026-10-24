@@ -178,6 +178,12 @@ export function main({ workspace = root, run = execute } = {}) {
       "--report-path",
       ".analysis/secrets.json",
     ]);
+    task("hidden-characters", process.execPath, [
+      "tools/code-analysis/hidden-characters.mjs",
+      ...files.filter((f) =>
+        /^(?:content|authoring)\/.*\.(?:md|mmd|ya?ml|json|csv|txt)$/.test(f),
+      ),
+    ]);
     const workflows = files.filter((f) =>
       /^\.github\/workflows\/.*\.ya?ml$/.test(f),
     );

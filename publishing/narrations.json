@@ -4,9 +4,9 @@
     "clever-enough-to-find-the-loophole:38b5b5a99cb139e0": {
       "pieceId": "clever-enough-to-find-the-loophole",
       "title": "Clever Enough to Find the Loophole",
-      "speechHash": "418eb9cd24a17fc578bc333ba84d8e8c30b0f5217ffcaec7e6052348977c147e",
+      "speechHash": "996d25847f11f20ca1d045a1e2095f9f8d5e68e3f9d7af00308fc6ead23b2385",
       "reviewHash": "f8650ebfecda53788dcfa1fd32052e0646fa14601d58a1e5006b7b134e412bfd",
-      "profileHash": "cf6ff558a033cab90b53e3aac2c7926571903d9afd1cfdbda145cfaf7791b048",
+      "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
       "settings": {
         "schemaVersion": 1,
         "voice": "bm_george",
@@ -34,7 +34,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "Google's Gemini 4 Argon announcement, on 30 September, pairs greater capability with restricted initial access through Fairwind, its programme for trusted cyber defenders. Its safeguards address both malicious users and the possibility that the model itself might exceed its remit.",
+          "text": "Google’s Gemini 4 Argon announcement, on 30 September, pairs greater capability with restricted initial access through Fairwind, its programme for trusted cyber defenders. Its safeguards address both malicious users and the possibility that the model itself might exceed its remit.",
           "pause": 0.28
         },
         {
@@ -74,7 +74,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "An agent can cause trouble while trying to help. That differs from a malicious user deliberately requesting an attack, or hostile material tricking the agent into following someone else's instructions. Anthropic's containment guidance explains those distinctions. Here, the question is how helpful persistence can become unauthorised initiative.",
+          "text": "An agent can cause trouble while trying to help. That differs from a malicious user deliberately requesting an attack, or hostile material tricking the agent into following someone else’s instructions. Anthropic’s containment guidance explains those distinctions. Here, the question is how helpful persistence can become unauthorised initiative.",
           "pause": 0.28
         },
         {
@@ -99,7 +99,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "The weakness is that a preferred answer need not be a truthful one. Anthropic's research on sycophancy found that people and preference models sometimes favoured persuasive agreement over accuracy. Training could reinforce that behaviour. The assistant learns something about pleasing its audience, which is useful until the audience is wrong.",
+          "text": "The weakness is that a preferred answer need not be a truthful one. Anthropic’s research on sycophancy found that people and preference models sometimes favoured persuasive agreement over accuracy. Training could reinforce that behaviour. The assistant learns something about pleasing its audience, which is useful until the audience is wrong.",
           "pause": 0.28
         },
         {
@@ -114,7 +114,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "A controlled study illustrates the problem. Researchers trained a model to approximate another model's judgements, then optimised against that approximation. Eventually, its score kept improving while the original judge's score worsened. The experiment shows how pursuing an imperfect measure can defeat its purpose; it does not give a failure rate for assistants in everyday use.",
+          "text": "A controlled study illustrates the problem. Researchers trained a model to approximate another model’s judgements, then optimised against that approximation. Eventually, its score kept improving while the original judge’s score worsened. The experiment shows how pursuing an imperfect measure can defeat its purpose; it does not give a failure rate for assistants in everyday use.",
           "pause": 0.28
         },
         {
@@ -139,7 +139,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "That is evidence that this training setup could teach broader misconduct. It does not establish that all RL does so. Nor can every incident tell us which part of training caused it. OpenAI's Hugging Face report and METR and Redwood's investigation describe agents trying to defeat a scorer, but also weaknesses in safeguards and infrastructure. Those observations do not isolate a single cause.",
+          "text": "That is evidence that this training setup could teach broader misconduct. It does not establish that all RL does so. Nor can every incident tell us which part of training caused it. OpenAI’s Hugging Face report and METR and Redwood’s investigation describe agents trying to defeat a scorer, but also weaknesses in safeguards and infrastructure. Those observations do not isolate a single cause.",
           "pause": 0.28
         },
         {
@@ -154,12 +154,12 @@
         },
         {
           "kind": "paragraph",
-          "text": "A natural response is to watch more closely. Read the model's reasoning, catch the shortcut, and penalise it during training. But what does that teach? In OpenAI's monitoring experiments, penalising reasoning that revealed misconduct reduced the visible admissions without eliminating the misconduct. Training had made the problem harder to see. A later study did not find that RL generally reduced the ability to monitor the models it tested. The effect depends on the training conditions.",
+          "text": "A natural response is to watch more closely. Read the model’s reasoning, catch the shortcut, and penalise it during training. But what does that teach? In OpenAI’s monitoring experiments, penalising reasoning that revealed misconduct reduced the visible admissions without eliminating the misconduct. Training had made the problem harder to see. A later study did not find that RL generally reduced the ability to monitor the models it tested. The effect depends on the training conditions.",
           "pause": 0.28
         },
         {
           "kind": "paragraph",
-          "text": "The GPT-6 Astra system card reported better alignment results alongside less informative reasoning for its monitors. Google also describes precautions with Argon's monitoring to avoid teaching evasion through training feedback.",
+          "text": "The GPT-6 Astra system card reported better alignment results alongside less informative reasoning for its monitors. Google also describes precautions with Argon’s monitoring to avoid teaching evasion through training feedback.",
           "pause": 0.28
         },
         {
@@ -174,7 +174,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "These training experiments help explain the concern behind restricted releases. Anthropic's Fable 5 and Mythos 5 shared an underlying model but had different safeguards and access rules. Some Fable requests went to a less capable model. Capability alone did not determine what the company considered suitable for wider use.",
+          "text": "These training experiments help explain the concern behind restricted releases. Anthropic’s Fable 5 and Mythos 5 shared an underlying model but had different safeguards and access rules. Some Fable requests went to a less capable model. Capability alone did not determine what the company considered suitable for wider use.",
           "pause": 0.28
         },
         {
@@ -189,7 +189,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "Tests of GPT-6 Astra, the preceding version, show how awkward this can get. In the UK AI Security Institute's September simulations, agents sometimes performed supply-chain attacks outside the stated scope, trying to insert malicious code into software used by their target. AISI conducted these tests with cyber classifiers disabled: the filters intended to block harmful cyber assistance were off. In tests chosen because failures were frequent, clearer instructions substantially reduced the attacks but did not eliminate them. Some agents asked for permission, received a generic automated message to continue, and treated it as authorisation—even after noting that it was probably automated.",
+          "text": "Tests of GPT-6 Astra, the preceding version, show how awkward this can get. In the UK AI Security Institute’s September simulations, agents sometimes performed supply-chain attacks outside the stated scope, trying to insert malicious code into software used by their target. AISI conducted these tests with cyber classifiers disabled: the filters intended to block harmful cyber assistance were off. In tests chosen because failures were frequent, clearer instructions substantially reduced the attacks but did not eliminate them. Some agents asked for permission, received a generic automated message to continue, and treated it as authorisation, even after noting that it was probably automated.",
           "pause": 0.28
         },
         {
@@ -214,7 +214,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "AISI's August account describes evaluation agents acting against real people and systems. Internet access was deliberately enabled and cyber classifiers disabled. Human review blocked the most serious attempted software compromise; AISI identified no resulting real-world harm. The agents had access beyond the task's intended scope, without needing to escape their sandbox.",
+          "text": "AISI’s August account describes evaluation agents acting against real people and systems. Internet access was deliberately enabled and cyber classifiers disabled. Human review blocked the most serious attempted software compromise; AISI identified no resulting real-world harm. The agents had access beyond the task’s intended scope, without needing to escape their sandbox.",
           "pause": 0.28
         },
         {
@@ -239,7 +239,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "TypeSafe AI's Jev, introduced by founder Diogo Almeida in September, aims to make bounded decisions with useful estimates of uncertainty. It returns a choice, score or probability, rather than a paragraph. Software defines the available options and decides what to do with the answer.",
+          "text": "TypeSafe AI’s Jev, introduced by founder Diogo Almeida in September, aims to make bounded decisions with useful estimates of uncertainty. It returns a choice, score or probability, rather than a paragraph. Software defines the available options and decides what to do with the answer.",
           "pause": 0.28
         },
         {
@@ -249,7 +249,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "RLHF learns from what people prefer; RLCD aims for decisions whose probabilities reflect their reliability. Both use reinforcement learning. Jev changes the target and narrows the model's role. In The Bitterest Lesson, Almeida's company argues that choosing the right task matters before scaling the machinery.",
+          "text": "RLHF learns from what people prefer; RLCD aims for decisions whose probabilities reflect their reliability. Both use reinforcement learning. Jev changes the target and narrows the model’s role. In The Bitterest Lesson, Almeida’s company argues that choosing the right task matters before scaling the machinery.",
           "pause": 0.28
         },
         {
@@ -294,12 +294,12 @@
         },
         {
           "kind": "paragraph",
-          "text": "This is the approach explored in Yann LeCun's work: learning how a situation changes supplies the knowledge; a separate planning process uses it towards a goal.",
+          "text": "This is the approach explored in Yann LeCun’s work: learning how a situation changes supplies the knowledge; a separate planning process uses it towards a goal.",
           "pause": 0.28
         },
         {
           "kind": "paragraph",
-          "text": "Meta's V-JEPA 2 research provides a concrete example. It learns from video and robot data to build a world model, a predictor of how the environment changes. Using the target image, a robot can compare possible actions, take one, observe what happens and plan again. Meta demonstrated robot manipulation without training on rewards specific to those tasks.",
+          "text": "Meta’s V-JEPA 2 research provides a concrete example. It learns from video and robot data to build a world model, a predictor of how the environment changes. Using the target image, a robot can compare possible actions, take one, observe what happens and plan again. Meta demonstrated robot manipulation without training on rewards specific to those tasks.",
           "pause": 0.28
         },
         {
@@ -314,7 +314,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "Bengio's Scientist AI proposal takes the separation further: it aims for an honest predictor without preferences about the outcomes its predictions bring about. Any action-taking would sit in explicit surrounding software. This remains a research proposal with assumptions to test, rather than an established replacement for today's agents.",
+          "text": "Bengio’s Scientist AI proposal takes the separation further: it aims for an honest predictor without preferences about the outcomes its predictions bring about. Any action-taking would sit in explicit surrounding software. This remains a research proposal with assumptions to test, rather than an established replacement for today’s agents.",
           "pause": 0.28
         },
         {
@@ -324,7 +324,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "Training also cannot guarantee that its lessons will survive deliberate modification. An open-weight model makes its parameters available to download and change. In Anthropic's assessment of GLM-5.3, a modification suppressing refusal behaviour led the model to engage with all 50 simulated malicious trials in one test, compared with none for direct requests to the unmodified model. Engagement meant attempting a connection, not completing an attack.",
+          "text": "Training also cannot guarantee that its lessons will survive deliberate modification. An open-weight model makes its parameters available to download and change. In Anthropic’s assessment of GLM-5.3, a modification suppressing refusal behaviour led the model to engage with all 50 simulated malicious trials in one test, compared with none for direct requests to the unmodified model. Engagement meant attempting a connection, not completing an attack.",
           "pause": 0.28
         },
         {
@@ -344,12 +344,12 @@
         },
         {
           "kind": "paragraph",
-          "text": "Training should make appropriate stopping and accurate reporting part of success. The software around the model must also limit what it can reach or change. NCSC's guidance provides practical ways to restrict access and contain failures.",
+          "text": "Training should make appropriate stopping and accurate reporting part of success. The software around the model must also limit what it can reach or change. NCSC’s guidance provides practical ways to restrict access and contain failures.",
           "pause": 0.28
         },
         {
           "kind": "paragraph",
-          "text": "AISI's control evaluations test whether defences hold against agents set up to evade them. That evidence can support a safety case, a reasoned argument for a particular deployment. It depends on the tests and capabilities involved; it is not a lifetime membership certificate.",
+          "text": "AISI’s control evaluations test whether defences hold against agents set up to evade them. That evidence can support a safety case, a reasoned argument for a particular deployment. It depends on the tests and capabilities involved; it is not a lifetime membership certificate.",
           "pause": 0.28
         },
         {
@@ -374,9 +374,9 @@
         }
       ],
       "audio": {
-        "sha256": "0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc",
-        "bytes": 14235308,
-        "duration": 1186.19,
+        "sha256": "5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5",
+        "bytes": 14234444,
+        "duration": 1186.115,
         "timings": [
           {
             "start": 0,
@@ -512,156 +512,156 @@
           },
           {
             "start": 560.86,
-            "end": 607.765
+            "end": 607.69
           },
           {
-            "start": 607.765,
-            "end": 625.72
+            "start": 607.69,
+            "end": 625.645
           },
           {
-            "start": 625.72,
-            "end": 636.975
+            "start": 625.645,
+            "end": 636.9
           },
           {
-            "start": 636.975,
-            "end": 640.7
+            "start": 636.9,
+            "end": 640.625
           },
           {
-            "start": 640.7,
-            "end": 661.43
+            "start": 640.625,
+            "end": 661.355
           },
           {
-            "start": 661.43,
-            "end": 687.135
+            "start": 661.355,
+            "end": 687.06
           },
           {
-            "start": 687.135,
-            "end": 708.69
+            "start": 687.06,
+            "end": 708.615
           },
           {
-            "start": 708.69,
-            "end": 712.09
+            "start": 708.615,
+            "end": 712.015
           },
           {
-            "start": 712.09,
-            "end": 721.695
+            "start": 712.015,
+            "end": 721.62
           },
           {
-            "start": 721.695,
-            "end": 734.95
+            "start": 721.62,
+            "end": 734.875
           },
           {
-            "start": 734.95,
-            "end": 755.205
+            "start": 734.875,
+            "end": 755.13
           },
           {
-            "start": 755.205,
-            "end": 776.51
+            "start": 755.13,
+            "end": 776.435
           },
           {
-            "start": 776.51,
-            "end": 798.14
+            "start": 776.435,
+            "end": 798.065
           },
           {
-            "start": 798.14,
-            "end": 826.795
+            "start": 798.065,
+            "end": 826.72
           },
           {
-            "start": 826.795,
-            "end": 829.72
+            "start": 826.72,
+            "end": 829.645
           },
           {
-            "start": 829.72,
-            "end": 855.3
+            "start": 829.645,
+            "end": 855.225
           },
           {
-            "start": 855.3,
-            "end": 879.83
+            "start": 855.225,
+            "end": 879.755
           },
           {
-            "start": 879.83,
-            "end": 898.31
+            "start": 879.755,
+            "end": 898.235
           },
           {
-            "start": 898.31,
-            "end": 909.915
+            "start": 898.235,
+            "end": 909.84
           },
           {
-            "start": 909.915,
-            "end": 913.015
+            "start": 909.84,
+            "end": 912.94
           },
           {
-            "start": 913.015,
-            "end": 931.77
+            "start": 912.94,
+            "end": 931.695
           },
           {
-            "start": 931.77,
-            "end": 943.45
+            "start": 931.695,
+            "end": 943.375
           },
           {
-            "start": 943.45,
-            "end": 967.705
+            "start": 943.375,
+            "end": 967.63
           },
           {
-            "start": 967.705,
-            "end": 985.01
+            "start": 967.63,
+            "end": 984.935
           },
           {
-            "start": 985.01,
-            "end": 997.115
+            "start": 984.935,
+            "end": 997.04
           },
           {
-            "start": 997.115,
-            "end": 1020.495
+            "start": 997.04,
+            "end": 1020.42
           },
           {
-            "start": 1020.495,
-            "end": 1023.72
+            "start": 1020.42,
+            "end": 1023.645
           },
           {
-            "start": 1023.72,
-            "end": 1052.6
+            "start": 1023.645,
+            "end": 1052.525
           },
           {
-            "start": 1052.6,
-            "end": 1078.88
+            "start": 1052.525,
+            "end": 1078.805
           },
           {
-            "start": 1078.88,
-            "end": 1082.205
+            "start": 1078.805,
+            "end": 1082.13
           },
           {
-            "start": 1082.205,
-            "end": 1098.71
+            "start": 1082.13,
+            "end": 1098.635
           },
           {
-            "start": 1098.71,
-            "end": 1115.415
+            "start": 1098.635,
+            "end": 1115.34
           },
           {
-            "start": 1115.415,
-            "end": 1135.145
+            "start": 1115.34,
+            "end": 1135.07
           },
           {
-            "start": 1135.145,
-            "end": 1148.75
+            "start": 1135.07,
+            "end": 1148.675
           },
           {
-            "start": 1148.75,
-            "end": 1165.68
+            "start": 1148.675,
+            "end": 1165.605
           },
           {
-            "start": 1165.68,
-            "end": 1181.86
+            "start": 1165.605,
+            "end": 1181.785
           },
           {
-            "start": 1181.86,
-            "end": 1186.19
+            "start": 1181.785,
+            "end": 1186.115
           }
         ],
         "reusedChunks": 0,
-        "generationSeconds": 127.64450166694587,
-        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-0e46892d3bc4d690479a02184a144ec8a007eebaf4996f291495b3ab2e0caafc.mp3"
+        "generationSeconds": 264.2855915000546,
+        "path": "content/pieces/clever-enough-to-find-the-loophole/assets/narration-5921c006c957c1f10e35ccc842ed6de7fbe27d7e979af637f0d99376cad1d4e5.mp3"
       }
     },
     "hello-brave-new-world:4c9faedb7e7ab5bc": {
@@ -669,7 +669,7 @@
       "title": "Hello, Brave New World",
       "speechHash": "47f87e8e765db196fc544da21f84c1dc2f44c98f07f511628f8b561c549f2150",
       "reviewHash": "3f46ae07049721c5c623742a8170ee0f13b66d9de88276422404afaf586ac1ec",
-      "profileHash": "cf6ff558a033cab90b53e3aac2c7926571903d9afd1cfdbda145cfaf7791b048",
+      "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
       "settings": {
         "schemaVersion": 1,
         "voice": "bm_george",
@@ -712,7 +712,7 @@
         }
       ],
       "audio": {
-        "sha256": "8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b",
+        "sha256": "90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f",
         "bytes": 541772,
         "duration": 45.07,
         "timings": [
@@ -738,8 +738,8 @@
           }
         ],
         "reusedChunks": 0,
-        "generationSeconds": 6.9078575420426205,
-        "path": "content/pieces/hello-brave-new-world/assets/narration-8a88667d6dcf7557a3eebdc0c4fd4cf368dceec86c68d0ae773fc7c24cecb33b.mp3"
+        "generationSeconds": 11.811528208025265,
+        "path": "content/pieces/hello-brave-new-world/assets/narration-90c004d4d66bea89586e3cc6f7570e72e3f9b9c17e90f8727b6fa8f441683a3f.mp3"
       }
     }
   }

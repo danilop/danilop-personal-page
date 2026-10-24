@@ -18,7 +18,7 @@ publishedAt: 2026-10-01T20:00:14.881Z
 The interesting part of a new AI launch increasingly comes after the benchmark
 chart: the explanation of who is allowed to use it.
 
-Google's [Gemini 4 Argon announcement](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/),
+Google’s [Gemini 4 Argon announcement](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/),
 on 30 September, pairs greater capability with restricted initial access through
 Fairwind, its programme for trusted cyber defenders. Its safeguards address both
 malicious users and the possibility that the model itself might exceed its remit.
@@ -56,7 +56,7 @@ can do, from *alignment*, whether its behaviour matches our intentions.
 
 An agent can cause trouble while trying to help. That differs from a malicious
 user deliberately requesting an attack, or hostile material tricking the agent
-into following someone else's instructions. Anthropic's
+into following someone else’s instructions. Anthropic’s
 [containment guidance](https://www.anthropic.com/engineering/how-we-contain-claude)
 explains those distinctions. Here, the question is how helpful persistence can
 become unauthorised initiative.
@@ -76,7 +76,7 @@ and supplies scores for further training. The
 [InstructGPT research](https://arxiv.org/abs/2203.02155) showed how this could make
 language models more helpful and better at following instructions.
 
-The weakness is that a preferred answer need not be a truthful one. Anthropic's
+The weakness is that a preferred answer need not be a truthful one. Anthropic’s
 [research on sycophancy](https://www.anthropic.com/research/towards-understanding-sycophancy-in-language-models)
 found that people and preference models sometimes favoured persuasive agreement
 over accuracy. Training could reinforce that behaviour. The assistant learns
@@ -93,9 +93,9 @@ find shortcuts a weaker one could not. Higher scores then become less reassuring
 we need to know how it earned them.
 
 A [controlled study](https://arxiv.org/abs/2210.10760) illustrates the problem.
-Researchers trained a model to approximate another model's judgements, then
+Researchers trained a model to approximate another model’s judgements, then
 optimised against that approximation. Eventually, its score kept improving while
-the original judge's score worsened. The experiment shows how pursuing an
+the original judge’s score worsened. The experiment shows how pursuing an
 imperfect measure can defeat its purpose; it does not give a failure rate for
 assistants in everyday use.
 
@@ -123,8 +123,8 @@ or reward seeking beyond the current task.
 
 That is evidence that this training setup could teach broader misconduct.
 It does not establish that all RL does so. Nor can every incident tell us which
-part of training caused it. [OpenAI's Hugging Face report](https://openai.com/index/hugging-face-incident-and-the-road-ahead/)
-and [METR and Redwood's investigation](https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/)
+part of training caused it. [OpenAI’s Hugging Face report](https://openai.com/index/hugging-face-incident-and-the-road-ahead/)
+and [METR and Redwood’s investigation](https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/)
 describe agents trying to defeat a scorer, but also weaknesses in safeguards and
 infrastructure. Those observations do not isolate a single cause.
 
@@ -136,9 +136,9 @@ test and learning what we meant are separate achievements.
 
 ## The trouble with checking the working
 
-A natural response is to watch more closely. Read the model's reasoning, catch
+A natural response is to watch more closely. Read the model’s reasoning, catch
 the shortcut, and penalise it during training. But what does that teach?
-In [OpenAI's monitoring experiments](https://openai.com/index/chain-of-thought-monitoring/),
+In [OpenAI’s monitoring experiments](https://openai.com/index/chain-of-thought-monitoring/),
 penalising reasoning that revealed misconduct reduced the visible admissions
 without eliminating the misconduct. Training had made the problem harder to see.
 A [later study](https://openai.com/index/evaluating-chain-of-thought-monitorability/)
@@ -147,7 +147,7 @@ The effect depends on the training conditions.
 
 The [GPT-6 Astra system card](https://deploymentsafety.openai.com/gpt-6-astra)
 reported better alignment results alongside less informative reasoning for its
-monitors. Google also [describes precautions with Argon's monitoring](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/#strengtheningsafeguards)
+monitors. Google also [describes precautions with Argon’s monitoring](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/#strengtheningsafeguards)
 to avoid teaching evasion through training feedback.
 
 A convincing explanation is therefore not enough. Oversight needs to check what
@@ -156,7 +156,7 @@ the agent actually did and, where necessary, stop an action before it causes har
 ## Permission to proceed
 
 These training experiments help explain the concern behind restricted releases.
-Anthropic's [Fable 5 and Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5)
+Anthropic’s [Fable 5 and Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5)
 shared an underlying model but had different safeguards and access rules. Some
 Fable requests went to a less capable model. Capability alone did not determine
 what the company considered suitable for wider use.
@@ -177,14 +177,14 @@ next route requires permission the user never gave. The agent must recognise
 when an obstacle is a boundary it should respect.
 
 Tests of GPT-6 Astra, the preceding version, show how awkward this can get.
-In the [UK AI Security Institute's September simulations](https://www.aisi.gov.uk/blog/gpt-6-astra-performs-unsanctioned-supply-chain-attacks-in-simulations),
+In the [UK AI Security Institute’s September simulations](https://www.aisi.gov.uk/blog/gpt-6-astra-performs-unsanctioned-supply-chain-attacks-in-simulations),
 agents sometimes performed supply-chain attacks outside the stated scope, trying
 to insert malicious code into software used by their target. AISI conducted these
 tests with cyber classifiers disabled: the filters intended to block harmful cyber
 assistance were off. In tests chosen because failures were frequent, clearer
 instructions substantially reduced the attacks but did not eliminate them. Some
 agents asked for permission, received a generic automated message to continue,
-and treated it as authorisation—even after noting that it was probably automated.
+and treated it as authorisation, even after noting that it was probably automated.
 
 That result implicates the surrounding software as well as the model. An approval
 process must distinguish a human decision from a mechanism that keeps a test
@@ -202,11 +202,11 @@ rank developers by safety: exposure, testing and willingness to disclose differ.
 Nor does its name establish a legal verdict. The useful material lies in the
 linked reports.
 
-[AISI's August account](https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing)
+[AISI’s August account](https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing)
 describes evaluation agents acting against real people and systems. Internet
 access was deliberately enabled and cyber classifiers disabled. Human review
 blocked the most serious attempted software compromise; AISI identified no
-resulting real-world harm. The agents had access beyond the task's intended
+resulting real-world harm. The agents had access beyond the task’s intended
 scope, without needing to escape their sandbox.
 
 AISI acknowledged that it had not reassessed its internet-access policy quickly
@@ -223,7 +223,7 @@ One option is to change what earns the reward. A model that can say how uncertai
 it is gives the surrounding software a chance to pause before a doubtful decision
 becomes an action.
 
-TypeSafe AI's Jev, introduced by founder Diogo Almeida in
+TypeSafe AI’s Jev, introduced by founder Diogo Almeida in
 [September](https://typesafe.ai/blog/introducing-system-one-models-and-jev), aims
 to make bounded decisions with useful estimates of uncertainty. It returns a
 choice, score or probability, rather than a paragraph. Software defines the
@@ -236,8 +236,8 @@ use those probabilities to decide when to ask for human review.
 
 RLHF learns from what people prefer; RLCD aims for decisions whose probabilities
 reflect their reliability. Both use reinforcement learning. Jev changes the
-target and narrows the model's role. In
-[The Bitterest Lesson](https://typesafe.ai/blog/bitterest-lesson), Almeida's company
+target and narrows the model’s role. In
+[The Bitterest Lesson](https://typesafe.ai/blog/bitterest-lesson), Almeida’s company
 argues that choosing the right task matters before scaling the machinery.
 
 This is a promising distinction, not a safety guarantee. A
@@ -280,10 +280,10 @@ of lesson. It can learn how objects move, predict the effects of possible action
 and use those predictions to choose its next move. It need not learn every task
 by collecting rewards for completing it.
 
-This is the approach explored in Yann LeCun's work: learning how a situation
+This is the approach explored in Yann LeCun’s work: learning how a situation
 changes supplies the knowledge; a separate planning process uses it towards a goal.
 
-Meta's [V-JEPA 2 research](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/)
+Meta’s [V-JEPA 2 research](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/)
 provides a concrete example. It learns from video and robot data to build a
 *world model*, a predictor of how the environment changes. Using the target
 image, a robot can compare possible actions, take one, observe what happens and
@@ -298,17 +298,17 @@ A world model can also help an agent [learn through rewards](https://danijar.com
 by letting it rehearse possible actions. Even then, its predictions do not
 decide what merits a reward.
 
-Bengio's [Scientist AI proposal](https://lawzero.org/en/publication/safety-honesty-disinterested-ai-predictor)
+Bengio’s [Scientist AI proposal](https://lawzero.org/en/publication/safety-honesty-disinterested-ai-predictor)
 takes the separation further: it aims for an honest predictor without preferences
 about the outcomes its predictions bring about. Any action-taking would sit in
 explicit surrounding software. This remains a research proposal with assumptions
-to test, rather than an established replacement for today's agents.
+to test, rather than an established replacement for today’s agents.
 
 ## The owner can remove the brakes
 
 Training also cannot guarantee that its lessons will survive deliberate modification.
 An *open-weight* model makes its parameters available to download and change.
-In Anthropic's [assessment of GLM-5.3](https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities),
+In Anthropic’s [assessment of GLM-5.3](https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities),
 a modification suppressing refusal behaviour led the model to engage with all
 50 simulated malicious trials in one test, compared with none for direct requests
 to the unmodified model. Engagement meant attempting a connection, not completing
@@ -329,10 +329,10 @@ addresses part of the problem. None makes the intended behaviour self-evident.
 
 Training should make appropriate stopping and accurate reporting part of success.
 The software around the model must also limit what it can reach or change.
-[NCSC's guidance](https://www.ncsc.gov.uk/blogs/managing-the-cyber-risk-of-agentic-ai)
+[NCSC’s guidance](https://www.ncsc.gov.uk/blogs/managing-the-cyber-risk-of-agentic-ai)
 provides practical ways to restrict access and contain failures.
 
-AISI's [control evaluations](https://www.aisi.gov.uk/blog/how-to-evaluate-control-measures-for-ai-agents)
+AISI’s [control evaluations](https://www.aisi.gov.uk/blog/how-to-evaluate-control-measures-for-ai-agents)
 test whether defences hold against agents set up to evade them. That evidence can
 support a *safety case*, a reasoned argument for a particular deployment.
 It depends on the tests and capabilities involved; it is not a lifetime

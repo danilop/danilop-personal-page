@@ -266,6 +266,8 @@ duration at 1× for “min read”, rounded up to whole minutes (minimum one), a
 falls back to raw word count at 220 words per minute when audio is unavailable.
 Listening labels follow playback speed independently. The release workflow verifies these labels against the deployed revision. No new runtime dependency was adopted.
 
+The [writing style](docs/writing-style.md) records the voice, the habits to avoid,
+the typography standard and which check covers each rule.
 The [content review workflow](docs/content-quality.md) combines local NLP, stem-sequence
 counts, source/reference checks, tag reuse, and declared Python example tests.
 Run `npm run quality:setup` once, then `npm run prepublish:check` for the review
