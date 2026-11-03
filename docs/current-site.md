@@ -49,6 +49,13 @@ manual corrections untouched. Review and commit the changed JSON files, then
 push to `main` to deploy. Content discovery is an explicit update step, separate
 from deployment, so a build does not unexpectedly change the curated list.
 
+Articles on other publishers, such as the Nearform blog, are not imported
+automatically. Add the canonical URL at the top of `data/posts.json` and a
+versioned entry in `data/link-metadata.json` (`ogTitle`, `ogDescription`,
+`ogImage`, `publishedAt`). Posts dated after the relaunch appear under
+**Elsewhere** on the new site, labelled with the publisher (Nearform for
+`nearform.com`). `sync:posts` keeps these manual entries.
+
 ## Correcting titles, descriptions, and images
 
 Metadata precedence, from lowest to highest:

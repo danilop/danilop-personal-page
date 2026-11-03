@@ -189,11 +189,13 @@ async function main() {
             ? "AWS"
             : host === "dev.to"
               ? "DEV"
-              : host.includes("speakerdeck")
-                ? "Speaker Deck"
-                : host.includes("youtu")
-                  ? "YouTube"
-                  : host;
+              : host.endsWith("nearform.com")
+                ? "Nearform"
+                : host.includes("speakerdeck")
+                  ? "Speaker Deck"
+                  : host.includes("youtu")
+                    ? "YouTube"
+                    : host;
         return publisher;
       }
     }

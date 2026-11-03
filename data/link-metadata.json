@@ -2368,5 +2368,17 @@
     },
     "publishedAt": "2024-09-23T08:40:42Z",
     "source": "https://dev.to/api/articles?username=danilop&per_page=100&page=1"
+  },
+  "https://nearform.com/digital-community/your-ai-agent-says-yes-can-it-prove-it/": {
+    "ogTitle": "Neurosymbolic guardrails for AI agents: answers you can prove",
+    "ogDescription": "An LLM-as-a-judge gives you another model's opinion; a logic solver gives you a proof. Here's how to check LLM answers and agent actions against a written policy, and get the broken rule named when one fails.",
+    "ogUrl": "https://nearform.com/digital-community/your-ai-agent-says-yes-can-it-prove-it/",
+    "ogSiteName": "Nearform",
+    "ogImage": {
+      "url": "https://res.cloudinary.com/nearform-website/image/upload/f_auto,q_auto,w_3840,h_2160/Option_S_1.png"
+    },
+    "canonicalUrl": "https://nearform.com/digital-community/your-ai-agent-says-yes-can-it-prove-it/",
+    "publishedAt": "2026-10-29",
+    "source": "https://nearform.com/digital-community/your-ai-agent-says-yes-can-it-prove-it/"
   }
 }
