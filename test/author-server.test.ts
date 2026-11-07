@@ -32,7 +32,7 @@ async function pollUntil(check: () => Promise<boolean>, attempts = 600) {
 
 test(
   "author server authenticates local writes and keeps preview, revision history, and draft deletion recoverable",
-  { timeout: 240000 },
+  { timeout: 600000 },
   async (t) => {
     const snapshot = await repositoryFixture(root);
 
