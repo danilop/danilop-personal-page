@@ -22,6 +22,14 @@ async function unusedPort() {
   return address.port;
 }
 
+async function pollUntil(check: () => Promise<boolean>, attempts = 600) {
+  for (let i = 0; i < attempts; i++) {
+    if (await check()) return true;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return false;
+}
+
 test(
   "author server authenticates local writes and keeps preview, revision history, and draft deletion recoverable",
   { timeout: 240000 },
@@ -572,7 +580,14 @@ test(
       context: "",
     });
     await waitForCleanup(savedCandidate);
-    assert((await api("files")).imageCleanupVersion > beforeCleanup);
+    // The server bumps the version after the sweep returns, so the files can be
+    // gone slightly before it changes; wait for it instead of asserting once.
+    assert(
+      await pollUntil(
+        async () => (await api("files")).imageCleanupVersion > beforeCleanup,
+      ),
+      log,
+    );
     saved = await api("unpublish", { file, revision: saved.revision });
     assert(saved.text.includes(`publishedAt: ${publishedDate}`));
     const plan = await api("delete-plan", { file, revision: saved.revision });
