@@ -2380,5 +2380,17 @@
     "canonicalUrl": "https://nearform.com/digital-community/your-ai-agent-says-yes-can-it-prove-it/",
     "publishedAt": "2026-10-29",
     "source": "https://nearform.com/digital-community/your-ai-agent-says-yes-can-it-prove-it/"
+  },
+  "https://nearform.com/insights/every-october-the-bug-came-back/": {
+    "ogTitle": "Every October, the bug came back",
+    "ogDescription": "What to map before AI agents start modernising a legacy system",
+    "ogUrl": "https://nearform.com/insights/every-october-the-bug-came-back/",
+    "ogSiteName": "Nearform",
+    "ogImage": {
+      "url": "https://res.cloudinary.com/nearform-website/image/upload/f_auto,q_auto,w_4642,h_2828/144_1.png"
+    },
+    "canonicalUrl": "https://nearform.com/insights/every-october-the-bug-came-back/",
+    "publishedAt": "2026-11-04",
+    "source": "https://nearform.com/insights/every-october-the-bug-came-back/"
   }
 }

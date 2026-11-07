@@ -58,8 +58,9 @@ The new site is live at the main URL, with the historical catalogue at
 links redirect to their root equivalents. See [verification](docs/verification.md)
 for release evidence.
 
-The first Elsewhere entry is the Nearform article “Neurosymbolic guardrails for AI
-agents” (29 Oct 2026), added by hand; see [current site](docs/current-site.md).
+Elsewhere has two Nearform articles, added by hand: “Neurosymbolic guardrails for AI
+agents” (29 Oct 2026) and “Every October, the bug came back” (4 Nov 2026); see
+[current site](docs/current-site.md).
 
 Third-party publication is manual: assignments prepare exports; commits and tags
 never send or update external posts. No articles are enrolled. The DEV key is
