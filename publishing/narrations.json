@@ -763,7 +763,7 @@
     "from-first-commit-to-self-improving-agent:54dd3ddeeaa03e90": {
       "pieceId": "from-first-commit-to-self-improving-agent",
       "title": "From first commit to self-improving agent",
-      "speechHash": "bda311b639a306d5ec924e7468640c17310b17ea8d026f4cc210a4b4d470880d",
+      "speechHash": "3ab9853eed2f923d1934839dfe08b4ff5ccf51cd0a3b32997d79aeb40505be6f",
       "reviewHash": "2ca25e7c316f7d5cd0500186bff471792d90a22d97522f4b239862109da6ba7f",
       "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
       "settings": {
@@ -789,7 +789,7 @@
         },
         {
           "kind": "subtitle",
-          "text": "My talk at the Claude Operators Summit in London, with its abstract and slides.",
+          "text": "My talk at the Claude Operators Summit in London, with the slides.",
           "pause": 0.55
         },
         {
@@ -834,9 +834,9 @@
         }
       ],
       "audio": {
-        "sha256": "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a",
-        "bytes": 1708460,
-        "duration": 142.28,
+        "sha256": "d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058",
+        "bytes": 1696940,
+        "duration": 141.33,
         "timings": [
           {
             "start": 0,
@@ -844,44 +844,44 @@
           },
           {
             "start": 4.3,
-            "end": 10.75
+            "end": 9.8
           },
           {
-            "start": 10.75,
-            "end": 29.505
+            "start": 9.8,
+            "end": 28.555
           },
           {
-            "start": 29.505,
-            "end": 51.085
+            "start": 28.555,
+            "end": 50.135
           },
           {
-            "start": 51.085,
-            "end": 58.44
+            "start": 50.135,
+            "end": 57.49
           },
           {
-            "start": 58.44,
-            "end": 65.24
+            "start": 57.49,
+            "end": 64.29
           },
           {
-            "start": 65.24,
-            "end": 114.695
+            "start": 64.29,
+            "end": 113.745
           },
           {
-            "start": 114.695,
-            "end": 116.52
+            "start": 113.745,
+            "end": 115.57
           },
           {
-            "start": 116.52,
-            "end": 126.625
+            "start": 115.57,
+            "end": 125.675
           },
           {
-            "start": 126.625,
-            "end": 142.28
+            "start": 125.675,
+            "end": 141.33
           }
         ],
-        "reusedChunks": 0,
-        "generationSeconds": 12.107006333011668,
-        "path": "content/pieces/from-first-commit-to-self-improving-agent/assets/narration-27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
+        "reusedChunks": 10,
+        "generationSeconds": 0.5609463750151917,
+        "path": "content/pieces/from-first-commit-to-self-improving-agent/assets/narration-d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3"
       }
     }
   }

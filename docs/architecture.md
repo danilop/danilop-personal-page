@@ -299,6 +299,9 @@ Landscape PDFs (wider than 1.2:1) and `presentation` blocks are called slides;
 others are pages; `render: {web: {options: {noun: page}}}` overrides it. Remote
 PDFs have no cover and need CORS from their host; when loading fails the viewer
 says so and keeps the download link.
+On the homepage, a lead article whose first image is a PDF cover shows it as a
+slide, up to 720px wide at its own aspect ratio, instead of the 180px-high strip
+used for illustrations.
 
 Accept local PDFs or public HTTPS sources. Google adapters accept the published
 view/embed URLs provided by Google, validate their host/path, and generate the

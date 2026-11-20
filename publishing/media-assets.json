@@ -129,8 +129,7 @@
       "sha256": "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a",
       "bytes": 1708460,
       "contentType": "audio/mpeg",
-      "key": "originals/narration-27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3",
-      "publicKey": "media/27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
+      "key": "originals/narration-27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
     },
     "content/pieces/from-first-commit-to-self-improving-agent/assets/first-commit-to-self-improving-agent-slides.pdf": {
       "sha256": "1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa",
@@ -138,6 +137,13 @@
       "contentType": "application/pdf",
       "key": "originals/first-commit-to-self-improving-agent-slides-1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf",
       "publicKey": "media/1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf"
+    },
+    "content/pieces/from-first-commit-to-self-improving-agent/assets/narration-d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3": {
+      "sha256": "d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058",
+      "bytes": 1696940,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3",
+      "publicKey": "media/d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3"
     }
   },
   "outputs": {
@@ -147,17 +153,17 @@
       "contentType": "application/pdf",
       "key": "media/1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf"
     },
-    "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3": {
-      "sha256": "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a",
-      "bytes": 1708460,
-      "contentType": "audio/mpeg",
-      "key": "media/27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
-    },
     "a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c.webp": {
       "sha256": "a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c",
       "bytes": 49952,
       "contentType": "image/webp",
       "key": "media/a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c.webp"
+    },
+    "d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3": {
+      "sha256": "d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058",
+      "bytes": 1696940,
+      "contentType": "audio/mpeg",
+      "key": "media/d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3"
     },
     "d720f055f4feae9d36284631fcf786585d8d4dff17331f601b8c85acb0b15762.mp3": {
       "sha256": "d720f055f4feae9d36284631fcf786585d8d4dff17331f601b8c85acb0b15762",

@@ -17,12 +17,24 @@ export type HomeEntry = {
   books?: { id: string; title: string; url: string; draft: boolean }[];
   kind: "piece" | "collection";
   draft?: boolean;
-  image?: { src: string; alt: string; width?: number; height?: number };
+  image?: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    /** The cover of a PDF block's first page, shown as a slide, not artwork. */
+    slide?: boolean;
+  };
 };
 function articleImage(html: string) {
   const image = load(html)("img[src]").first();
   const src = image.attr("src");
-  return src ? { src, alt: image.attr("alt") ?? "" } : undefined;
+  if (!src) return undefined;
+  return {
+    src,
+    alt: image.attr("alt") ?? "",
+    ...(image.closest(".pdf-cover").length ? { slide: true } : {}),
+  };
 }
 export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
   const entries = new Map<string, HomeEntry>();

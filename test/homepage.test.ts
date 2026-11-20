@@ -286,3 +286,21 @@ test("public articles reused in draft books stay independent and preview book-on
   assert.equal(result.books.length, 0);
   assert.equal(result.independent.length, 2);
 });
+test("a PDF cover leads as a slide; ordinary artwork does not", () => {
+  const { lib, site } = fixture();
+  const articles = site.articles as { html: string }[];
+  articles[0].html =
+    '<section class="pdf-viewer"><div class="pdf-stage"><button class="pdf-cover"><img src="/media/cover.webp" alt="First slide of Talk"></button></div></section>';
+  const welcome = () =>
+    homepageWriting(site, lib).find((entry) => entry.id === "welcome")!;
+  assert.deepEqual(welcome().image, {
+    src: "/media/cover.webp",
+    alt: "First slide of Talk",
+    slide: true,
+  });
+  articles[0].html = '<p><img src="/media/art.png" alt="Ink drawing"></p>';
+  assert.deepEqual(welcome().image, {
+    src: "/media/art.png",
+    alt: "Ink drawing",
+  });
+});

@@ -43,6 +43,20 @@
   object-position: left;
 }
 
+.discovery-lead .article-art.slide-art {
+  max-width: 720px;
+}
+
+.discovery-lead .article-art.slide-art img {
+  max-height: none;
+  border-radius: 6px;
+  box-shadow:
+    0 1px 2px rgb(19 25 28 / 8%),
+    0 18px 40px -22px rgb(19 25 28 / 45%);
+  mix-blend-mode: normal;
+  filter: none;
+}
+
 .discovery-books {
   border-left: 1px solid var(--hairline);
   padding-left: 30px;

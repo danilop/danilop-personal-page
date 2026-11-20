@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: from-first-commit-to-self-improving-agent
 title: From first commit to self-improving agent
-summary: My talk at the Claude Operators Summit in London, with its abstract and slides.
+summary: My talk at the Claude Operators Summit in London, with the slides.
 language: en-GB
 draft: false
 publication:
