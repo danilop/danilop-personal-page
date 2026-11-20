@@ -46,7 +46,8 @@ see [branding assets](docs/authoring-format.md#browser-icons).
   Site** preserves the old look, with a return link to the current website. **Elsewhere** is reserved for external writing
   published after relaunch. Empty sections stay hidden.
 
-Public PDFs and published Google Docs/Slides load on reader request. iCloud
+Public PDFs and published Google Docs/Slides load on reader request. PDFs show
+the first page as a cover and open in a built-in slide and page viewer. iCloud
 Photos albums use public album links; photographs are not copied into this repo.
 The About page presents social profiles in a separate row below the biography,
 with local icons and visible platform names configured in `publishing/site.yaml`.

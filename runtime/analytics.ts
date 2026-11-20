@@ -223,7 +223,7 @@ document.addEventListener("click", (event) => {
     track("edition_artifact_opened", {
       edition_id: artifact.dataset.editionId,
     });
-  if (el.closest(".load-embed")) track("embed_opened");
+  if (el.closest(".load-embed, .pdf-cover")) track("embed_opened");
   const experiment = el
     .closest<HTMLElement>(".experiment [data-action=run]")
     ?.closest<HTMLElement>(".experiment");

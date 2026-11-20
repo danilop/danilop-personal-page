@@ -10,6 +10,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { execFile } from "node:child_process";
+import { createRequire } from "node:module";
 import { promisify } from "node:util";
 import sharp from "sharp";
 import { codeToHtml } from "shiki";
@@ -194,6 +195,92 @@ async function alternative(r: Request): Promise<Rendition> {
     }
   }
   return { html };
+}
+export type PdfCover = {
+  pages: number;
+  width: number;
+  height: number;
+  image: Buffer;
+  imageWidth: number;
+  imageHeight: number;
+};
+export function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+const COVER_WIDTH = 1600;
+/**
+ * Draws a PDF's first page as the viewer's cover and reads its page count and
+ * size. Glyphs are drawn as outlines so embedded fonts render without a browser.
+ * Results are cached by file hash under cache/renditions.
+ */
+async function pdfCover(data: Buffer): Promise<PdfCover> {
+  const key = hash(JSON.stringify({ pdf: hash(data), cover: 1, COVER_WIDTH }));
+  const base = path.join("cache", "renditions", "pdf-" + key);
+  try {
+    const meta = JSON.parse(await fs.readFile(base + ".json", "utf8")) as Omit<
+      PdfCover,
+      "image"
+    >;
+    return { ...meta, image: await fs.readFile(base + ".webp") };
+  } catch (caught) {
+    const err = asError(caught);
+    if (err.code !== "ENOENT") throw err;
+  }
+  const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const fonts = path.join(
+    path.dirname(
+      createRequire(import.meta.url).resolve("pdfjs-dist/package.json"),
+    ),
+    "standard_fonts",
+  );
+  const doc = await getDocument({
+    data: new Uint8Array(data),
+    disableFontFace: true,
+    useSystemFonts: false,
+    standardFontDataUrl: fonts + path.sep,
+    verbosity: 0,
+  }).promise;
+  try {
+    const page = await doc.getPage(1);
+    const size = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: COVER_WIDTH / size.width });
+    const factory = (
+      doc as unknown as {
+        canvasFactory: {
+          create(
+            w: number,
+            h: number,
+          ): {
+            canvas: HTMLCanvasElement & { toBuffer(type: string): Buffer };
+            context: CanvasRenderingContext2D;
+          };
+        };
+      }
+    ).canvasFactory;
+    const { canvas, context } = factory.create(
+      Math.round(viewport.width),
+      Math.round(viewport.height),
+    );
+    await page.render({ canvasContext: context, canvas, viewport }).promise;
+    const image = await sharp(canvas.toBuffer("image/png"))
+      .webp({ quality: 86 })
+      .toBuffer();
+    const meta = {
+      pages: doc.numPages,
+      width: size.width,
+      height: size.height,
+      imageWidth: canvas.width,
+      imageHeight: canvas.height,
+    };
+    await fs.mkdir(path.dirname(base), { recursive: true });
+    await fs.writeFile(base + ".webp", image);
+    await fs.writeFile(base + ".json", JSON.stringify(meta));
+    return { ...meta, image };
+  } finally {
+    await doc.loadingTask.destroy();
+  }
 }
 const plugin = (
   id: string,
@@ -519,6 +606,45 @@ export function registry() {
           .strict(),
       ),
     );
+  reg.register(
+    plugin(
+      "pdf-js",
+      ["document", "presentation"],
+      ["pdf"],
+      async (r) => {
+        if (r.target === "book") return alternative(r);
+        const s = r.block.source;
+        if (Boolean(s.path) === Boolean(s.url))
+          throw Error("Document requires exactly one path or URL");
+        const title = text(r.block.title, "document title");
+        const summary = text(r.block.summary, "document summary");
+        let url: string,
+          info: PdfCover | undefined,
+          size = "";
+        if (s.path) {
+          const data = await r.assets.read(r.owner, String(s.path));
+          url = await r.assets.emit(data, ".pdf");
+          info = await pdfCover(data);
+          size = ` · ${formatBytes(data.length)}`;
+        } else url = safeUrl(mediaUrl(text(s.url, "document URL")));
+        const ratio = info ? info.width / info.height : 1 / Math.SQRT2;
+        const noun = String(
+          r.options.noun ??
+            (r.block.kind === "presentation" || ratio > 1.2 ? "slide" : "page"),
+        );
+        const count = info
+          ? `${info.pages} ${noun}${info.pages === 1 ? "" : "s"}`
+          : "";
+        const cover = info
+          ? `<img src="${await r.assets.emit(info.image, ".webp")}" alt="${e(`First ${noun} of ${title}`)}" width="${info.imageWidth}" height="${info.imageHeight}" loading="lazy" decoding="async">`
+          : `<span class="pdf-cover-blank" aria-hidden="true"></span>`;
+        return {
+          html: `<section class="pdf-viewer" data-src="${e(url)}" data-noun="${e(noun)}" style="--pdf-ratio: ${ratio.toFixed(4)}"><div class="pdf-stage"><button type="button" class="pdf-cover" aria-label="${e(`View ${noun}s: ${title}${count ? ` (${count})` : ""}`)}">${cover}<span class="pdf-cover-action" aria-hidden="true"><span class="pdf-cover-play"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 6.5v11l8.5-5.5z"/></svg></span><span class="pdf-cover-label">View ${e(noun)}s</span>${count ? `<span class="pdf-cover-count">${e(count)}</span>` : ""}</span></button></div><div class="pdf-caption"><span class="pdf-title">${e(title)}</span><span class="pdf-summary">${e(summary)}</span><a class="pdf-download" href="${e(url)}" download>Download PDF${e(size)}</a><span class="pdf-failed" role="alert" hidden>The viewer could not open this file. Use the download link to read it.</span></div></section>`,
+        };
+      },
+      z.object({ noun: z.enum(["slide", "page"]).optional() }).strict(),
+    ),
+  );
   reg.register(
     plugin("gallery-link", ["gallery"], ["public-photo-album"], async (r) => {
       if (r.target === "book") return alternative(r);

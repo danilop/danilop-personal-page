@@ -96,6 +96,12 @@ document.addEventListener("keydown", (event) => {
     searchForm.querySelector<HTMLInputElement>('input[name="q"]')?.focus();
   else location.assign(link.href);
 });
+if (document.querySelector(".pdf-viewer"))
+  import("./pdf-viewer")
+    .then((m) => m.mountPdfViewers())
+    .catch((error: unknown) =>
+      console.error("Could not load the PDF viewer", error),
+    );
 if (document.querySelector(".experiment"))
   import("./simulations")
     .then((m) => m.mountSimulations())

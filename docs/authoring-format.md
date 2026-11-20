@@ -493,8 +493,10 @@ blocks:
 ```
 
 The source format resolves a compatible viewer through the normal plugin rules.
-Initial site defaults select `pdf-native`, `google-docs-published`, or
-`google-slides-published`. Each adapter handles the book target through its
+Site defaults select `pdf-js` for PDFs (a cover from the first page and a
+slide/page viewer that loads on request), and `google-docs-published` or
+`google-slides-published` for Google sources. `pdf-native` remains available as
+a block-level choice. Each adapter handles the book target through its
 authored static alternative. A direct
 link to a local PDF is derived from its published asset path. Remote PDFs use
 `url` instead of `path`; sources declare exactly one of these fields.

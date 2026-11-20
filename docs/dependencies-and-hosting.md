@@ -68,6 +68,11 @@ included in this release; the pilot chapter remains a draft.
 | Node types | 24.19.2     | Match the runtime major                                         |
 | Prettier   | 3.9.10      | Current stable                                                  |
 
+PDF.js (`pdfjs-dist` 6.5.438) renders PDF covers at build time and powers the
+on-demand PDF viewer. It is bundled from npm, not loaded from a CDN; its optional
+`@napi-rs/canvas` dependency supplies the build-time canvas through prebuilt
+binaries with no install scripts.
+
 Direct upgrades include AWS SDK clients 3.1150.0, WebLLM 0.2.86, PostHog 1.438.9,
 Vega-Lite 6.5.0, Zod 4.6.7, Puppeteer 25.13.0 and Playwright 1.64.0. The prototype
 uses Vite 8.3.4 and its React plugin 6.1.2. The dev-only analysis tools include

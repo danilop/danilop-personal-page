@@ -274,11 +274,31 @@ packages or import arbitrary remote scripts by naming a plugin.
 
 ### Document and presentation adapters
 
-Initial adapters: `pdf-native` for browser PDF viewing, `google-docs-published`
-for published Docs, and `google-slides-published` for published Slides. Content
-kinds remain `document` and `presentation`; the adapter is independently selected.
-Start PDF support with a browser viewer and a direct file link. A richer viewer
-can replace that adapter later without changing source identity.
+Adapters: `pdf-js` (the default for PDFs), `pdf-native` for the browser's own
+PDF viewer, `google-docs-published` for published Docs and
+`google-slides-published` for published Slides. Content kinds remain `document`
+and `presentation`; the adapter is selected independently, so a block keeps its
+source identity when the viewer changes.
+
+`pdf-js` is implemented and tested (unit tests, and headless Chromium and WebKit
+against the local preview); it is not yet deployed. At build time it renders a local PDF's first
+page to a WebP cover with PDF.js in Node, drawing glyphs as outlines so embedded
+fonts need no browser, and reads the page count and page size. Covers are cached
+under `cache/renditions/` by file hash. The page ships only the cover, a
+"View slides" (or "View pages") control, the title, the summary and a download
+link. PDF.js and the file load from the site's own origin when the reader
+activates the viewer (`runtime/pdf-viewer.ts`); its worker is bundled as a
+classic `.js` chunk so hosts without an `.mjs` MIME type still serve it. The
+viewer has previous/next, first/last, a page counter that accepts a number,
+zoom, a thumbnail strip, download and full screen, which falls back to a
+covering layer where element full screen is unavailable (iPhone Safari). Keys:
+left/right arrows, `j`/`k`, Home/End, `f`, `g`, `+`/`-` and `0`; in full screen
+also up/down arrows, Page Up/Down and Space, which otherwise keep scrolling the
+article. Touch swipes turn pages. The current page's text goes to a hidden element for screen readers.
+Landscape PDFs (wider than 1.2:1) and `presentation` blocks are called slides;
+others are pages; `render: {web: {options: {noun: page}}}` overrides it. Remote
+PDFs have no cover and need CORS from their host; when loading fails the viewer
+says so and keeps the download link.
 
 Accept local PDFs or public HTTPS sources. Google adapters accept the published
 view/embed URLs provided by Google, validate their host/path, and generate the

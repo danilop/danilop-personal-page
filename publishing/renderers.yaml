@@ -10,7 +10,7 @@ web:
   exercise: { plugin: prose }
   audio: { plugin: media }
   video: { plugin: media }
-  document: { plugin: pdf-native }
+  document: { plugin: pdf-js }
   presentation: { plugin: google-slides-published }
   gallery: { plugin: gallery-link }
   simulation: { plugin: simulation }
@@ -26,12 +26,13 @@ book:
   exercise: { plugin: prose }
   audio: { plugin: media }
   video: { plugin: media }
-  document: { plugin: pdf-native }
+  document: { plugin: pdf-js }
   presentation: { plugin: google-slides-published }
   gallery: { plugin: gallery-link }
   simulation: { plugin: simulation }
   model-experiment: { plugin: browser-model }
 formats:
+  pdf: { plugin: pdf-js }
   d2: { plugin: d2, options: { layout: elk } }
   mermaid: { plugin: mermaid }
   google-docs-published: { plugin: google-docs-published }

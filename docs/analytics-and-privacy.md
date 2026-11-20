@@ -171,7 +171,7 @@ are independent of PostHog, so another adapter can replace it.
 | `edition_artifact_opened`    | Book artifact link clicked                                     | Edition ID                                                                                           |
 | `article_engagement`         | 30, 60 or 180 seconds of visible, recently active article time | Time bucket and prose depth rounded down to 25%; local October fix spans all chapter prose sections  |
 | `code_copied`                | Clipboard write succeeded                                      | None                                                                                                 |
-| `embed_opened`               | External viewer activation clicked                             | None                                                                                                 |
+| `embed_opened`               | Document or external viewer activation clicked                 | None                                                                                                 |
 | `simulator_started`          | Simulation run clicked                                         | Experiment ID                                                                                        |
 | `agent_tool_called`          | A browser agent or the reading assistant used a site tool      | Tool name, caller (`webmcp` or `assistant`), outcome (`success` or `error`); never inputs or results |
 | `assistant_started`          | The reading assistant started a model session                  | Runtime (`prompt-api` or `litert-lm`); never questions or answers                                    |
