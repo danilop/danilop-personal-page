@@ -1,9 +1,10 @@
 schemaVersion: 1
-removed: {}
+removed:
+  self-improving-agent: from-first-commit-to-self-improving-agent
 links:
   hello:
     ref: hello-brave-new-world
   clever-loophole:
     ref: clever-enough-to-find-the-loophole
-  self-improving-agent:
+  claude-operators-london-2026:
     ref: from-first-commit-to-self-improving-agent
