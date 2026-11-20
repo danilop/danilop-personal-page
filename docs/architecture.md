@@ -875,7 +875,11 @@ Deployed 23 October 2026.
 [Pagefind](https://pagefind.app/) 1.5.2 is a build-time dev dependency.
 `core/search-index.ts` runs at the start of `scripts/package-site.ts`, the step
 every build path shares after `astro build`, and writes a chunked index, WASM
-search client and worker to `/pagefind/`. Pagefind's bundled UIs are deleted;
+search client and worker to `/pagefind/`. It takes the files from Pagefind in
+memory (`getFiles`) and writes them itself. With Pagefind's own `writeFiles`, a
+loaded CI build once read an empty `pagefind-entry.json` after `writeFiles` had
+resolved and the backend was closed; writing the bytes here makes completion
+explicit. The output is byte-identical. Pagefind's bundled UIs are not written;
 the site renders its own results. Only elements marked `data-pagefind-body` are
 indexed, with title and context read from `data-title`/`data-context` attributes:
 article bodies, book piece pages whose piece is not also a standalone article (the

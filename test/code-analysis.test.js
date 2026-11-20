@@ -183,7 +183,7 @@ test("analysis orchestration records every check and fails closed without skippi
     };
   };
   process.argv = [process.execPath, "analyzer", "ci"];
-  main({ workspace: dir, run });
+  await main({ workspace: dir, run });
   const summary = JSON.parse(
     fs.readFileSync(path.join(dir, ".analysis/summary.json"), "utf8"),
   );
@@ -198,4 +198,42 @@ test("analysis orchestration records every check and fails closed without skippi
   assert(invocations.some((call) => call.args.includes("scripts/prepare.ts")));
   assert(invocations.some((call) => call.command.endsWith("/c8")));
   assert(fs.existsSync(path.join(dir, ".analysis/report.md")));
+});
+
+test("asynchronous check execution reports output, failures, missing tools and timeouts without rejecting", async () => {
+  const { executeAsync } = await import("../tools/code-analysis/run.mjs");
+  const ok = await executeAsync(process.execPath, [
+    "-e",
+    'process.stdout.write("out"); process.stderr.write("err")',
+  ]);
+  assert.deepEqual(
+    {
+      status: ok.status,
+      stdout: ok.stdout,
+      stderr: ok.stderr,
+      error: ok.error,
+    },
+    { status: 0, stdout: "out", stderr: "err", error: undefined },
+  );
+  const failed = await executeAsync(process.execPath, [
+    "-e",
+    "process.exit(3)",
+  ]);
+  assert.equal(failed.status, 3);
+  const missing = await executeAsync("definitely-not-an-analysis-tool", []);
+  assert.equal(missing.status, null);
+  assert.equal(missing.error.code, "ENOENT");
+  const slow = await executeAsync(
+    process.execPath,
+    ["-e", "setTimeout(() => {}, 10000)"],
+    { timeout: 200 },
+  );
+  assert.notEqual(slow.status, 0);
+  assert.match(slow.error.message, /Timed out/);
+  const noisy = await executeAsync(
+    process.execPath,
+    ["-e", 'process.stdout.write("x".repeat(4096))'],
+    { maxBuffer: 1024 },
+  );
+  assert.match(noisy.error.message, /maxBuffer/);
 });

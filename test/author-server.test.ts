@@ -22,7 +22,12 @@ async function unusedPort() {
   return address.port;
 }
 
-async function pollUntil(check: () => Promise<boolean>, attempts = 600) {
+// Generous ceiling for builds and sweeps on a loaded CI runner. Passing runs
+// return as soon as the condition holds, so this only bounds a real hang.
+const WAIT_MS = 180000;
+const POLLS = WAIT_MS / 100;
+
+async function pollUntil(check: () => Promise<boolean>, attempts = POLLS) {
   for (let i = 0; i < attempts; i++) {
     if (await check()) return true;
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -30,11 +35,41 @@ async function pollUntil(check: () => Promise<boolean>, attempts = 600) {
   return false;
 }
 
+async function minimalLibrary(dir: string) {
+  // Every save rebuilds the whole preview site, so a copy of the real library
+  // makes this test slower with each new article and racier under CI load.
+  // Replace it with a minimal library: one published lead with artwork (the
+  // homepage needs a published lead) plus the draft fixtures created below.
+  for (const folder of ["content/pieces", "content/collections"])
+    for (const entry of await fs.readdir(path.join(dir, folder)))
+      if (entry !== "assets")
+        await fs.rm(path.join(dir, folder, entry), {
+          recursive: true,
+          force: true,
+        });
+  await fs.writeFile(
+    path.join(dir, "publishing/links.yaml"),
+    "schemaVersion: 1\nremoved: {}\nlinks: {}\n",
+  );
+  const leadDir = path.join(dir, "content/pieces/lead-fixture");
+  await fs.mkdir(leadDir);
+  await fs.writeFile(
+    path.join(leadDir, "index.md"),
+    "---\nschemaVersion: 1\nid: lead-fixture\ntitle: Lead fixture\nsummary: Published fixture lead\nslug: lead-fixture\npublication: {surfaces: [standalone]}\npublishedAt: 2026-10-02T10:00:00Z\n---\n\n![Published lead artwork](lead.png)\n\nPublished local text.\n",
+  );
+  await sharp({
+    create: { width: 20, height: 10, channels: 3, background: "#654321" },
+  })
+    .png()
+    .toFile(path.join(leadDir, "lead.png"));
+}
+
 test(
   "author server authenticates local writes and keeps preview, revision history, and draft deletion recoverable",
   { timeout: 600000 },
   async (t) => {
     const snapshot = await repositoryFixture(root);
+    await minimalLibrary(snapshot.dir);
 
     const file = "content/pieces/server-fixture/index.md";
     const original =
@@ -136,7 +171,7 @@ test(
         snapshot.cleanup();
       }
     });
-    for (let i = 0; i < 150 && !log.includes("Editor:"); i++) {
+    for (let i = 0; i < POLLS && !log.includes("Editor:"); i++) {
       assert.equal(child.exitCode, null, log);
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
@@ -223,7 +258,7 @@ test(
 
     // Switch the actual rendered preview, not just visibility of existing cards.
     let readyState;
-    for (let i = 0; i < 600; i++) {
+    for (let i = 0; i < POLLS; i++) {
       const state = (await api("files")).build;
       assert.notEqual(state.state, "error", state.error);
       if (state.state === "ready") {
@@ -244,7 +279,7 @@ test(
       "draft previews must not advertise public sharing",
     );
     async function waitForCleanup(id: string) {
-      for (let i = 0; i < 600; i++) {
+      for (let i = 0; i < POLLS; i++) {
         if (
           !(await api("image-list?file=" + encodeURIComponent(file))).some(
             (candidate: { id: string }) => candidate.id === id,
@@ -263,6 +298,7 @@ test(
     });
     t.after(() => browser.close());
     const page = await browser.newPage();
+    page.setDefaultTimeout(WAIT_MS);
     await page.goto(origin);
     const previewLeadImage = await page
       .locator(".discovery-lead .article-art img")
@@ -292,7 +328,7 @@ test(
         return select?.value === "published" && !select.disabled;
       },
       null,
-      { timeout: 60000 },
+      { timeout: WAIT_MS },
     );
     assert.equal((await api("files")).includeDrafts, false);
     assert.equal(await page.locator(".draft-badge").count(), 0);
@@ -328,7 +364,7 @@ test(
         return select?.value === "drafts" && !select.disabled;
       },
       null,
-      { timeout: 60000 },
+      { timeout: WAIT_MS },
     );
     assert.equal((await api("files")).includeDrafts, true);
     assert.equal(
@@ -428,12 +464,14 @@ test(
       path.join(snapshot.dir, "publishing/home.yaml"),
       "schemaVersion: 1\nlead: cover-fixture\nrecentCount: 3\nelsewhereCount: 4\ncollections: []\n",
     );
-    for (let i = 0; i < 600; i++) {
-      const state = (await api("files")).build;
-      assert.notEqual(state.state, "error", state.error);
-      if (state.state === "ready" && state.version > oldVersion) break;
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
+    assert(
+      await pollUntil(async () => {
+        const state = (await api("files")).build;
+        assert.notEqual(state.state, "error", state.error);
+        return state.state === "ready" && state.version > oldVersion;
+      }),
+      log,
+    );
     await page.goto(origin);
     assert.equal(
       await page

@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,6 +28,60 @@ export function execute(command, args, options = {}) {
     maxBuffer: 32 * 1024 * 1024,
     timeout: 10 * 60 * 1000,
     ...options,
+  });
+}
+
+/**
+ * Asynchronous counterpart of execute(), so independent check groups can run
+ * side by side. Resolves (never rejects) with the same fields as spawnSync.
+ */
+export function executeAsync(command, args, options = {}) {
+  const { timeout = 10 * 60 * 1000, maxBuffer = 32 * 1024 * 1024 } = options;
+  return new Promise((resolve) => {
+    let stdout = "",
+      stderr = "",
+      size = 0,
+      error,
+      settled = false;
+    const child = spawn(command, args, {
+      cwd: root,
+      env: environment,
+      ...options,
+    });
+    const finish = (status) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({ status, stdout, stderr, error });
+    };
+    const timer = setTimeout(() => {
+      error ??= Error(`Timed out after ${timeout / 1000}s`);
+      child.kill("SIGTERM");
+    }, timeout);
+    const collect = (append) => (chunk) => {
+      size += chunk.length;
+      if (size > maxBuffer) {
+        error ??= Error("Output exceeded maxBuffer");
+        child.kill("SIGTERM");
+        return;
+      }
+      append(chunk);
+    };
+    child.stdout?.setEncoding("utf8");
+    child.stderr?.setEncoding("utf8");
+    child.stdout?.on(
+      "data",
+      collect((chunk) => (stdout += chunk)),
+    );
+    child.stderr?.on(
+      "data",
+      collect((chunk) => (stderr += chunk)),
+    );
+    child.on("error", (caught) => {
+      error ??= caught;
+      finish(null);
+    });
+    child.on("close", (status) => finish(status));
   });
 }
 
@@ -65,7 +119,7 @@ export function sourceFiles(dir = root, base = dir) {
     .sort();
 }
 
-export function main({ workspace = root, run = execute } = {}) {
+export async function main({ workspace = root, run = executeAsync } = {}) {
   const root = workspace;
   const mode = process.argv[2] ?? "all";
   if (!["all", "static", "coverage", "ci"].includes(mode))
@@ -80,11 +134,17 @@ export function main({ workspace = root, run = execute } = {}) {
   const dir = path.join(root, ".analysis");
   fs.mkdirSync(dir, { recursive: true });
   const files = sourceFiles(root);
-  const reports = [];
-  const task = (id, command, args, options) => {
+  // Checks are declared in report order, then run in groups: static analysis
+  // and the test suites are independent, so they run side by side. Each group
+  // stays sequential, and the prototype build still precedes the tests.
+  const specs = [];
+  let group = "first";
+  const task = (id, command, args, options) =>
+    specs.push({ id, command, args, options, group });
+  const execute = async ({ id, command, args, options }) => {
     const started = Date.now();
     process.stdout.write(`Checking ${id}…\n`);
-    const result = run(command, args, options);
+    const result = await run(command, args, options);
     const output =
       (result.stdout ?? "") +
       (result.stderr ?? "") +
@@ -100,12 +160,13 @@ export function main({ workspace = root, run = execute } = {}) {
           ? ".analysis/eslint.json"
           : `.analysis/${id}.log`,
     };
-    reports.push(row);
     console.log(
       `${row.passed ? "PASS" : "FAIL"} ${id} (${row.seconds}s); ${row.report}`,
     );
+    return row;
   };
   task("tool-versions", process.execPath, ["tools/code-analysis/versions.mjs"]);
+  group = "static";
   if (mode !== "coverage") {
     task("eslint", bin("eslint"), [
       ".",
@@ -194,6 +255,7 @@ export function main({ workspace = root, run = execute } = {}) {
     if (shell.length)
       task("shell", "shellcheck", ["--severity=style", ...shell]);
   }
+  group = "tests";
   if (mode !== "static") {
     fs.mkdirSync(path.join(root, "coverage/python"), { recursive: true });
     task("prototype-build", "npm", [
@@ -223,6 +285,7 @@ export function main({ workspace = root, run = execute } = {}) {
     task("python-coverage-html", python, ["-m", "coverage", "html"]);
     task("python-coverage-xml", python, ["-m", "coverage", "xml"]);
   }
+  group = "last";
   if (mode === "ci") {
     // Continue after individual failures so one run provides a complete inventory.
     task("release-prepare", bin("tsx"), ["scripts/prepare.ts"]);
@@ -237,6 +300,15 @@ export function main({ workspace = root, run = execute } = {}) {
       "check",
       ...(mode === "ci" ? ["--hydrate"] : []),
     ]);
+  const rows = new Map();
+  const sequence = async (name) => {
+    for (const spec of specs.filter((candidate) => candidate.group === name))
+      rows.set(spec, await execute(spec));
+  };
+  await sequence("first");
+  await Promise.all([sequence("static"), sequence("tests")]);
+  await sequence("last");
+  const reports = specs.map((spec) => rows.get(spec));
   const summary = {
     schemaVersion: 1,
     mode,
@@ -260,4 +332,7 @@ if (
   fs.existsSync(process.argv[1]) &&
   fs.realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
 )
-  main();
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

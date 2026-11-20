@@ -95,7 +95,11 @@ Missing source files are left for the resolver to restore; mismatches fail the
 snapshot. No AWS credentials or private operator configuration are copied. Disposable
 authoring integration fixtures seed their own image bytes and identities when
 private draft artwork is absent in CI; public production assets still resolve
-against their committed checksums.
+against their committed checksums. The author-server integration test replaces
+the copied library with a minimal one (a published lead with artwork plus its
+draft fixtures), so its preview rebuilds stay small as the real library grows.
+Its waits share one generous ceiling sized for loaded CI runners; passing runs
+return as soon as each condition holds.
 The collector's pure Python tests also support Amplify's Python 3.10 runtime;
 the deployed collector runs on Python 3.13. Tests of local preparation isolate
 their disposable environment and separately assert that CI cannot prepare assets.
@@ -111,8 +115,12 @@ remains validation-only. Existing
 
 `npm test` builds the prototype, then runs every `.test.js`, `.test.mjs` and
 `.test.ts` file, worker contracts and Chromium interaction
-tests, with at most four test files running concurrently to limit browser/build
-contention on local and hosted runners. Install both npm workspaces first. Playwright drives the pinned Puppeteer
+tests. Test files run concurrently: four on a four-core hosted runner, and up to
+eight on larger machines (the available cores minus two), leaving headroom for
+the servers, builds and browsers that integration tests start. Install both npm
+workspaces first. In the commit, worktree and CI analyses, the static checks
+and the test suites run side by side as two sequential queues; the prototype
+build still precedes the tests, and the report lists checks in their usual order. Playwright drives the pinned Puppeteer
 Chrome headless shell, reusing the renderer browser installation and Linux system
 libraries. Tests start disposable loopback authoring/Vite servers and temporary Git
 repositories. Cold prototype navigation has a bounded 30-second timeout, separate
