@@ -261,3 +261,24 @@ test("native path-limited commits stop before synthesis instead of leaving a sta
   assert.equal(indexFingerprint(f.root), before);
   assert.equal(f.git("show", "HEAD:" + article), "Original article\n");
 });
+test("commit restores published audio before checking, and a failed restore does not block", async (t) => {
+  const f = fixture(t);
+  const calls: string[] = [];
+  const order: string[] = [];
+  assert.deepEqual(
+    await prepareCommitAudio(
+      f.root,
+      () => {
+        order.push("check");
+      },
+      (root) => {
+        calls.push(root);
+        order.push("hydrate");
+        throw Error("offline");
+      },
+    ),
+    [],
+  );
+  assert.deepEqual(calls, [f.root]);
+  assert.deepEqual(order, ["hydrate", "check"]);
+});

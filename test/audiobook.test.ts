@@ -315,7 +315,7 @@ test("book editor validates identity and revision, completes jobs, auditions, an
       await new Promise((r) => setTimeout(r, 10));
       job = manager.get(job.id);
     }
-    assert.equal(job.status, "ready", job.error);
+    assert.equal(job.status, "ready", job.error ?? `status ${job.status}`);
     if (mode === "publish") assert.ok(job.saved);
   }
   assert.equal(await checkAllAudiobooks(root), 1);

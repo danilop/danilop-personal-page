@@ -45,4 +45,4 @@ output = "coverage/python/coverage.xml"
 [[tool.ty.overrides]]
 include = ["tools/narration/**"]
 [tool.ty.overrides.rules]
-unresolved-import = "ignore"
+import-not-found = "ignore"

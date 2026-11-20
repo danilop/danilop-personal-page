@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=24.21.0 <25",
-    "npm": ">=12.2.0 <13"
+    "node": ">=26.13.1 <27",
+    "npm": ">=12.2.3 <13"
   },
-  "packageManager": "npm@12.2.0",
+  "packageManager": "npm@12.2.3",
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/prepare-sites-build.mjs",
@@ -18,10 +18,10 @@
     "@fontsource/inter": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
-    "@vitejs/plugin-react": "^6.1.2",
+    "@vitejs/plugin-react": "^6.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "vite": "^8.3.5"
+    "vite": "^8.3.8"
   },
   "allowScripts": {
     "fsevents@2.3.3": true

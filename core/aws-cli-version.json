@@ -1,5 +1,5 @@
 {
   "minimum": "2.37.12",
-  "tested": "2.37.12",
-  "linuxX64Sha256": "e6d3c672fb36ed4b12c354c39a993eee2b34da1437cafb10bac4480840cfa83f"
+  "tested": "2.41.2",
+  "linuxX64Sha256": "2db6f80635cf554a506f3b3c1d070937b87526193fb37e0ac80c8705398219da"
 }

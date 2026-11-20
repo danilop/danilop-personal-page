@@ -9,9 +9,9 @@ This reference covers configuration, delivery commands, and recovery.
 
 ## Build and preview
 
-Use pinned Node 24.21.0 LTS and npm 12.2.0, then `npm ci` and
+Use pinned Node 26.13.1 LTS and npm 12.2.3, then `npm ci` and
 `npm --prefix prototypes/ink-and-paper ci` (required by the unified test suite). The project enforces
-Node 24 and npm 12 and version-specific dependency install-script approvals.
+Node 26 and npm 12 and version-specific dependency install-script approvals.
 See [dependencies and hosting](dependencies-and-hosting.md) for upgrades. Run `npm run dev` for the website, or
 `npm run build` followed by `npm run preview -- --release` to inspect production output.
 `npm run validate` is the shared local/CI release gate: tests, clean content

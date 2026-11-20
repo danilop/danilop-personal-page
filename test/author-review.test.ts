@@ -207,7 +207,7 @@ let text='';process.stdin.on('data',d=>text+=d);process.stdin.on('end',()=>{
       );
       while (job.state === "running")
         await new Promise((r) => setTimeout(r, 10));
-      assert.equal(job.state, "complete", job.error);
+      assert.equal(job.state, "complete", job.error ?? `state ${job.state}`);
       assert(job.result);
       assert.equal(job.result.summary, "Fixture review");
       assert.deepEqual(job.result.findings, []);

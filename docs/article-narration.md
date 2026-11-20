@@ -270,7 +270,10 @@ belonging to an active writer. A conflicting source requires operator reconcilia
 
 ### Enforcement at three boundaries
 
-1. The local Git pre-commit hook first checks the exact staged source. If public
+1. The local Git pre-commit hook first restores published audio this checkout
+   lacks (`narration check --hydrate`, best effort), so recordings released from
+   another machine are downloaded rather than regenerated with different bytes.
+   It then checks the exact staged source. If public
    article narration or a public audiobook is missing/stale, it runs the existing
    `assets:prepare` pipeline in an isolated staged snapshot using installed local
    Kokoro. Current recordings are reused; drafts are not generated automatically.

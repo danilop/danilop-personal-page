@@ -2,8 +2,8 @@
 // The page ships a static cover; PDF.js and the file load only when the reader
 // asks for them, and the viewer then replaces the cover in place.
 
-export type PdfViewport = { width: number; height: number };
-export type PdfRenderTask = { promise: Promise<unknown>; cancel(): void };
+type PdfViewport = { width: number; height: number };
+type PdfRenderTask = { promise: Promise<unknown>; cancel(): void };
 export type PdfPage = {
   getViewport(options: { scale: number }): PdfViewport;
   render(options: {
@@ -45,7 +45,7 @@ const svg = (name: Icon) =>
  * The worker is bundled by Vite as a classic `.js` chunk, so hosts that do not
  * know the `.mjs` MIME type still serve it as JavaScript.
  */
-export const loadPdfJs: PdfLoader = async (url) => {
+const loadPdfJs: PdfLoader = async (url) => {
   const [pdfjs, worker] = await Promise.all([
     import("pdfjs-dist"),
     import("pdfjs-dist/build/pdf.worker.min.mjs?worker"),

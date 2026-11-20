@@ -13,7 +13,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | ----------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
 | Website                 | Astro, static output                                                                 | Content-oriented rendering with optional interactive islands             |
 | Implementation          | TypeScript in strict mode                                                            | Explicit schemas and plugin contracts                                    |
-| Runtime/package manager | Node.js 24.21.0 LTS; npm 12.2.0                                                      | Pinned across local, Amplify and GitHub builds                           |
+| Runtime/package manager | Node.js 26.13.1 LTS; npm 12.2.3                                                      | Pinned across local, Amplify and GitHub builds                           |
 | Authoring               | Markdown + YAML metadata/manifests                                                   | Portable prose and inspectable structure                                 |
 | Parsing                 | unified / remark / rehype, with remark-directive                                     | Parse semantic blocks before HTML generation                             |
 | Validation              | Zod schemas; exportable JSON Schema where practical                                  | Build validation plus future editor assistance                           |
@@ -39,7 +39,7 @@ Resolved versions are installed and recorded in package-lock.json. See
 [implementation status](implementation-plan.md) and [operations](operations.md)
 for actual module locations, commands and account-dependent limits.
 
-The rebuild pins Node 24.21.0 LTS and npm 12.2.0 and uses Astro 7.3.8.
+The rebuild pins Node 26.13.1 LTS and npm 12.2.3 and uses Astro 7.4.13.
 TypeScript remains at 6.0.3 because Astro's checker does not support TypeScript 7's
 compiler API. See [dependencies and hosting](dependencies-and-hosting.md) for
 version exceptions, install-script policy, and hosted verification.

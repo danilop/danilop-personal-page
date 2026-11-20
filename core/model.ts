@@ -15,7 +15,7 @@ import type { Root } from "mdast";
 import { validateCodeActivities, type CodeActivity } from "./code-activities";
 
 export const id = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
-export const surface = z.enum(["standalone", "collection", "book"]);
+const surface = z.enum(["standalone", "collection", "book"]);
 export type Surface = z.infer<typeof surface>;
 export type Target = "web" | "book";
 const date = z
@@ -24,7 +24,7 @@ const date = z
     validPublicationDate,
     "Invalid publication date or timezone-qualified timestamp",
   );
-export const selectionSchema = z
+const selectionSchema = z
   .object({
     plugin: z.string().optional(),
     options: z.record(z.string(), z.unknown()).optional(),
@@ -139,7 +139,7 @@ const alternativeSchema = z
       .optional(),
   })
   .strict();
-export const blockSchema = z
+const blockSchema = z
   .object({
     kind: z.enum(kinds),
     source: z.record(z.string(), z.unknown()),

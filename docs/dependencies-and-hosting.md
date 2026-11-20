@@ -1,5 +1,57 @@
 # Dependencies and deployment
 
+## Dependency and runtime refresh — 2026-11-20
+
+The runtime moved from Node 24.21.0 to **Node 26.13.1**, the Active LTS line
+(Node 27 is still an alpha), with npm 12.2.3, the latest npm, which supports
+Node 26. `.nvmrc`, both `engines` ranges (`>=26.13.1 <27`) and
+`packageManager` are updated. Amplify and GitHub CI both read `.nvmrc`
+(`nvm install` in `amplify.yml`, `node-version-file` in the workflows), so no
+hosting setting changes. `@types/node` moved to 26.6.6 to match the runtime.
+
+Every npm dependency in both manifests is on its latest release, including
+the majors stylelint 18.1.0 and stylelint-config-standard 41.1.0, plus Astro
+7.4.13, ESLint 10.15.0, Pagefind 1.6.0, Playwright 1.65.1, Puppeteer 25.18.1, the
+AWS SDK clients 3.1173.0 and, in the prototype, Vite 8.3.8 and its React plugin
+6.3.0. Exact pins stay exact. The install-script allowlist now approves
+`puppeteer@25.18.1`. A new `glob` override (14.0.6) patches
+[GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4) in the
+c8 → test-exclude chain. The `minimatch` override moved to 11.0.9. `npm audit`
+reports no vulnerabilities in either workspace.
+
+`@litert-lm/core` moved from 0.18.0 to 0.19.0. Because it runs the deployed
+on-device assistant, it was checked with the real model: `npm run
+assistant:eval` with Gemma 4 E2B on LiteRT-LM in Chrome cited the gold section
+for all answerable questions and declined all unanswerable ones (thresholds 80%
+and 75%), median 4.4 seconds. The 0.18 workarounds (wrapped tool declarations,
+constrained decoding off) are kept. WebLLM 0.2.89 is covered only by the mocked
+runtime tests. The tool upgrades required small source changes: `@types/node` 26
+types assertion messages strictly (two tests now pass a string), Knip 6.47
+reports three schema constants in `core/model.ts` that were exported but only
+used inside the module (no longer exported), and ty renamed the
+`unresolved-import` rule to `import-not-found` (`pyproject.toml`).
+
+Python requirements for content quality and code analysis were re-resolved with
+`uv pip compile --upgrade --generate-hashes` and synced with hash checks (for
+example spaCy 3.8.18, Ruff 0.17.6, ty 0.0.107). **Narration requirements are
+deliberately unchanged.** The production voice profile in
+`publishing/narration.yaml` is pinned to a hash of `tools/narration/requirements.txt`,
+`worker.py` and `profile.json`, so any change to that stack (for example torch
+2.15 or transformers 5.23) counts as a new voice and must be auditioned and
+approved before audio is generated with it. Upgrade it as a separate,
+listened-to change.
+CI now bootstraps uv 0.13.9. The CI AWS CLI moved from 2.37.12 to 2.41.2; its
+installer was checked against the AWS CLI Team PGP signature (fingerprint
+`FB5D B77F D5C1 18B8 0511 ADA8 A631 0ACC 4672 475C`) before its SHA-256 was
+pinned. Gitleaks 8.30.1, actionlint 1.7.12, ShellCheck 0.11.0 and the pinned
+GitHub Actions were already the latest releases.
+
+**TypeScript stays on 6.0.3**, the latest 6.x. TypeScript 7 (the native
+compiler) does not yet provide the JavaScript compiler API that
+`typescript-eslint` (8.73.0, and its 8.73.1 canary: `<6.1.0`) and
+`@astrojs/check` (0.9.12: `^5 || ^6`) need for typed linting and `astro check`.
+Revisit when either widens its range.
+
 ## Dependency refresh — 2026-10-13
 
 The root application and isolated prototype manifests and npm lockfiles were
@@ -61,34 +113,33 @@ included in this release; the pilot chapter remains a draft.
 
 | Component  | Version     | Update policy                                                   |
 | ---------- | ----------- | --------------------------------------------------------------- |
-| Node.js    | 24.21.0 LTS | Pin `.nvmrc`; stay on the supported LTS major                   |
-| npm        | 12.2.0      | Pin `packageManager`; enforce engines                           |
-| Astro      | 7.3.8       | Current stable; validate renderer and route compatibility       |
+| Node.js    | 26.13.1 LTS | Pin `.nvmrc`; stay on the supported LTS major                   |
+| npm        | 12.2.3      | Pin `packageManager`; enforce engines                           |
+| Astro      | 7.4.13      | Current stable; validate renderer and route compatibility       |
 | TypeScript | 6.0.3       | Astro checker supports 5.x/6.x; typescript-eslint requires <6.1 |
-| Node types | 24.19.2     | Match the runtime major                                         |
-| Prettier   | 3.9.10      | Current stable                                                  |
+| Node types | 26.6.6      | Match the runtime major                                         |
+| Prettier   | 3.10.1      | Current stable                                                  |
 
 PDF.js (`pdfjs-dist` 6.5.438) renders PDF covers at build time and powers the
 on-demand PDF viewer. It is bundled from npm, not loaded from a CDN; its optional
 `@napi-rs/canvas` dependency supplies the build-time canvas through prebuilt
 binaries with no install scripts.
 
-Direct upgrades include AWS SDK clients 3.1150.0, WebLLM 0.2.86, PostHog 1.438.9,
-Vega-Lite 6.5.0, Zod 4.6.7, Puppeteer 25.13.0 and Playwright 1.64.0. The prototype
-uses Vite 8.3.4 and its React plugin 6.1.2. The dev-only analysis tools include
-ESLint 10.12.0, typescript-eslint 8.71.2, Knip 6.41.0, dependency-cruiser 18.6.0,
-Ruff 0.17.0 and ty 0.0.86. See the [analysis guide](code-analysis.md) for setup.
+Current direct versions include AWS SDK clients 3.1173.0, WebLLM 0.2.89, PostHog
+1.453.1, Vega-Lite 6.5.0, Zod 4.6.7, Puppeteer 25.18.1 and Playwright 1.65.1. The
+prototype uses Vite 8.3.8 and its React plugin 6.3.0. The dev-only analysis tools
+include ESLint 10.15.0, typescript-eslint 8.73.0, Knip 6.47.0, dependency-cruiser
+18.8.0, Ruff 0.17.6 and ty 0.0.107. See the [analysis guide](code-analysis.md) for setup.
 
-The only newer direct npm releases intentionally held back are TypeScript 7.0.2,
-which is outside both Astro checker's and typescript-eslint's peer ranges, and
-Node 26 type definitions, which do not match the Node 24 runtime. Node 24.21.0
-and npm 12.2.0 remain current on the supported lines. The spaCy 3.8 family is
+The only newer direct npm release intentionally held back is TypeScript 7.0.2,
+which is outside both Astro checker's and typescript-eslint's peer ranges.
+Node 26.13.1 and npm 12.2.3 are current on the supported lines. The spaCy 3.8 family is
 retained to match the pinned English model. Python transitives `thinc` 8.3.13
 and `mando` 0.7.1 remain constrained by spaCy (`<8.4`) and Radon (`<0.8`)
 respectively. Native analysis pins remain Gitleaks
 8.30.1, actionlint 1.7.12 and ShellCheck 0.11.0; official releases were checked.
 
-CI uses uv 0.13.0 and immutable commit pins for checkout 7.0.1, setup-node 7.1.0,
+CI uses uv 0.13.9 and immutable commit pins for checkout 7.0.1, setup-node 7.1.0,
 upload-artifact 7.0.2 and configure-aws-credentials 6.3.0. Keep committed lockfiles;
 production builds must not perform dependency upgrades. The separate design
 prototype is not part of the deployed bundle.

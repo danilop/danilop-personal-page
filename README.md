@@ -91,14 +91,14 @@ model) were deployed on 23 October 2026; see the
 
 ## Develop
 
-Use the pinned Node.js 24.21.0 LTS and npm 12.2.0. Dependencies were refreshed on
-13 October 2026; [compatibility holds, security overrides, and unresolved advisories](docs/dependencies-and-hosting.md)
+Use the pinned Node.js 26.13.1 LTS and npm 12.2.3. Dependencies were refreshed on
+20 November 2026; [compatibility holds, security overrides, and unresolved advisories](docs/dependencies-and-hosting.md)
 are documented. With nvm installed:
 
 ```sh
 nvm install --skip-default-packages
 nvm use
-npm install --global npm@12.2.0
+npm install --global npm@12.2.3
 npm ci
 npm --prefix prototypes/ink-and-paper ci
 npm run dev
@@ -533,8 +533,9 @@ short-link preview after the deployed byte-range redirect fix.
 See [social previews](docs/social-previews.md). The plan includes platform limitations,
 ordered technical milestones and acceptance tests. The
 [code-analysis pipeline](docs/code-analysis.md) is now implemented locally: the
-installed pre-commit hook prepares missing/stale public narration from staged
-content, automatically stages only generated audio metadata, then checks the
+installed pre-commit hook first restores published narration audio the checkout
+lacks (for example audio released from another machine), then prepares
+missing/stale public narration from staged content, automatically stages only generated audio metadata, then checks the
 resulting staged snapshot. Conflicting unstaged metadata stops the commit; partial
 staging and unrelated work are preserved. This commit-time preparation is
 implemented locally and tested separately from deployed site behaviour.

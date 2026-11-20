@@ -191,13 +191,34 @@ async function stageMetadata(
     await fs.rm(lock + ".lock", { force: true });
   }
 }
+/**
+ * Restore published narration audio that this checkout lacks (for example audio
+ * generated and released from another machine) before deciding anything needs
+ * generating. Regenerating instead would replace live audio with new bytes.
+ * Best effort: offline or unsigned-in checkouts fall through to the old path.
+ */
+function hydrateInCheckout(root: string) {
+  const result = spawnSync(
+    process.execPath,
+    ["--import", "tsx", "scripts/narration.ts", "check", "--hydrate"],
+    { cwd: root, stdio: "pipe", encoding: "utf8", timeout: 5 * 60_000 },
+  );
+  if (result.status === 0)
+    console.log("Published narration audio is present or was restored.");
+}
 export async function prepareCommitAudio(
   root: string,
   run: Run = runInSnapshot,
+  hydrate: (root: string) => void = hydrateInCheckout,
 ) {
   if (process.env.CI || process.env.AWS_BRANCH) return [];
   root = await fs.realpath(root);
   if (!git(root, ["diff", "--cached", "--name-only", "-z"]).length) return [];
+  try {
+    hydrate(root);
+  } catch {
+    // Restoring is an optimisation; the snapshot check below stays authoritative.
+  }
   const snapshot = createSnapshot(root);
   try {
     if (!(await narrationPolicy(snapshot.dir)).required) return [];

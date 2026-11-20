@@ -258,7 +258,7 @@ test("LiteRT-LM adapter checks WebGPU and storage, caches the download, and maps
     },
   });
   const { litertLm } = await import("../runtime/adapters/litert-lm.ts");
-  assert.equal(litertLm.version, "0.18.0");
+  assert.equal(litertLm.version, "0.19.0");
   const signal = new AbortController().signal;
   quota = 1e9;
   assert.match(
