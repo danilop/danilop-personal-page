@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+# Refuse to push manifest records whose bytes are not in the media bucket.
+exec node --import tsx scripts/check-pushed-assets.ts

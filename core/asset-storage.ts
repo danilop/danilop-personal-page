@@ -203,6 +203,37 @@ export async function syncStoredAssets(
   }
 }
 
+/** Objects that are absent from the bucket or stored with a different size. */
+export async function missingStoredObjects(
+  objects: { key: string; bytes?: number }[],
+) {
+  if (!objects.length) return [];
+  const { config, client } = await assetStorage();
+  const missing: { key: string; reason: string }[] = [];
+  for (const object of objects) {
+    try {
+      const head = await client.send(
+        new HeadObjectCommand({
+          Bucket: config.bucket,
+          ExpectedBucketOwner: config.accountId,
+          Key: object.key,
+        }),
+      );
+      if (object.bytes !== undefined && head.ContentLength !== object.bytes)
+        missing.push({
+          key: object.key,
+          reason: `stored size ${head.ContentLength}, expected ${object.bytes}`,
+        });
+    } catch (error) {
+      const status = (error as { $metadata?: { httpStatusCode?: number } })
+        .$metadata?.httpStatusCode;
+      if (status !== 404) throw error;
+      missing.push({ key: object.key, reason: "not uploaded" });
+    }
+  }
+  return missing;
+}
+
 export async function withAssetLease<T>(run: () => Promise<T>) {
   const { config, client } = await assetStorage();
   const request = {

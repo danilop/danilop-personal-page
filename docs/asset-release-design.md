@@ -69,7 +69,19 @@ npm run release
 Preparation takes the editor's write lock, discovers supported sources, registers
 cleanup ownership, reconciles missing unreferenced entries and prepares production
 renditions. Missing referenced files must be restored with matching checksums or
-preparation fails. Save alone neither uploads files nor deploys content.
+preparation fails. Save alone neither uploads files nor deploys content, and
+preparation records identities without uploading bytes.
+
+A plain `git push` bypasses the release upload. The `pre-push` hook
+(`scripts/check-pushed-assets.ts`, installed by `npm run analysis:setup`) compares
+the manifest in each pushed commit with the remote's, and checks every new or
+resized object with an S3 HeadObject: private `originals/` and public copies
+under `published/`. If any is missing, has a different size, or cannot be checked
+(no AWS sign-in), the push is refused with the upload command:
+`npm run release -- --upload-only`. Pushes that add no asset records make no AWS
+requests. `npm run release` uploads before pushing, so its own push passes. The
+hook was added after a draft figure was pushed without an upload and could not be
+restored on another machine.
 
 Release requires `main`, upstream `origin/main`, and no unstaged, staged or
 non-ignored untracked work. It captures HEAD, runs validation with strict source

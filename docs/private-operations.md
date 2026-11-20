@@ -28,15 +28,19 @@ On a new computer:
 1. Clone this repository and the private repository; place the private one at
    `~/.config/notes-along-the-way/` with mode `700`, files `600`.
 2. Copy its `env` file to this repository's `.env`. Copy, do not symlink.
-3. Run `npm ci`, sign in to AWS (`aws login` or the media profile) and run
+3. Run `npm ci` and `npm run analysis:setup` (it installs the commit and push
+   hooks), sign in to AWS (`aws login` or the media profile) and run
    `npm run assets:doctor`.
 4. Preview or prepare a piece. The local-asset resolver restores missing images,
    PDFs and audio from the private S3 originals; see
    [asset release design](asset-release-design.md).
 
 Ignored local state (`.authoring-state/`, `.asset-cache/`, `exports/`) is not
-synchronised and stays on each machine. Run `npm run assets:prepare` before
-switching machines so new assets are uploaded and can be restored elsewhere.
+synchronised and stays on each machine. `npm run assets:prepare` only records
+new assets in the manifest; it uploads nothing. Upload their bytes with
+`npm run release -- --upload-only` (or publish with `npm run release`, which
+uploads before pushing) so other machines can restore them. The pre-push hook
+refuses a push whose manifest refers to objects that are not uploaded yet.
 Pull both repositories when starting and push both when finishing. Book chapters
 are synced from manuscripts kept in a separate private repository; only the
 machine holding those manuscripts can sync chapters.

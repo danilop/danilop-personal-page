@@ -75,7 +75,9 @@ npm run verify:worktree
 ```
 
 Setup creates `.venv-analysis`, installs locked dependencies, checks native tool
-versions and configures this repository's `core.hooksPath` as `.githooks`. It refuses
+versions and configures this repository's `core.hooksPath` as `.githooks`
+(the pre-commit checks and the pre-push asset upload guard described in
+[asset release design](asset-release-design.md)). It refuses
 to replace an existing unrelated hook. It does not change global Git configuration,
 stage files, commit, push, run assistants or deploy. The hook itself uses Git's native
 hook mechanism; no Husky/lint-staged dependency is necessary because validation is
