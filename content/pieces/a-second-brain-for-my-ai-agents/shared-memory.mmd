@@ -1,18 +1,16 @@
 flowchart TB
-  agents["AI tools"]
-  access["Brain MCP or CLI"]
-  agents <--> access
+  tools("AI tools on my devices")
   subgraph pi["Raspberry Pi"]
-    service["Brain service"]
-    journal["Journal"]
-    wiki["Wiki"]
-    search["Local search"]
-    service --> journal
-    service <--> wiki
-    service <--> search
-    journal -. indexed .-> search
-    wiki -. indexed .-> search
+    dream["Nightly dream"]
+    service["Brain service<br/>with local search"]
+    spaces[("Team and personal spaces<br/>journal and wiki in Git")]
   end
-  access <-->|"Private Tailscale connection"| service
-  journal -->|"Nightly consolidation"| model["Cloud model"]
-  model -->|"Wiki updates via MCP"| wiki
+  model("Cloud model")
+  store[("Versioned S3 store")]
+  mac[("Full copy on my Mac")]
+  tools -->|"MCP or CLI<br/>over Tailscale"| service
+  dream -->|"updates the wiki<br/>through MCP"| service
+  dream -->|"sends journal context"| model
+  service -->|"reads and writes"| spaces
+  spaces <-->|"syncs"| store
+  mac <-->|"syncs every minute"| store

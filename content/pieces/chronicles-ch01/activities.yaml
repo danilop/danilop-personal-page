@@ -4,3 +4,7 @@ activities:
     title: Make a tally
     codeSha256: 81f368900aaa1cb21fdfa204b8d5ef82680378a28ecdd98e1f86d9c3483a4b64
     runtime: python
+  - id: split-tally
+    title: Check a split tally
+    codeSha256: ef3c94856482adc82268f81df8f5246801d85fa79d48d6c41c2f5d9d67592ff0
+    runtime: python

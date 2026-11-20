@@ -4,8 +4,8 @@ Status: implemented locally, 2026-09-20. Importing prepares source content for t
 normal publishing workflow; it does not publish, deploy, commit, or remove sources.
 The Chronicles Introduction, Chapter 1 and collection are now imported under
 `content/` as drafts. Run `npm run preview` to see them; no repeated import is needed.
-The [Good Enough opening](local-minimum-serialization.md), now Chapters 1 and 2, was imported as a
-draft on 7 October 2026, using the separate private library at
+The [Good Enough opening](local-minimum-serialization.md), now the restored Introduction and Chapters 1 and 2,
+was first imported as a draft on 7 October 2026, using the separate private library at
 `exports/local-minimum-pilot/content` and collection ID `good-enough`.
 
 Imported chapters stay in sync with the original manuscripts in
@@ -242,3 +242,56 @@ audiobook. The active source manifest and copied tally source were refreshed, an
 the removed second example was removed from the active extraction inventory.
 The historical combined pilot remains a historical snapshot, not a source to reimport.
 See [the applied example decisions](code-example-editorial-review.md#applied-outcome).
+
+## Source synchronisation on 10 November 2026
+
+Refreshed the draft Chronicles Introduction from the current manuscript: the
+EDSAC/Renwick opening, the “How the book is arranged” section and the revised
+ending now match. Curly apostrophes are aligned in both the original Introduction
+and Chapter 1 and their website copies. The source Contents section remains
+excluded because the collection supplies navigation.
+
+After a later manuscript update the same day, refreshed all three Good Enough
+pieces from Chapters 1 and 2 and their revised cited notes. Copied the new
+four-arrangements diagram unchanged as Figure 2.1 and retained the objective-function
+diagram, now Figure 2.2. The split remains before “What a graph can show”; its
+source ranges are now lines 1–59 and 60–102. A scoped piece import preserved
+publication metadata and the collection outline. The new original is registered
+in the local managed asset manifest. The colon in the new `2012:3` working-paper
+identifier is escaped in web Markdown to prevent directive parsing; its displayed
+text remains identical to the source note.
+
+The earlier comparison verified all five then-active book pieces, including Chronicles’
+expanded tally example and four notes, Good Enough’s complete Chapters 1 and 2,
+the Chapter 2 article join, cited notes and both original figures’ bytes. The active
+private pilot copies, raw extracts, source manifests and quality baselines were
+refreshed only after those comparisons passed. The obsolete second Chronicles
+example was removed from its validation profile. Historical combined previews
+remain snapshots and must not be reimported.
+
+A subsequent recheck found another source revision: Chapter 1 was then about
+1,100 words, omits “Reading the book” and revises the local-minimum explanation;
+Chapter 2 has a new closing paragraph. Refreshed only the two changed pieces
+(`good-enough-ch01` and `good-enough-ch02-search`). The foundations article, notes
+and figures remain unchanged. All five active book pieces were compared again
+with the current manuscript files before refreshing their source baselines.
+
+The latest recheck found changes in both books. Chronicles Chapter 1 now includes
+“Exact and approximate quantity”, “A tally that outlived writing” and “Tokens and
+envelopes”, plus seven new cited notes. The two Python includes are expanded
+verbatim without module docstrings; the new split-tally example has a stable
+`split-tally` activity and an expected-output check. The earlier removed example
+has not been restored. There are now eleven cited notes in Chapter 1.
+
+Good Enough’s current build restores a new Introduction in `00-front-matter.md`.
+Imported it as `good-enough-introduction` before Part I, preserving the current
+collection’s other metadata and outline. Chapter 1 now includes “The second entry”
+and is about 1,400 words; its current range is lines 1–37. Chapter 2’s ending was
+refreshed again. The Introduction is lines 1–25. This supersedes the earlier
+instruction to exclude the old preface: the new source text and build selection
+are authoritative. All six active pieces now match the manuscript prose, cited
+notes, both Python examples and both figures after documented transformations.
+
+This is a local manuscript synchronisation, not a publication or deployment.
+Audio and edition outputs were not regenerated; source-dependent outputs must
+pass their freshness checks before use or release.

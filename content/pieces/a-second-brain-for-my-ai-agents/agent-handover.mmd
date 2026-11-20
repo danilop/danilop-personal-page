@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant CC as Claude Code
+  participant J@{ "type": "database" } as Journal
+  participant D as Nightly dream
+  participant W@{ "type": "database" } as Wiki
+  participant CX as Codex
+  CC->>J: records the fix<br/>as an episode
+  Note over J,W: That night
+  D->>J: reads new episodes
+  D->>W: updates the<br/>project page
+  Note over CC,CX: A week later
+  CX->>W: searches
+  W-->>CX: project page
+  CX->>J: follows the cited source
+  J-->>CX: the episode and how it was tested

@@ -118,6 +118,12 @@
       "contentType": "audio/mpeg",
       "key": "originals/narration-ee45f083bb11627feed5b0994e90a63aba5f96d645f2f530fb455cec53c9b898.mp3",
       "publicKey": "media/ee45f083bb11627feed5b0994e90a63aba5f96d645f2f530fb455cec53c9b898.mp3"
+    },
+    "content/pieces/good-enough-ch02-foundations/assets/fig-four-arrangements.png": {
+      "sha256": "da9e9606b82bc9f167765a6726700addcb3647b5981cfdcdf88334bfefaba7d5",
+      "bytes": 83181,
+      "contentType": "image/png",
+      "key": "originals/fig-four-arrangements-da9e9606b82bc9f167765a6726700addcb3647b5981cfdcdf88334bfefaba7d5.png"
     }
   },
   "outputs": {

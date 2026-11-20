@@ -14,6 +14,33 @@ events and reproducible procedures without private account links or measurements
 Required public identifiers in application/provisioning configuration are not
 credentials; moving a note does not make browser-visible configuration secret.
 
+## Work from another computer
+
+The private directory is versioned as a separate private Git repository, never as
+part of this one. It holds the operations note, `media.json`, the short-link
+configuration and a copy of `.env` (public PostHog values only), with its own
+README describing setup and daily use. No credentials are stored in it. This
+repository does not reference it through a submodule or remote, so public clones
+are unaffected.
+
+On a new computer:
+
+1. Clone this repository and the private repository; place the private one at
+   `~/.config/notes-along-the-way/` with mode `700`, files `600`.
+2. Copy its `env` file to this repository's `.env`. Copy, do not symlink.
+3. Run `npm ci`, sign in to AWS (`aws login` or the media profile) and run
+   `npm run assets:doctor`.
+4. Preview or prepare a piece. The local-asset resolver restores missing images,
+   PDFs and audio from the private S3 originals; see
+   [asset release design](asset-release-design.md).
+
+Ignored local state (`.authoring-state/`, `.asset-cache/`, `exports/`) is not
+synchronised and stays on each machine. Run `npm run assets:prepare` before
+switching machines so new assets are uploaded and can be restored elsewhere.
+Pull both repositories when starting and push both when finishing. Book chapters
+are synced from manuscripts kept in a separate private repository; only the
+machine holding those manuscripts can sync chapters.
+
 ## Analytics launcher
 
 The shell shortcut `./analytics.sh` opens the dashboard list by default;
@@ -40,7 +67,9 @@ Opening a link still requires the browser's normal PostHog authentication.
 
 ## Reconstruct a lost note
 
-The note is a convenience index. Provider configuration is the source of truth:
+If the private repository is reachable, clone it again first. Otherwise, rebuild
+from the providers: the note is a convenience index and provider configuration is
+the source of truth:
 
 1. **PostHog:** sign in to the configured region, choose the site's project, and
    open **Dashboards**. The traffic dashboard measures page views, users and

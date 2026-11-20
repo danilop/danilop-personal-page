@@ -8,7 +8,11 @@ slug: good-enough
 ordered: true
 book: true
 completion: in-progress
-frontMatter: []
+frontMatter:
+  - id: introduction
+    kind: piece
+    role: introduction
+    ref: good-enough-introduction
 body:
   - id: why-arrangements-persist
     kind: part

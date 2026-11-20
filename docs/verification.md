@@ -2353,3 +2353,80 @@ Phases 3 and 4 of the [agent tools plan](agent-and-browser-ai-plan.md).
   `list_writing`, `open_page`, `pause_narration`, `play_narration`,
   `search_writing`). The same browser had no `document.modelContext` on an
   unregistered origin. Edge has not been checked by hand.
+
+## Book manuscript synchronisation — 10 November 2026
+
+Synced the draft Chronicles Introduction with the current canonical opening,
+including the EDSAC account, reading-guide structure and ending. Eight prose
+apostrophes were aligned in the original Introduction and Chapter 1; the website
+copies use the same typography. Direct source comparison passes for all five
+active book pieces after documented title, citation, include and asset-path
+transformations. Cited notes, the expanded tally code, Good Enough’s chapter join
+and both figures’ bytes match.
+
+A later manuscript update on the same day was imported into all three Good Enough
+pieces, including revised prose and source notes. The new four-arrangements
+diagram is Figure 2.1; the unchanged objective-function diagram is now Figure 2.2.
+Chapter 2 still splits before “What a graph can show”, with no gaps or duplicated
+prose. Both figures match the original bytes, and the new figure is registered
+in the local managed asset manifest. The draft build exposed directive parsing
+of the new `2012:3` working-paper identifier; escaping its colon in web Markdown
+retains the original rendered text.
+
+The active private pilot copies, extracts, manifests and quality baselines were
+refreshed. The Chronicles profile no longer names the removed second example and
+uses the explicit installed Python 3.14 executable instead of the moving
+`python3` alias. Both collection quality runs pass with zero technical errors and
+zero incomplete checks; the tally executes with its expected output. Editorial
+suggestions remain (59 for Chronicles, 74 for Good Enough); this sync does not
+claim a new editorial sign-off. The original book’s British English check reports
+zero review targets. Documentation file links and diff whitespace checks pass.
+
+The static gate passed 19 checks; its narration launcher hit a sandbox socket
+restriction (`EPERM`). Running the same check directly with
+`node --import tsx scripts/narration.ts check` passed and verified both public
+narration renditions. This public check does not certify refreshed draft audio.
+
+No publication, deployment, audio synthesis or edition export was performed.
+
+The later sync also passes the hidden-character scan. The broader validation run
+hit local-server sandbox restrictions (`listen EPERM`) in preview/browser tests
+and was interrupted; a full-suite pass is not claimed for this refresh.
+
+The filtered Good Enough draft snapshot build passes after the citation escape:
+41 pages, 239 output files and 1,377 local links verified. Both Chapter 2 figure
+references resolve to rendered image files, and the Chapter 1 note displays
+`CTS Working Paper 2012:3` unchanged. Direct source comparison, both scoped quality
+profiles, 141 local documentation file links and diff whitespace checks pass.
+
+A further recheck on 10 November found another Good Enough revision: the shortened
+Chapter 1 removes “Reading the book” and changes the local-minimum explanation;
+Chapter 2 has a revised closing paragraph. The two affected pieces were refreshed
+through a fingerprint-checked import. Direct comparison passes for all five
+active pieces, including notes, tally code and both figures. The refreshed Good
+Enough quality profile reports zero technical errors, zero incomplete checks
+and 76 editorial targets. Source wording, including its apostrophe typography,
+is preserved; this check does not claim editorial approval.
+The repeated filtered snapshot build passes with 41 pages, 239 output files and
+1,377 local links verified. Rendered checks confirm the removed section is absent
+and the revised Chapter 2 ending is present. Nothing was published or deployed.
+
+The latest 10 November recheck includes six draft pieces. Chronicles Chapter 1
+adds three sections, seven cited notes (eleven total), and the new split-tally
+Python example. Both code examples pass expected-output checks; the split tally
+records 142 pounds with five notches, then detects the altered 143-pound stock.
+Good Enough now opens with the restored Introduction, followed by Part I and
+Chapters 1–2; Chapter 1 includes “The second entry”. Its current book-builder
+configuration, as well as the manuscript files, was checked before changing the
+collection outline.
+
+Direct source comparison passes for all six pieces, all cited notes, both code
+includes and both figures. The scoped quality profiles report zero technical
+errors and incomplete checks (84 editorial targets for Chronicles, 139 for Good
+Enough). The combined draft snapshot passes with 46 pages, 252 output files and
+1,714 local links verified. Rendered checks confirm the new Introduction and
+Chapter 1 section, all three added Chronicles sections, eleven footnotes and both
+`tally` and `split-tally` activities. The hidden-character scan, 179 local
+documentation links and diff whitespace checks pass. Final source-hash checks
+confirm the files did not change during verification. Audio and editions were
+not regenerated; there was no publication or deployment.

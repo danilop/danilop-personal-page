@@ -1,0 +1,7 @@
+test,setup,correct,questions,share,label,side
+Standard,Raw journal,36,37,0.973,36/37,low
+Standard,After consolidation,37,37,1.000,37/37,high
+Hard,Raw journal,32,37,0.865,32/37,low
+Hard,After consolidation,37,37,1.000,37/37,high
+Held-out,Raw journal,38,39,0.974,38/39,high
+Held-out,After consolidation,37,39,0.949,37/39,low

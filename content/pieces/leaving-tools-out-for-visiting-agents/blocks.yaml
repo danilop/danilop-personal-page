@@ -1,0 +1,9 @@
+schemaVersion: 1
+blocks:
+  page-tools:
+    kind: diagram
+    source:
+      format: mermaid
+      path: ./page-tools.mmd
+    caption: Page tools. A visiting agent reaches the tools through WebMCP; the assistant calls only the reading tools. Action tools press the controls a reader clicks and announce what they did.
+    description: A visiting agent calls the page’s tools through WebMCP in the browser. The on-device assistant calls the reading tools directly. Reading tools for the outline, sections and find read the article text. Action tools for going to a section, playing the narration and running code press the same visible controls a reader clicks. They also announce each action in a notice with Undo, which the reader can use.

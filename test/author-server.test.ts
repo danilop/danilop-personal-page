@@ -571,8 +571,11 @@ test(
       saved.text,
     );
     const publishedDate = saved.text.match(/publishedAt: (.+)/)[1];
-    const savedCandidate = await expiredCandidate("#fb732a");
+    // Read the baseline before the candidate exists. GET files reads the
+    // version after an await, so a sweep that removes the new candidate can
+    // already be counted in a baseline taken afterwards, and no later bump comes.
     const beforeCleanup = (await api("files")).imageCleanupVersion;
+    const savedCandidate = await expiredCandidate("#fb732a");
     await api("save", {
       file,
       text: saved.text,

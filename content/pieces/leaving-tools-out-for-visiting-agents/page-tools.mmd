@@ -1,0 +1,22 @@
+flowchart TB
+  agent("Visiting agent")
+  assistant("On-device assistant")
+  webmcp["WebMCP in the browser"]
+  subgraph page["This page"]
+    acting["Action tools<br/>go to, play, run"]
+    reading["Reading tools<br/>outline, sections, find"]
+    controls["Visible controls<br/>links, Play, Run"]
+    notice["Notice with Undo"]
+    text@{ shape: doc, label: "Article text" }
+  end
+  reader("Reader")
+  agent --> webmcp
+  webmcp --> acting
+  webmcp --> reading
+  assistant -->|"calls directly"| reading
+  acting -->|"presses"| controls
+  acting -->|"announces"| notice
+  reading -->|"reads"| text
+  controls ~~~ reader
+  reader -->|"clicks"| controls
+  reader -->|"can undo"| notice

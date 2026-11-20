@@ -1,15 +1,17 @@
 flowchart TB
-  experiences["Experiences"]
-  journal["Journal"]
-  dreams["Nightly consolidation"]
-  wiki["Wiki"]
-  search["Local search"]
-  recall["Memories for later tasks"]
-  experiences -->|"Record details"| journal
-  journal -->|"Revisit"| dreams
-  wiki -->|"Read"| dreams
-  dreams -->|"Update"| wiki
-  journal -. indexed .-> search
-  wiki -. indexed .-> search
-  dreams -. "Find related" .-> search
-  search -->|"Keywords + embeddings"| recall
+  incoming[/"Experiences, notes and files"/]
+  journal[("Journal and sources")]
+  wiki[("Wiki<br/>people, projects and facts")]
+  dream["Nightly dream"]
+  report[/"Morning report<br/>with grounding check"/]
+  index[("Search indexes")]
+  later("Agents in later tasks")
+  incoming -->|"recorded, captured, transcribed"| journal
+  journal -->|"new episodes"| dream
+  wiki -->|"existing pages"| dream
+  dream -->|"updates and links"| wiki
+  dream --> report
+  journal -.->|"indexed"| index
+  wiki -.->|"indexed"| index
+  dream -->|"finds related memories"| index
+  later -->|"searches"| index

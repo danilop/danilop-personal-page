@@ -1,0 +1,191 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "config": {
+    "font": "Inter, system-ui, sans-serif",
+    "background": null,
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#13191c",
+      "labelFontSize": 13,
+      "titleColor": "#586371",
+      "titleFontSize": 12,
+      "titleFontWeight": "normal",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e2ded3",
+      "labelFlush": false
+    },
+    "legend": {
+      "labelColor": "#13191c",
+      "labelFontSize": 13,
+      "orient": "top",
+      "title": null,
+      "symbolSize": 110,
+      "labelLimit": 0
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "test",
+      "type": "nominal",
+      "sort": [
+        "Standard",
+        "Hard",
+        "Held-out"
+      ],
+      "title": null,
+      "axis": {
+        "grid": false,
+        "labelPadding": 10
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#c9c9c3",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x": {
+          "aggregate": "min",
+          "field": "share",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.8,
+              1
+            ],
+            "zero": false
+          }
+        },
+        "x2": {
+          "aggregate": "max",
+          "field": "share"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 120,
+        "opacity": 1
+      },
+      "encoding": {
+        "x": {
+          "field": "share",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.8,
+              1
+            ],
+            "zero": false
+          },
+          "axis": {
+            "format": "%",
+            "tickCount": 5,
+            "title": "Questions answered correctly"
+          }
+        },
+        "color": {
+          "field": "setup",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Raw journal",
+              "After consolidation"
+            ],
+            "range": [
+              "#8a949f",
+              "#164b88"
+            ]
+          }
+        },
+        "shape": {
+          "field": "setup",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Raw journal",
+              "After consolidation"
+            ],
+            "range": [
+              "circle",
+              "square"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.side === 'low'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -10,
+        "fontSize": 12,
+        "color": "#586371"
+      },
+      "encoding": {
+        "x": {
+          "field": "share",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.8,
+              1
+            ],
+            "zero": false
+          }
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.side === 'high'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 10,
+        "fontSize": 12,
+        "color": "#586371"
+      },
+      "encoding": {
+        "x": {
+          "field": "share",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.8,
+              1
+            ],
+            "zero": false
+          }
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "x": "shared"
+    }
+  }
+}

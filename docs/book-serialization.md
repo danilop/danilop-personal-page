@@ -13,15 +13,17 @@ It is implemented with release verification through the shared deployment gate. 
 
 Book-specific starting points are documented separately. The
 [Good Enough opening](local-minimum-serialization.md) is prepared as a local draft:
-Part I and Chapters 1 and 2, without the old preface excluded by its book build.
-The Introduction → Chapter 1 examples below describe Chronicles specifically;
-preserve each book's own reading sequence rather than requiring identical openings.
+the restored Introduction, Part I and Chapters 1 and 2. Its book build reintroduced
+front matter on 10 November 2026 with a new Sweden opening; the site now follows
+that order. Preserve each book’s own reading sequence when its source changes.
 
 See the [content discovery review](content-discovery.md) for implemented opening tags,
 proposed page summaries, and search treatment of individual and continuous reading views.
 The implemented [content review](content-quality.md) adapts the book's checks with
 local NLP and stem counts; its private opening profile verifies source hashes and
-the two printed Python examples before the website checks.
+the retained tally example before the website checks. The
+[10 November source refresh](content-import.md#source-synchronisation-on-10-november-2026)
+updated the active extracts and baselines after comparing both draft books.
 
 Publish new material weekly, using consecutive sections of the original manuscript.
 Meaningful components have separate reading pages within an ordered **collection**,

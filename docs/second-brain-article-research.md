@@ -8,13 +8,20 @@ Raspberry Pi at the user's request, described below. At the user's request, S3 b
 implemented and deployed to the Raspberry Pi on 18 October 2026, with a restore drill.
 
 Article: [Do second brains dream of agentic loops?](../content/pieces/a-second-brain-for-my-ai-agents/index.md).
-The article includes two Mermaid sources: the existing
-[shared-memory overview](../content/pieces/a-second-brain-for-my-ai-agents/shared-memory.mmd)
-and a simplified [memory lifecycle](../content/pieces/a-second-brain-for-my-ai-agents/memory-lifecycle.mmd)
-beside the dreaming explanation. Both use the same top-to-bottom flowchart style,
-Journal/Wiki/Local search labels, neutral SVG renderer and caption/description
-conventions. The overview retains the deployment picture; the lifecycle shows
-episodes becoming connected wiki knowledge and search supporting later reuse.
+The article has four Mermaid diagrams and one chart, drawn to the site's
+[diagram conventions](authoring-format.md#diagram-conventions) (revised 24
+October 2026):
+[agent hand-over](../content/pieces/a-second-brain-for-my-ai-agents/agent-handover.mmd)
+(a sequence diagram for the opening example),
+[hybrid search](../content/pieces/a-second-brain-for-my-ai-agents/hybrid-search.mmd),
+the [memory lifecycle](../content/pieces/a-second-brain-for-my-ai-agents/memory-lifecycle.mmd)
+beside the dreaming explanation, and the
+[deployment overview](../content/pieces/a-second-brain-for-my-ai-agents/shared-memory.mmd),
+which moved to "Where it lives now". The
+[evaluation chart](../content/pieces/a-second-brain-for-my-ai-agents/memory-evaluation.vl.json)
+plots the raw journal against the consolidated wiki from
+[its data](../content/pieces/a-second-brain-for-my-ai-agents/memory-evaluation.csv).
+Captions and descriptions follow the conventions below.
 
 ## Editorial approach
 

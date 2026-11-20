@@ -201,10 +201,13 @@ sleep and dream studies explain the inspiration without claiming biological
 equivalence or that dreams cause consolidation. The dreaming section connects
 the title to tool use and continuity across runs, distinguishing the implemented
 maintenance job from repetition until a measured target is reached.
-Two matching Mermaid diagrams show the shared setup and the memory lifecycle,
-with the latter beside the dreaming explanation; both render as SVG figures.
-Deployment details follow the conceptual account and evaluations, including S3 backup after
-nightly consolidation and a verified restore drill. Its
+Four Mermaid diagrams show the hand-over between agents, the search pipeline,
+the memory lifecycle and where the brain runs; a dot plot compares the raw
+journal with the consolidated wiki across three evaluations. All follow the
+[diagram conventions](docs/authoring-format.md#diagram-conventions) and render
+as SVG figures. Deployment details follow the conceptual account and
+evaluations, including the versioned S3 store that replaced nightly backups and
+a verified restore drill. Its
 [source notes and publication preparation](docs/second-brain-article-research.md)
 separate verified desktop access, recorded deployment details and planned work.
 The article will be published only once the application repository is public and
@@ -222,14 +225,20 @@ in the research notes. Sources were checked on 1 October 2026.
 The article is published at its canonical writing URL. Its `clever-loophole`
 short code is active and resolves to the same verified social preview.
 The Chronicles pieces remain drafts. Their Introduction and Chapter 1 were
-[checked against the book source on 7 October 2026](docs/content-import.md#source-refresh-on-7-october-2026);
-the Introduction was refreshed and Chapter 1 was unchanged.
+[synchronised with the book source on 10 November 2026](docs/content-import.md#source-synchronisation-on-10-november-2026).
+The Introduction now includes the EDSAC opening and revised reading guide;
+apostrophe typography matches the original manuscript. Chapter 1 now also includes
+exact and approximate quantity, Exchequer split tallies, and clay tokens and
+envelopes, with two runnable Python examples and eleven source notes.
 
 **Good Enough: The Local Minimum Trap** also has a
-[local opening draft](docs/local-minimum-serialization.md): Part I and Chapters 1
-and 2. Chapter 1 is one article; Chapter 2 uses two consecutive articles while
-remaining one book chapter. Original prose, the table, figure and source notes
-are preserved. Later chapters and publication remain pending.
+[local opening draft](docs/local-minimum-serialization.md): the restored
+Introduction, Part I and Chapters 1 and 2. Chapter 1 is one article; Chapter 2 uses two consecutive articles while
+remaining one book chapter. The latest 10 November manuscript revisions are
+synchronised, including updated source notes, the four-arrangements diagram
+and the renumbered objective-function figure. The latest recheck adds the new
+Sweden Introduction, Chapter 1’s “The second entry” section and Chapter 2’s
+revised ending. Original prose and the table are preserved. Later chapters and publication remain pending.
 
 Book YAML now supports `completion: in-progress` or `completion: complete`,
 independently of draft/published status. Both opening serializations are marked
@@ -380,7 +389,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Media storage](docs/media-storage.md): configured S3/CloudFront delivery, uploads and corrections for images/PDFs.
 - [Asset release design](docs/asset-release-design.md): ignored editorial media, checksum manifests, release/deployment gates and automatic retention.
 - [Social link previews](docs/social-previews.md): deployed Open Graph/X article cards, locally tested book covers and verified full/short article URLs.
-- [Private operations](docs/private-operations.md): where account-specific notes live and how to recover them.
+- [Private operations](docs/private-operations.md): where account-specific notes live, how they are versioned in a separate private repository for use on other computers, and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
 - [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.

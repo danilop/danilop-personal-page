@@ -1,0 +1,14 @@
+flowchart TB
+  question[/"Question"/]
+  keywords["Keyword search<br/>SQLite FTS5"]
+  meaning["Meaning search<br/>EmbeddingGemma 2"]
+  merge["Merge the rankings<br/>reciprocal rank fusion"]
+  links["Follow links<br/>people, projects, other names"]
+  results[/"Results"/]
+  question --> keywords
+  question --> meaning
+  keywords -->|"ranked list"| merge
+  meaning -->|"ranked list"| merge
+  merge -->|"best matches"| links
+  question -->|"names it mentions"| links
+  links --> results
