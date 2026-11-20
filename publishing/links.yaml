@@ -5,3 +5,5 @@ links:
     ref: hello-brave-new-world
   clever-loophole:
     ref: clever-enough-to-find-the-loophole
+  self-improving-agent:
+    ref: from-first-commit-to-self-improving-agent

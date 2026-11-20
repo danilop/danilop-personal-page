@@ -124,9 +124,41 @@
       "bytes": 83181,
       "contentType": "image/png",
       "key": "originals/fig-four-arrangements-da9e9606b82bc9f167765a6726700addcb3647b5981cfdcdf88334bfefaba7d5.png"
+    },
+    "content/pieces/from-first-commit-to-self-improving-agent/assets/narration-27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3": {
+      "sha256": "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a",
+      "bytes": 1708460,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3",
+      "publicKey": "media/27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
+    },
+    "content/pieces/from-first-commit-to-self-improving-agent/assets/first-commit-to-self-improving-agent-slides.pdf": {
+      "sha256": "1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa",
+      "bytes": 428963,
+      "contentType": "application/pdf",
+      "key": "originals/first-commit-to-self-improving-agent-slides-1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf",
+      "publicKey": "media/1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf"
     }
   },
   "outputs": {
+    "1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf": {
+      "sha256": "1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa",
+      "bytes": 428963,
+      "contentType": "application/pdf",
+      "key": "media/1da359353554166852065b4f26ada53af1e054cb64d79a48d2568f5e62cc3baa.pdf"
+    },
+    "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3": {
+      "sha256": "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a",
+      "bytes": 1708460,
+      "contentType": "audio/mpeg",
+      "key": "media/27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
+    },
+    "a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c.webp": {
+      "sha256": "a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c",
+      "bytes": 49952,
+      "contentType": "image/webp",
+      "key": "media/a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c.webp"
+    },
     "d720f055f4feae9d36284631fcf786585d8d4dff17331f601b8c85acb0b15762.mp3": {
       "sha256": "d720f055f4feae9d36284631fcf786585d8d4dff17331f601b8c85acb0b15762",
       "bytes": 14306156,
@@ -156,6 +188,12 @@
       "bytes": 86404,
       "contentType": "image/jpeg",
       "key": "media/social-preview-4c1ea2e341d969ddb21886534c350a12d1adfe5f43878dc3991b57ecaa98a1f4.jpg"
+    },
+    "social-preview-6cb47295dc76dde9357b4f528b1fdaa3032ea51556d62985df4dc85516ce13de.jpg": {
+      "sha256": "6cb47295dc76dde9357b4f528b1fdaa3032ea51556d62985df4dc85516ce13de",
+      "bytes": 46583,
+      "contentType": "image/jpeg",
+      "key": "media/social-preview-6cb47295dc76dde9357b4f528b1fdaa3032ea51556d62985df4dc85516ce13de.jpg"
     },
     "social-preview-8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6.jpg": {
       "sha256": "8041e9adbf13ba95b6c511034e9d87ec9f0b4304b9ebe0279f3af8d62573e1c6",
@@ -193,7 +231,8 @@
     "022cb5e1fdfbc55669090d43357b06e34a77fbb119a467cf0ea4d48970b3a419": "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg",
     "178b1db734423668a704a50261627658ae3019da3b8bc8e2298823f57be686e6": "social-preview-f0f7319feee75e35e5a863ffda5f381add02b1a901c4f3201a24c7ab82222f62.jpg",
     "7304fa327afd8cb7af61aec5de04abe0fbbb706e2a05f2b431715412302a6d7a": "social-preview-4c1ea2e341d969ddb21886534c350a12d1adfe5f43878dc3991b57ecaa98a1f4.jpg",
-    "0255e4760865ccb3257c5d0aaab9c3f5d8e5f5475f998049abff0fdd0ee34c1a": "social-preview-85a068ddcc3d78d6245c51dce6f339f92412a050a2b31759e3d297f9908eb3c5.jpg"
+    "0255e4760865ccb3257c5d0aaab9c3f5d8e5f5475f998049abff0fdd0ee34c1a": "social-preview-85a068ddcc3d78d6245c51dce6f339f92412a050a2b31759e3d297f9908eb3c5.jpg",
+    "a86db7e1775bcb19cf7dbc82c37417fc923fd96c07dec9c7cf8ba9c12e27efea": "social-preview-6cb47295dc76dde9357b4f528b1fdaa3032ea51556d62985df4dc85516ce13de.jpg"
   },
   "legacy": [
     "social-preview-367a640502c55f7f700de67b76301efe81e968ef41ae17714c464e85f409a7ec.jpg",

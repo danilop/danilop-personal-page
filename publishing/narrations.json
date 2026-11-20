@@ -759,6 +759,130 @@
         "generationSeconds": 7.464493875042535,
         "path": "content/pieces/hello-brave-new-world/assets/narration-ee45f083bb11627feed5b0994e90a63aba5f96d645f2f530fb455cec53c9b898.mp3"
       }
+    },
+    "from-first-commit-to-self-improving-agent:54dd3ddeeaa03e90": {
+      "pieceId": "from-first-commit-to-self-improving-agent",
+      "title": "From first commit to self-improving agent",
+      "speechHash": "bda311b639a306d5ec924e7468640c17310b17ea8d026f4cc210a4b4d470880d",
+      "reviewHash": "2ca25e7c316f7d5cd0500186bff471792d90a22d97522f4b239862109da6ba7f",
+      "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
+      "settings": {
+        "schemaVersion": 1,
+        "voice": "bm_george",
+        "pace": 1,
+        "profile": "kokoro-mlx-bf16-v1",
+        "pronunciations": {},
+        "adaptations": {
+          "deck": {
+            "treatment": "explanation",
+            "sourceHash": "b4aafa7747367c0ccf33c2a9831909451bd64a4c5db3e8aa484d4ef52cb7f3b2",
+            "text": "The article's web page includes the thirty-three slides from the talk, which you can view there or download as a PDF. They cover model choice, shared skills, guardrails, evaluations, self-improvement and human approval gates.",
+            "reason": "Reviewed against the saved block source; the PDF cannot be read aloud, so the narration says where to find the slides and what they cover."
+          }
+        }
+      },
+      "segments": [
+        {
+          "kind": "title",
+          "text": "From first commit to self-improving agent",
+          "pause": 0.55
+        },
+        {
+          "kind": "subtitle",
+          "text": "My talk at the Claude Operators Summit in London, with its abstract and slides.",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "Yesterday I spoke at the Claude Operators Summit in London. Community Stack organises it as a single-track, in-person day for teams building and running AI systems with Claude and related tools. Digital Futures hosted the event at its venue on Worship Square.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Engineers, product leaders and AI operators shared their experience of running AI in production. Talks covered agent workflows, context and memory, integration with enterprise systems and operating AI responsibly at scale. The programme also had keynotes, a recruitment panel and a set of short ignite talks.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "My session had the half hour before lunch. Its title and abstract, as listed in the programme:",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "From first commit to self-improving agent: lessons from running Claude in production",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "This talk follows one project, assembled from what Nearform’s teams have learned across several client engagements, with the goal of bringing Claude agents into an existing business workflow. It starts with model selection and cost optimisation in one engineer’s Claude Code setup, then moves to team collaboration, shared skills and codebase mapping. Guardrails and context management keep the agent on track, and caching keeps it affordable. Golden datasets and evals show whether a change helped, and telemetry from production feeds the next improvement. Along the way it looks at where a human needs to stay in the loop, and what evidence would let them step back, sharing what worked and what failed with concrete examples. It’s aimed at engineers building agents and at the people who decide whether they ship.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Slides",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "The deck follows one agent through six stages: start, build, guard, measure, improve and continue. It ends with one tip for each stage.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The article's web page includes the thirty-three slides from the talk, which you can view there or download as a PDF. They cover model choice, shared skills, guardrails, evaluations, self-improvement and human approval gates.",
+          "pause": 0.28
+        }
+      ],
+      "audio": {
+        "sha256": "27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a",
+        "bytes": 1708460,
+        "duration": 142.28,
+        "timings": [
+          {
+            "start": 0,
+            "end": 4.3
+          },
+          {
+            "start": 4.3,
+            "end": 10.75
+          },
+          {
+            "start": 10.75,
+            "end": 29.505
+          },
+          {
+            "start": 29.505,
+            "end": 51.085
+          },
+          {
+            "start": 51.085,
+            "end": 58.44
+          },
+          {
+            "start": 58.44,
+            "end": 65.24
+          },
+          {
+            "start": 65.24,
+            "end": 114.695
+          },
+          {
+            "start": 114.695,
+            "end": 116.52
+          },
+          {
+            "start": 116.52,
+            "end": 126.625
+          },
+          {
+            "start": 126.625,
+            "end": 142.28
+          }
+        ],
+        "reusedChunks": 0,
+        "generationSeconds": 12.107006333011668,
+        "path": "content/pieces/from-first-commit-to-self-improving-agent/assets/narration-27f08beb1238a4248af2fc27ffd007de73feb2ae8bad423ec7b08c804cc0fe1a.mp3"
+      }
     }
   }
 }

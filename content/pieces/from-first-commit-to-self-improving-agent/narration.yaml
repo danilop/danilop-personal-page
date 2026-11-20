@@ -1,0 +1,15 @@
+schemaVersion: 1
+voice: bm_george
+pace: 1
+profile: kokoro-mlx-bf16-v1
+pronunciations: {}
+adaptations:
+  deck:
+    treatment: explanation
+    sourceHash: b4aafa7747367c0ccf33c2a9831909451bd64a4c5db3e8aa484d4ef52cb7f3b2
+    text: The article's web page includes the thirty-three slides from the talk,
+      which you can view there or download as a PDF. They cover model choice,
+      shared skills, guardrails, evaluations, self-improvement and human
+      approval gates.
+    reason: Reviewed against the saved block source; the PDF cannot be read aloud,
+      so the narration says where to find the slides and what they cover.

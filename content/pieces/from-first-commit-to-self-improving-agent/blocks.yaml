@@ -1,0 +1,15 @@
+schemaVersion: 1
+blocks:
+  deck:
+    kind: document
+    title: "From first commit to self-improving agent: slides"
+    source:
+      format: pdf
+      path: ./assets/first-commit-to-self-improving-agent-slides.pdf
+      updatePolicy: snapshot
+      capturedAt: 2026-11-19
+    summary: The 33 slides presented at the Claude Operators Summit in London on 19 November 2026, covering model choice, shared skills, guardrails, evals, self-improvement and human approval gates.
+    alternative:
+      mode: summary-link
+      text: The slides from the talk are available as a PDF on the article’s web page.
+      url: https://www.danilop.net/writing/from-first-commit-to-self-improving-agent/
