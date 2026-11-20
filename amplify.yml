@@ -3,10 +3,11 @@ frontend:
   phases:
     preBuild:
       commands:
+        # libatomic: Node 26 Linux binaries link against it; the build image lacks it.
+        - sudo dnf install -y libatomic atk at-spi2-atk cups-libs gtk3 libXcomposite libXdamage libXrandr libxkbcommon mesa-libgbm nss alsa-lib
         - nvm install --no-progress --skip-default-packages
         - nvm use
         - npm install --global "$(node -p 'require("./package.json").packageManager')"
-        - sudo dnf install -y atk at-spi2-atk cups-libs gtk3 libXcomposite libXdamage libXrandr libxkbcommon mesa-libgbm nss alsa-lib
         - export PUPPETEER_CACHE_DIR="$PWD/.cache/puppeteer"
         - npm ci --include=dev --cache .npm --prefer-offline
         - npm --prefix prototypes/ink-and-paper ci --include=dev --cache .npm --prefer-offline

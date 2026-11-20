@@ -8,8 +8,11 @@ const run = (command, args) =>
     stdio: "inherit",
     env: { ...process.env, UV_CACHE_DIR: path.join(root, ".cache/uv") },
   });
-if (Number(process.versions.node.split(".")[0]) !== 24)
-  throw Error("Use the Node 24 version in .nvmrc before setup.");
+const pinned = fs.readFileSync(path.join(root, ".nvmrc"), "utf8").trim();
+if (process.versions.node.split(".")[0] !== pinned.split(".")[0])
+  throw Error(
+    `Use Node ${pinned} from .nvmrc before setup (found ${process.versions.node}).`,
+  );
 run("uv", ["venv", "--allow-existing", "--python", "3.13", ".venv-analysis"]);
 run("uv", [
   "pip",

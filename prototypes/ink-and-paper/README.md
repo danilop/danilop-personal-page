@@ -14,7 +14,7 @@ site configuration and theme registry. See the
 
 ## Preview
 
-Use the root project's pinned Node 24.21.0 and npm 12.2.0. The 1 October 2026
+Use the root project's pinned Node 26.13.1 and npm 12.2.3. The 1 October 2026
 dependency refresh uses React 19.3.0, Vite 8.3.2 and the React plugin 6.1.1. Its lockfile and version-specific
 install-script approvals are independent of the production Astro application.
 
@@ -94,7 +94,7 @@ production content. The validated theme system is implemented in `themes/` and
 
 ## Dependency refresh — 13 October 2026
 
-Vite is updated to 8.3.4 and `@vitejs/plugin-react` to 6.1.2, with compatible
-transitive updates in the lockfile. Use the root repository's pinned Node 24.21.0
-and npm 12.2.0. This local refresh does not publish the prototype. See
+Vite is updated to 8.3.8 and `@vitejs/plugin-react` to 6.3.0 (20 November 2026),
+with compatible transitive updates in the lockfile. Use the root repository's
+pinned Node 26.13.1 and npm 12.2.3. This local refresh does not publish the prototype. See
 [dependency status](../../docs/dependencies-and-hosting.md).

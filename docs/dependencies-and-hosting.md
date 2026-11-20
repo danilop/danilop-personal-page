@@ -7,7 +7,12 @@ The runtime moved from Node 24.21.0 to **Node 26.13.1**, the Active LTS line
 Node 26. `.nvmrc`, both `engines` ranges (`>=26.13.1 <27`) and
 `packageManager` are updated. Amplify and GitHub CI both read `.nvmrc`
 (`nvm install` in `amplify.yml`, `node-version-file` in the workflows), so no
-hosting setting changes. `@types/node` moved to 26.6.6 to match the runtime.
+hosting setting changes. One build-image change was needed: Node 26's Linux
+binaries link against `libatomic.so.1`, which Amplify's Amazon Linux 2023 image
+lacks, so `amplify.yml` installs `libatomic` with `dnf` before `nvm install`. The
+first Node 26 Amplify build failed on this and the live site stayed on the previous
+deployment. The analysis setup check now compares the running Node major with
+`.nvmrc` instead of a hardcoded 24. `@types/node` moved to 26.6.6 to match the runtime.
 
 Every npm dependency in both manifests is on its latest release, including
 the majors stylelint 18.1.0 and stylelint-config-standard 41.1.0, plus Astro
