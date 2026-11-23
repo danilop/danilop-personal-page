@@ -299,11 +299,18 @@ Landscape PDFs (wider than 1.2:1) and `presentation` blocks are called slides;
 others are pages; `render: {web: {options: {noun: page}}}` overrides it. Remote
 PDFs have no cover and need CORS from their host; when loading fails the viewer
 says so and keeps the download link.
-On the homepage, a lead article whose first image is a PDF cover shows it as a
-slide, up to 720px wide at its own aspect ratio, instead of the 180px-high strip
-used for illustrations. A lead article whose first image is a rendered chart or
-diagram shows it at its own size, as in the article and up to 720px wide, on every
-screen size, without the artwork blend, so its text stays readable.
+The homepage lead is an editorial hero (implemented 2026-11-23). A container query
+on the lead stacks text and image when the lead is narrower than 720px and places
+them side by side in two equal columns when it is wider, so the layout follows the
+space the lead has, including beside the books column and on landscape phones. The
+lead image fills its column at its own aspect ratio with `object-fit: contain`, and
+its height is capped at `min(70svh, 560px)` stacked or `min(75svh, 620px)` side by
+side, so landscape images are limited by width and portrait images by height.
+Headline and summary sizes use `clamp()` with rem plus a small vw term, so they
+scale with the screen and still respond to browser zoom. A PDF cover is marked as
+a slide (rounded corners and a shadow); a rendered chart or diagram is marked as a
+figure. Both skip the ink blend used for illustrations. Collection covers stay at
+most 320px wide.
 
 Accept local PDFs or public HTTPS sources. Google adapters accept the published
 view/embed URLs provided by Google, validate their host/path, and generate the

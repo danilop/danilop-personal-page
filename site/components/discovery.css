@@ -8,14 +8,28 @@
   grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
 }
 
+/*
+ * The lead story is an editorial hero. It stacks when its column is narrow and puts
+ * text and image side by side when there is room. A container query follows the
+ * space the lead actually has, which shrinks when the books column sits beside it.
+ */
+.discovery-lead {
+  container: lead / inline-size;
+}
+
 .discovery-lead h1 {
-  font-size: clamp(36px, 4.3vw, 60px);
-  letter-spacing: -1px;
+  /* rem plus a little vw: scales with the screen and still with browser zoom. */
+  font-size: clamp(2.25rem, 1.5rem + 2.2vw, 3.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
   margin: 12px 0 18px;
+  text-wrap: balance;
 }
 
 .discovery-lead .lead-summary {
-  font-size: 24px;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  max-width: 40ch;
+  text-wrap: pretty;
 }
 
 .lead-membership {
@@ -34,40 +48,60 @@
 }
 
 .discovery-lead .article-art {
-  max-width: 480px;
+  max-width: none;
+  margin: 24px 0 0;
 }
 
+/*
+ * Any lead image, landscape or portrait, fills its column at its own aspect ratio
+ * and never grows taller than most of the screen; svh ignores mobile browser bars.
+ */
 .discovery-lead .article-art img {
-  max-height: 180px;
+  width: 100%;
+  height: auto;
+  max-height: min(70svh, 560px);
   object-fit: contain;
-  object-position: left;
+  object-position: left top;
 }
 
-.discovery-lead .article-art.slide-art {
-  max-width: 720px;
+.discovery-lead .article-art.cover-art {
+  max-width: 320px;
+}
+
+/* Slides and rendered charts or diagrams are content, so they skip the ink blend. */
+.discovery-lead .article-art.slide-art img,
+.discovery-lead .article-art.figure-art img {
+  mix-blend-mode: normal;
+  filter: none;
 }
 
 .discovery-lead .article-art.slide-art img {
-  max-height: none;
   border-radius: 6px;
   box-shadow:
     0 1px 2px rgb(19 25 28 / 8%),
     0 18px 40px -22px rgb(19 25 28 / 45%);
-  mix-blend-mode: normal;
-  filter: none;
 }
 
-/* A chart or diagram keeps the size it has in the article, so its text stays readable. */
-.discovery-lead .article-art.figure-art {
-  max-width: 720px;
-}
+@container lead (inline-size >= 720px) {
+  .lead-body:has(> .article-art) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(24px, 4cqi, 56px);
+    align-items: center;
+  }
 
-.discovery-lead .article-art.figure-art img {
-  width: auto;
-  max-width: 100%;
-  max-height: none;
-  mix-blend-mode: normal;
-  filter: none;
+  .lead-body > .article-art {
+    margin: 0;
+  }
+
+  .lead-body > .article-art img {
+    max-height: min(75svh, 620px);
+    object-position: center;
+  }
+
+  .lead-body > .article-art.cover-art {
+    justify-self: center;
+  }
 }
 
 .discovery-books {
@@ -190,9 +224,5 @@
 @media (width <= 550px) {
   .discovery-articles {
     grid-template-columns: 1fr;
-  }
-
-  .discovery-lead .article-art img {
-    max-height: 130px;
   }
 }

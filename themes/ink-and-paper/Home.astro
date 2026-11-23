@@ -39,73 +39,75 @@ const history = site.archive.filter((r) => r.kind === "posts").slice(0, 4);
   {!lead && <h1>Writing</h1>}
   {lead && (
     <article class="discovery-lead">
-      <div class="lead-copy">
-        <p class="eyebrow">Latest</p>
-        <p class="lead-membership">
-          {lead.books?.some((book) => !book.draft)
-            ? lead.books
-                .filter((book) => !book.draft)
-                .map((book) => <a href={book.url}>From {book.title}</a>)
-            : "Article"}
-        </p>
-        {leadContext && <p class="meta">{leadContext}</p>}
-        <h1 id="latest-heading">
-          <a href={lead.url}>{lead.title}</a>
-          <DraftBadge
-            pieceId={lead.kind === "piece" ? lead.id : undefined}
-            collectionId={lead.kind === "collection" ? lead.id : undefined}
-          />
-        </h1>
-        <p class="lead-summary">{lead.summary}</p>
-        <p class="meta">
-          {lead.publishedAt && (
-            <time datetime={lead.publishedAt}>
-              {dateLabel(lead.publishedAt)}
-            </time>
-          )}
-          {lead.minutes && (
-            <span>
-              {lead.publishedAt ? " · " : ""}
-              {lead.minutes} min read
-            </span>
-          )}
-          {lead.narration && (
-            <span>
-              {" "}
-              · {Math.floor(lead.narration.duration / 1.1 / 60)}:
-              {String(
-                Math.floor((lead.narration.duration / 1.1) % 60),
-              ).padStart(2, "0")}{" "}
-              listen at 1.1×
-            </span>
-          )}
-        </p>
-        <a class="read-link" href={lead.url}>
-          {lead.kind === "collection" ? "Start reading" : "Read the article"}{" "}
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 12h15m-6-6 6 6-6 6" />
-          </svg>
-        </a>
+      <div class="lead-body">
+        <div class="lead-copy">
+          <p class="eyebrow">Latest</p>
+          <p class="lead-membership">
+            {lead.books?.some((book) => !book.draft)
+              ? lead.books
+                  .filter((book) => !book.draft)
+                  .map((book) => <a href={book.url}>From {book.title}</a>)
+              : "Article"}
+          </p>
+          {leadContext && <p class="meta">{leadContext}</p>}
+          <h1 id="latest-heading">
+            <a href={lead.url}>{lead.title}</a>
+            <DraftBadge
+              pieceId={lead.kind === "piece" ? lead.id : undefined}
+              collectionId={lead.kind === "collection" ? lead.id : undefined}
+            />
+          </h1>
+          <p class="lead-summary">{lead.summary}</p>
+          <p class="meta">
+            {lead.publishedAt && (
+              <time datetime={lead.publishedAt}>
+                {dateLabel(lead.publishedAt)}
+              </time>
+            )}
+            {lead.minutes && (
+              <span>
+                {lead.publishedAt ? " · " : ""}
+                {lead.minutes} min read
+              </span>
+            )}
+            {lead.narration && (
+              <span>
+                {" "}
+                · {Math.floor(lead.narration.duration / 1.1 / 60)}:
+                {String(
+                  Math.floor((lead.narration.duration / 1.1) % 60),
+                ).padStart(2, "0")}{" "}
+                listen at 1.1×
+              </span>
+            )}
+          </p>
+          <a class="read-link" href={lead.url}>
+            {lead.kind === "collection" ? "Start reading" : "Read the article"}{" "}
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12h15m-6-6 6 6-6 6" />
+            </svg>
+          </a>
+        </div>
+        {lead.image && (
+          <a
+            href={lead.url}
+            class:list={[
+              "article-art",
+              { "cover-art": lead.kind === "collection" },
+              { "slide-art": lead.image.slide },
+              { "figure-art": lead.image.figure },
+            ]}
+          >
+            <img
+              src={lead.image.src}
+              alt={lead.image.alt}
+              width={lead.image.width}
+              height={lead.image.height}
+              fetchpriority="high"
+            />
+          </a>
+        )}
       </div>
-      {lead.image && (
-        <a
-          href={lead.url}
-          class:list={[
-            "article-art",
-            { "cover-art": lead.kind === "collection" },
-            { "slide-art": lead.image.slide },
-            { "figure-art": lead.image.figure },
-          ]}
-        >
-          <img
-            src={lead.image.src}
-            alt={lead.image.alt}
-            width={lead.image.width}
-            height={lead.image.height}
-            fetchpriority="high"
-          />
-        </a>
-      )}
     </article>
   )}
   <BookSummaries books={books} />
