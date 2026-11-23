@@ -11,7 +11,13 @@ import {
 import { mediaUrl } from "./media";
 import type { Assets } from "./assets";
 
-export async function pinnedSocialBytes(recipe: string) {
+/**
+ * Prepared bytes for a generated rendition (a social card or a rendered chart or
+ * diagram), keyed by its recipe hash. Verification builds reuse these bytes instead
+ * of rendering again, because renderers such as Mermaid lay out text with the
+ * machine's fonts and would produce different bytes on Linux than on the author's Mac.
+ */
+export async function pinnedRecipeBytes(recipe: string) {
   if (
     process.env.NOTES_ASSET_PREPARE === "1" ||
     process.env.NOTES_AUTHORING_PREVIEW === "1"
@@ -49,12 +55,22 @@ async function cachedOutputBytes(
   await fs.writeFile(file, bytes);
   return Buffer.from(bytes);
 }
-export async function recordSocialRecipe(recipe: string, name: string) {
-  if (process.env.NOTES_ASSET_PREPARE !== "1") return;
-  const manifest = await readAssetManifest(process.cwd());
-  if (!manifest) return;
-  manifest.recipes[recipe] = name;
-  await writeAssetManifest(process.cwd(), manifest);
+let recipeWrites: Promise<void> = Promise.resolve();
+/** Records a recipe's output during preparation; writes are serialised. */
+export function recordRecipe(recipe: string, name: string) {
+  if (process.env.NOTES_ASSET_PREPARE !== "1") return Promise.resolve();
+  recipeWrites = recipeWrites.then(async () => {
+    const manifest = await readAssetManifest(process.cwd());
+    if (!manifest) return;
+    manifest.recipes[recipe] = name;
+    await writeAssetManifest(process.cwd(), manifest);
+  });
+  return recipeWrites;
+}
+const renditionOrigins = new Map<string, string>();
+/** Remembers which content produced an output, for actionable build errors. */
+export function noteRenditionOrigin(name: string, origin: string) {
+  renditionOrigins.set(name, origin);
 }
 async function collectOutputs(manifest: AssetManifest, prepare: boolean) {
   const names = await fs
@@ -83,7 +99,11 @@ async function collectOutputs(manifest: AssetManifest, prepare: boolean) {
       const expected = manifest.outputs[name];
       if (!expected)
         throw Error(
-          `Uncommitted rendition ${name}: run assets:prepare and commit before release.`,
+          `Uncommitted rendition ${name}${
+            renditionOrigins.has(name)
+              ? ` from ${renditionOrigins.get(name)}`
+              : ""
+          }: run assets:prepare and commit before release.`,
         );
       verifyAsset(bytes, expected, name);
     }

@@ -18,7 +18,13 @@ import {
   verifyPublicAsset,
 } from "../core/asset-release";
 import { Assets } from "../core/assets";
-import { finishAssetBuild } from "../core/asset-build";
+import {
+  finishAssetBuild,
+  noteRenditionOrigin,
+  pinnedRecipeBytes,
+  recordRecipe,
+} from "../core/asset-build";
+import { digestAsset } from "../core/asset-manifest";
 import { AuthorImageCleanup } from "../core/author-image-cleanup";
 
 async function repository(t: { after: (fn: () => Promise<unknown>) => void }) {
@@ -494,5 +500,65 @@ test("audiobook download outputs get their own attachment transfer group", async
       assert.equal(groups[0].publicFile, true);
     },
     async () => {},
+  );
+});
+
+test("rendered charts reuse prepared bytes, record every recipe and name an unprepared origin", async (t) => {
+  const { root } = await repository(t);
+  const before = process.cwd(),
+    oldPrepare = process.env.NOTES_ASSET_PREPARE,
+    oldPreview = process.env.NOTES_AUTHORING_PREVIEW;
+  t.after(async () => {
+    process.chdir(before);
+    if (oldPrepare === undefined) delete process.env.NOTES_ASSET_PREPARE;
+    else process.env.NOTES_ASSET_PREPARE = oldPrepare;
+    if (oldPreview === undefined) delete process.env.NOTES_AUTHORING_PREVIEW;
+    else process.env.NOTES_AUTHORING_PREVIEW = oldPreview;
+  });
+  process.chdir(root);
+  await writeAssetManifest(root, emptyAssetManifest());
+  await fs.writeFile(
+    "publishing/media.json",
+    JSON.stringify({
+      schemaVersion: 1,
+      baseUrl: "https://media.example.invalid",
+      cacheSeconds: 300,
+    }),
+  );
+  process.env.NOTES_ASSET_PREPARE = "1";
+  const recipes = ["a", "b", "c"].map((c) => c.repeat(64));
+  await Promise.all(recipes.map((r, i) => recordRecipe(r, `${i}.svg`)));
+  assert.deepEqual(
+    Object.keys((await readAssetManifest(root))!.recipes).sort(),
+    recipes,
+  );
+  assert.equal(await pinnedRecipeBytes(recipes[0]), undefined);
+
+  delete process.env.NOTES_ASSET_PREPARE;
+  const prepared = Buffer.from("<svg>laid out on the Mac</svg>");
+  const sha = digestAsset(prepared),
+    name = sha + ".svg";
+  const manifest = (await readAssetManifest(root))!;
+  manifest.outputs[name] = {
+    sha256: sha,
+    bytes: prepared.length,
+    contentType: "image/svg+xml",
+    key: "media/" + name,
+  };
+  manifest.recipes["d".repeat(64)] = name;
+  await writeAssetManifest(root, manifest);
+  await fs.mkdir(".asset-cache", { recursive: true });
+  await fs.writeFile(path.join(".asset-cache", name), prepared);
+  assert.deepEqual(await pinnedRecipeBytes("d".repeat(64)), prepared);
+  process.env.NOTES_AUTHORING_PREVIEW = "1";
+  assert.equal(await pinnedRecipeBytes("d".repeat(64)), undefined);
+  delete process.env.NOTES_AUTHORING_PREVIEW;
+
+  const assets = new Assets();
+  const fresh = await assets.emit("<svg>laid out on Linux</svg>", ".svg");
+  noteRenditionOrigin(path.basename(fresh), "story (diagram, mermaid)");
+  await assert.rejects(
+    finishAssetBuild({ image: fresh }, assets, false),
+    /Uncommitted rendition [a-f0-9]{64}\.svg from story \(diagram, mermaid\)/,
   );
 });

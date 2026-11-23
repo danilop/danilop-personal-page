@@ -24,6 +24,11 @@ import {
   type Plugin,
 } from "./registry";
 import { escape as e, safeUrl, hash } from "../core/assets";
+import {
+  noteRenditionOrigin,
+  pinnedRecipeBytes,
+  recordRecipe,
+} from "../core/asset-build";
 import { siteConfig, type SiteConfig } from "../core/config";
 const exec = promisify(execFile);
 /**
@@ -136,18 +141,28 @@ async function cached(
       lock: hash(lock),
     }),
   );
-  const file = path.join("cache", "renditions", key + ".svg");
+  // Release builds reuse the bytes prepared on the author's machine, because
+  // re-rendering elsewhere can lay text out with different fonts.
+  const pinned = await pinnedRecipeBytes(key);
   let svg: string;
-  try {
-    svg = await fs.readFile(file, "utf8");
-  } catch (caught) {
-    const err = asError(caught);
-    if (err.code !== "ENOENT") throw err;
-    svg = await generate();
-    await fs.mkdir(path.dirname(file), { recursive: true });
-    await fs.writeFile(file, svg);
+  if (pinned) svg = pinned.toString("utf8");
+  else {
+    const file = path.join("cache", "renditions", key + ".svg");
+    try {
+      svg = await fs.readFile(file, "utf8");
+    } catch (caught) {
+      const err = asError(caught);
+      if (err.code !== "ENOENT") throw err;
+      svg = await generate();
+      await fs.mkdir(path.dirname(file), { recursive: true });
+      await fs.writeFile(file, svg);
+    }
   }
-  return imageResult(r, svg);
+  const result = await imageResult(r, svg);
+  const name = path.basename(result.asset);
+  noteRenditionOrigin(name, `${r.owner} (${r.block.kind}, ${plugin})`);
+  await recordRecipe(key, name);
+  return result;
 }
 export function publicEmbed(format: string, value: string) {
   const u = new URL(safeUrl(value));

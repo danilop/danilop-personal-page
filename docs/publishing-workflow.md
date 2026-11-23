@@ -170,7 +170,9 @@ After editorial and visual approval:
    The build checks [social preview metadata and image bytes](social-previews.md).
 4. Run `npm run assets:prepare`; review the Git diff and commit the article,
    checksum manifest, editable sources, relevant configuration and documentation.
-   On a clean `main` tracking `origin/main`, run `npm run release`. It validates
+   The manifest also pins the SVGs rendered from chart and diagram blocks, so the
+   release build reuses them instead of rendering them again with Linux fonts; see
+   [asset release design](asset-release-design.md). On a clean `main` tracking `origin/main`, run `npm run release`. It validates
    exact bytes, uploads and checks S3/CDN before pushing the captured commit.
 5. Wait for Amplify and GitHub’s live-deployment verification to pass. Use
    `npm run verify:deployment -- --wait` for the same check locally, then review

@@ -6,7 +6,7 @@ import { Assets, escape } from "./assets";
 import { localPath } from "./deployment.mjs";
 import type { CompiledSite } from "./site-data";
 import { digestAsset } from "./asset-manifest";
-import { pinnedSocialBytes, recordSocialRecipe } from "./asset-build";
+import { pinnedRecipeBytes, recordRecipe } from "./asset-build";
 
 export type SocialImage = {
   src: string;
@@ -64,7 +64,7 @@ export async function socialCard(
       image: input ? digestAsset(input) : null,
     }),
   );
-  const pinned = await pinnedSocialBytes(recipe);
+  const pinned = await pinnedRecipeBytes(recipe);
   let output: Buffer;
   if (pinned) output = pinned;
   else if (input) {
@@ -117,7 +117,7 @@ export async function socialCard(
   if (output.length > 1_000_000)
     throw Error("Social card exceeds the 1 MB budget");
   const src = await assets.emit(output, ".jpg", "social-preview");
-  await recordSocialRecipe(recipe, path.basename(src));
+  await recordRecipe(recipe, path.basename(src));
   return {
     src,
     alt: input ? image!.alt : `${title} — ${brand}`,

@@ -11,9 +11,19 @@ No second media domain or asset distribution is required.
 `publishing/media-assets.json` is the tracked inventory. Each logical source and
 public rendition has a SHA-256, byte size, MIME type and immutable storage key.
 Content, image selection, alt text, captions and publication settings stay in Git.
-Generated social cards also have committed recipe identities and byte checksums;
-builds reuse their prepared bytes instead of relying on fonts to reproduce them.
-Other regenerated outputs must match their committed checksums.
+Generated social cards and rendered chart and diagram SVGs (Vega-Lite, Mermaid
+and D2 blocks) also have committed recipe identities and byte checksums. A recipe
+hashes the block source, its data, render options, target, renderer and
+`package-lock.json`. Release and CI builds reuse the prepared bytes, from
+`.asset-cache/` or the public CDN, instead of rendering again: renderers lay text
+out with the machine's fonts, so a Linux build cannot reproduce SVGs prepared on
+the author's Mac byte for byte (implemented and tested 2026-11-23, after the first
+article with rendered blocks failed its Amplify build). Preparation and authoring
+preview still render afresh. An unprepared rendition fails the build with an error
+that names its article, block kind and renderer. Because the recipe includes the
+lockfile, run `npm run assets:prepare` after a dependency update and commit the
+manifest before releasing. Other regenerated outputs must match their committed
+checksums.
 
 Managed binary sources stay at their existing authoring paths:
 
@@ -37,8 +47,8 @@ assets before a preview build. Rewriting local `/media/` paths preserves authore
 absolute URLs, including existing media-domain links.
 Managed imports restore linked image/download and block resources before copying
 them into their validation sandbox; unreferenced private candidates remain private.
-A fresh production checkout restores selected sources and pinned social cards
-from the public CDN without AWS credentials. It rejects private-only dependencies.
+A fresh production checkout restores selected sources, pinned social cards and
+pinned chart and diagram renditions from the public CDN without AWS credentials. It rejects private-only dependencies.
 Local authoring can restore draft sources through authenticated S3 reads. Images
 and covers keep their local syntax, so preview, import and book exports use the
 same verified source bytes. Frozen editions still contain their own resource
