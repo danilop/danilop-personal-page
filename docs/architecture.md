@@ -301,7 +301,9 @@ PDFs have no cover and need CORS from their host; when loading fails the viewer
 says so and keeps the download link.
 On the homepage, a lead article whose first image is a PDF cover shows it as a
 slide, up to 720px wide at its own aspect ratio, instead of the 180px-high strip
-used for illustrations.
+used for illustrations. A lead article whose first image is a rendered chart or
+diagram shows it at its own size, as in the article and up to 720px wide, on every
+screen size, without the artwork blend, so its text stays readable.
 
 Accept local PDFs or public HTTPS sources. Google adapters accept the published
 view/embed URLs provided by Google, validate their host/path, and generate the

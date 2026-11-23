@@ -286,7 +286,7 @@ test("public articles reused in draft books stay independent and preview book-on
   assert.equal(result.books.length, 0);
   assert.equal(result.independent.length, 2);
 });
-test("a PDF cover leads as a slide; ordinary artwork does not", () => {
+test("a PDF cover leads as a slide and a chart or diagram as a figure; ordinary artwork does not", () => {
   const { lib, site } = fixture();
   const articles = site.articles as { html: string }[];
   articles[0].html =
@@ -297,6 +297,13 @@ test("a PDF cover leads as a slide; ordinary artwork does not", () => {
     src: "/media/cover.webp",
     alt: "First slide of Talk",
     slide: true,
+  });
+  articles[0].html =
+    '<figure class="rich-block" id="setup"><img src="/media/setup.svg" alt="The setup"><figcaption>Setup.</figcaption></figure>';
+  assert.deepEqual(welcome().image, {
+    src: "/media/setup.svg",
+    alt: "The setup",
+    figure: true,
   });
   articles[0].html = '<p><img src="/media/art.png" alt="Ink drawing"></p>';
   assert.deepEqual(welcome().image, {

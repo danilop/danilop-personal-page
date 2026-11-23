@@ -57,6 +57,19 @@
   filter: none;
 }
 
+/* A chart or diagram keeps the size it has in the article, so its text stays readable. */
+.discovery-lead .article-art.figure-art {
+  max-width: 720px;
+}
+
+.discovery-lead .article-art.figure-art img {
+  width: auto;
+  max-width: 100%;
+  max-height: none;
+  mix-blend-mode: normal;
+  filter: none;
+}
+
 .discovery-books {
   border-left: 1px solid var(--hairline);
   padding-left: 30px;

@@ -24,6 +24,8 @@ export type HomeEntry = {
     height?: number;
     /** The cover of a PDF block's first page, shown as a slide, not artwork. */
     slide?: boolean;
+    /** A rendered chart or diagram, shown at its own size so its text stays readable. */
+    figure?: boolean;
   };
 };
 function articleImage(html: string) {
@@ -33,7 +35,11 @@ function articleImage(html: string) {
   return {
     src,
     alt: image.attr("alt") ?? "",
-    ...(image.closest(".pdf-cover").length ? { slide: true } : {}),
+    ...(image.closest(".pdf-cover").length
+      ? { slide: true }
+      : image.closest("figure.rich-block").length
+        ? { figure: true }
+        : {}),
   };
 }
 export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
