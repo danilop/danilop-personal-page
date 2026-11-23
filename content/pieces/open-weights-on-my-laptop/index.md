@@ -2,8 +2,8 @@
 schemaVersion: 1
 id: open-weights-on-my-laptop
 title: Trying Inkling 2 Mini and Bonsai 2 27B on my laptop
-summary: A morning of speed tests and three coding tasks, with the code never
-  leaving my machine.
+summary: I set up two open-weight models on my MacBook Pro in a few minutes, then
+  ran speed tests and three coding tasks.
 language: en-GB
 draft: false
 publication:

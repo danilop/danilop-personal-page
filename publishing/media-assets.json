@@ -149,8 +149,14 @@
       "sha256": "76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979",
       "bytes": 11362220,
       "contentType": "audio/mpeg",
-      "key": "originals/narration-76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3",
-      "publicKey": "media/76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3"
+      "key": "originals/narration-76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3"
+    },
+    "content/pieces/open-weights-on-my-laptop/assets/narration-9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5.mp3": {
+      "sha256": "9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5",
+      "bytes": 11380364,
+      "contentType": "audio/mpeg",
+      "key": "originals/narration-9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5.mp3",
+      "publicKey": "media/9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5.mp3"
     }
   },
   "outputs": {
@@ -166,17 +172,17 @@
       "contentType": "image/svg+xml",
       "key": "media/63e3e397d63b16889ab6b2c709e719e1460483eef7722579dd024ffa628c2640.svg"
     },
-    "76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3": {
-      "sha256": "76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979",
-      "bytes": 11362220,
-      "contentType": "audio/mpeg",
-      "key": "media/76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3"
-    },
     "8773171f3a16efcd31af0319723a2fec42b11c59afaf251c5da2b22e14082186.svg": {
       "sha256": "8773171f3a16efcd31af0319723a2fec42b11c59afaf251c5da2b22e14082186",
       "bytes": 18007,
       "contentType": "image/svg+xml",
       "key": "media/8773171f3a16efcd31af0319723a2fec42b11c59afaf251c5da2b22e14082186.svg"
+    },
+    "9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5.mp3": {
+      "sha256": "9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5",
+      "bytes": 11380364,
+      "contentType": "audio/mpeg",
+      "key": "media/9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5.mp3"
     },
     "a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c.webp": {
       "sha256": "a61a5595da0f9bf50653e38675be7f5cbadd70bf8e4ab3e63683200e00ae438c",

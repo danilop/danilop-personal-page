@@ -887,7 +887,7 @@
     "open-weights-on-my-laptop:5bd6d9586bf1d531": {
       "pieceId": "open-weights-on-my-laptop",
       "title": "Trying Inkling 2 Mini and Bonsai 2 27B on my laptop",
-      "speechHash": "7dd3f2f78115845a68b9771f5fa377df49cd9f1c1c19f1a0c2375e2e6233038c",
+      "speechHash": "04da5538e36ed1dafaab485f47407e584c830b9c3c5a1ec51dd086b632532c7f",
       "reviewHash": "0ae414796e9a64f78bc8d0bdd9fab1a7b4fe0c6d41b089f0f3fcaf266cf5e620",
       "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
       "settings": {
@@ -961,7 +961,7 @@
         },
         {
           "kind": "subtitle",
-          "text": "A morning of speed tests and three coding tasks, with the code never leaving my machine.",
+          "text": "I set up two open-weight models on my MacBook Pro in a few minutes, then ran speed tests and three coding tasks.",
           "pause": 0.55
         },
         {
@@ -1166,9 +1166,9 @@
         }
       ],
       "audio": {
-        "sha256": "76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979",
-        "bytes": 11362220,
-        "duration": 946.775,
+        "sha256": "9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5",
+        "bytes": 11380364,
+        "duration": 948.275,
         "timings": [
           {
             "start": 0,
@@ -1176,172 +1176,172 @@
           },
           {
             "start": 5.825,
-            "end": 12.775
+            "end": 14.275
           },
           {
-            "start": 12.775,
-            "end": 48.93
+            "start": 14.275,
+            "end": 50.43
           },
           {
-            "start": 48.93,
-            "end": 94.335
+            "start": 50.43,
+            "end": 95.835
           },
           {
-            "start": 94.335,
-            "end": 116.915
+            "start": 95.835,
+            "end": 118.415
           },
           {
-            "start": 116.915,
-            "end": 120.19
+            "start": 118.415,
+            "end": 121.69
           },
           {
-            "start": 120.19,
-            "end": 136.07
+            "start": 121.69,
+            "end": 137.57
           },
           {
-            "start": 136.07,
-            "end": 155.425
+            "start": 137.57,
+            "end": 156.925
           },
           {
-            "start": 155.425,
-            "end": 193.33
+            "start": 156.925,
+            "end": 194.83
           },
           {
-            "start": 193.33,
-            "end": 208.51
+            "start": 194.83,
+            "end": 210.01
           },
           {
-            "start": 208.51,
-            "end": 243.715
+            "start": 210.01,
+            "end": 245.215
           },
           {
-            "start": 243.715,
-            "end": 266.57
+            "start": 245.215,
+            "end": 268.07
           },
           {
-            "start": 266.57,
-            "end": 282.575
+            "start": 268.07,
+            "end": 284.075
           },
           {
-            "start": 282.575,
-            "end": 284.8
+            "start": 284.075,
+            "end": 286.3
           },
           {
-            "start": 284.8,
-            "end": 326.605
+            "start": 286.3,
+            "end": 328.105
           },
           {
-            "start": 326.605,
-            "end": 371.735
+            "start": 328.105,
+            "end": 373.235
           },
           {
-            "start": 371.735,
-            "end": 420.465
+            "start": 373.235,
+            "end": 421.965
           },
           {
-            "start": 420.465,
-            "end": 475.52
+            "start": 421.965,
+            "end": 477.02
           },
           {
-            "start": 475.52,
-            "end": 511.275
+            "start": 477.02,
+            "end": 512.775
           },
           {
-            "start": 511.275,
-            "end": 530.08
+            "start": 512.775,
+            "end": 531.58
           },
           {
-            "start": 530.08,
-            "end": 532.255
+            "start": 531.58,
+            "end": 533.755
           },
           {
-            "start": 532.255,
-            "end": 554.61
+            "start": 533.755,
+            "end": 556.11
           },
           {
-            "start": 554.61,
-            "end": 571.79
+            "start": 556.11,
+            "end": 573.29
           },
           {
-            "start": 571.79,
-            "end": 596.195
+            "start": 573.29,
+            "end": 597.695
           },
           {
-            "start": 596.195,
-            "end": 613.525
+            "start": 597.695,
+            "end": 615.025
           },
           {
-            "start": 613.525,
-            "end": 639.33
+            "start": 615.025,
+            "end": 640.83
           },
           {
-            "start": 639.33,
-            "end": 676.635
+            "start": 640.83,
+            "end": 678.135
           },
           {
-            "start": 676.635,
-            "end": 710.165
+            "start": 678.135,
+            "end": 711.665
           },
           {
-            "start": 710.165,
-            "end": 713.915
+            "start": 711.665,
+            "end": 715.415
           },
           {
-            "start": 713.915,
-            "end": 728.745
+            "start": 715.415,
+            "end": 730.245
           },
           {
-            "start": 728.745,
-            "end": 743.9
+            "start": 730.245,
+            "end": 745.4
           },
           {
-            "start": 743.9,
-            "end": 755.255
+            "start": 745.4,
+            "end": 756.755
           },
           {
-            "start": 755.255,
-            "end": 769.46
+            "start": 756.755,
+            "end": 770.96
           },
           {
-            "start": 769.46,
-            "end": 785.19
+            "start": 770.96,
+            "end": 786.69
           },
           {
-            "start": 785.19,
-            "end": 806.045
+            "start": 786.69,
+            "end": 807.545
           },
           {
-            "start": 806.045,
-            "end": 825.3
+            "start": 807.545,
+            "end": 826.8
           },
           {
-            "start": 825.3,
-            "end": 850.53
+            "start": 826.8,
+            "end": 852.03
           },
           {
-            "start": 850.53,
-            "end": 852.855
+            "start": 852.03,
+            "end": 854.355
           },
           {
-            "start": 852.855,
-            "end": 888.06
+            "start": 854.355,
+            "end": 889.56
           },
           {
-            "start": 888.06,
-            "end": 910.24
+            "start": 889.56,
+            "end": 911.74
           },
           {
-            "start": 910.24,
-            "end": 930.52
+            "start": 911.74,
+            "end": 932.02
           },
           {
-            "start": 930.52,
-            "end": 946.775
+            "start": 932.02,
+            "end": 948.275
           }
         ],
-        "reusedChunks": 0,
-        "generationSeconds": 48.19670870801201,
-        "path": "content/pieces/open-weights-on-my-laptop/assets/narration-76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3"
+        "reusedChunks": 53,
+        "generationSeconds": 3.7700784169719554,
+        "path": "content/pieces/open-weights-on-my-laptop/assets/narration-9e6d11be50467584cc7ef1883010c7886bdd30c19b8c94f81f454b0839d32ce5.mp3"
       }
     }
   }
