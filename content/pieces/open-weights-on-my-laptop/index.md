@@ -10,6 +10,7 @@ publication:
   surfaces: [ standalone ]
 slug: open-weights-on-my-laptop
 tags: [ ai, computing, programming ]
+homeImage: pi-tasks
 publishedAt: 2026-11-23T13:46:29.313Z
 ---
 

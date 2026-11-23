@@ -96,6 +96,12 @@ through a Markdown extension. It is not a promise of compatibility with every
 Markdown viewer. Plain prose, headings, links, lists, and fences remain ordinary
 Markdown. Unsupported directives must produce a clear export error.
 
+Optional `homeImage: <block id>` chooses which rendered block (a chart, diagram or
+other block with an image) represents the article on the homepage, in place of
+its first image. Use the block that sums up the article, such as its main result
+chart. The id must name a block in the piece's `blocks.yaml`; otherwise the build
+fails. It does not change the social preview.
+
 ### Quiet paragraph callouts
 
 The portable format also supports this explicit Pandoc/Quarto fenced-div subset:

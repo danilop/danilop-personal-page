@@ -311,3 +311,20 @@ test("a PDF cover leads as a slide and a chart or diagram as a figure; ordinary 
     alt: "Ink drawing",
   });
 });
+test("homeImage picks the named block's rendering and fails when the block is missing", () => {
+  const { lib, site } = fixture();
+  const articles = site.articles as { html: string }[];
+  articles[0].html =
+    '<figure class="rich-block" id="welcome-setup"><img src="/media/setup.svg" alt="The setup"></figure>' +
+    '<figure class="rich-block" id="welcome-results"><img src="/media/results.svg" alt="The results"></figure>';
+  lib.pieces.set("welcome", { ...piece("welcome"), homeImage: "results" });
+  const welcome = () =>
+    homepageWriting(site, lib).find((entry) => entry.id === "welcome")!;
+  assert.deepEqual(welcome().image, {
+    src: "/media/results.svg",
+    alt: "The results",
+    figure: true,
+  });
+  lib.pieces.set("welcome", { ...piece("welcome"), homeImage: "missing" });
+  assert.throws(welcome, /homeImage of welcome does not name a rendered block/);
+});

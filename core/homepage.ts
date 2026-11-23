@@ -28,8 +28,22 @@ export type HomeEntry = {
     figure?: boolean;
   };
 };
-function articleImage(html: string) {
-  const image = load(html)("img[src]").first();
+/**
+ * The homepage image: the rendered block the author chose with `homeImage`, or
+ * else the article's first image. A chosen block that is missing fails the build.
+ */
+function articleImage(
+  html: string,
+  chosen?: { anchor: string; piece: string },
+) {
+  const $ = load(html);
+  const image = chosen
+    ? $(`figure.rich-block[id="${chosen.anchor}"] img[src]`).first()
+    : $("img[src]").first();
+  if (chosen && !image.length)
+    throw Error(
+      `homeImage of ${chosen.piece} does not name a rendered block with an image: ${chosen.anchor}`,
+    );
   const src = image.attr("src");
   if (!src) return undefined;
   return {
@@ -42,15 +56,25 @@ function articleImage(html: string) {
         : {}),
   };
 }
+/** The anchor of the block an article names with `homeImage`, if any. */
+function chosenImage(
+  prefix: string,
+  piece?: { id: string; homeImage?: string },
+) {
+  return piece?.homeImage
+    ? { anchor: `${prefix}-${piece.homeImage}`, piece: piece.id }
+    : undefined;
+}
 export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
   const entries = new Map<string, HomeEntry>();
-  for (const a of site.articles)
+  for (const a of site.articles) {
     entries.set(a.id, {
       ...a,
-      image: articleImage(a.html),
+      image: articleImage(a.html, chosenImage(a.id, lib.pieces.get(a.id))),
       kind: "piece",
       draft: site.authoring?.pieces.includes(a.id),
     });
+  }
   addCollectionWriting();
   applyAnnouncements();
   return [...entries.values()].sort(publicationOrder);
@@ -114,7 +138,7 @@ export function homepageWriting(site: CompiledSite, lib: Library): HomeEntry[] {
         books: book ? [book] : [],
         kind: "piece",
         draft,
-        image: articleImage(n.html),
+        image: articleImage(n.html, chosenImage(n.id, p)),
       });
     }
   }

@@ -76,6 +76,8 @@ export const pieceSchema = z
     publishedAt: date.optional(),
     updatedAt: date.optional(),
     shortCode: id.optional(),
+    /** Block id whose rendering represents the article on the homepage. */
+    homeImage: id.optional(),
     tags: z.array(z.string()).default([]),
     adaptedFrom: id.optional(),
     render: preferences,

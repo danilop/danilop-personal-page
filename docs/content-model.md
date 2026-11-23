@@ -126,8 +126,11 @@ editing dates stay internal. Book reading order remains separate from chronologi
 
 Homepage artwork follows the selected article: its first rendered body image is
 reused with its alt text, including for collection-only articles. An article with
-no image has no homepage artwork. This is derived presentation data, not a separate
-cover field in article metadata. Books and collections have an explicit optional
+no image has no homepage artwork. An article can instead name one of its rendered
+blocks with the optional `homeImage` field, for example the chart that sums up its
+result rather than an opening diagram (implemented 2026-11-23). A name that does not
+match a rendered block with an image fails the build. The choice affects only the
+homepage; it is not a cover and does not change social previews. Books and collections have an explicit optional
 cover independent of their members and reading order; the collection overview never
 inherits a member's illustration. Social previews now derive article artwork or
 the explicit collection cover, with title-card fallback. An explicit social-image
