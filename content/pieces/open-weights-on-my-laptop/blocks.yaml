@@ -1,0 +1,61 @@
+schemaVersion: 1
+blocks:
+  local-setup:
+    kind: diagram
+    source:
+      format: mermaid
+      path: ./local-setup.mmd
+    caption: The setup. The coding agent, the server and the model all run on one laptop.
+    description: On a MacBook Pro with an M5 Pro chip and 48 GB of memory, the Pi coding agent reads, edits and runs tests in a project folder. It sends chat requests and tool calls to an MTPLX server on a local port. The server loads the model weights, 9 GB or 17 GB, when it starts.
+  mtp:
+    kind: diagram
+    source:
+      format: mermaid
+      path: ./mtp.mmd
+    caption: Multi-token prediction. A small draft head guesses ahead and the full model checks the guesses together, so one pass can produce several tokens.
+    description: The conversation so far goes to a draft head, which guesses the next few tokens. The full model receives the conversation and the proposed tokens and checks every guess in one pass. The output is the accepted tokens plus one corrected token where the first wrong guess was.
+  runtime-speed:
+    kind: chart
+    source:
+      format: vega-lite
+      path: ./runtime-speed.vl.json
+      data: ./runtime-speed.csv
+    render:
+      web:
+        plugin: vega-lite
+        options: { width: 460, height: 260 }
+      book:
+        plugin: vega-lite
+        options: { width: 460, height: 260 }
+    caption: Bonsai 2 27B on oMLX and MTPLX. The model writes about twice as fast under MTPLX with multi-token prediction as under oMLX.
+    description: A grouped bar chart of tokens per second while writing the answer, for three prompt sizes. Short prompt, oMLX 21, MTPLX without MTP 27, MTPLX with MTP 43. Prompt of about 4,000 tokens, oMLX 20, MTPLX without MTP 27, MTPLX with MTP 38. Prompt of about 14,000 tokens, oMLX 17, MTPLX without MTP 25, MTPLX with MTP 37. Medians of repeated runs with thinking off.
+  model-speed:
+    kind: chart
+    source:
+      format: vega-lite
+      path: ./model-speed.vl.json
+      data: ./model-speed.csv
+    render:
+      web:
+        plugin: vega-lite
+        options: { width: 460, height: 160 }
+      book:
+        plugin: vega-lite
+        options: { width: 460, height: 160 }
+    caption: Time to a full answer. Inkling 2 Mini is a little faster on a short question and nearly three times faster on the long log.
+    description: A grouped bar chart of seconds to a complete 700-token answer. Short question, Bonsai 2 27B 19.5 seconds, Inkling 2 Mini 15.5 seconds. Long service log of 11,000 to 14,500 tokens, Bonsai 2 27B 52.6 seconds, Inkling 2 Mini 19.5 seconds. Means of three runs.
+  pi-tasks:
+    kind: chart
+    source:
+      format: vega-lite
+      path: ./pi-tasks.vl.json
+      data: ./pi-tasks.csv
+    render:
+      web:
+        plugin: vega-lite
+        options: { width: 460, height: 220 }
+      book:
+        plugin: vega-lite
+        options: { width: 460, height: 220 }
+    caption: Three coding tasks in Pi. Both models finished every task with the same result, and Inkling 2 Mini needed between a sixth and two fifths of the time.
+    description: A grouped bar chart of seconds for the Pi coding agent to finish each task. Create a tool, Bonsai 2 27B 620 seconds, Inkling 2 Mini 98 seconds. Fix three bugs, Bonsai 2 27B 49 seconds, Inkling 2 Mini 17 seconds. Review a file, Bonsai 2 27B 73 seconds, Inkling 2 Mini 29 seconds. One run per task.

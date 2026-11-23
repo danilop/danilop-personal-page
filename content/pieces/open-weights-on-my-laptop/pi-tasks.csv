@@ -1,0 +1,7 @@
+task,model,seconds,label
+Create a tool,Bonsai 2 27B,620,10 min 20 s
+Create a tool,Inkling 2 Mini,98,1 min 38 s
+Fix three bugs,Bonsai 2 27B,49,49 s
+Fix three bugs,Inkling 2 Mini,17,17 s
+Review a file,Bonsai 2 27B,73,1 min 13 s
+Review a file,Inkling 2 Mini,29,29 s

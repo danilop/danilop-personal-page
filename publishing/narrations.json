@@ -883,6 +883,466 @@
         "generationSeconds": 0.5609463750151917,
         "path": "content/pieces/from-first-commit-to-self-improving-agent/assets/narration-d4fffa89abc374184e859f34e56c09f9732e5a9a86d050484df484e8207dd058.mp3"
       }
+    },
+    "open-weights-on-my-laptop:5bd6d9586bf1d531": {
+      "pieceId": "open-weights-on-my-laptop",
+      "title": "Trying Inkling 2 Mini and Bonsai 2 27B on my laptop",
+      "speechHash": "7dd3f2f78115845a68b9771f5fa377df49cd9f1c1c19f1a0c2375e2e6233038c",
+      "reviewHash": "0ae414796e9a64f78bc8d0bdd9fab1a7b4fe0c6d41b089f0f3fcaf266cf5e620",
+      "profileHash": "f7c7123f82e6ac6636e0d627af6c77b544cafb4a5ba0ad90e885cce53f7a7231",
+      "settings": {
+        "schemaVersion": 1,
+        "voice": "bm_george",
+        "pace": 1,
+        "profile": "kokoro-mlx-bf16-v1",
+        "pronunciations": {},
+        "adaptations": {
+          "local-setup": {
+            "treatment": "explanation",
+            "sourceHash": "cc0c85a3092424b9207153bca67d4a912e7912963dc9226cfe53d3210fb0e684",
+            "text": "The diagram shows the setup on the MacBook Pro. The Pi coding agent reads, edits and runs tests in the project folder. It sends chat requests and tool calls to the MTPLX server on a local port, which loads the model weights, 9 or 17 gigabytes, when it starts.",
+            "reason": "Reviewed against the saved diagram source and description."
+          },
+          "mtp": {
+            "treatment": "explanation",
+            "sourceHash": "c80d525f1d9031763eaad82473bc0f77341f104eb21a94faecd27c7dfb9d7a18",
+            "text": "The diagram shows multi-token prediction. The conversation goes to the draft head, which guesses the next few tokens. The full model checks every guess in one pass and returns the accepted tokens plus one correction.",
+            "reason": "Reviewed against the saved diagram source and description."
+          },
+          "runtime-speed": {
+            "treatment": "explanation",
+            "sourceHash": "b2177b30c10be7a2a266b68e2f55e8f71e0e1cc81cde00b06bb7852a52ca9684",
+            "text": "The chart compares how fast Bonsai 2 27B writes at three prompt sizes. With a short prompt, oMLX writes 21 tokens a second, MTPLX without multi-token prediction 27, and MTPLX with it 43. With a prompt of about 14,000 tokens, the figures are 17, 25 and 37.",
+            "reason": "Reviewed against the chart data and description; the middle prompt size is left to the page."
+          },
+          "model-speed": {
+            "treatment": "explanation",
+            "sourceHash": "171f71f5183d01509a257d2794ffc77251bd2544d84da167565d31859cbf605a",
+            "text": "The chart shows the time to a complete 700-token answer. On the short question, Bonsai takes 19.5 seconds and Inkling 15.5. On the long log, Bonsai takes 52.6 seconds and Inkling 19.5.",
+            "reason": "Reviewed against the chart data and description."
+          },
+          "pi-tasks": {
+            "treatment": "explanation",
+            "sourceHash": "7c3c1415bc37ea6472e685926f4d6ce14256b351670efa52f198ab123366e40a",
+            "text": "The chart shows how long Pi took on each task. Creating the tool took Bonsai 620 seconds and Inkling 98. Fixing the bugs took 49 and 17 seconds, and the review 73 and 29.",
+            "reason": "Reviewed against the chart data and description."
+          },
+          "table-027537c211f3fb141a3f2a4d": {
+            "treatment": "explanation",
+            "sourceHash": "010d94206f6822d505c3ee01ac64006bdf8aa20ff2d0dae922958dbd5e4ee1b9",
+            "text": "The table compares the two models. Bonsai 2 27B, made by Prism ML from Qwen3.8 27B, is a dense model that uses all 27 billion parameters for every token. Its MTPLX build stores ternary weights in 2 bits, downloads as 8.9 gigabytes and has a context window of about 262,000 tokens. I found no SWE-bench Verified result for it that I could trace. Inkling 2 Mini, from Thinking Machines, is a mixture of experts with looped layers and 26.4 billion parameters, about 3.4 billion of them active, or 5.4 billion counting the loops. Its MTPLX build uses 4-bit experts and 8-bit attention, downloads as 17.2 gigabytes and has a context window of about 1 million tokens. The vendor reports 79.2 per cent on SWE-bench Verified.",
+            "reason": "Reviewed against the saved table; every row is spoken."
+          },
+          "table-b7f707751290973d0760acf9": {
+            "treatment": "explanation",
+            "sourceHash": "e26eb84c796198e3cf09a185f425e3bcb89e1babc85cb8ab15213551b56a6f70",
+            "text": "The table gives the raw speeds. Bonsai writes 36 tokens a second after the short question and 37 after the long log. Inkling writes 46 and 65. On the long log, Bonsai reads 430 tokens a second and Inkling 1,320, so the first token arrives after 34 seconds for Bonsai and 8.6 seconds for Inkling.",
+            "reason": "Reviewed against the saved table; every value is spoken."
+          },
+          "table-18de6f9c65006a30060a8cb3": {
+            "treatment": "explanation",
+            "sourceHash": "9218b23d43019a90e296e42468f47341153d2ebd8663071326b820e63a7a8982",
+            "text": "The table shows the same results for both models. Each passed all five hidden tests on the create task, fixed all three bugs but missed one hidden check, and found all five planted problems plus three sound extras. Bonsai took 12 minutes 22 seconds in total, and Inkling 2 minutes 24 seconds.",
+            "reason": "Reviewed against the saved table; every value is spoken."
+          },
+          "inlineCode-3fbe1a96b193d663893c1b09": {
+            "treatment": "explanation",
+            "sourceHash": "f8948aadd3a7c3f7cb832824acf16624cfb82f78f5515967a19cb48aa9d847d2",
+            "text": "boxed five over twelve",
+            "reason": "The LaTeX command is read as its meaning inside the sentence."
+          }
+        }
+      },
+      "segments": [
+        {
+          "kind": "title",
+          "text": "Trying Inkling 2 Mini and Bonsai 2 27B on my laptop",
+          "pause": 0.55
+        },
+        {
+          "kind": "subtitle",
+          "text": "A morning of speed tests and three coding tasks, with the code never leaving my machine.",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "Most of the AI I use runs in someone else’s data centre, which suits nearly all of my work. My interest in open-weight models comes from somewhere else. When a model can run close to its data and to the places where people and devices interact with it, new uses become possible. A model on a laptop or a phone can read files that should never leave the building and answer without a round trip to the cloud. It can also keep working without a network connection. I keep one running on my laptop to see how much of that capability fits on hardware I own, with weights anyone can download.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The answer changes every few months. Apple is asking a similar question at a much larger scale. In a recent paper, Minions, six Apple researchers describe a “virtual GPU cloud” built from the idle Apple silicon Macs in their organisation. Jobs are split into small pieces. Each Mac pulls work when it has nothing better to do and runs open models locally through Ollama. The paper reports that some jobs used to wait more than ten hours for a shared GPU and can now often start within minutes. It is an experience report with no benchmarks and no released code. I still find the idea promising, because it treats the computers already on our desks as inference capacity.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "My own test was more modest. This month Thinking Machines released Inkling 2 Mini, an open-weight model that fits on a laptop and reports strong coding scores. I wanted to compare it with Ternary Bonsai 2 27B, the model I have been running locally since October. Setting both up on my own machine took a few minutes one morning. Then I watched them work.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "The machine and the runtime",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "Everything here ran on my MacBook Pro with an M5 Pro chip and 48 GB of memory, with my usual apps open. The coding tests used the Pi coding agent, which talks to a local server instead of a cloud API.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The diagram shows the setup on the MacBook Pro. The Pi coding agent reads, edits and runs tests in the project folder. It sends chat requests and tool calls to the MTPLX server on a local port, which loads the model weights, 9 or 17 gigabytes, when it starts.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Before comparing models, I had to choose the software that serves them. That choice alone can double the speed of the same model. A few days earlier I had compared two Mac apps that serve models locally, oMLX 0.8.0 and MTPLX 2.12.3, with Bonsai 2 27B on both. MTPLX supports multi-token prediction (MTP). A small draft head guesses the next few tokens and the full model checks all of the guesses in one pass. When the guesses are right, one pass produces several tokens. The output follows the model’s own distribution, so speed is the only thing that changes.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The diagram shows multi-token prediction. The conversation goes to the draft head, which guesses the next few tokens. The full model checks every guess in one pass and returns the accepted tokens plus one correction.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "With thinking off and 512-token answers, MTPLX wrote about twice as fast as oMLX at every prompt size I tried. With MTP switched off, MTPLX was still about a third faster, so part of the gain comes from the runtime itself. MTP added the rest. MTPLX also read prompts faster, about 470 tokens per second against 300, so a 14,000-token prompt started answering after 30 seconds instead of 47.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The chart compares how fast Bonsai 2 27B writes at three prompt sizes. With a short prompt, oMLX writes 21 tokens a second, MTPLX without multi-token prediction 27, and MTPLX with it 43. With a prompt of about 14,000 tokens, the figures are 17, 25 and 37.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "oMLX has its merits, including lower memory use over a long run of unrelated prompts. For one person using a coding agent on one laptop, MTPLX was the clear choice. I used it for everything that follows.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Two models",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "The two models reach a laptop by different routes. Bonsai shrinks an existing model. Ternary Bonsai 2 27B from Prism ML is Qwen3.8 27B with almost every weight reduced to −1, 0 or +1. Prism gives its footprint as 5.9 GB and reports that it keeps 98.2% of the original model’s overall score on a suite covering reasoning, maths, coding, instruction following and tool use. The coding tests in that suite include HumanEval+ and LiveCodeBench, but none of them asks a model to work as an agent. I found no SWE-bench Verified result for Bonsai that I could trace to its source.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Inkling 2 Mini saves space another way. Thinking Machines released it on 20 November under the Apache 2.0 licence. It is a looped transformer. The middle 12 of its 24 layers run three times for every token, with the same weights on each pass. Each token goes through 48 layers, while the download stores only 24. Inkling is also a mixture of experts, so only a small part of the model works on any one token. The vendor reports 79.2% on SWE-bench Verified. Artificial Analysis gives it 20 on its Intelligence Index, against a median of 10 for open models of a similar size. Most of these figures come from the vendors, so I wanted my own.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Looping gives a model more room to think inside its hidden state without more weights to store. Researchers call this recurrent depth, or latent reasoning when the extra passes do work that would otherwise be written out as reasoning text. The idea goes back to the Universal Transformer in 2018. Smaller looped models such as Huginn and ByteDance’s Ouro came before Inkling. What is new is a looped mixture-of-experts model from a well-funded lab, with open weights and strong coding results. The loops add depth beneath the reasoning that Inkling still writes out. Larger models may follow. The Information has reported, from one anonymous source, that OpenAI’s next model, Astra, uses recurrent depth (summarised here by Bret Kerr). OpenAI has not confirmed it.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The table compares the two models. Bonsai 2 27B, made by Prism ML from Qwen3.8 27B, is a dense model that uses all 27 billion parameters for every token. Its MTPLX build stores ternary weights in 2 bits, downloads as 8.9 gigabytes and has a context window of about 262,000 tokens. I found no SWE-bench Verified result for it that I could trace. Inkling 2 Mini, from Thinking Machines, is a mixture of experts with looped layers and 26.4 billion parameters, about 3.4 billion of them active, or 5.4 billion counting the loops. Its MTPLX build uses 4-bit experts and 8-bit attention, downloads as 17.2 gigabytes and has a context window of about 1 million tokens. The vendor reports 79.2 per cent on SWE-bench Verified.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Both models arrive already compressed, so MTPLX mostly repackages them. Its Bonsai build, 8.9 GB, keeps the image encoder and adds a draft head for multi-token prediction. For Inkling it offers three builds that keep the official 4-bit experts and differ in how they store the rest. I used the middle one, Optimized Speed, a 17.2 GB download with 8-bit attention. MTPLX measured its loss on 6,140 tokens of code and prose as equal to the official weights within noise.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Both ran on MTPLX 2.13.2 with multi-token prediction on. It drafted one token ahead for Bonsai and three for Inkling. Loading both at once pushed my Mac into swap, so I ran them one at a time. Each used its vendor’s recommended sampling settings.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "Raw speed",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "I started with the simplest measurement. Each model received a short question and a long service log of 330 lines. I asked for 700 tokens of answer and timed three runs of each. The log is about 11,000 tokens for Inkling and 14,500 for Bonsai, because their tokenisers split text differently.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The chart shows the time to a complete 700-token answer. On the short question, Bonsai takes 19.5 seconds and Inkling 15.5. On the long log, Bonsai takes 52.6 seconds and Inkling 19.5.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The table gives the raw speeds. Bonsai writes 36 tokens a second after the short question and 37 after the long log. Inkling writes 46 and 65. On the long log, Bonsai reads 430 tokens a second and Inkling 1,320, so the first token arrives after 34 seconds for Bonsai and 8.6 seconds for Inkling.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Inkling reads prompts about three times faster than Bonsai. That helps most the first time a model sees a long document. In a coding agent, later turns reuse most of the conversation from a cache, so how much a model writes, and how fast, counts for more.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Inkling also writes faster after the long log than after the short question. Its answer about the log is more predictable, so the draft head’s guesses were accepted about two thirds of the time, against under a third for the short question. With three tokens drafted at a time, each accepted guess is worth more to Inkling. For Bonsai, which drafts one, each pass over its much longer context costs enough to cancel the gain.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Speed helps only if the answers are right, so I also gave both models 13 small tasks, twice each. They covered arithmetic, a calendar question, a logic puzzle, a probability question, three Python functions checked by tests, a bug fix, a list with strict formatting rules, structured extraction, two tool calls and a question about the long log. Each model used its own default reasoning effort, medium for Bonsai and high for Inkling. Bonsai passed all 26. Inkling passed 24 and finished the set in 7 minutes 23 seconds against Bonsai’s 10 minutes 22 seconds.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "On the probability question, Inkling got the answer right but wrapped it in LaTeX, boxed five over twelve, when I had asked for a bare fraction. Maths benchmarks mark their final answers that way, and Inkling had clearly sat a few of them. Its model card warns of occasional failures to follow instructions precisely. The other miss was a tool call. Inkling handled Pi’s own read, bash and edit every time. When the same kind of tool was named read_file, it wrote the call out as broken text in seven of ten requests.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "A coding agent with a local model",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "All of those were single answers. An agent has to plan, call tools, read the results and try again. I gave Pi three small tasks, each in a fresh folder, with reasoning effort set to medium for both models.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Create: write a command-line tool that prints statistics for one column of a CSV file, following an exact output format, and write tests for it. I checked the result with five tests of my own that the model never saw.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Fix: a small module with three planted bugs and failing tests. The model had to fix the code without touching the tests. I checked it with extra hidden tests.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Review: a short Python class with five planted problems, from SQL injection to an error handler that lets anyone log in. The model had to list the problems by severity and suggest a fix for each.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The chart shows how long Pi took on each task. Creating the tool took Bonsai 620 seconds and Inkling 98. Fixing the bugs took 49 and 17 seconds, and the review 73 and 29.",
+          "pause": 0.28
+        },
+        {
+          "kind": "adaptation",
+          "text": "The table shows the same results for both models. Each passed all five hidden tests on the create task, fixed all three bugs but missed one hidden check, and found all five planted problems plus three sound extras. Bonsai took 12 minutes 22 seconds in total, and Inkling 2 minutes 24 seconds.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "The two models made the same miss on the fix. The docstring says the discount must be between 0 and 100. Neither added a check for it. Their reviews ranked the same two problems first, the login bypass and the SQL injection. Both also raised sensible points I had not planted.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Bonsai spent most of its time on the create task, more than ten minutes against under two for Inkling. It took ten turns and wrote almost 20,000 tokens at about 34 a second. Inkling finished in nine turns with about 5,000 tokens at about 61 a second. Waiting for the first token was a small part of either total, because most of each request was already in the cache.",
+          "pause": 0.28
+        },
+        {
+          "kind": "heading",
+          "text": "What I take from it",
+          "pause": 0.55
+        },
+        {
+          "kind": "paragraph",
+          "text": "On these tasks the two models were equally good. Inkling 2 Mini was much faster. Apart from MTP, I think most of that speed comes from the mixture of experts. For each token, Bonsai uses all 27 billion of its parameters and Inkling about 3.4 billion, or 5.4 billion counting the loops. Drafting three tokens at a time, against Bonsai’s one, adds to the gain. I did not measure the two effects separately. Inkling is also the first model I have run on my laptop that combines a mixture of experts with multi-token prediction.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Inkling’s published coding scores are high, but my tasks were too simple to show a difference in quality. Each task ran once, so I read the speed gap as solid and the tie as a first impression. In the Pi tests I ran Inkling one step below its default reasoning effort, which favours it on speed and may have cost it a little quality.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "Memory is the real constraint. Inkling needs twice the space of Bonsai. With my normal apps open, the server occasionally refused a long prompt to keep the Mac out of swap. On a 48 GB laptop that also runs everything else I do, that is the right behaviour, if not always a welcome one.",
+          "pause": 0.28
+        },
+        {
+          "kind": "paragraph",
+          "text": "For now I am switching my local coding setup to Inkling 2 Mini and keeping Bonsai for times when memory is tight. A year ago I would not have expected a model on my laptop to fix bugs and find a SQL injection in a minute or two.",
+          "pause": 0.28
+        }
+      ],
+      "audio": {
+        "sha256": "76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979",
+        "bytes": 11362220,
+        "duration": 946.775,
+        "timings": [
+          {
+            "start": 0,
+            "end": 5.825
+          },
+          {
+            "start": 5.825,
+            "end": 12.775
+          },
+          {
+            "start": 12.775,
+            "end": 48.93
+          },
+          {
+            "start": 48.93,
+            "end": 94.335
+          },
+          {
+            "start": 94.335,
+            "end": 116.915
+          },
+          {
+            "start": 116.915,
+            "end": 120.19
+          },
+          {
+            "start": 120.19,
+            "end": 136.07
+          },
+          {
+            "start": 136.07,
+            "end": 155.425
+          },
+          {
+            "start": 155.425,
+            "end": 193.33
+          },
+          {
+            "start": 193.33,
+            "end": 208.51
+          },
+          {
+            "start": 208.51,
+            "end": 243.715
+          },
+          {
+            "start": 243.715,
+            "end": 266.57
+          },
+          {
+            "start": 266.57,
+            "end": 282.575
+          },
+          {
+            "start": 282.575,
+            "end": 284.8
+          },
+          {
+            "start": 284.8,
+            "end": 326.605
+          },
+          {
+            "start": 326.605,
+            "end": 371.735
+          },
+          {
+            "start": 371.735,
+            "end": 420.465
+          },
+          {
+            "start": 420.465,
+            "end": 475.52
+          },
+          {
+            "start": 475.52,
+            "end": 511.275
+          },
+          {
+            "start": 511.275,
+            "end": 530.08
+          },
+          {
+            "start": 530.08,
+            "end": 532.255
+          },
+          {
+            "start": 532.255,
+            "end": 554.61
+          },
+          {
+            "start": 554.61,
+            "end": 571.79
+          },
+          {
+            "start": 571.79,
+            "end": 596.195
+          },
+          {
+            "start": 596.195,
+            "end": 613.525
+          },
+          {
+            "start": 613.525,
+            "end": 639.33
+          },
+          {
+            "start": 639.33,
+            "end": 676.635
+          },
+          {
+            "start": 676.635,
+            "end": 710.165
+          },
+          {
+            "start": 710.165,
+            "end": 713.915
+          },
+          {
+            "start": 713.915,
+            "end": 728.745
+          },
+          {
+            "start": 728.745,
+            "end": 743.9
+          },
+          {
+            "start": 743.9,
+            "end": 755.255
+          },
+          {
+            "start": 755.255,
+            "end": 769.46
+          },
+          {
+            "start": 769.46,
+            "end": 785.19
+          },
+          {
+            "start": 785.19,
+            "end": 806.045
+          },
+          {
+            "start": 806.045,
+            "end": 825.3
+          },
+          {
+            "start": 825.3,
+            "end": 850.53
+          },
+          {
+            "start": 850.53,
+            "end": 852.855
+          },
+          {
+            "start": 852.855,
+            "end": 888.06
+          },
+          {
+            "start": 888.06,
+            "end": 910.24
+          },
+          {
+            "start": 910.24,
+            "end": 930.52
+          },
+          {
+            "start": 930.52,
+            "end": 946.775
+          }
+        ],
+        "reusedChunks": 0,
+        "generationSeconds": 48.19670870801201,
+        "path": "content/pieces/open-weights-on-my-laptop/assets/narration-76236fb6a01e012ac8921d4d94f80963482d84173fc5b5609ad3d6ab06062979.mp3"
+      }
     }
   }
 }

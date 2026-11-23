@@ -8,3 +8,5 @@ links:
     ref: clever-enough-to-find-the-loophole
   claude-operators-london-2026:
     ref: from-first-commit-to-self-improving-agent
+  inkling-bonsai:
+    ref: open-weights-on-my-laptop

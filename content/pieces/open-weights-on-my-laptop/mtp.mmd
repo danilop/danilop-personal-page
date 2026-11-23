@@ -1,0 +1,9 @@
+flowchart TB
+  prompt[/"Conversation so far"/]
+  draft["Draft head<br/>guesses the next few tokens"]
+  full("Full model<br/>checks every guess in one pass")
+  answer[/"Accepted tokens<br/>plus one correction"/]
+  prompt --> draft
+  draft -->|proposed tokens| full
+  prompt --> full
+  full --> answer

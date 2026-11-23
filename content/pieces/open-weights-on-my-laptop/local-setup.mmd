@@ -1,0 +1,10 @@
+flowchart TB
+  subgraph mac["MacBook Pro, M5 Pro, 48 GB"]
+    pi("Pi coding agent")
+    folder["Project folder"]
+    server["MTPLX server<br/>local port"]
+    weights[("Model weights<br/>9 GB or 17 GB")]
+  end
+  pi -->|reads, edits, runs tests| folder
+  pi -->|chat requests and tool calls| server
+  server -->|loads at start| weights

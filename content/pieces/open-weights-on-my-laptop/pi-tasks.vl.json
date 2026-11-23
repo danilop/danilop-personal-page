@@ -1,0 +1,104 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "config": {
+    "font": "Inter, system-ui, sans-serif",
+    "background": null,
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#13191c",
+      "labelFontSize": 13,
+      "titleColor": "#586371",
+      "titleFontSize": 12,
+      "titleFontWeight": "normal",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e2ded3",
+      "labelFlush": false
+    },
+    "legend": {
+      "labelColor": "#13191c",
+      "labelFontSize": 13,
+      "orient": "top",
+      "title": null,
+      "symbolSize": 110,
+      "labelLimit": 0
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "task",
+      "type": "nominal",
+      "sort": [
+        "Create a tool",
+        "Fix three bugs",
+        "Review a file"
+      ],
+      "title": null,
+      "axis": {
+        "grid": false,
+        "labelPadding": 10
+      }
+    },
+    "yOffset": {
+      "field": "model",
+      "type": "nominal",
+      "sort": [
+        "Bonsai 2 27B",
+        "Inkling 2 Mini"
+      ]
+    },
+    "x": {
+      "field": "seconds",
+      "type": "quantitative",
+      "title": "Seconds for Pi to finish the task (lower is better)",
+      "axis": {
+        "tickCount": 5
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "height": {
+          "band": 0.9
+        }
+      },
+      "encoding": {
+        "color": {
+          "field": "model",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Bonsai 2 27B",
+              "Inkling 2 Mini"
+            ],
+            "range": [
+              "#8a949f",
+              "#164b88"
+            ]
+          },
+          "legend": {
+            "orient": "top"
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 6,
+        "fontSize": 12,
+        "color": "#586371"
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ]
+}

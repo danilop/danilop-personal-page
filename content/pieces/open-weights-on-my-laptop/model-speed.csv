@@ -1,0 +1,5 @@
+prompt,model,seconds,label
+Short question,Bonsai 2 27B,19.5,19.5 s
+Short question,Inkling 2 Mini,15.5,15.5 s
+Long service log,Bonsai 2 27B,52.6,52.6 s
+Long service log,Inkling 2 Mini,19.5,19.5 s

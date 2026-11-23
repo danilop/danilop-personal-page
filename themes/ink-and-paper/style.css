@@ -698,6 +698,15 @@ button:disabled {
   margin: 1.6em 0;
 }
 
+.prose table {
+  margin: 1.6em 0;
+}
+
+/* Table blocks are wrapped in a figure that already carries the spacing. */
+.prose figure table {
+  margin: 0;
+}
+
 .prose figcaption {
   font-family: var(--sans);
   font-size: 13px;

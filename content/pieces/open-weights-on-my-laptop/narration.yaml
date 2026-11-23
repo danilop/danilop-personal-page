@@ -1,0 +1,80 @@
+schemaVersion: 1
+voice: bm_george
+pace: 1
+profile: kokoro-mlx-bf16-v1
+pronunciations: {}
+adaptations:
+  local-setup:
+    treatment: explanation
+    sourceHash: cc0c85a3092424b9207153bca67d4a912e7912963dc9226cfe53d3210fb0e684
+    text: The diagram shows the setup on the MacBook Pro. The Pi coding agent reads,
+      edits and runs tests in the project folder. It sends chat requests and
+      tool calls to the MTPLX server on a local port, which loads the model
+      weights, 9 or 17 gigabytes, when it starts.
+    reason: Reviewed against the saved diagram source and description.
+  mtp:
+    treatment: explanation
+    sourceHash: c80d525f1d9031763eaad82473bc0f77341f104eb21a94faecd27c7dfb9d7a18
+    text: The diagram shows multi-token prediction. The conversation goes to the
+      draft head, which guesses the next few tokens. The full model checks every
+      guess in one pass and returns the accepted tokens plus one correction.
+    reason: Reviewed against the saved diagram source and description.
+  runtime-speed:
+    treatment: explanation
+    sourceHash: b2177b30c10be7a2a266b68e2f55e8f71e0e1cc81cde00b06bb7852a52ca9684
+    text: The chart compares how fast Bonsai 2 27B writes at three prompt sizes.
+      With a short prompt, oMLX writes 21 tokens a second, MTPLX without
+      multi-token prediction 27, and MTPLX with it 43. With a prompt of about
+      14,000 tokens, the figures are 17, 25 and 37.
+    reason: Reviewed against the chart data and description; the middle prompt size
+      is left to the page.
+  model-speed:
+    treatment: explanation
+    sourceHash: 171f71f5183d01509a257d2794ffc77251bd2544d84da167565d31859cbf605a
+    text: The chart shows the time to a complete 700-token answer. On the short
+      question, Bonsai takes 19.5 seconds and Inkling 15.5. On the long log,
+      Bonsai takes 52.6 seconds and Inkling 19.5.
+    reason: Reviewed against the chart data and description.
+  pi-tasks:
+    treatment: explanation
+    sourceHash: 7c3c1415bc37ea6472e685926f4d6ce14256b351670efa52f198ab123366e40a
+    text: The chart shows how long Pi took on each task. Creating the tool took
+      Bonsai 620 seconds and Inkling 98. Fixing the bugs took 49 and 17 seconds,
+      and the review 73 and 29.
+    reason: Reviewed against the chart data and description.
+  table-027537c211f3fb141a3f2a4d:
+    treatment: explanation
+    sourceHash: 010d94206f6822d505c3ee01ac64006bdf8aa20ff2d0dae922958dbd5e4ee1b9
+    text: The table compares the two models. Bonsai 2 27B, made by Prism ML from
+      Qwen3.8 27B, is a dense model that uses all 27 billion parameters for
+      every token. Its MTPLX build stores ternary weights in 2 bits, downloads
+      as 8.9 gigabytes and has a context window of about 262,000 tokens. I found
+      no SWE-bench Verified result for it that I could trace. Inkling 2 Mini,
+      from Thinking Machines, is a mixture of experts with looped layers and
+      26.4 billion parameters, about 3.4 billion of them active, or 5.4 billion
+      counting the loops. Its MTPLX build uses 4-bit experts and 8-bit
+      attention, downloads as 17.2 gigabytes and has a context window of about 1
+      million tokens. The vendor reports 79.2 per cent on SWE-bench Verified.
+    reason: Reviewed against the saved table; every row is spoken.
+  table-b7f707751290973d0760acf9:
+    treatment: explanation
+    sourceHash: e26eb84c796198e3cf09a185f425e3bcb89e1babc85cb8ab15213551b56a6f70
+    text: The table gives the raw speeds. Bonsai writes 36 tokens a second after the
+      short question and 37 after the long log. Inkling writes 46 and 65. On the
+      long log, Bonsai reads 430 tokens a second and Inkling 1,320, so the first
+      token arrives after 34 seconds for Bonsai and 8.6 seconds for Inkling.
+    reason: Reviewed against the saved table; every value is spoken.
+  table-18de6f9c65006a30060a8cb3:
+    treatment: explanation
+    sourceHash: 9218b23d43019a90e296e42468f47341153d2ebd8663071326b820e63a7a8982
+    text: The table shows the same results for both models. Each passed all five
+      hidden tests on the create task, fixed all three bugs but missed one
+      hidden check, and found all five planted problems plus three sound extras.
+      Bonsai took 12 minutes 22 seconds in total, and Inkling 2 minutes 24
+      seconds.
+    reason: Reviewed against the saved table; every value is spoken.
+  inlineCode-3fbe1a96b193d663893c1b09:
+    treatment: explanation
+    sourceHash: f8948aadd3a7c3f7cb832824acf16624cfb82f78f5515967a19cb48aa9d847d2
+    text: boxed five over twelve
+    reason: The LaTeX command is read as its meaning inside the sentence.

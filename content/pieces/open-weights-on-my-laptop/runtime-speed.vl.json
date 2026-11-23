@@ -1,0 +1,107 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "config": {
+    "font": "Inter, system-ui, sans-serif",
+    "background": null,
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#13191c",
+      "labelFontSize": 13,
+      "titleColor": "#586371",
+      "titleFontSize": 12,
+      "titleFontWeight": "normal",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e2ded3",
+      "labelFlush": false
+    },
+    "legend": {
+      "labelColor": "#13191c",
+      "labelFontSize": 13,
+      "orient": "top",
+      "title": null,
+      "symbolSize": 110,
+      "labelLimit": 0
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "prompt",
+      "type": "nominal",
+      "sort": [
+        "Short prompt",
+        "4K-token prompt",
+        "14K-token prompt"
+      ],
+      "title": null,
+      "axis": {
+        "grid": false,
+        "labelPadding": 10
+      }
+    },
+    "yOffset": {
+      "field": "runtime",
+      "type": "nominal",
+      "sort": [
+        "oMLX",
+        "MTPLX without MTP",
+        "MTPLX with MTP"
+      ]
+    },
+    "x": {
+      "field": "tokens_per_second",
+      "type": "quantitative",
+      "title": "Tokens per second while writing the answer (higher is better)",
+      "axis": {
+        "tickCount": 5
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "height": {
+          "band": 0.9
+        }
+      },
+      "encoding": {
+        "color": {
+          "field": "runtime",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "oMLX",
+              "MTPLX without MTP",
+              "MTPLX with MTP"
+            ],
+            "range": [
+              "#c9c9c3",
+              "#8a949f",
+              "#164b88"
+            ]
+          },
+          "legend": {
+            "orient": "top"
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 6,
+        "fontSize": 12,
+        "color": "#586371"
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ]
+}
