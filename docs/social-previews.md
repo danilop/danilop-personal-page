@@ -15,6 +15,11 @@ authentication, analytics consent or platform SDK. The platform decides whether
 to display a card, how to crop it and how long to cache it.
 
 - Standalone articles use their first rendered local raster image and its alt text.
+  An article that names a rendered chart or diagram with `homeImage` uses that
+  figure instead: the card shows the title above the figure, rasterised on paper
+  at 1200×630 so its labels stay readable, with the figure's description as alt
+  text (implemented 2026-11-23). Like other cards, it is prepared on the author's
+  machine and pinned by recipe, so release builds reuse the exact bytes.
 - Collection/book overview pages use the explicitly selected cover.
 - Collection reading pages use their first local body image, then the collection
   cover when no body image exists. Their description/language/dates come from the

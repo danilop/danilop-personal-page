@@ -100,7 +100,7 @@ Optional `homeImage: <block id>` chooses which rendered block (a chart, diagram 
 other block with an image) represents the article on the homepage, in place of
 its first image. Use the block that sums up the article, such as its main result
 chart. The id must name a block in the piece's `blocks.yaml`; otherwise the build
-fails. It does not change the social preview.
+fails. The social preview then shows the article title above the same chart or diagram.
 
 ### Quiet paragraph callouts
 

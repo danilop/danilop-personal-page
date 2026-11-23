@@ -129,8 +129,9 @@ reused with its alt text, including for collection-only articles. An article wit
 no image has no homepage artwork. An article can instead name one of its rendered
 blocks with the optional `homeImage` field, for example the chart that sums up its
 result rather than an opening diagram (implemented 2026-11-23). A name that does not
-match a rendered block with an image fails the build. The choice affects only the
-homepage; it is not a cover and does not change social previews. Books and collections have an explicit optional
+match a rendered block with an image fails the build. The same block becomes the
+article's social preview: the title above the rendered chart or diagram on a
+1200×630 card. It is not a cover. Books and collections have an explicit optional
 cover independent of their members and reading order; the collection overview never
 inherits a member's illustration. Social previews now derive article artwork or
 the explicit collection cover, with title-card fallback. An explicit social-image

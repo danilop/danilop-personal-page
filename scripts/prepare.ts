@@ -84,7 +84,17 @@ async function main() {
     ),
   };
   await prepareWriting();
-  site.social = await prepareSocialPreviews(site, assets, config.title);
+  site.social = await prepareSocialPreviews(
+    site,
+    assets,
+    config.title,
+    undefined,
+    new Map(
+      [...lib.pieces.values()].flatMap((p) =>
+        p.homeImage ? [[p.id, p.homeImage] as const] : [],
+      ),
+    ),
+  );
   // Prepare portable image renditions before deployment, so remote copies never
   // refer to assets that only exist in the publisher's temporary workspace.
   await prepareDistribution();

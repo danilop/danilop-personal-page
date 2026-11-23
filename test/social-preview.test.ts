@@ -5,7 +5,11 @@ import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
 import { Assets } from "../core/assets";
-import { socialCard, firstSocialImage } from "../core/social-preview";
+import {
+  socialCard,
+  firstSocialImage,
+  chosenSocialImage,
+} from "../core/social-preview";
 import { verifySharedLink } from "../core/social-link-check";
 import { verifySocialMetadata } from "../core/social-metadata";
 
@@ -257,5 +261,46 @@ test("crawler check rejects different GET/HEAD destinations and unpublished HTML
       preview,
     ),
     /noindex/,
+  );
+});
+
+test("a homeImage chart becomes a card with the title above the chart", async (t) => {
+  const page =
+    '<figure class="rich-block" id="story-setup"><img src="/media/setup.svg" alt="Setup"></figure>' +
+    '<figure class="rich-block" id="story-results"><img src="/media/results.svg" alt="Results"></figure>';
+  assert.deepEqual(chosenSocialImage(page, "story-results"), {
+    src: "/media/results.svg",
+    alt: "Results",
+    figure: true,
+  });
+  assert.equal(chosenSocialImage(page, "story-missing"), undefined);
+
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "social-figure-"));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const out = path.join(root, "media");
+  await fs.mkdir(out);
+  await fs.writeFile(
+    path.join(out, "results.svg"),
+    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><rect x="20" y="40" width="300" height="40" fill="#164b88"/></svg>',
+  );
+  const assets = new Assets(out);
+  const image = { src: "/media/results.svg", alt: "Results", figure: true };
+  const card = await socialCard("Story", "Notes", assets, image, root);
+  assert.equal(card.alt, "Results");
+  const plain = await socialCard("Story", "Notes", assets, undefined, root);
+  assert.notEqual(card.src, plain.src);
+  const bytes = await fs.readFile(path.join(root, card.src));
+  const metadata = await sharp(bytes).metadata();
+  assert.deepEqual(
+    [metadata.width, metadata.height, metadata.format],
+    [1200, 630, "jpeg"],
+  );
+  const { data } = await sharp(bytes)
+    .extract({ left: 150, top: 290, width: 1, height: 1 })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  assert(
+    data[2] > data[0] + 40,
+    "the chart's blue bar is drawn below the title",
   );
 });
