@@ -1,0 +1,92 @@
+name: Deploy site to S3 and CloudFront
+# Builds main exactly as amplify.yml does and publishes dist/ to a private S3
+# bucket behind a directly managed CloudFront distribution. The role, bucket and
+# distribution come from repository variables; the role trusts main only.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main' && vars.AWS_ROLE_ARN != '' && vars.SITE_BUCKET != '' && vars.SITE_DISTRIBUTION_ID != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PUBLIC_ANALYTICS_ENABLED: ${{ vars.PUBLIC_ANALYTICS_ENABLED }}
+      PUBLIC_POSTHOG_HOST: ${{ vars.PUBLIC_POSTHOG_HOST }}
+      PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ vars.PUBLIC_POSTHOG_PROJECT_TOKEN }}
+      PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Same history as Amplify's clone.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+      - run: npm install --global "$(node -p 'require("./package.json").packageManager')"
+      - name: Install locked dependencies
+        run: npm ci --include=dev
+      - name: Install locked prototype dependencies
+        run: npm --prefix prototypes/ink-and-paper ci --include=dev
+      - name: Install browser system libraries
+        run: sudo env "PATH=$PATH" "PUPPETEER_CACHE_DIR=$PUPPETEER_CACHE_DIR" npx puppeteer browsers install chrome --install-deps
+      - name: Allow the installed browser to use its sandbox
+        run: |
+          chrome_binary=$(node --input-type=module -e 'import puppeteer from "puppeteer"; console.log(await puppeteer.executablePath({headless: "shell"}))')
+          sudo tee /etc/apparmor.d/notes-chrome >/dev/null <<EOF
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile notes-chrome "$chrome_binary" flags=(unconfined) {
+            userns,
+          }
+          EOF
+          sudo apparmor_parser -r /etc/apparmor.d/notes-chrome
+      - name: Build and validate the release
+        run: npm run validate
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'eu-west-1' }}
+      - name: Upload dist/ with the same Content-Types as the current host
+        env:
+          BUCKET: ${{ vars.SITE_BUCKET }}
+        run: |
+          aws s3 sync dist/ "s3://$BUCKET/" --delete --no-progress --only-show-errors
+          # The CLI guesses types from the runner's MIME table; pin the ones that matter.
+          while read -r pattern type; do
+            aws s3 cp dist/ "s3://$BUCKET/" --recursive --exclude '*' --include "$pattern" \
+              --content-type "$type" --no-progress --only-show-errors </dev/null
+          done <<'EOF'
+          *.html text/html
+          *.css text/css
+          *.js text/javascript
+          *.json application/json
+          *.xml text/xml
+          *.txt text/plain
+          *.svg image/svg+xml
+          *.ico image/x-icon
+          *.webmanifest application/manifest+json
+          *.wasm application/wasm
+          *.woff application/font-woff
+          *.woff2 font/woff2
+          *.ttf font/ttf
+          *.pagefind application/octet-stream
+          *.pf_fragment application/octet-stream
+          *.pf_index application/octet-stream
+          *.pf_meta application/octet-stream
+          EOF
+      - name: Invalidate the CDN cache
+        env:
+          DISTRIBUTION_ID: ${{ vars.SITE_DISTRIBUTION_ID }}
+        run: |
+          id=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths '/*' --query Invalidation.Id --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION_ID" --id "$id"
+          echo "Invalidation $id completed"

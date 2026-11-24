@@ -410,7 +410,9 @@ live revision, routes, assets, RSS, indexing, and the original-site snapshot. `a
 the build; `customHttp.yml` defines response headers. After integration setup,
 the publication workflow requires that verification before activating
 short links. Third-party delivery is a separate manual operation. Local commits
-must be pushed to trigger website deployment.
+must be pushed to trigger website deployment. A second workflow builds the same
+commit and publishes it to an S3 + CloudFront staging host that is planned to
+replace Amplify; see [dependencies and hosting](docs/dependencies-and-hosting.md).
 
 Editorial image/PDF binaries stay in ignored article/collection asset folders;
 `publishing/media-assets.json` tracks their checksums. `npm run assets:prepare`

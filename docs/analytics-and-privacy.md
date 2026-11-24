@@ -125,6 +125,8 @@ ignored by Git. Use `.env.example` for a new checkout.
 | `PUBLIC_ANALYTICS_ENABLED`     | `true` to enable the consent-controlled integration; otherwise disabled |
 
 Set these in the **production branch's Amplify environment**, then rebuild.
+The S3 + CloudFront deploy workflow reads the same names from GitHub repository
+variables; change both places together.
 Never put a personal API key, access token or private reporting credential in a
 `PUBLIC_` variable, Git, or the static build. The integration runs only on the
 configured canonical origin; branch previews are excluded. Local development can

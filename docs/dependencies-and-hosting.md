@@ -233,9 +233,20 @@ account's directly managed distributions. Its hosting remains subject to
 distribution's CloudFront Free subscription does not cover the website.
 [CloudFront flat-rate plans](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html)
 cover one distribution each, with up to three Free subscriptions per account.
-Using a separate Free plan for website delivery would require a hosting change,
-such as deploying the static build to private S3 behind a directly managed
-CloudFront distribution with OAC. That migration is not implemented or approved.
+Using a separate Free plan for website delivery requires a hosting change:
+the static build in a private S3 bucket behind a directly managed CloudFront
+distribution with OAC. That target is deployed as a non-indexed staging host;
+the public hostnames still point at Amplify, and moving them is a separate,
+unapproved step. **Deploy site to S3 and CloudFront**
+(`.github/workflows/deploy-site.yml`) runs on pushes to `main` and on manual
+dispatch, never on pull requests. It runs the same `npm run validate` build as
+Amplify on Ubuntu, assumes an OIDC role whose trust is limited to this
+repository's `main` branch and whose policy covers only that bucket and an
+invalidation of that distribution, syncs `dist/` with `--delete`, pins the
+Content-Types that the CLI would otherwise guess, and invalidates `/*`. The role,
+bucket, distribution, region and the public `PUBLIC_*` analytics values are
+repository variables (`AWS_ROLE_ARN`, `SITE_BUCKET`, `SITE_DISTRIBUTION_ID`,
+`AWS_REGION`); without them the job is skipped.
 Placing another distribution in front of Amplify would not remove Amplify's
 hosting/build charges or cap the entire application's bill.
 
