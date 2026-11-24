@@ -35,7 +35,7 @@ export const siteSchema = z
                 url.protocol === "https:" && !url.username && !url.password
               );
             }, "Social links must use HTTPS without credentials"),
-            icon: z.enum(["github", "linkedin", "x", "facebook"]),
+            icon: z.enum(["github", "linkedin", "x", "bluesky", "facebook"]),
           })
           .strict(),
       )

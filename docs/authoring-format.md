@@ -737,7 +737,7 @@ socialLinks:
   - { label: GitHub, url: "https://github.com/danilop", icon: github }
 ```
 
-Icons currently support `github`, `linkedin`, `x`, and `facebook`. Labels, HTTPS
+Icons currently support `github`, `linkedin`, `x`, `bluesky`, and `facebook`. Labels, HTTPS
 URLs and ordering are configurable; an empty list hides the row. Add future icon
 artwork to the local icon set and schema. Each icon/name pair is one link, with
 the icon hidden from assistive technology to avoid duplicate announcements.

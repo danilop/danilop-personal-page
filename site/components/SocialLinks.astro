@@ -3,12 +3,13 @@ import type { SiteConfig } from "../../core/config";
 import github from "../../site-assets/social/github.svg?raw";
 import linkedin from "../../site-assets/social/linkedin.svg?raw";
 import x from "../../site-assets/social/x-twitter.svg?raw";
+import bluesky from "../../site-assets/social/bluesky.svg?raw";
 import facebook from "../../site-assets/social/facebook.svg?raw";
 interface Props {
   links: SiteConfig["socialLinks"];
 }
 const { links } = Astro.props;
-const icons = { github, linkedin, x, facebook };
+const icons = { github, linkedin, x, bluesky, facebook };
 ---
 
 {links.length > 0 && (

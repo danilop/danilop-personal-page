@@ -2430,3 +2430,18 @@ Chapter 1 section, all three added Chronicles sections, eleven footnotes and bot
 documentation links and diff whitespace checks pass. Final source-hash checks
 confirm the files did not change during verification. Audio and editions were
 not regenerated; there was no publication or deployment.
+
+## About-page Bluesky profile link — 24 November 2026
+
+The About-page profile row gains a Bluesky link between X (Twitter) and Facebook.
+The icon is the Font Awesome Free 7.3.1 brand glyph, bundled locally like the
+other four with the same accessibility attributes and 20px dimensions.
+
+Local checker: zero errors. The production build passes with 36 pages, 225 output
+files and 1,104 local links verified. All 393 tests pass or skip (392 pass, one
+skipped). The built About page was rendered in installed Chrome at 1440×960 and
+390×844: five labelled icon links, each icon 20×20px in a 44px link, no
+horizontal overflow and no console errors. Screenshots were inspected at both
+widths; the Bluesky glyph matches the weight and colour of its neighbours and the
+row wraps to two lines on mobile. The remote profile page was not audited. The
+change was not deployed at the time of these checks.

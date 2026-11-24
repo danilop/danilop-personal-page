@@ -1,4 +1,4 @@
-Social icons: GitHub, LinkedIn, X (Twitter), Facebook.
+Social icons: GitHub, LinkedIn, X (Twitter), Bluesky, Facebook.
 Font Awesome Free 7.3.1, Copyright 2026 Fonticons, Inc.
 https://fontawesome.com/
 https://fontawesome.com/license/free

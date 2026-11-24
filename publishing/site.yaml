@@ -13,6 +13,11 @@ socialLinks:
     }
   - { label: X (Twitter), url: "https://twitter.com/danilop", icon: x }
   - {
+      label: Bluesky,
+      url: "https://bsky.app/profile/danilop.bsky.social",
+      icon: bluesky,
+    }
+  - {
       label: Facebook,
       url: "https://www.facebook.com/danilopoccia/",
       icon: facebook,
