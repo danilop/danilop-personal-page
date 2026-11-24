@@ -166,7 +166,7 @@ paid tier solely to pay for the redirect function.
 The private configuration is `~/.config/notes-along-the-way/links.json`, or the
 file selected by `NOTES_LINKS_CONFIG`. It uses `schemaVersion: 2`,
 `resolver: s3-oac`, `bucket`, `distributionId`, `region`, `shortOrigin`,
-`canonicalOrigin`, and optional `amplifyAppId`. Infrastructure setup additionally
+and `canonicalOrigin`; an older `amplifyAppId` key is ignored. Infrastructure setup additionally
 uses `accountId` and optional `hostedZoneId`. Generated OAC, Function, WAF and
 subscription identifiers stay in that file. Credentials remain in the AWS
 credential/session provider, never the configuration file.

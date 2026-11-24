@@ -41,6 +41,7 @@
         ]
       },
       "ignoreDependencies": [
+        "@aws-sdk/client-amplify",
         "@fontsource/inter",
         "@fontsource/newsreader",
         "@mermaid-js/mermaid-cli",

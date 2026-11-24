@@ -245,6 +245,10 @@ The site moved from AWS Amplify to S3 + CloudFront on 24 November 2026. Amplify
 hosting, its build configuration (`amplify.yml`) and its redirect rule files were
 retired the same day. Earlier sections and the verification log that mention
 Amplify jobs describe the previous host.
+No code imports `@aws-sdk/client-amplify` any more; it stays in
+`package.json` (and in knip's ignore list) until the next dependency refresh,
+because the lockfile is part of every rendition recipe and removing it alone
+would require `npm run assets:prepare` and a media upload.
 
 Repository workflow defaults are read-only, with pull-request approval disabled.
 Each workflow declares its own permissions. `main` currently permits direct pushes:
