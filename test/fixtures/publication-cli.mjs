@@ -27,9 +27,6 @@ const handlers = {
     WebsiteRedirectLocation: "https://danilop.net/old/",
     Metadata: { owner: "retired-fixture" },
   }),
-  ListJobsCommand: () => ({
-    jobSummaries: [{ commitId: revision, status: "SUCCEED" }],
-  }),
   PutObjectCommand: () => ({ ETag: "fixture-etag" }),
   DeleteObjectCommand: () => ({}),
   CreateInvalidationCommand: () => ({
@@ -49,7 +46,6 @@ const handlers = {
 };
 for (const [moduleName, clientName] of [
   ["s3", "S3Client"],
-  ["amplify", "AmplifyClient"],
   ["cloudfront", "CloudFrontClient"],
 ]) {
   const name = "@aws-sdk/client-" + moduleName;
@@ -81,7 +77,11 @@ let remote = {
 globalThis.fetch = async (input, options = {}) => {
   const url = String(input);
   calls.push({ url, method: options.method ?? "GET" });
-  if (url.includes("/build.json")) return Response.json({ revision });
+  if (url.includes("/build.json"))
+    return Response.json(
+      { revision },
+      { headers: { "cache-control": "no-store" } },
+    );
   if (options.method === "HEAD") return new Response("", { status: 200 });
   if (url.includes("/articles/me/all")) return Response.json([]);
   if (url === "https://dev.to/api/articles" || options.method === "PUT") {

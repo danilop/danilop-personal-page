@@ -7,7 +7,7 @@ the two Chronicles pieces remain drafts.
 ## Publish locally, then deliver
 
 The first local publication sets an article's public `publishedAt` timestamp.
-The author then commits and pushes to `main`; Amplify builds and delivers the site.
+The author then commits and pushes to `main`; the deploy workflow builds and delivers the site.
 The timestamp represents the publishing decision, not a measurement of when the
 first reader could fetch the page. Delaying the push or a failed deployment can
 make actual availability later. Deployment verification still checks delivery.
@@ -66,7 +66,7 @@ so new articles do not need an undated interval on the public site.
 Tests exercise local publication, unchanged draft saves, validation failures,
 revision conflicts, preserved dates on unpublish/restore/republish, minute-level
 and timezone-aware ordering, and single-build HTML, JSON-LD and feed output.
-Live delivery remains subject to the existing Amplify deployment verification.
+Live delivery remains subject to the live deployment verification.
 
 On 1 October 2026, full local validation passed 182 tests, TypeScript/Astro checks,
 the production build and verification of 185 output files and 897 local links.

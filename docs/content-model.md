@@ -118,7 +118,7 @@ times do not determine either.
 
 ### Public publication time — accepted requirement, 1 October 2026
 
-The author publishes locally, then commits and pushes to `main` for Amplify
+The author publishes locally, then commits and pushes to `main` for
 delivery. The first local publishing action establishes `publishedAt`, with a UTC
 time as well as a date. Public latest-content lists sort by that timestamp,
 newest first, irrespective of when the article was drafted. Draft creation and
@@ -138,7 +138,7 @@ the explicit collection cover, with title-card fallback. An explicit social-imag
 override remains future work; see [social previews](social-previews.md).
 
 Status: implemented locally, not deployed. The editor saves publication metadata
-with the article; Amplify delivers it without changing that time. Actual public
+with the article; deployment delivers it without changing that time. Actual public
 availability can be later if committing, pushing or deployment is delayed. This
 supersedes the earlier post-deployment observation/confirmation design. Historical
 date-only records retain their precision; preview dates remain provisional.

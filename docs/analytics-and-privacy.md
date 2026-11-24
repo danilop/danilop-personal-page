@@ -124,9 +124,9 @@ ignored by Git. Use `.env.example` for a new checkout.
 | `PUBLIC_POSTHOG_HOST`          | `https://eu.i.posthog.com`                                              |
 | `PUBLIC_ANALYTICS_ENABLED`     | `true` to enable the consent-controlled integration; otherwise disabled |
 
-Set these in the **production branch's Amplify environment**, then rebuild.
-The S3 + CloudFront deploy workflow reads the same names from GitHub repository
-variables; change both places together.
+Set these as GitHub repository variables, which the S3 + CloudFront deploy
+workflow reads, then rerun it. (Until 24 November 2026 they lived in the Amplify
+production branch environment.)
 Never put a personal API key, access token or private reporting credential in a
 `PUBLIC_` variable, Git, or the static build. The integration runs only on the
 configured canonical origin; branch previews are excluded. Local development can

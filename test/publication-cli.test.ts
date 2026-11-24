@@ -33,7 +33,6 @@ test(
         distributionId: "fixture-distribution",
         shortOrigin: "https://short.example.com",
         canonicalOrigin: siteConfig.url,
-        amplifyAppId: "fixture-app",
       }),
     );
     await fs.writeFile(

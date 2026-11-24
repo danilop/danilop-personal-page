@@ -42,7 +42,7 @@ async function main() {
     engines: { yaml: (s) => YAML.parse(s, { maxAliasCount: 0 }) },
   }).data;
   console.log(
-    `Published locally: ${id} (${data.publishedAt}). Review, commit and push to main for Amplify delivery.`,
+    `Published locally: ${id} (${data.publishedAt}). Review, commit and push to main to deploy.`,
   );
 }
 main().catch((error: unknown) => {

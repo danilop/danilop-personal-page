@@ -340,7 +340,7 @@ The live workspace refreshes after saved edits. Standalone tag/quality reports a
 read-only snapshots remain on disk and require their generators to be rerun.
 
 GitHub validation runs `npm run verify:ci`, including analysis, coverage and release
-checks. Amplify runs `npm run validate` and publishes only `dist/`. Neither runs
+checks. The deploy workflow runs `npm run validate` and publishes only `dist/`. Neither runs
 the article NLP review or these private servers. The combined
 `npm run prepublish:check` remains a local release step, not an enforced CI gate.
 Ignored `exports/` reports and pilot drafts are excluded from the public build;
@@ -392,7 +392,7 @@ available through `npm run build:legacy`; its output is `public/`.
 - [Social link previews](docs/social-previews.md): deployed Open Graph/X article cards, locally tested book covers and verified full/short article URLs.
 - [Private operations](docs/private-operations.md): where account-specific notes live, how they are versioned in a separate private repository for use on other computers, and how to recover them.
 - [Credentials and access](docs/credentials-and-access.md): provider capabilities, secret locations, and setup steps.
-- [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and Amplify configuration.
+- [Dependencies and hosting](docs/dependencies-and-hosting.md): current toolchain, compatibility exceptions, and S3 + CloudFront hosting.
 - [Operations](docs/operations.md): deployment, export, recovery, and maintenance.
 - [Implementation status](docs/implementation-plan.md): capability and verification map.
 - [Code analysis](docs/code-analysis.md): installed commit checks, complexity limits, coverage thresholds, bounded test concurrency and reports.
@@ -404,22 +404,22 @@ guides must change alongside the implementation; see [AGENTS.md](AGENTS.md).
 
 ## Deployment
 
-Pull requests run the same validation command as Amplify. AWS Amplify builds
-and deploys pushes to GitHub `main`; an independent GitHub job verifies the exact
-live revision, routes, assets, RSS, indexing, and the original-site snapshot. `amplify.yml` defines
-the build; `customHttp.yml` defines response headers. After integration setup,
-the publication workflow requires that verification before activating
-short links. Third-party delivery is a separate manual operation. Local commits
-must be pushed to trigger website deployment. A second workflow builds the same
-commit and publishes it to an S3 + CloudFront staging host that is planned to
-replace Amplify; see [dependencies and hosting](docs/dependencies-and-hosting.md).
+Pull requests run the same validation command as the deploy workflow. On each push
+to GitHub `main`, `.github/workflows/deploy-site.yml` builds `dist/` and publishes it
+to a private S3 bucket behind CloudFront, which serves `www.danilop.net`. An independent
+GitHub job verifies the exact live revision, routes, assets, RSS, indexing, and the
+original-site snapshot. After integration setup, the publication workflow requires
+that verification before activating short links. Third-party delivery is a separate
+manual operation. Local commits must be pushed to trigger website deployment. The
+site moved from AWS Amplify to S3 + CloudFront on 24 November 2026; see
+[dependencies and hosting](docs/dependencies-and-hosting.md).
 
 Editorial image/PDF binaries stay in ignored article/collection asset folders;
 `publishing/media-assets.json` tracks their checksums. `npm run assets:prepare`
 prepares selected public renditions and privately backed-up sources before commit.
 `npm run release` rejects uncommitted work, verifies ignored bytes, uploads to the
 existing media bucket, checks `media.danilop.net`, then pushes the exact commit and
-verifies Amplify delivery. Asset transfers use AWS CLI v2 (>= 2.37.12) conditional
+verifies live delivery. Asset transfers use AWS CLI v2 (>= 2.37.12) conditional
 recursive copies; the SDK retains integrity checks, tags and release coordination.
 Run `npm run assets:doctor` to check the native dependency and `npm run test:aws-cli`
 to test the real CLI against a local fixture. CI pins and checks the CLI; publishing
@@ -458,7 +458,7 @@ standalone posts, without duplicate entries. Book articles show their collection
 and chapter context and link to the reading page. Publication dates determine
 latest order. The [publication timestamp workflow](docs/publication-time.md) is
 implemented, with public date ordering deployed: first local publication saves a UTC timestamp
-in the article's `publishedAt` metadata. Prepare assets, commit, then run `npm run release`; Amplify delivers
+in the article's `publishedAt` metadata. Prepare assets, commit, then run `npm run release`; the deploy workflow delivers
 the dated article in one deployment. Drafting dates stay internal, and edits or
 republishing preserve the original publication time. Actual delivery can be later
 than the local publication action.

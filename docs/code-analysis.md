@@ -248,7 +248,7 @@ the tests themselves passed. Prioritisation never changes the blocking rules.
 CI runs on pull requests and main pushes and retains reports for 14 days, including
 failed runs. This provides comparable per-run metrics without a paid service. GitHub
 branch-protection/required-check settings are not changed by this task; a local hook
-can be bypassed and a failing check alone does not prevent Amplify's push-triggered
+can be bypassed and a failing check alone does not prevent the push-triggered
 deployment. Review those release controls before relying on CI as a deployment gate.
 
 ## Current findings and verification

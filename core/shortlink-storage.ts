@@ -34,7 +34,6 @@ const shortLinkConfigSchema = z
     region: z.string().default("eu-west-1"),
     shortOrigin: origin,
     canonicalOrigin: origin,
-    amplifyAppId: z.string().optional(),
   })
   .passthrough();
 export type ShortLinkConfig = z.infer<typeof shortLinkConfigSchema>;

@@ -197,58 +197,54 @@ remains available for a build without the full test/check sequence.
 
 `.npmrc` enforces engines and explicit lifecycle-script approvals. Review installer
 changes when upgrading esbuild, fsevents, or Puppeteer; do not bypass the allowlist.
-Mermaid rendering requires Chromium and its system libraries. Amplify installs
-AL2023 libraries; GitHub validation uses Ubuntu 24.04, installs Chromium's system
-dependencies, and permits user namespaces for the exact installed browser path
-through AppArmor so Chromium's sandbox can run.
+Mermaid rendering requires Chromium and its system libraries. GitHub validation
+and the deploy workflow use Ubuntu 24.04, install Chromium's system dependencies,
+and permit user namespaces for the exact installed browser path through AppArmor
+so Chromium's sandbox can run.
 
-## GitHub → Amplify → live verification
+## GitHub → S3 + CloudFront → live verification
 
 1. Pull requests run **Validate website** with a read-only token and no publishing
    credentials. The same job can be dispatched manually.
-2. Pushing to `main` triggers Amplify's connected GitHub build automatically.
-   The checked-in `amplify.yml` is authoritative; the console copy is a fallback.
-3. Amplify runs `npm run validate` and deploys `dist/`. It caches npm downloads,
-   render output, and Chromium, not `node_modules`. Astro's content store and Vite
-   caches use workspace-local `.astro/` paths, keeping parallel isolated builds
-   independent even when they share dependency installations.
+2. Pushing to `main` triggers **Deploy site to S3 and CloudFront**
+   (`.github/workflows/deploy-site.yml`), which also runs on manual dispatch and
+   never on pull requests.
+3. The deploy workflow runs `npm run validate`, then syncs `dist/` to a private S3
+   bucket with `--delete`, pins the Content-Types that the CLI would otherwise
+   guess, and invalidates `/*`. Astro's content store and Vite caches use
+   workspace-local `.astro/` paths, keeping parallel isolated builds independent
+   even when they share dependency installations.
 4. **Verify deployment and update short links** independently waits for the exact
    revision at the uncached build marker, even when publication is disabled.
    It checks pages, resources/cache headers, RSS, true 404 responses, and original
    snapshot navigation and indexing. A newer main revision supersedes an older check explicitly;
    superseded checks cannot authorize publication.
 5. Only a verified, indexable main revision can reach the optional publication
-   job for short links. Third-party delivery is excluded from all GitHub workflows;
-   its CLI requires a manually selected, reviewed copy. Short-link access remains
-   a separate setup task.
+   job for short links. Its `--wait` step polls the same build marker, so it does
+   not depend on any hosting API. Third-party delivery is excluded from all GitHub
+   workflows; its CLI requires a manually selected, reviewed copy. Short-link
+   access remains a separate setup task.
 
 `publishing/deployment.json` is the single source for HTTPS origin, base path,
-indexing, and original-root preservation. `customHttp.yml` sets the corresponding
-headers; review its path patterns when changing the base. Native Amplify 404
-handling is retained because explicit `404` rules redirected with HTTP 302.
+indexing, and original-root preservation. CloudFront functions set the matching
+response headers and redirects; `customHttp.yml` records the header values the
+former host used. Review the functions' path patterns when changing the base.
 
-Amplify manages the website's underlying CloudFront distribution outside this
-account's directly managed distributions. Its hosting remains subject to
-[Amplify pricing](https://aws.amazon.com/amplify/pricing/); the short-link
-distribution's CloudFront Free subscription does not cover the website.
-[CloudFront flat-rate plans](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html)
-cover one distribution each, with up to three Free subscriptions per account.
-Using a separate Free plan for website delivery requires a hosting change:
-the static build in a private S3 bucket behind a directly managed CloudFront
-distribution with OAC. That target is deployed as a non-indexed staging host;
-the public hostnames still point at Amplify, and moving them is a separate,
-unapproved step. **Deploy site to S3 and CloudFront**
-(`.github/workflows/deploy-site.yml`) runs on pushes to `main` and on manual
-dispatch, never on pull requests. It runs the same `npm run validate` build as
-Amplify on Ubuntu, assumes an OIDC role whose trust is limited to this
-repository's `main` branch and whose policy covers only that bucket and an
-invalidation of that distribution, syncs `dist/` with `--delete`, pins the
-Content-Types that the CLI would otherwise guess, and invalidates `/*`. The role,
-bucket, distribution, region and the public `PUBLIC_*` analytics values are
+The website is served by a directly managed CloudFront distribution with OAC in
+front of the private bucket, on its own
+[CloudFront flat-rate](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html)
+Free plan, separate from the short-link distribution's plan. Each plan covers one
+distribution, with up to three Free subscriptions per account. The workflow
+assumes an OIDC role whose trust is limited to this repository's `main` branch and
+whose policy covers only that bucket and an invalidation of that distribution. The
+role, bucket, distribution, region and the public `PUBLIC_*` analytics values are
 repository variables (`AWS_ROLE_ARN`, `SITE_BUCKET`, `SITE_DISTRIBUTION_ID`,
 `AWS_REGION`); without them the job is skipped.
-Placing another distribution in front of Amplify would not remove Amplify's
-hosting/build charges or cap the entire application's bill.
+
+The site moved from AWS Amplify to S3 + CloudFront on 24 November 2026. Amplify
+hosting, its build configuration (`amplify.yml`) and its redirect rule files were
+retired the same day. Earlier sections and the verification log that mention
+Amplify jobs describe the previous host.
 
 Repository workflow defaults are read-only, with pull-request approval disabled.
 Each workflow declares its own permissions. `main` currently permits direct pushes:

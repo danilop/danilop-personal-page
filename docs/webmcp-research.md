@@ -149,7 +149,7 @@ Polyfill: [`@mcp-b/global`](https://docs.mcp-b.ai/packages/webmcp-polyfill/refer
 
 ## Options for this site
 
-The site is static Astro on Amplify with first-party scripts, interactive Python
+The site is static Astro on S3 + CloudFront with first-party scripts, interactive Python
 activities (Pyodide), narration and audiobook players, a replaceable browser
 model runtime (WebLLM) and a local-only authoring editor. Ranked by value for
 effort:

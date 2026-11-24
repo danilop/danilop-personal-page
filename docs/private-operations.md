@@ -80,14 +80,14 @@ the source of truth:
    sessions; the collection/book dashboard measures the custom events documented
    in [analytics and privacy](analytics-and-privacy.md). Copy each dashboard URL.
    Recover setup reports from **Notebooks**. If project names are ambiguous,
-   compare the project token in project settings with the production Amplify
-   environment value privately.
+   compare the project token in project settings with the
+   `PUBLIC_POSTHOG_PROJECT_TOKEN` repository variable privately.
 2. **API option:** authenticated dashboard listing/retrieval can recover IDs and
    definitions; listing requires `dashboard:read`. See the official
    [PostHog dashboard API](https://posthog.com/docs/api/dashboards).
    The public ingestion token does not grant reporting access.
-3. **AWS:** find the Amplify app by connected repository or custom domain; inspect
-   its production branch environment and deployment history. Find the short-link
+3. **AWS:** find the website CloudFront distribution by its `www.danilop.net` alias
+   and its S3 origin; the deploy workflow's repository variables name both. Find the short-link
    CloudFront distribution by its domain alias, then inspect its S3 origin.
 4. Recreate the private directory/file with owner-only access. Add recovered
    links and identifiers, not credential values or copied visitor records.

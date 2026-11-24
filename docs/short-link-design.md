@@ -157,10 +157,8 @@ For small traffic, function charges will usually be zero on either pricing model
 
 The flat-rate plan bounds covered CloudFront costs, not the entire AWS bill.
 S3 request charges remain separate; its storage credit covers Standard storage,
-not requests. Amplify hosting/builds, domain registration and excluded logging
-features remain separate. Route 53 zone charges are covered only when the eligible
-zone is attached to the plan. Applying a plan to the short-link distribution does
-not move the Amplify website into that plan. There is no reason here to select a
+not requests. Domain registration and excluded logging features remain separate. Route 53 zone charges are covered only when the eligible
+zone is attached to the plan. The website uses its own distribution and Free plan. There is no reason here to select a
 paid tier solely to pay for the redirect function.
 
 ## Local configuration and commands
@@ -187,7 +185,7 @@ DNS alias was configured separately during activation; check DNS/TLS as part of
 recovery. Do not run the provisioner to publish individual alias changes.
 
 In the editor, open **Short links**, reserve a code, commit/push the saved content
-and registry, wait for Amplify deployment, then select **Publish saved redirects**
+and registry, wait for the website deployment, then select **Publish saved redirects**
 and **Check live links**. Publishing reconciles the complete saved registry,
 including withdrawals. An alias reservation can be made for a draft, but it
 remains inactive. A primary identity code cannot be removed while the article

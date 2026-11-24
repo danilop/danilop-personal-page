@@ -177,5 +177,5 @@ and publishing workflow remain accurate.
 
 Publication timestamps are assigned by the first local published save in the
 editor or the article publishing command. Commit and push then deliver through
-Amplify. This implementation does not publish the draft.
+the deploy workflow. This implementation does not publish the draft.
 See [publication timestamps](publication-time.md).

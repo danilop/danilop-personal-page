@@ -13,7 +13,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | ----------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
 | Website                 | Astro, static output                                                                 | Content-oriented rendering with optional interactive islands             |
 | Implementation          | TypeScript in strict mode                                                            | Explicit schemas and plugin contracts                                    |
-| Runtime/package manager | Node.js 26.13.1 LTS; npm 12.2.3                                                      | Pinned across local, Amplify and GitHub builds                           |
+| Runtime/package manager | Node.js 26.13.1 LTS; npm 12.2.3                                                      | Pinned across local and GitHub builds                                    |
 | Authoring               | Markdown + YAML metadata/manifests                                                   | Portable prose and inspectable structure                                 |
 | Parsing                 | unified / remark / rehype, with remark-directive                                     | Parse semantic blocks before HTML generation                             |
 | Validation              | Zod schemas; exportable JSON Schema where practical                                  | Build validation plus future editor assistance                           |
@@ -27,7 +27,7 @@ Changing a tool requires updating its adapter/decision, not the editorial model.
 | Images                  | Image adapter using Astro/Sharp for web derivatives                                  | Keep originals, captions, and export renditions distinct                 |
 | Interactivity           | Registered JS modules; Web Workers for computation; WASM where useful                | Load only the requested experiment                                       |
 | Browser model runtime   | Replaceable runtime; WebLLM worker adapter                                           | Never a content-model dependency; validate model compatibility           |
-| Hosting                 | Existing AWS Amplify app, Amazon Linux 2023                                          | Preserve automatic deployment from main                                  |
+| Hosting                 | Private S3 + OAC behind CloudFront, deployed by GitHub Actions (since 2026-11-24)    | Preserve automatic deployment from main                                  |
 | Short links             | Private S3 + OAC; viewer-response CloudFront Function (active)                       | HTTP redirects compatible with the actual existing origin setup          |
 | Book output             | Markua export and separate Leanpub adapter                                           | Preserve an independent route to other formats/publishers                |
 | Tests                   | node:test for the core; browser testing for the implemented UI                       | Exercise semantics and user behavior at the appropriate layer            |
@@ -78,7 +78,7 @@ checksum manifest and shared resolver restore verified bytes for preview, import
 book exports and production builds. Preparation selects public dependencies;
 release uploads private originals and selected public copies to the existing media
 bucket before pushing an exact clean commit. Public pages and social cards use the
-media CDN; initial legacy `/media/` URLs remain in Amplify's artifact. Public build
+media CDN; initial legacy `/media/` URLs remain in the site artifact. Public build
 hydration requires no AWS credentials. The collector uses verified deployment
 inventories, explicit shared pins, retention and recoverable deletion; local orphan
 cleanup stays separate. See [asset release](asset-release-design.md).
@@ -666,7 +666,7 @@ inside import. See [behavior and commands](content-import.md).
 `core/authoring-preview.ts` snapshots versionable project files into a temporary
 workspace, overlays selected canonical sources using the importer, and enables
 draft visibility only in that copy. A workspace-bound manifest and explicit local
-build flag guard preparation; CI/Amplify reject authoring mode. `preview-authoring.ts`
+build flag guard preparation; CI builds reject authoring mode. `preview-authoring.ts`
 runs the normal prepare/build/verification pipeline with a root, non-indexable
 configuration, then retains only output under ignored `exports/authoring-preview`.
 It never writes the original `.generated` or `dist` directories. Layout renders
@@ -885,7 +885,7 @@ Browser tests exercise authoring edits, review decisions, image insertion and
 prototype dialogs. Real local server tests use disposable repositories; publication,
 analytics and model tests substitute external boundaries. Verified Chromium source
 coverage joins Node V8 coverage. The same unified JS/TS command runs locally and
-in release validation, with prototype dependencies installed in both CI and Amplify.
+in release validation, with prototype dependencies installed in both CI workflows.
 
 ## Article narration
 

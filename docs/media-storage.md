@@ -89,7 +89,7 @@ Changing `cacheSeconds` requires applying the infrastructure configuration too.
 Third-party platforms may keep independent copies/caches beyond our control.
 
 The personal site's observed HTML header uses browser revalidation with a long
-shared cache, which Amplify invalidates on deployment. Media shares browser
+shared cache, which the deploy workflow invalidates on deployment. Media shares browser
 revalidation, HTTPS and the site's security headers, but deliberately caps edge
 caching at five minutes so corrections also propagate without a website deploy.
 

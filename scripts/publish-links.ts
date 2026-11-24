@@ -1,7 +1,6 @@
 import { deployment, siteUrl } from "../core/deployment.mjs";
 import { loadEditions } from "../core/editions";
 import { execFileSync } from "node:child_process";
-import { AmplifyClient, ListJobsCommand } from "@aws-sdk/client-amplify";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { loadLibrary, readYaml } from "../core/model";
 import { compileLinks, linksSchema } from "../core/shortlinks";
@@ -11,6 +10,7 @@ import {
   redirectTarget,
 } from "../core/shortlink-storage";
 import { siteConfig } from "../core/config";
+import { waitForRevision } from "./verify-deployment.mjs";
 
 async function main() {
   const apply = process.argv.includes("--apply");
@@ -52,7 +52,13 @@ async function main() {
       return;
     }
   }
-  if (process.argv.includes("--wait")) await waitForDeployment(infra, revision);
+  // Wait until the public deployment marker reports this revision.
+  if (process.argv.includes("--wait"))
+    await waitForRevision({
+      markerUrl: siteUrl("/build.json", config.url),
+      revision,
+      timeoutMs: 30 * 60 * 1000,
+    });
   const verify = async () => {
     const response = await fetch(
       siteUrl("/build.json", config.url) + "?revision=" + revision,
@@ -113,29 +119,6 @@ function rollbackKey() {
   )
     throw Error("Specify an exact publication/shortlinks/snapshots/*.json key");
   return rollback;
-}
-async function waitForDeployment(
-  infra: Awaited<ReturnType<typeof shortLinkConfig>>,
-  revision: string,
-) {
-  if (!infra.amplifyAppId)
-    throw Error("Configure amplifyAppId before waiting for deployment");
-  const amplify = new AmplifyClient({ region: infra.region });
-  for (let n = 0; n < 180; n++) {
-    const jobs = await amplify.send(
-      new ListJobsCommand({
-        appId: infra.amplifyAppId,
-        branchName: "main",
-        maxResults: 20,
-      }),
-    );
-    const job = jobs.jobSummaries?.find((j) => j.commitId === revision);
-    if (job?.status === "SUCCEED") break;
-    if (job && ["FAILED", "CANCELLED"].includes(job.status!))
-      throw Error(`Site deployment ${job.status}`);
-    if (n === 179) throw Error("Timed out waiting for exact site deployment");
-    await new Promise((r) => setTimeout(r, 10000));
-  }
 }
 async function restoreTargets(
   infra: Awaited<ReturnType<typeof shortLinkConfig>>,

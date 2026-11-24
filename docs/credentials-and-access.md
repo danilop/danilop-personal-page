@@ -15,7 +15,7 @@ remain in secret stores, not in that note.
 Only DEV needs a new publishing credential for the next integration step.
 Store it in your password manager for manual local delivery. A future manually
 dispatched GitHub workflow could use the protected environment described below. Do not paste it into chat, commit
-it, put it in an issue, or add it to the Amplify website build.
+it, put it in an issue, or add it to the website build.
 
 | Service                    | Credential for this project                                              | Recommended location                                                   |
 | -------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
@@ -58,7 +58,7 @@ it is not required for website launch.
    must be able to approve their own initiated runs, or appoint another reviewer.
    Every run must still be explicitly initiated; keep the main-only restriction.
 7. Under **Environment secrets**, add **`DEV_API_KEY`** and paste the key there.
-   Do not add a same-named repository secret, Actions variable, or Amplify variable.
+   Do not add a same-named repository secret, or Actions variable.
 
 GitHub environment protections apply before jobs receive their environment
 secrets. Availability depends on repository visibility and plan. This repository

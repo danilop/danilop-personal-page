@@ -18,7 +18,7 @@ I built it for my personal page: https://danilop.net
 
 3. The JSON file should be in the `data` folder and contain a single JSON array of links.
 
-4. Run `npm run build:legacy` to create the `public` folder. I use [AWS Amplify Console](https://aws.amazon.com/amplify/console/) to automate deployment.
+4. Run `npm run build:legacy` to create the `public` folder. Deployment used [AWS Amplify Console](https://aws.amazon.com/amplify/console/) until 24 November 2026.
 
 5. Link titles, descriptions, and thumbnails come from saved publisher metadata
    or an Open Graph lookup, with optional manual corrections applied last.
@@ -60,7 +60,7 @@ versioned entry in `data/link-metadata.json` (`ogTitle`, `ogDescription`,
 
 Metadata precedence, from lowest to highest:
 
-1. Raw Open Graph metadata in the local/Amplify `cache/` directory (fetched when
+1. Raw Open Graph metadata in the local `cache/` directory (fetched when
    no usable title is available).
 2. Versioned publisher metadata in `data/link-metadata.json`, refreshed by
    `sync:posts` for AWS and DEV. It also contains the existing YouTube metadata
@@ -95,7 +95,8 @@ AWS/DEV metadata, rerun `sync:posts` or add a manual correction.
 
 ## Deployment
 
-The current rebuild uses Astro output in `dist/` through the existing Amplify app
-in `eu-west-1`; its ID is in the private operations note. The legacy command writes `public/` solely for
+The current rebuild publishes Astro output in `dist/` to S3 + CloudFront through
+`.github/workflows/deploy-site.yml` (moved from AWS Amplify on 24 November 2026);
+resource IDs are in the private operations note. The legacy command writes `public/` solely for
 maintenance/snapshot comparison. See [rebuild operations](operations.md) for
 automatic main-branch deployment and exact revision checks.

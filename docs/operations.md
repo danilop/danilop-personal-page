@@ -17,7 +17,7 @@ See [dependencies and hosting](dependencies-and-hosting.md) for upgrades. Run `n
 `npm run validate` is the shared local/CI release gate: tests, clean content
 preparation, type checks, build, and artifact verification. Run the build first on a fresh checkout to create the
 content-loader inputs. Mermaid CLI needs its installed Chromium and Linux system
-libraries; Amplify installs these in `amplify.yml`.
+libraries; the deploy workflow installs them with Puppeteer's `--install-deps`.
 
 The website output is `dist/`. `.generated/` is disposable intermediate data.
 Core reading works without browser scripts. Model and simulation workers are
@@ -48,10 +48,10 @@ the original site over the root; its snapshot still ships at `/original-site/`.
 The marker is `/build.json`. `npm run verify:deployment -- --wait` checks the exact
 commit, root pages/assets, feed, indexing, 404 responses, and snapshot navigation.
 
-Apply `infrastructure/amplify-rules.json` for `/new/` → `/` redirects and legacy
-HTML routes. These rules apply to every branch of the Amplify app. Keep native
-404 handling: explicit Amplify 404 rules previously returned redirects.
-The old coexistence rules remain a rollback reference.
+A CloudFront viewer-request function applies the `/new/` → `/` redirects, the
+legacy HTML routes and the root-domain redirect; missing URLs return `/404.html`
+with status 404. The function and distribution are managed outside this
+repository (see [dependencies and hosting](dependencies-and-hosting.md)).
 
 ## Historical publications and the relaunch boundary
 
@@ -203,23 +203,21 @@ not prevent other enrolled copies from being processed.
 
 ## Deployment and short links
 
-The production Amplify app in `eu-west-1` automatically builds GitHub `main`.
-Find its ID in the private operations note or recover it from the AWS console
-using the repository/custom domain; see [private operations](private-operations.md).
-`amplify.yml` builds `dist/`; `customHttp.yml` sets response headers.
-The AL2023 build installs the pinned runtime/package manager, installs required
-Chromium libraries with `dnf`, and caches npm downloads, render output and
-project-local Puppeteer browsers. It does not cache `node_modules` or use an
-absolute/home-relative cache path. Hashed `_astro` assets are immutable-cacheable;
-the deployment marker remains uncached.
-The existing domain is `https://www.danilop.net`. The root-domain redirect stays
-in Amplify. Preview branches emit noindex metadata and disallow crawling. Build
-identity comes from the checked-out Git commit, including manually started jobs. At cutover, use explicit redirects for `/posts.html`, `/decks.html`,
-`/videos.html`, and `/about.html`. Leave the missing-page catch-all absent:
-Amplify `404` rules were observed to redirect with 302, while native handling
-returns a true 404 (without the custom error-page body).
-The final root-cutover rules are in `infrastructure/amplify-rules.json`. Apply
-them only when the new site takes over the root: rules apply to every branch of this Amplify app.
+`.github/workflows/deploy-site.yml` builds every push to GitHub `main` and
+publishes `dist/` to a private S3 bucket behind a CloudFront distribution. It
+assumes an OIDC role that trusts `main` only; the role, bucket and distribution
+come from repository variables, and their IDs are in the private operations note
+(see [private operations](private-operations.md)). The workflow installs the pinned
+runtime/package manager and Chromium's system libraries, runs `npm run validate`,
+syncs `dist/` with explicit Content-Types and invalidates the distribution.
+CloudFront functions set response headers (the values in `customHttp.yml`, which
+is no longer read by any host, plus HSTS). Hashed `_astro` assets are
+immutable-cacheable; the deployment marker remains uncached.
+The domain is `https://www.danilop.net`; the CloudFront function redirects the root
+domain to it. Build identity comes from the checked-out Git commit, including
+manually started runs. Legacy `/posts.html`, `/decks.html`, `/videos.html` and
+`/about.html` have explicit redirects. The site moved from AWS Amplify to S3 +
+CloudFront on 24 November 2026.
 
 The active [short-link design](short-link-design.md) uses private S3 with OAC
 and one viewer-response function. CloudFront Free pricing and the attached
@@ -236,8 +234,8 @@ server code. Draft reservations do not activate redirects. Commit and deploy sav
 content and link reservations before using **Publish saved redirects**.
 
 `npm run publish:links` previews desired mappings; `--apply --wait` reconciles S3
-objects after the exact successful Amplify revision and public destinations are
-verified. Conditional writes, ownership metadata/ledger, snapshots and a create-only
+objects after the live `/build.json` marker reports the exact revision and public
+destinations are verified. Conditional writes, ownership metadata/ledger, snapshots and a create-only
 lock prevent blind overwrites. Both `/code` and `/code/` are written and invalidated.
 Unrelated objects remain untouched. Deleted codes retain ownership permanently.
 A rollback snapshot cannot activate currently ineligible content or change fixed

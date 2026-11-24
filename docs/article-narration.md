@@ -288,7 +288,7 @@ belonging to an active writer. A conflicting source requires operator reconcilia
    existing immutable asset upload-before-push workflow and validates the captured
    commit. Manual `assets:prepare` remains available; the local hook also runs it
    when staged narration needs preparation.
-3. CI/Amplify verifies speech/review identities and pinned public bytes without
+3. CI and the deploy build verify speech/review identities and pinned public bytes without
    Kokoro, provider access or private draft state. Direct hook bypass cannot make
    missing or stale narration pass the production build.
 

@@ -35,7 +35,7 @@ status labels. Edit opens that exact source in the editor, retaining its book
 context. **View on site** opens the saved page in a new tab so unsaved editor
 changes remain undisturbed. Save first to see those changes on the full site.
 These links are injected by the local author server only; they are absent from
-static preview builds and production/Amplify artifacts.
+static preview builds and production artifacts.
 
 You can also choose an article, book/collection or setting from the grouped content list.
 Articles open in **Article text**, with metadata outside the writing area.
@@ -64,7 +64,7 @@ Creating/importing pieces and automatic alias allocation still use the existing
 file/command workflows. The Images panel can import local images; tag reuse
 suggestions are available in Post details. Short-link infrastructure is active;
 this editor does not provision it. Reserve a code, commit/push saved content and
-reservations, wait for Amplify, then use **Publish saved redirects** and **Check live
+reservations, wait for the website deployment, then use **Publish saved redirects** and **Check live
 links**. Publishing reconciles the full saved registry; drafts stay inactive. See
 [short-link operations](short-link-design.md#local-configuration-and-commands).
 
@@ -121,7 +121,7 @@ Save unsaved edits first. Confirming writes `draft: true` locally and records a
 saved version. Republishing uses the existing Draft control and Save; retain the
 original `publishedAt`. For a new article, clearing Draft and saving assigns the
 current UTC publication time atomically with the source. Toggling without saving
-or previewing does not assign one. Run `npm run assets:prepare`, commit, then `npm run release` for Amplify delivery.
+or previewing does not assign one. Run `npm run assets:prepare`, commit, then `npm run release` to deliver.
 See [publication timestamps](publication-time.md).
 
 **Delete draft…** is available only for a saved draft. Published and retired

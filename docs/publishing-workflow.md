@@ -28,8 +28,8 @@ These are loopback-only local tools, not public administration routes. See the
 [content review](content-quality.md#setup-and-daily-workflow).
 
 The checked-in GitHub validation workflow runs `npm run verify:ci`, including
-analysis, coverage and release checks; Amplify runs `npm run validate`.
-Amplify publishes only the generated `dist/` artifact. Tests start disposable
+analysis, coverage and release checks; the deploy workflow runs `npm run validate`
+and publishes only the generated `dist/` artifact. Tests start disposable
 loopback authoring servers with fixture content; no public authoring service is
 deployed, and release validation does not run manuscript NLP; `npm run prepublish:check` is currently a local
 release step, not an enforced CI requirement. Draft status controls website
@@ -174,7 +174,7 @@ After editorial and visual approval:
    release build reuses them instead of rendering them again with Linux fonts; see
    [asset release design](asset-release-design.md). On a clean `main` tracking `origin/main`, run `npm run release`. It validates
    exact bytes, uploads and checks S3/CDN before pushing the captured commit.
-5. Wait for Amplify and GitHub’s live-deployment verification to pass. Use
+5. Wait for the deploy workflow and GitHub’s live-deployment verification to pass. Use
    `npm run verify:deployment -- --wait` for the same check locally, then review
    the published article and its media in the browser.
 
@@ -182,11 +182,11 @@ After deployment, use `npm run verify:social -- <full-url> <active-short-url>` t
 check crawler-visible metadata, image delivery and redirect parity. An active short
 URL requires the separate reviewed resolver setup; metadata alone does not activate it.
 
-A push to `main` triggers Amplify; a local commit does not. The original snapshot
-ships with the new website. The separate Amplify branch preview requires a manual release.
+A push to `main` triggers the deploy workflow; a local commit does not. The original
+snapshot ships with the new website.
 
 The release script waits for exact-revision deployment verification and records
-its private asset inventory before triggering cleanup. Amplify independently
+its private asset inventory before triggering cleanup. The deploy build independently
 checks committed outputs and CDN availability; pushing without required asset
 uploads fails the build. See [release gates](asset-release-design.md#prepare-commit-and-release).
 
@@ -199,7 +199,7 @@ external local library until it can be shared.
 
 Local publication saves a UTC `publishedAt` timestamp in the article's frontmatter.
 Prepare assets and commit this together with the draft-state change, then run
-`npm run release`. Amplify builds
+`npm run release`. The deploy workflow builds
 and delivers the dated article in one deployment; CI verifies delivery without
 creating another commit. Public listings and RSS use the saved timestamp. Edits,
 unpublishing and republishing retain it. Local draft saves and previews do not
@@ -261,7 +261,7 @@ Unsupported embeds use alternatives or block required delivery.
 
 Short links are separate: private S3/OAC infrastructure and CloudFront Free pricing
 are active. In the editor, use **Short links** to reserve a code; commit/push saved
-content and reservations, wait for Amplify, then use **Publish saved redirects**
+content and reservations, wait for the website deployment, then use **Publish saved redirects**
 and **Check live links**. `npm run publish:links` previews mappings and
 `--apply --wait` publishes them after exact deployment verification. Draft aliases
 remain inactive. Automatic CI reconciliation requires both private configuration
